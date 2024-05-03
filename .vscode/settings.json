@@ -1,0 +1,8 @@
+{
+  "[javascript]": {
+    "editor.insertSpaces": false
+  },
+  "[svelte]": {
+    "editor.insertSpaces": false
+  }
+}
