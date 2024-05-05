@@ -11,9 +11,7 @@
 	let canUndo = false;
 	let canRedo = false;
 
-	/**
-	 * @type {Writable<{ getEditor: () => LexicalEditor} | null>}
-	 */
+	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
 	$: composer = $c;
 

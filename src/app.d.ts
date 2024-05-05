@@ -18,7 +18,10 @@ declare global {
 	export type Writable<T> = import('svelte/store').Writable<T>
 
 	export type BaseSelection = import('lexical').BaseSelection
+	export type RangeSelection = import('lexical').RangeSelection
 	export type ElementNode = import('lexical').ElementNode
+
+	export type ComposerWritable = Writable<{ getEditor: () => LexicalEditor} | null>
 }
 
 

@@ -20,12 +20,9 @@
 
 	let currentAlignment = '';
 
-	/**
-	 * @type {Writable<{ getEditor: () => LexicalEditor} | null>}
-	 */
+	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
 	$: composer = $c;
-
 	$: canEdit = composer?.getEditor().isEditable();
 
 	/** @param {Event} e */
@@ -53,13 +50,6 @@
 	};
 
 	const updateToolbar = () => {
-		/**
-		 * @type { BaseSelection & { hasFormat?: (format: string) => boolean } | null }
-		 */
-		const selection = getSelection();
-
-		if (!selection?.hasFormat) return;
-
 		const nodes = getSelectedElements();
 		const formats = [...new Set(nodes.map((node) => node.getFormatType()))];
 		currentAlignment = formats.length > 1 ? 'mixed' : formats[0];
@@ -83,12 +73,11 @@
 				LowPriority
 			);
 		});
-
-		console.log(JSON.stringify(alignmentElement.selectedIndex))
 	});
 </script>
 
 <Select
+	title="Element alignment"
 	disabled={!canEdit}
 	bind:ref={alignmentElement}
 	on:change={alignment}

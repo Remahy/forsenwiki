@@ -15,12 +15,9 @@
 	$: isBold = false;
 	$: isItalic = false;
 
-	/**
-	 * @type {Writable<{ getEditor: () => LexicalEditor} | null>}
-	 */
+	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
 	$: composer = $c;
-
 	$: canEdit = composer?.getEditor().isEditable();
 
 	const updateToolbar = () => {

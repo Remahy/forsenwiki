@@ -62,9 +62,7 @@
 		editorState: null
 	};
 
-	/**
-	 * @type {Writable<{ getEditor: () => LexicalEditor } | null>}
-	 */
+	/** @type {ComposerWritable} */
 	const composer = writable(null);
 	setContext('COMPOSER', composer);
 

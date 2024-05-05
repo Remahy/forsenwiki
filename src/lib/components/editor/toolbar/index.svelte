@@ -2,15 +2,15 @@
 	import Divider from '$lib/components/Divider.svelte';
 	import HistoryButtons from './HistoryButtons.svelte';
 	import FontFormatButtons from './FontFormatButtons.svelte';
-	import FontButtons from './FontButtons.svelte';
-	import ElementFormatButtons from './ElementFormatButtons.svelte';
+	import ElementAlignmentSelect from './ElementAlignmentSelect.svelte';
+	import FontSelect from './FontSelect.svelte';
 </script>
 
 <div class="flex gap-2">
 	<HistoryButtons />
 	<Divider />
-	<!-- FontButtons /-->
+	<FontSelect />
 	<FontFormatButtons />
 	<Divider />
-	<ElementFormatButtons />
+	<ElementAlignmentSelect />
 </div>
