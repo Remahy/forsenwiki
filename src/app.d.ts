@@ -16,6 +16,9 @@ declare global {
   export type LexicalEditor = import('svelte-lexical').LexicalEditor
 
 	export type Writable<T> = import('svelte/store').Writable<T>
+
+	export type BaseSelection = import('lexical').BaseSelection
+	export type ElementNode = import('lexical').ElementNode
 }
 
 

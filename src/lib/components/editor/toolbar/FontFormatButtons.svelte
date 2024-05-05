@@ -9,7 +9,6 @@
 
 	import Button from '$lib/components/Button.svelte';
 	import { ctrlKey } from '$lib/environment/environment';
-	// import Select from '$lib/components/Select.svelte';
 
 	const LowPriority = 1;
 
@@ -26,7 +25,7 @@
 
 	const updateToolbar = () => {
 		/**
-		 * @type { ReturnType<getSelection> & { hasFormat?: (format: string) => boolean } | null }
+		 * @type { BaseSelection & { hasFormat?: (format: string) => boolean } | null }
 		 */
 		const selection = getSelection();
 
@@ -78,11 +77,3 @@
 <Button title="Italic ({ctrlKey}B)" on:click={italic} disabled={!canEdit} isActive={isItalic}>
 	<ItalicIcon size="16" />
 </Button>
-
-<!--
-<Select>
-	<option value="left">Left</option>
-	<option value="center">Center</option>
-	<option value="right">Right</option>
-</Select>
--->
