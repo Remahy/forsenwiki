@@ -1,5 +1,7 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
+import {} from 'yjs'
+
 declare global {
 	namespace App {
 		// interface Error {}
@@ -9,5 +11,12 @@ declare global {
 		// interface Platform {}
 	}
 }
+
+declare global {
+  export type LexicalEditor = import('svelte-lexical').LexicalEditor
+
+	export type Writable<T> = import('svelte/store').Writable<T>
+}
+
 
 export {};

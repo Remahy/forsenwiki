@@ -6,7 +6,11 @@ const config = {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 
 	theme: {
-		extend: {}
+		extend: {
+			fontFamily: {
+				dyslexic: 'OpenDyslexic, \'Comic Sans MS\', arial, helvetica, sans-serif',
+			},
+		}
 	},
 
 	plugins: [forms, typography]
