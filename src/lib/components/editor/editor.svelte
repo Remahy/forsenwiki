@@ -13,8 +13,8 @@
 		ListItemNode,
 		ListNode,
 		ListPlugin,
+		QuoteNode,
 		RichTextPlugin,
-		ToolbarRichText,
 		validateUrl
 	} from 'svelte-lexical';
 	import { CLEAR_HISTORY_COMMAND } from 'lexical';
@@ -54,7 +54,7 @@
 		},
 		namespace: 'editor',
 		editable: true,
-		nodes: [LinkNode, ListNode, ListItemNode, HeadingNode],
+		nodes: [LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode],
 		/** @param {Error} error */
 		onError: (error) => {
 			throw error;
@@ -70,7 +70,7 @@
 </script>
 
 <Composer {initialConfig} bind:this={$composer}>
-	<div class="m-4 flex w-full flex-col">
+	<div class="flex flex-col grow">
 		<div class="w-full border border-b-0 p-2">
 			<Toolbar />
 		</div>
