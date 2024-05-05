@@ -1,8 +1,8 @@
 const ALIGNMENT = Object.freeze({
-	LEFT: 'left',
-	CENTER: 'center',
-	RIGHT: 'right',
-	JUSTIFY: 'justify',
+	left: 'Left',
+	center: 'Center',
+	right: 'Right',
+	justify: 'Justify',
 });
 
 const TYPES = Object.freeze({

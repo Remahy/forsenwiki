@@ -5,8 +5,7 @@
 
 	import { ctrlKey } from '$lib/environment/environment';
 	import Button from '$lib/components/Button.svelte';
-
-	const LowPriority = 1;
+	import { LowPriority } from '$lib/constants/lexical';
 
 	let canUndo = false;
 	let canRedo = false;
@@ -16,24 +15,30 @@
 	$: composer = $c;
 
 	$: canEdit = composer?.getEditor().isEditable();
+	$: editor = composer?.getEditor();
 
 	const undo = () => {
-		if (composer === null) return;
+		if (!editor) {
+			return;
+		}
 
-		const editor = composer.getEditor();
 		editor.dispatchCommand(UNDO_COMMAND, undefined);
 	};
 
 	const redo = () => {
-		if (composer === null) return;
+		if (!editor) {
+			return;
+		}
 
-		const editor = composer.getEditor();
 		editor.dispatchCommand(REDO_COMMAND, undefined);
 	};
 
 	onMount(() => {
 		c.subscribe((composer) => {
-			if (composer === null) return;
+			if (!composer) {
+				return;
+			}
+
 			const editor = composer.getEditor();
 
 			editor.registerCommand(
@@ -44,6 +49,7 @@
 				},
 				LowPriority
 			);
+
 			editor.registerCommand(
 				CAN_UNDO_COMMAND,
 				(payload) => {

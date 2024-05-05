@@ -1,19 +1,16 @@
 <script>
-	import {
-		FORMAT_ELEMENT_COMMAND,
-		SELECTION_CHANGE_COMMAND,
-		$getSelection as getSelection
-	} from 'lexical';
+	import { FORMAT_ELEMENT_COMMAND, SELECTION_CHANGE_COMMAND } from 'lexical';
 	import { getContext, onMount } from 'svelte';
 
 	import Select from '$lib/components/Select.svelte';
 	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
 	import { getSelectedElements } from '$lib/environment/utils';
-
-	const LowPriority = 1;
+	import { CriticalPriority } from '$lib/constants/lexical';
 
 	const { ALIGNMENT } = ELEMENT_CONSTANTS;
-	const validValues = Object.values(ALIGNMENT);
+	const alignmentOptions = Object.entries(ALIGNMENT);
+
+	const validValues = Object.keys(ALIGNMENT);
 
 	/** @type {HTMLSelectElement} */
 	let alignmentElement;
@@ -24,21 +21,24 @@
 	const c = getContext('COMPOSER');
 	$: composer = $c;
 	$: canEdit = composer?.getEditor().isEditable();
+	$: editor = composer?.getEditor();
 
 	/** @param {Event} e */
 	const alignment = (e) => {
-		if (composer === null) return;
+		if (!editor) {
+			return;
+		}
 
 		/** @type {HTMLSelectElement} */
 		const target = /** @type {any} */ (e.target);
 		if (target) {
 			// This is only used as a placeholder, don't action on it.
-			if (target.value === 'mixed') return;
+			if (target.value === 'mixed') {
+				return;
+			}
 
-			/** @type {validValues[any]} */
+			/** @type {keyof typeof ALIGNMENT} */
 			const value = /** @type {any} */ (target.value);
-
-			const editor = composer.getEditor();
 
 			if (!validValues.includes(value)) {
 				editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, '');
@@ -57,20 +57,19 @@
 
 	onMount(() => {
 		c.subscribe((composer) => {
-			if (composer === null) return;
+			if (composer === null) {
+				return;
+			}
+
 			const editor = composer.getEditor();
-			editor.registerUpdateListener(({ editorState }) => {
-				editorState.read(() => {
-					updateToolbar();
-				});
-			});
+
 			editor.registerCommand(
 				SELECTION_CHANGE_COMMAND,
 				(_payload) => {
 					updateToolbar();
 					return false;
 				},
-				LowPriority
+				CriticalPriority
 			);
 		});
 	});
@@ -86,8 +85,7 @@
 >
 	<option value="mixed" hidden>Mixed</option>
 	<option value="" selected>Default</option>
-	<option value={ALIGNMENT.LEFT}>Left</option>
-	<option value={ALIGNMENT.CENTER}>Center</option>
-	<option value={ALIGNMENT.RIGHT}>Right</option>
-	<option value={ALIGNMENT.JUSTIFY}>Justify</option>
+	{#each alignmentOptions as [value, label]}
+		<option {value}>{label}</option>
+	{/each}
 </Select>

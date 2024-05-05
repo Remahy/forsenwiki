@@ -8,8 +8,7 @@
 
 	import Select from '$lib/components/Select.svelte';
 	import { TEXT_CONSTANTS } from '$lib/constants/text';
-
-	const LowPriority = 1;
+	import { CriticalPriority } from '$lib/constants/lexical';
 
 	const { FONTFAMILIES } = TEXT_CONSTANTS;
 	const validValues = Object.values(FONTFAMILIES);
@@ -23,20 +22,24 @@
 	const c = getContext('COMPOSER');
 	$: composer = $c;
 	$: canEdit = composer?.getEditor().isEditable();
+	$: editor = composer?.getEditor();
 
 	/** @param {Event} e */
 	const font = (e) => {
-		if (composer === null) return;
+		if (!editor) {
+			return;
+		}
 
 		/** @type {HTMLSelectElement} */
 		const target = /** @type {any} */ (e.target);
 		if (target) {
 			// This is only used as a placeholder, don't action on it.
-			if (target.value === 'mixed') return;
+			if (target.value === 'mixed') {
+				return;
+			}
 
 			/** @type {validValues[any]} */
 			const value = /** @type {any} */ (target.value);
-			const editor = composer.getEditor();
 
 			editor.update(() => {
 				const selection = getSelection();
@@ -73,20 +76,24 @@
 
 	onMount(() => {
 		c.subscribe((composer) => {
-			if (composer === null) return;
+			if (!composer) {
+				return;
+			}
 			const editor = composer.getEditor();
+
 			editor.registerUpdateListener(({ editorState }) => {
 				editorState.read(() => {
 					updateToolbar();
 				});
 			});
+
 			editor.registerCommand(
 				SELECTION_CHANGE_COMMAND,
 				(_payload) => {
 					updateToolbar();
 					return false;
 				},
-				LowPriority
+				CriticalPriority
 			);
 		});
 	});
