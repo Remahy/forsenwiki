@@ -5,8 +5,8 @@
 <button
 	on:click
 	{...$$restProps}
-	class="rounded bg-fuchsia-300 p-2 disabled:opacity-25 hover:bg-fuchsia-400 {isActive
-		? 'border border-fuchsia-950 bg-fuchsia-500'
+	class="rounded bg-violet-700 p-2 text-white hover:bg-violet-800 disabled:opacity-25 {isActive
+		? 'border border-violet-950 bg-violet-900'
 		: 'border border-opacity-0'}"
 >
 	<slot />

@@ -10,12 +10,10 @@
 	setContext('COMPOSER', writable(null));
 </script>
 
-<div class="app flex flex-col min-h-screen">
+<div class="app flex min-h-screen flex-col">
 	<Header />
 
-	<main class="flex grow w-full">
-		<slot></slot>
-	</main>
+	<slot></slot>
 
-  <Footer />
+	<Footer />
 </div>
