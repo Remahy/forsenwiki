@@ -1,7 +1,6 @@
 <script>
 	import License from '$lib/components/License.svelte';
 	import Link from '$lib/components/Link.svelte';
-	import GitHub from '$lib/components/icons/GitHub.svelte';
 	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
 </script>
 
@@ -26,11 +25,6 @@
 			<p>forsen.wiki Version 0.0.1</p>
 			<div class="text-purple-800">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</div>
 			<ul class="flex flex-col gap-2 font-semibold">
-				<li>
-					<Link href="https://github.com/Remahy/forsenwiki" target="github.com/remahy/forsenwiki">
-						<GitHub size="18" color="white" /> <span class="grow">GitHub</span>
-					</Link>
-				</li>
 				<li>
 					<Link href="https://www.twitch.tv/forsen" target="twitch.tv/forsen">
 						<TwitchGlitch size="18" /> <span class="grow">Twitch</span>
