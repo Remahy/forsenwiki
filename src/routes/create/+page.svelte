@@ -1,5 +1,7 @@
 <script>
+	import Box from '$lib/components/Box.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import Link from '$lib/components/Link.svelte';
 	import Editor from '$lib/components/editor/editor.svelte';
 	import { getContext } from 'svelte';
 
@@ -10,7 +12,7 @@
 </script>
 
 <div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
-	<div class="mb-4 grow rounded bg-violet-200 p-4">
+	<Box class="mb-4 grow p-4">
 		<div class="prose !max-w-none">
 			<p>
 				Creating a new article.
@@ -21,12 +23,12 @@
 				<strong>paragraph</strong> text.
 			</p>
 		</div>
-	</div>
+	</Box>
 
 	<Editor update={null} id={'new'} />
 
-	<div class="flex border p-2">
+	<Box class="flex items-center p-2">
 		<div class="grow" />
 		<Button disabled={!canEdit}>Submit</Button>
-	</div>
+	</Box>
 </div>

@@ -1,7 +1,6 @@
-<!--
-  <script>
-  </script>
--->
+<script>
+	import Box from '$lib/components/Box.svelte';
+</script>
 
 <svelte:head>
 	<title>Unofficial Forsen Wiki</title>
@@ -18,7 +17,7 @@
 			Feel free to take a look around or{' '}
 			<a
 				href="/create/"
-				class="rounded bg-violet-700 p-2 font-semibold text-white hover:bg-violet-800 whitespace-nowrap"
+				class="whitespace-nowrap rounded bg-violet-700 p-2 font-semibold text-white hover:bg-violet-800"
 				data-sveltekit-reload>Create new article</a
 			>
 		</p>
@@ -26,34 +25,34 @@
 
 	<div class="block grow gap-4 lg:flex">
 		<div class="mb-4 flex grow flex-col lg:mb-0">
-			<div class="mb-4 grow rounded bg-violet-200 p-4">
+			<Box class="mb-4 grow p-4">
 				<div class="mb-2 border-b-2 border-violet-700 pb-2">
 					<h2 class="text-2xl">Recent edits</h2>
 				</div>
 				<ul class="mx-4 list-disc">
 					<li class="p-2 pl-0"><strong>Article</strong> - Edit date - By Author</li>
 				</ul>
-			</div>
+			</Box>
 
-			<div class="grow rounded bg-violet-200 p-4">
+			<Box class="grow p-4">
 				<div class="mb-2 border-b-2 border-violet-700 pb-2">
 					<h2 class="text-2xl">New articles</h2>
 				</div>
 				<ul class="mx-4 list-disc">
 					<li class="p-2 pl-0"><strong>Article</strong> - Creation date - By Author</li>
 				</ul>
-			</div>
+			</Box>
 		</div>
 
 		<div class="lg:min-w-96">
-			<div class="grow rounded bg-violet-200 p-4">
+			<Box class="grow p-4">
 				<div class="mb-2 border-b-2 border-violet-700 pb-2">
 					<h2 class="text-2xl">New users</h2>
 				</div>
 				<ul class="mx-4 list-disc">
 					<li class="p-2 pl-0"><strong>User</strong> - Creation date</li>
 				</ul>
-			</div>
+			</Box>
 		</div>
 	</div>
 </section>
