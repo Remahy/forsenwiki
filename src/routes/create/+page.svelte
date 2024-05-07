@@ -1,6 +1,7 @@
 <script>
 	import Box from '$lib/components/Box.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import Clown from '$lib/components/Clown.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import Editor from '$lib/components/editor/editor.svelte';
 	import { getContext } from 'svelte';
@@ -28,7 +29,11 @@
 	<Editor update={null} id={'new'} />
 
 	<Box class="flex items-center p-2">
-		<div class="grow" />
+		<div class="grow">
+			Make sure you read the <Link href="/terms" class="hover:!text-indigo-700"
+				>Terms & Conditions</Link
+			>. Don't complain if your edits get deleted. <Clown />
+		</div>
 		<Button disabled={!canEdit}>Submit</Button>
 	</Box>
 </div>
