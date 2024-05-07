@@ -47,40 +47,44 @@
 </script>
 
 <div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
-	<div class="prose !max-w-none">
-		<p>
-			Creating a new article. <strong>Alpha: </strong> Your article drafts are automatically saved locally.*
-		</p>
-		<p>
-			To submit, make sure you have at least one <strong>heading 1</strong> text, and at least one
-			<strong>paragraph</strong> text.
-		</p>
+	<div class="mb-4 grow rounded bg-violet-200 p-4">
+		<div class="prose !max-w-none">
+			<p>
+				Creating a new article.
+				<strong>Alpha: </strong> Your article drafts are automatically saved locally.*
+			</p>
+			<p>
+				To submit, make sure you have at least one <strong>heading 1</strong> text, and at least one
+				<strong>paragraph</strong> text.
+			</p>
+		</div>
 	</div>
-
-	<div class="overflow-hidden text-purple-800">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</div>
 
 	<Editor update={null} id={'new'} />
 
 	<div class="flex border p-2">
-		<div class="flex grow gap-x-4 items-center uppercase text-violet-400 leading-none">
+		<div class="flex grow items-center gap-x-4 uppercase leading-none text-violet-400">
 			<button class="flex items-center p-2" on:click={() => (disableCount = !disableCount)}>
 				{#if !disableCount}
 					<XIcon />
-					{:else}
+				{:else}
 					<ChevronRightIcon />
 				{/if}
 			</button>
+
 			{#if !disableCount}
-			 <div class="flex flex-col gap-1">
-				<span><strong>Words:</strong> <span>{wordsCount}</span></span>
-				<span><strong>Characters:</strong> <span>{characterCount}</span></span>
-			</div>
-			<div class="flex flex-col gap-1">
-				<span><strong>Forsen:</strong> <span>{forsenCount}</span></span>
-				<!--<span><strong>Links:</strong> <span>{linkCount}</span></span>-->
-			</div>
+				<div class="flex flex-col gap-1">
+					<span><strong>Words:</strong> <span>{wordsCount}</span></span>
+					<span><strong>Characters:</strong> <span>{characterCount}</span></span>
+				</div>
+
+				<div class="flex flex-col gap-1">
+					<span><strong>Forsen:</strong> <span>{forsenCount}</span></span>
+					<!--<span><strong>Links:</strong> <span>{linkCount}</span></span>-->
+				</div>
 			{/if}
 		</div>
+
 		<Button disabled={!canEdit}>Submit</Button>
 	</div>
 </div>
