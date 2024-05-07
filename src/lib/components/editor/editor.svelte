@@ -1,4 +1,5 @@
 <script>
+	import { getContext } from 'svelte';
 	import {
 		$getRoot as getRoot,
 		$createParagraphNode as createParagraphNode,
@@ -21,8 +22,6 @@
 
 	import Toolbar from './toolbar/index.svelte';
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
-	import { setContext } from 'svelte';
-	import { writable } from 'svelte/store';
 
 	export let id;
 	export let update;
@@ -62,14 +61,14 @@
 		editorState: null
 	};
 
-	/** @type {ComposerWritable} */
-	const composer = writable(null);
-	setContext('COMPOSER', composer);
+	/** @type {Composer | null} */
+	let composer = null;
+	$: getContext('COMPOSER').set(composer);
 
 	const providerFactory = instantiateProvider(update);
 </script>
 
-<Composer {initialConfig} bind:this={$composer}>
+<Composer {initialConfig} bind:this={composer}>
 	<div class="flex flex-col grow">
 		<div class="w-full border border-b-0 p-2">
 			<Toolbar />

@@ -7,7 +7,7 @@
 	import ElementSelect from './ElementSelect.svelte';
 </script>
 
-<div class="flex gap-2">
+<div class="flex gap-2 flex-wrap">
 	<HistoryButtons />
 	<Divider />
 	<ElementSelect />

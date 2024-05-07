@@ -22,6 +22,7 @@ declare global {
 	export type ElementNode = import('lexical').ElementNode
 
 	export type ComposerWritable = Writable<{ getEditor: () => LexicalEditor} | null>
+	export type Composer = import('svelte-lexical').Composer
 }
 
 
