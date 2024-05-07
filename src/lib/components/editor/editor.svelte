@@ -1,5 +1,6 @@
 <script>
 	import { getContext } from 'svelte';
+	import { CLEAR_HISTORY_COMMAND } from 'lexical';
 	import {
 		$getRoot as getRoot,
 		$createParagraphNode as createParagraphNode,
@@ -18,10 +19,10 @@
 		RichTextPlugin,
 		validateUrl
 	} from 'svelte-lexical';
-	import { CLEAR_HISTORY_COMMAND } from 'lexical';
 
-	import Toolbar from './toolbar/index.svelte';
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
+	import Toolbar from './toolbar/index.svelte';
+	import Footer from './footer/index.svelte';
 
 	export let id;
 	export let update;
@@ -69,10 +70,11 @@
 </script>
 
 <Composer {initialConfig} bind:this={composer}>
-	<div class="flex flex-col grow">
+	<div class="flex grow flex-col">
 		<div class="w-full border border-b-0 p-2">
 			<Toolbar />
 		</div>
+
 		<article class="flex grow flex-col border">
 			<div class="prose relative flex max-w-[unset] grow p-2">
 				<ContentEditable className="grow m-0 p-0 border-0 outline-0" />
@@ -92,5 +94,9 @@
 				initialEditorState={initialState}
 			/>
 		</article>
+		
+		<div class="w-full border border-t-0 p-2">
+			<Footer />
+		</div>
 	</div>
 </Composer>

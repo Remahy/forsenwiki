@@ -1,0 +1,80 @@
+<script>
+	import Divider from '$lib/components/Divider.svelte';
+	import { ChevronRightIcon, XIcon } from 'lucide-svelte';
+	import { getContext, onMount } from 'svelte';
+
+	/** @type {ComposerWritable} */
+	const c = getContext('COMPOSER');
+
+	let disableCount = true;
+
+	let wordsCount = 0;
+	let characterCount = 0;
+	let forsenCount = 0;
+	// let linkCount = 0;
+	// let memeCount = 0;
+
+	/** @param {string | null | undefined} text */
+	const countForsen = (text) => {
+		return text?.match(/forsen/g)?.length || 0;
+	};
+
+	/** @param {string | null | undefined} text */
+	const countCharacters = (text) => {
+		return text?.split('').length || 0;
+	};
+
+	/** @param {string | null | undefined} text */
+	const countWords = (text) => {
+		return text?.match(/\b\S+\b/g)?.length || 0;
+	};
+
+	onMount(() => {
+		c.subscribe((composer) => {
+			if (composer === null) {
+				return;
+			}
+
+			const editor = composer.getEditor();
+
+			editor.registerUpdateListener(({ editorState }) => {
+				editorState.read(() => {
+					if (!disableCount) {
+						const { textContent } = composer?.getEditor().getRootElement() || {};
+
+						wordsCount = countWords(textContent);
+						characterCount = countCharacters(textContent);
+						forsenCount = countForsen(textContent);
+					}
+				});
+			});
+		});
+	});
+</script>
+
+<div class="flex grow items-center uppercase leading-none text-violet-400">
+	<button class="flex items-center p-2" on:click={() => (disableCount = !disableCount)}>
+		{#if !disableCount}
+			<XIcon size="16" />
+		{:else}
+			<ChevronRightIcon size="16" />
+		{/if}
+	</button>
+
+	{#if !disableCount}
+		<div class="flex items-center gap-1">
+			<small><strong>Words:</strong> {wordsCount}</small>
+			<Divider />
+			<small><strong>Characters:</strong> {characterCount}</small>
+			<Divider />
+			<small><strong>Forsen:</strong> {forsenCount}</small>
+			<Divider />
+			<!--<span><strong>Links:</strong> <span>{linkCount}</span></span>-->
+		</div>
+		<!--
+			<div class="flex flex-col gap-1">
+				<span><strong>Memes:</strong> <span>{memeCount}</span></span>
+			</div>
+		-->
+	{/if}
+</div>
