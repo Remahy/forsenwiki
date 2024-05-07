@@ -29,11 +29,11 @@
 	<Editor update={null} id={'new'} />
 
 	<Box class="flex items-center p-2">
-		<div class="grow">
+		<small class="grow">
 			Make sure you read the <Link href="/terms" class="hover:!text-indigo-700"
 				>Terms & Conditions</Link
 			>. Don't complain if your edits get deleted. <Clown />
-		</div>
+		</small>
 		<Button disabled={!canEdit}>Submit</Button>
 	</Box>
 </div>
