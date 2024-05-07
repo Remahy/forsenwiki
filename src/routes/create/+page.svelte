@@ -15,6 +15,22 @@
 	let characterCount = 0;
 	let forsenCount = 0;
 	// let linkCount = 0;
+	// let memeCount = 0;
+
+	/** @param {string | null | undefined} text */
+	const countForsen = (text) => {
+		return text?.match(/forsen/g)?.length || 0;
+	};
+
+	/** @param {string | null | undefined} text */
+	const countCharacters = (text) => {
+		return text?.split('').length || 0;
+	};
+
+	/** @param {string | null | undefined} text */
+	const countWords = (text) => {
+		return text?.match(/\b\S+\b/g)?.length || 0;
+	};
 
 	onMount(() => {
 		c.subscribe((composer) => {
@@ -27,18 +43,11 @@
 			editor.registerUpdateListener(({ editorState }) => {
 				editorState.read(() => {
 					if (!disableCount) {
-						wordsCount =
-							composer
-								?.getEditor()
-								.getRootElement()
-								?.textContent?.match(/\b\S+\b/g)?.length || 0;
-						characterCount =
-							composer?.getEditor().getRootElement()?.textContent?.split('').length || 0;
-						forsenCount =
-							composer
-								?.getEditor()
-								.getRootElement()
-								?.textContent?.match(/forsen/g)?.length || 0;
+						const { textContent } = composer?.getEditor().getRootElement() || {};
+
+						wordsCount = countWords(textContent);
+						characterCount = countCharacters(textContent);
+						forsenCount = countForsen(textContent);
 					}
 				});
 			});
@@ -82,6 +91,11 @@
 					<span><strong>Forsen:</strong> <span>{forsenCount}</span></span>
 					<!--<span><strong>Links:</strong> <span>{linkCount}</span></span>-->
 				</div>
+				<!--
+					<div class="flex flex-col gap-1">
+						<span><strong>Memes:</strong> <span>{memeCount}</span></span>
+					</div>
+				-->
 			{/if}
 		</div>
 
