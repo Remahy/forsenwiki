@@ -41,11 +41,27 @@
 		"@auth/prisma-adapter": "^2.0.0",
 		"@auth/sveltekit": "^1.0.1",
 		"@fontsource/opendyslexic": "^5.0.11",
+		"@lexical/headless": "0.14.5",
+    "@lexical/clipboard": "0.14.5",
+    "@lexical/html": "0.14.5",
+    "@lexical/link": "0.14.5",
+    "@lexical/list": "0.14.5",
+    "@lexical/mark": "0.14.5",
+    "@lexical/rich-text": "0.14.5",
+    "@lexical/selection": "0.14.5",
+    "@lexical/table": "0.14.5",
+    "@lexical/utils": "0.14.5",
+    "@lexical/yjs": "0.14.5",
+    "lexical": "0.14.5",
 		"@prisma/client": "^5.13.0",
 		"lucide-svelte": "^0.378.0",
 		"svelte-lexical": "^0.4.0",
 		"uint8array-extras": "^1.1.0",
 		"y-indexeddb": "^9.0.12",
-		"yjs": "^13.6.15"
+		"yjs": "13.6.15"
+	},
+	"overrides": {
+		"lexical": "0.14.5",
+		"yjs": "13.6.15"
 	}
 }
