@@ -1,6 +1,8 @@
-import * as Y from 'yjs'
+import { getContext } from 'svelte'
 import { base64ToUint8Array } from 'uint8array-extras'
 import { IndexeddbPersistence } from 'y-indexeddb'
+
+import { Y } from './index'
 
 const noop = () => { }
 
@@ -76,14 +78,12 @@ function providerFactory(update, id = 'new', yjsDocMap) {
 		}
 	})
 
-	// This is for resetEditorModalContent.
-	// @ts-ignore
-	// eslint-disable-next-line no-undef
-	globalThis._persistence = persistence
+	// For future reference: These contexts makes it so only one editor can be active at a time.
 
-	// @ts-ignore
-	// eslint-disable-next-line no-undef
-	globalThis._yjsDocMap = yjsDocMap
+	// This is for resetEditorModalContent.
+	getContext('YDOCPERSISTENCE').set(persistence);
+
+	getContext('YDOC').set(doc);
 
 	provider = persistence
 

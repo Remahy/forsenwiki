@@ -8,6 +8,8 @@
 
 	/** @type {ComposerWritable} */
 	setContext('COMPOSER', writable(null));
+	setContext('YDOCPERSISTENCE', writable(null));
+	setContext('YDOC', writable(null));
 </script>
 
 <div class="app flex min-h-screen flex-col">
