@@ -13,7 +13,7 @@ declare global {
 }
 
 declare global {
-  export type LexicalEditor = import('svelte-lexical').LexicalEditor
+  export type LexicalEditor = import('lexical').LexicalEditor
 
 	export type Writable<T> = import('svelte/store').Writable<T>
 

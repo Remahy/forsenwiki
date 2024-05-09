@@ -1,21 +1,18 @@
 <script>
 	import { getContext } from 'svelte';
-	import { CLEAR_HISTORY_COMMAND } from 'lexical';
 	import {
+		CLEAR_HISTORY_COMMAND,
 		$getRoot as getRoot,
 		$createParagraphNode as createParagraphNode,
-		$createTextNode as createTextNode,
+		$createTextNode as createTextNode
+	} from 'lexical';
+	import {
 		AutoFocusPlugin,
 		CollaborationPlugin,
 		Composer,
 		ContentEditable,
-		HeadingNode,
-		LinkNode,
 		LinkPlugin,
-		ListItemNode,
-		ListNode,
 		ListPlugin,
-		QuoteNode,
 		RichTextPlugin,
 		validateUrl
 	} from 'svelte-lexical';
@@ -23,6 +20,7 @@
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
 	import Toolbar from './toolbar/index.svelte';
 	import Footer from './footer/index.svelte';
+	import { articleConfig } from './config/article';
 
 	export let id;
 	export let update;
@@ -47,20 +45,7 @@
 		editor.dispatchCommand(CLEAR_HISTORY_COMMAND, undefined);
 	}
 
-	/** @type {{ namespace: string, theme: any, nodes: any[], editable?: boolean, onError: any, editorState: any }} */
-	const initialConfig = {
-		theme: {
-			paragraph: 'm-0'
-		},
-		namespace: 'editor',
-		editable: true,
-		nodes: [LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode],
-		/** @param {Error} error */
-		onError: (error) => {
-			throw error;
-		},
-		editorState: null
-	};
+	const initialConfig = articleConfig({}, true, null);
 
 	/** @type {Composer | null} */
 	let composer = null;
@@ -94,7 +79,7 @@
 				initialEditorState={initialState}
 			/>
 		</article>
-		
+
 		<div class="w-full border border-t-0 p-2">
 			<Footer />
 		</div>
