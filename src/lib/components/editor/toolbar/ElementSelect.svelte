@@ -9,7 +9,6 @@
 		$isListNode as isListNode,
 		$isListItemNode as isListItemNode,
 		INSERT_ORDERED_LIST_COMMAND,
-		ListNode,
 		INSERT_UNORDERED_LIST_COMMAND
 	} from '@lexical/list';
 	import {
@@ -29,6 +28,7 @@
 	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
 	import { CriticalPriority } from '$lib/constants/lexical';
 	import { getSelectedElements } from '$lib/environment/utils';
+	import { ListNode } from '$lib/lexical.mjs';
 
 	const { TYPES } = ELEMENT_CONSTANTS;
 	const elementTypeOptions = Object.entries(TYPES);

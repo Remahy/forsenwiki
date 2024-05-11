@@ -1,8 +1,8 @@
 // @ts-nocheck Lexical's types... Klassiker
-import { ParagraphNode, $nodesOfType } from 'lexical';
-import { HeadingNode } from '@lexical/rich-text';
+import { $nodesOfType } from 'lexical';
 
-import { ALinkNode } from '../plugins/ALink';
+import { ParagraphNode, HeadingNode, ALinkNode } from "$lib/lexical.mjs";
+
 import { getOnlyInternalLinks } from '../utils/getEntities';
 
 /**

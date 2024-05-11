@@ -4,19 +4,24 @@
  */
 
 import { $applyNodeReplacement } from 'lexical'
-import { LinkNode, $createLinkNode } from '@lexical/link';
+import { $createLinkNode } from '@lexical/link';
+
+import { LinkNode } from '$lib/lexical.mjs'
 
 export class ALinkNode extends LinkNode {
+	__isInternal = false;
+
 	static getType () {
-		return super.getType();
+		return 'a-link'
 	}
 
 	/**
 	 * @param {string} url
 	 * @param {boolean} internal
+	 * @param {string | undefined} key
 	 */
-	constructor(url, internal) {
-		super(url)
+	constructor(url, internal, key) {
+		super(url, undefined, key)
 
 		this.__isInternal = internal;
 	}
@@ -25,7 +30,7 @@ export class ALinkNode extends LinkNode {
 	 * @param {ALinkNode} node
 	 */
 	static clone(node) {
-		return new ALinkNode(node.__url, node.__isInternal)
+		return new ALinkNode(node.__url, node.__isInternal, node.__key)
 	}
 
 	/** @param {any} serializedNode */
@@ -59,10 +64,12 @@ export class ALinkNode extends LinkNode {
 }
 
 /**
- * @param {{url: string, internal: boolean}} arg
+ * @param {string} url
+ * @param {boolean} internal
+ * @param {string | undefined} key
  */
-export function $createALinkNode({ url, internal }) {
-	const aLinkNode = new ALinkNode(url, internal)
+export function $createALinkNode(url, internal, key) {
+	const aLinkNode = new ALinkNode(url, internal, key)
 
 	return $applyNodeReplacement(aLinkNode)
 }

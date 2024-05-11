@@ -1,7 +1,6 @@
 <script>
 	import { getContext } from 'svelte';
 	import {
-		CLEAR_HISTORY_COMMAND,
 		$getRoot as getRoot,
 		$createParagraphNode as createParagraphNode,
 		$createTextNode as createTextNode
@@ -29,20 +28,14 @@
 	 * @param {LexicalEditor} editor
 	 */
 	function initialState(editor) {
-		editor.update(
-			() => {
-				const root = getRoot();
-				const paragraph = createParagraphNode();
-				const text = createTextNode();
-				text.setTextContent('Edit me!');
-				paragraph.append(text);
-				root.append(paragraph);
-			},
-			// `historic` tag is here to make sure this edit can't be actioned upon by undo/redo.
-			{ tag: 'historic' }
-		);
-
-		editor.dispatchCommand(CLEAR_HISTORY_COMMAND, undefined);
+		editor.update(() => {
+			const root = getRoot();
+			const paragraph = createParagraphNode();
+			const text = createTextNode();
+			text.setTextContent('Edit me!');
+			paragraph.append(text);
+			root.append(paragraph);
+		});
 	}
 
 	const initialConfig = articleConfig({}, true, null);
@@ -56,6 +49,20 @@
 
 <Composer {initialConfig} bind:this={composer}>
 	<div class="flex grow flex-col">
+		<RichTextPlugin />
+
+		<LinkPlugin {validateUrl} />
+		<ListPlugin />
+
+		<AutoFocusPlugin />
+
+		<CollaborationPlugin
+			{id}
+			{providerFactory}
+			shouldBootstrap={!update}
+			initialEditorState={initialState}
+		/>
+
 		<div class="w-full border border-b-0 p-2">
 			<Toolbar />
 		</div>
@@ -64,20 +71,6 @@
 			<div class="prose relative flex max-w-[unset] grow p-2">
 				<ContentEditable className="grow m-0 p-0 border-0 outline-0" />
 			</div>
-
-			<RichTextPlugin />
-
-			<LinkPlugin {validateUrl} />
-			<ListPlugin />
-
-			<AutoFocusPlugin />
-
-			<CollaborationPlugin
-				{id}
-				{providerFactory}
-				shouldBootstrap={!update}
-				initialEditorState={initialState}
-			/>
 		</article>
 
 		<div class="w-full border border-t-0 p-2">

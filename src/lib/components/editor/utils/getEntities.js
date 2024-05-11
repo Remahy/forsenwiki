@@ -1,8 +1,7 @@
 // @ts-nocheck Lexical's types... Klassiker
 import { $nodesOfType } from 'lexical';
-import { HeadingNode } from '@lexical/rich-text';
 
-import { ALinkNode } from '../plugins/ALink';
+import { ALinkNode, HeadingNode } from '$lib/lexical.mjs';
 
 /** @param {ALinkNode[]} links */
 export const getOnlyInternalLinks = (links) => links.filter((node) => node.getIsInternal());

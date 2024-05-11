@@ -1,7 +1,4 @@
-import { HeadingNode, QuoteNode } from '@lexical/rich-text';
-import { ListItemNode, ListNode } from '@lexical/list';
-
-import { ALinkNode } from '../plugins/ALink';
+import { ALinkNode, LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical.mjs';
 
 const articleTheme = {
 	paragraph: 'm-0'
@@ -25,7 +22,22 @@ export const articleConfig = (theme = articleTheme, editable, editorState, onErr
 	theme,
 	namespace: 'editor',
 	editable,
-	nodes: [ALinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode],
+	nodes: [
+		ALinkNode,
+		{
+			replace: LinkNode,
+			/**
+			 * @param {LinkNode} node
+			 */
+			with: (node) => {
+				return new ALinkNode(node.getURL(), false, node.__key);
+			}
+		},
+		ListNode,
+		ListItemNode,
+		HeadingNode,
+		QuoteNode
+	],
 	/** @param {Error} error */
 	onError,
 	editorState
