@@ -1,12 +1,11 @@
 <script>
 	import License from '$lib/components/License.svelte';
 	import Link from '$lib/components/Link.svelte';
-	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
 </script>
 
 <footer class="bg-purple-950 text-white">
 	<div
-		class="container mx-auto flex w-full flex-wrap items-stretch justify-between gap-8 gap-y-8 p-12 lg:p-0 lg:py-12"
+		class="container mx-auto flex w-full flex-wrap items-stretch justify-between gap-8 gap-y-8 p-4 lg:p-0 lg:py-12"
 	>
 		<div class="flex h-full flex-col justify-end gap-2 overflow-hidden">
 			<License />
@@ -26,8 +25,8 @@
 			<div class="text-purple-800">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</div>
 			<ul class="flex flex-col gap-2 font-semibold">
 				<li>
-					<Link href="https://www.twitch.tv/forsen" target="twitch.tv/forsen">
-						<TwitchGlitch size="18" /> <span class="grow">Twitch</span>
+					<Link href="/about">
+						<span class="grow">About</span>
 					</Link>
 				</li>
 			</ul>

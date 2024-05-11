@@ -83,6 +83,7 @@
 			<li>Twitch profile picture</li>
 			<li>Twitch profile display name</li>
 			<li>Twitch profile unique ID</li>
+			<li><strong>Twitch email address</strong></li>
 		</ul>
 		<h2>Use of Data</h2>
 		<p>The Service uses the collected data for various purposes:</p>

@@ -8,7 +8,7 @@
 	<meta name="description" content="About this app" />
 </svelte:head>
 
-<div class="container mx-auto p-12 lg:p-0 lg:py-12">
+<div class="container mx-auto p-4 lg:p-0 lg:py-12">
 	<section class="prose prose-lg w-full max-w-[unset]">
 		<h1>About</h1>
 
@@ -63,7 +63,7 @@
 		<h3>Privacy policy</h3>
 
 		<p>
-			<a href="/privacy">Visit privacy page.</a>
+			<a href="/privacy">Visit Privacy page.</a>
 		</p>
 
 		<h3>Terms of Service</h3>

@@ -7,7 +7,7 @@
 	<meta name="description" content="forsen" />
 </svelte:head>
 
-<section class="container mx-auto flex grow flex-col p-12 lg:p-0 lg:py-12">
+<section class="container mx-auto flex grow flex-col p-4 lg:p-0 lg:py-12">
 	<div
 		class="m-0 my-4 mt-0 w-full rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 sm:my-8 sm:mt-0"
 	>
