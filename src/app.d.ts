@@ -1,6 +1,5 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
-import {} from 'yjs'
 
 declare global {
 	namespace App {
@@ -14,6 +13,7 @@ declare global {
 
 declare global {
   export type LexicalEditor = import('lexical').LexicalEditor
+	export type LexicalNode = import('lexical').LexicalNode
 
 	export type Writable<T> = import('svelte/store').Writable<T>
 
@@ -23,6 +23,9 @@ declare global {
 
 	export type ComposerWritable = Writable<{ getEditor: () => LexicalEditor} | null>
 	export type Composer = import('svelte-lexical').Composer
+
+	export type YDoc = import('yjs').Doc
+	export type YEvent<T> = import('yjs').YEvent<T>
 }
 
 
