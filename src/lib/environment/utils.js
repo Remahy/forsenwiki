@@ -42,7 +42,7 @@ export function getSelectedElements() {
         $isElementNode(parentNode) && !parentNode.isInline(),
     );
     if (!parent) continue;
-    elements.set(parent.getKey(), /** @type {ElementNode} */ (parent))
+    elements.set(parent.getKey(), /** @type {ElementNode} */(parent))
   }
 
   return [...elements.values()];

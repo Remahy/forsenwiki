@@ -10,7 +10,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"prisma:migrate-dev": "prisma migrate dev",
-    "prisma:seed": "node ./prisma/seed/types.js"
+		"prisma:seed": "node ./prisma/seed/types.js"
 	},
 	"devDependencies": {
 		"@fontsource/fira-mono": "^4.5.10",
