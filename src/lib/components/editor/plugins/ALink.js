@@ -7,7 +7,9 @@ import { $applyNodeReplacement } from 'lexical'
 import { LinkNode, $createLinkNode } from '@lexical/link';
 
 export class ALinkNode extends LinkNode {
-	__isInternal = false
+	static getType () {
+		return super.getType();
+	}
 
 	/**
 	 * @param {string} url
@@ -66,7 +68,7 @@ export function $createALinkNode({ url, internal }) {
 }
 
 /**
- * @param {import('lexical').LexicalNode} node
+ * @param {LexicalNode} node
  */
 export function $isALinkNode(node) {
 	return node instanceof ALinkNode

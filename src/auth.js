@@ -49,7 +49,6 @@ const MyPrismaAdapter = (prisma) => ({
 
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
-	debug: true,
 	adapter: MyPrismaAdapter(prisma),
 	callbacks: {
 		async session({ session, user }) {

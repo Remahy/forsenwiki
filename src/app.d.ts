@@ -26,6 +26,8 @@ declare global {
 
 	export type YDoc = import('yjs').Doc
 	export type YEvent<T> = import('yjs').YEvent<T>
+
+	export type YDOCPERSISTENCE = import('y-indexeddb').IndexeddbPersistence;
 }
 
 

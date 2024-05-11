@@ -1,5 +1,7 @@
+// @ts-nocheck Lexical's types... Klassiker
 import { $getSelection, $isRangeSelection, $isNodeSelection, $isElementNode } from 'lexical';
-import { $findMatchingParent } from '@lexical/utils'
+import { $findMatchingParent } from '@lexical/utils';
+
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *

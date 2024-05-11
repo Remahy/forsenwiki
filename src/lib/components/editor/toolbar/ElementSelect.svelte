@@ -9,8 +9,8 @@
 		$isListNode as isListNode,
 		$isListItemNode as isListItemNode,
 		INSERT_ORDERED_LIST_COMMAND,
-		INSERT_UNORDERED_LIST_COMMAND,
-		ListNode
+		ListNode,
+		INSERT_UNORDERED_LIST_COMMAND
 	} from '@lexical/list';
 	import {
 		$getSelection as getSelection,
@@ -146,75 +146,77 @@
 	const updateToolbar = () => {
 		if (!editor) return;
 
-		const selection = getSelection();
-		if (isRangeSelection(selection)) {
-			const anchorNode = selection.anchor.getNode();
+		editor.update(() => {
+			const selection = getSelection();
+			if (isRangeSelection(selection)) {
+				const anchorNode = selection.anchor.getNode();
 
-			const elements = getSelectedElements();
-			const elementTypes = [
-				...new Set(
-					elements.map((element) => {
-						if (isListNode(element)) {
-							const parentList = getNearestNodeOfType(element, ListNode);
-							const type = parentList ? parentList.getListType() : element.getListType();
-							return type;
-						}
+				const elements = getSelectedElements();
+				const elementTypes = [
+					...new Set(
+						elements.map((element) => {
+							if (isListNode(element)) {
+								const parentList = getNearestNodeOfType(element, ListNode);
+								const type = parentList ? parentList.getListType() : element.getListType();
+								return type;
+							}
 
-						if (isListItemNode(element)) {
-							const parentList = getNearestNodeOfType(element, ListNode);
-							const type = parentList ? parentList.getListType() : 'unknown';
-							return type;
-						}
+							if (isListItemNode(element)) {
+								const parentList = getNearestNodeOfType(element, ListNode);
+								const type = parentList ? parentList.getListType() : 'unknown';
+								return type;
+							}
 
+							const type = isHeadingNode(element) ? element.getTag() : element.getType();
+							if (type in TYPES) {
+								return type;
+							}
+
+							return 'unknown';
+						})
+					)
+				];
+
+				if (elementTypes.length > 1) {
+					currentElementType = 'mixed';
+					return;
+				} else {
+					currentElementType = elementTypes[0];
+				}
+
+				let element =
+					anchorNode.getKey() === 'root'
+						? anchorNode
+						: findMatchingParent(anchorNode, (e) => {
+								const parent = e.getParent();
+								return parent !== null && isRootOrShadowRoot(parent);
+							});
+
+				if (element === null) {
+					element = anchorNode.getTopLevelElementOrThrow();
+				}
+
+				const elementKey = element.getKey();
+				const elementDOM = editor.getElementByKey(elementKey);
+
+				if (elementDOM !== null) {
+					if (isListNode(element)) {
+						const parentList = getNearestNodeOfType(anchorNode, ListNode);
+						const type = parentList ? parentList.getListType() : element.getListType();
+						currentElementType = type;
+					} else if (isListItemNode(element)) {
+						const parentList = getNearestNodeOfType(anchorNode, ListNode);
+						const type = parentList ? parentList.getListType() : 'unknown';
+						currentElementType = type;
+					} else {
 						const type = isHeadingNode(element) ? element.getTag() : element.getType();
 						if (type in TYPES) {
-							return type;
+							currentElementType = type;
 						}
-
-						return 'unknown';
-					})
-				)
-			];
-
-			if (elementTypes.length > 1) {
-				currentElementType = 'mixed';
-				return;
-			} else {
-				currentElementType = elementTypes[0];
-			}
-
-			let element =
-				anchorNode.getKey() === 'root'
-					? anchorNode
-					: findMatchingParent(anchorNode, (e) => {
-							const parent = e.getParent();
-							return parent !== null && isRootOrShadowRoot(parent);
-						});
-
-			if (element === null) {
-				element = anchorNode.getTopLevelElementOrThrow();
-			}
-
-			const elementKey = element.getKey();
-			const elementDOM = editor.getElementByKey(elementKey);
-
-			if (elementDOM !== null) {
-				if (isListNode(element)) {
-					const parentList = getNearestNodeOfType(anchorNode, ListNode);
-					const type = parentList ? parentList.getListType() : element.getListType();
-					currentElementType = type;
-				} else if (isListItemNode(element)) {
-					const parentList = getNearestNodeOfType(anchorNode, ListNode);
-					const type = parentList ? parentList.getListType() : 'unknown';
-					currentElementType = type;
-				} else {
-					const type = isHeadingNode(element) ? element.getTag() : element.getType();
-					if (type in TYPES) {
-						currentElementType = type;
 					}
 				}
 			}
-		}
+		});
 	};
 
 	onMount(() => {

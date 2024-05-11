@@ -1,0 +1,52 @@
+// Realistically only used by backend.
+import { createHeadlessEditor } from '@lexical/headless';
+import { createBinding, syncYjsChangesToLexical } from '@lexical/yjs';
+
+import { Y } from './index.mjs';
+
+// https://github.com/facebook/lexical/discussions/4442
+
+/**
+ * @param {any} config
+ * @param {Uint8Array} update
+ * @returns {LexicalEditor}
+ */
+export function updateToJSON(config, update) {
+  const editor = createHeadlessEditor(config)
+
+  const dummyId = 'dummy-id'
+  /** @type {import('@lexical/yjs').Provider} */
+  const dummyProvider = {
+    awareness: {
+      setLocalState: () => { },
+      // @ts-ignore
+      getStates: () => [],
+      getLocalState: () => null,
+      on: () => { },
+      off: () => { }
+    }
+  }
+  const copyTarget = new Y.Doc()
+  const copyBinding = createBinding(
+    editor,
+    dummyProvider,
+    dummyId,
+    copyTarget,
+    new Map([[dummyId, copyTarget]])
+  )
+
+  // this syncs yjs changes to the lexical editor
+  /** @param {Y.YEvent<any>[]} events */
+  const onYjsTreeChanges = (events) => {
+    syncYjsChangesToLexical(copyBinding, dummyProvider, events, false)
+  }
+  copyBinding.root.getSharedType().observeDeep(onYjsTreeChanges)
+
+  // copy the original document to the copy to trigger the observer which updates the editor
+  Y.applyUpdateV2(copyTarget, update)
+
+  editor.update(() => { }, { discrete: true })
+
+  return editor;
+}
+

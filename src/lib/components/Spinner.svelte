@@ -1,5 +1,5 @@
 <script>
-	export let size;
+	export let size = undefined;
 	import { Loader2Icon } from 'lucide-svelte';
 </script>
 

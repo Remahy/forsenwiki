@@ -50,9 +50,13 @@
 	};
 
 	const updateToolbar = () => {
-		const nodes = getSelectedElements();
-		const formats = [...new Set(nodes.map((node) => node.getFormatType()))];
-		currentAlignment = formats.length > 1 ? 'mixed' : formats[0];
+		if (!editor) return;
+
+		editor.update(() => {
+			const nodes = getSelectedElements();
+			const formats = [...new Set(nodes.map((node) => node.getFormatType()))];
+			currentAlignment = formats.length > 1 ? 'mixed' : formats[0];
+		});
 	};
 
 	onMount(() => {
