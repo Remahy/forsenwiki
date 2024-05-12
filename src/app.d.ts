@@ -28,6 +28,12 @@ declare global {
 	export type YEvent<T> = import('yjs').YEvent<T>
 
 	export type YDOCPERSISTENCE = import('y-indexeddb').IndexeddbPersistence;
+
+	export namespace PrismaTypes {
+		export {
+			User, YPost, YPostRelation, YPostUpdate, YPostUpdateMetadata
+		}
+	}
 }
 
 

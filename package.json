@@ -56,6 +56,7 @@
 		"@prisma/client": "^5.13.0",
 		"is-url": "^1.2.4",
 		"lexical": "0.14.5",
+		"linkedom-global": "^1.0.0",
 		"lucide-svelte": "^0.378.0",
 		"svelte-lexical": "^0.4.0",
 		"uint8array-extras": "^1.1.0",
