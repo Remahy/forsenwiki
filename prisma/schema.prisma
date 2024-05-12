@@ -126,3 +126,10 @@ model YPostUpdateMetadata {
 
   postUpdate YPostUpdate?
 }
+
+model WhitelistedAccounts {
+  id String @id @default(cuid())
+
+  provider          String
+  providerAccountId String
+}

@@ -1,30 +1,21 @@
 <script>
 	import License from '$lib/components/License.svelte';
-	import GitHub from '$lib/components/icons/GitHub.svelte';
-	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
+	import Link from '$lib/components/Link.svelte';
 </script>
 
 <footer class="bg-purple-950 text-white">
 	<div
-		class="container mx-auto flex w-full flex-wrap items-stretch justify-between gap-8 gap-y-8 p-12 lg:p-0 lg:py-12"
+		class="container mx-auto flex w-full flex-wrap items-stretch justify-between gap-8 gap-y-8 p-4 lg:p-0 lg:py-12"
 	>
 		<div class="flex h-full flex-col justify-end gap-2 overflow-hidden">
 			<License />
 			<div class="text-purple-800">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</div>
 			<ul class="flex flex-col gap-2 font-semibold">
 				<li>
-					<a
-						href="/terms"
-						class="flex gap-2 underline decoration-indigo-500 decoration-2 underline-offset-4 hover:text-indigo-300"
-						><span class="grow">Terms & Conditions</span></a
-					>
+					<Link href="/terms"><span class="grow">Terms & Conditions</span></Link>
 				</li>
 				<li>
-					<a
-						href="/privacy"
-						class="flex gap-2 underline decoration-indigo-500 decoration-2 underline-offset-4 hover:text-indigo-300"
-						><span class="grow">Privacy Policy</span></a
-					>
+					<Link href="/privacy"><span class="grow">Privacy Policy</span></Link>
 				</li>
 			</ul>
 		</div>
@@ -33,22 +24,11 @@
 			<p>forsen.wiki Version 0.0.1</p>
 			<div class="text-purple-800">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</div>
 			<ul class="flex flex-col gap-2 font-semibold">
+				<li class="font-normal">Not associated with Twitch.tv and/or Amazon</li>
 				<li>
-					<a
-						href="https://github.com/Remahy/forsenwiki"
-						target="github.com/remahy/forsenwiki"
-						class="flex items-center gap-2 underline decoration-indigo-500 decoration-2 underline-offset-4 hover:text-indigo-300"
-						><GitHub size="18" color="white" /><span class="grow">GitHub</span></a
-					>
-				</li>
-				<li>
-					<a
-						href="https://www.twitch.tv/forsen"
-						target="twitch.tv/forsen"
-						class="flex items-center gap-2 underline decoration-indigo-500 decoration-2 underline-offset-4 hover:text-indigo-300"
-					>
-						<TwitchGlitch size="18" /><span class="grow">Twitch</span>
-					</a>
+					<Link href="/about">
+						<span class="grow">About</span>
+					</Link>
 				</li>
 			</ul>
 		</div>

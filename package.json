@@ -9,7 +9,8 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
-		"prisma:migrate-dev": "prisma migrate dev"
+		"prisma:migrate-dev": "prisma migrate dev",
+		"prisma:seed": "node ./prisma/seed/types.js"
 	},
 	"devDependencies": {
 		"@fontsource/fira-mono": "^4.5.10",
@@ -40,7 +41,59 @@
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.0.0",
 		"@auth/sveltekit": "^1.0.1",
+		"@fontsource/opendyslexic": "^5.0.11",
+		"@lexical/clipboard": "0.14.5",
+		"@lexical/headless": "0.14.5",
+		"@lexical/html": "0.14.5",
+		"@lexical/link": "0.14.5",
+		"@lexical/list": "0.14.5",
+		"@lexical/mark": "0.14.5",
+		"@lexical/rich-text": "0.14.5",
+		"@lexical/selection": "0.14.5",
+		"@lexical/table": "0.14.5",
+		"@lexical/utils": "0.14.5",
+		"@lexical/yjs": "0.14.5",
 		"@prisma/client": "^5.13.0",
-		"svelte-lexical": "^0.4.0"
+		"is-url": "^1.2.4",
+		"lexical": "0.14.5",
+		"lucide-svelte": "^0.378.0",
+		"svelte-lexical": "^0.4.0",
+		"uint8array-extras": "^1.1.0",
+		"y-indexeddb": "^9.0.12",
+		"yjs": "13.6.15"
+	},
+	"overrides": {
+		"lexical": "0.14.5",
+		"yjs": "13.6.15",
+		"@lexical/yjs": "0.14.5",
+		"@lexical/headless": "0.14.5",
+		"@lexical/clipboard": "0.14.5",
+		"@lexical/html": "0.14.5",
+		"@lexical/link": "0.14.5",
+		"@lexical/list": "0.14.5",
+		"@lexical/mark": "0.14.5",
+		"@lexical/rich-text": "0.14.5",
+		"@lexical/selection": "0.14.5",
+		"@lexical/table": "0.14.5",
+		"@lexical/utils": "0.14.5",
+		"svelte-lexical@^0.4.0": {
+			"@lexical/clipboard": "0.14.5",
+			"@lexical/code": "0.14.5",
+			"@lexical/file": "0.14.5",
+			"@lexical/hashtag": "0.14.5",
+			"@lexical/history": "0.14.5",
+			"@lexical/html": "0.14.5",
+			"@lexical/link": "0.14.5",
+			"@lexical/list": "0.14.5",
+			"@lexical/mark": "0.14.5",
+			"@lexical/overflow": "0.14.5",
+			"@lexical/plain-text": "0.14.5",
+			"@lexical/rich-text": "0.14.5",
+			"@lexical/selection": "0.14.5",
+			"@lexical/table": "0.14.5",
+			"@lexical/utils": "0.14.5",
+			"@lexical/yjs": "0.14.5",
+			"lexical": "0.14.5"
+		}
 	}
 }

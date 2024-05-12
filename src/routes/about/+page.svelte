@@ -1,11 +1,23 @@
+<script>
+	import GitHub from '$lib/components/icons/GitHub.svelte';
+	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
+</script>
+
 <svelte:head>
 	<title>About</title>
 	<meta name="description" content="About this app" />
 </svelte:head>
 
-<div class="container mx-auto p-12 lg:p-0 lg:py-12">
-	<div class="prose mx-auto">
-		<h2>Forsen.wiki tech stack</h2>
+<div class="container mx-auto p-4 lg:p-0 lg:py-12">
+	<section class="prose prose-lg w-full max-w-[unset]">
+		<h1>About</h1>
+
+		<p>
+			Forsen related wiki. Forsen mixes, news, big plays, tilts. Everything that is somewhat related
+			to forsen.
+		</p>
+
+		<h3>ForsenWiki tech stack</h3>
 
 		<ul>
 			<li>sveltekit</li>
@@ -18,34 +30,46 @@
 
 		<p>
 			This wiki uses <a href="https://github.com/org-ppsl" target="github-org-ppsl">PPSL</a> code.
-		</p>
-
-		<p>
-			Code is licensed under <a
+			PPSL code is licensed under
+			<a
 				href="https://github.com/ORG-PPSL/ppsl-cd-api?tab=AGPL-3.0-1-ov-file#readme"
 				target="ppsl-code-license">GNU AFFERO GENERAL PUBLIC LICENSE Version 3</a
 			>.
 		</p>
 
-		<h2>Links</h2>
+		<h3>Links</h3>
 
 		<ul>
-			<li>GitHub (tbd)</li>
-			<li>Twitch (tbd)</li>
-			<li>(tbd)</li>
+			<li>
+				<a
+					href="https://github.com/Remahy/forsenwiki"
+					target="github.com/remahy/forsenwiki"
+					class="flex items-center gap-2"
+				>
+					<GitHub size="18" /> <span class="grow">GitHub - Remahy/forsenwiki</span>
+				</a>
+			</li>
+			<li>
+				<a
+					href="https://www.twitch.tv/remahy"
+					target="twitch.tv/remahy"
+					class="flex items-center gap-2"
+				>
+					<TwitchGlitch size="18" /> <span>Twitch - Remahy</span></a
+				>
+			</li>
 		</ul>
 
-		<h2>Privacy policy</h2>
+		<h3>Privacy policy</h3>
 
 		<p>
-			<a href="/privacy" target="fwiki-privacypolicy">Visit privacy page.</a>
+			<a href="/privacy">Visit Privacy page.</a>
 		</p>
 
-		<h2>Terms of Service</h2>
+		<h3>Terms of Service</h3>
 
 		<p>
-			<a href="/terms" target="fwiki-terms">Visit Terms of Service page.</a>
-			(tbd) Don't forget to add note about Twitch user creation date filter (2 yr)
+			<a href="/terms">Visit Terms of Service page.</a>
 		</p>
-	</div>
+	</section>
 </div>
