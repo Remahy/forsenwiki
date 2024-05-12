@@ -68,7 +68,6 @@ export class ALinkNode extends LinkNode {
 			...super.exportJSON(),
 			__isInternal: this.__isInternal,
 			type: this.getType(),
-			version: 1
 		}
 	}
 }
