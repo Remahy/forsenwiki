@@ -24,15 +24,16 @@ const MyPrismaAdapter = (prisma) => ({
 			const { data: [{ created_at, type }] } = await res.json();
 
 			if (type.length) {
-				await PrismaAdapter(prisma).deleteUser?.(userId);
+				// @ts-ignore
+				await PrismaAdapter(prisma).deleteUser(userId);
 				throw new AccountNotLinked('Your Twitch account is too special.')
 			}
 
 			const isWhitelisted = await prisma.whitelistedAccounts.findFirst({ where: { provider: provider, providerAccountId: providerAccountId } })
 
 			if (isWhitelisted) {
-				PrismaAdapter(prisma).linkAccount?.(account)
-				return;
+				// @ts-ignore
+				return PrismaAdapter(prisma).linkAccount(account);
 			}
 
 			// Temporary 2 yr Twitch account creation limit
@@ -42,8 +43,8 @@ const MyPrismaAdapter = (prisma) => ({
 			}
 		}
 
-		PrismaAdapter(prisma).linkAccount?.(account)
-		return;
+		// @ts-ignore
+		return PrismaAdapter(prisma).linkAccount(account);
 	},
 });
 
