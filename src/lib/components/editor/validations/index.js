@@ -22,7 +22,7 @@ export const validateArticle = (editor) => {
 			const headingOnes = headings.filter((heading) => heading.getTag() === 'h1');
 			if (!headingOnes.length) return reject('No heading 1');
 
-			const title = headingOnes[0].getTextContent();
+			const title = headingOnes[0].getTextContent().trim();
 			if (!title.length) return reject('First heading 1 is empty');
 
 			const links = $nodesOfType(ALinkNode) || [];

@@ -43,10 +43,10 @@ export const getArticleTitle = async (editor) => {
 			const headingOnes = headings.filter((heading) => heading.getTag() === 'h1');
 			if (!headingOnes.length) return reject('No heading 1');
 
-			const titleContent = headingOnes[0].getTextContent();
+			const titleContent = headingOnes[0].getTextContent().trim();
 			if (!titleContent.length) return reject('First heading 1 is empty');
 
-			resolve(titleContent)
+			resolve(encodeURIComponent(titleContent))
 		});
 	});
 };
