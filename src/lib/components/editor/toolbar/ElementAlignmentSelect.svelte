@@ -108,9 +108,9 @@
 		class="-ml-10 bg-transparent px-10"
 	>
 		<option value="mixed" hidden>Mixed</option>
-		<option value="" selected>Default</option>
+		<option value="" selected class="text-lg">Default</option>
 		{#each alignmentOptions as [value, label]}
-			<option {value}>{label}</option>
+			<option {value} class="text-lg">{label}</option>
 		{/each}
 	</Select>
 </div>

@@ -112,8 +112,8 @@
 		class="-ml-10 bg-transparent px-10"
 	>
 		<option value="mixed" hidden>Mixed</option>
-		<option value="" class="font-sans">Default font</option>
-		<option value="monospace" class="font-mono">Monospace</option>
-		<option value="OpenDyslexic" class="font-dyslexic">OpenDyslexic</option>
+		<option value="" class="font-sans text-lg">Default font</option>
+		<option value="monospace" class="font-mono text-lg">Monospace</option>
+		<option value="OpenDyslexic" class="font-dyslexic text-lg">OpenDyslexic</option>
 	</Select>
 </div>

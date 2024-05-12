@@ -113,8 +113,8 @@
 				bind:value={currentLinkType}
 				on:click={() => selectLinkTypeElement.dispatchEvent(new Event('change'))}
 			>
-				<option value="external" selected>External</option>
-				<option value="internal" hidden>Internal</option>
+				<option value="external" selected class="text-lg">External</option>
+				<option value="internal" hidden class="text-lg">Internal</option>
 			</Select>
 		</label>
 

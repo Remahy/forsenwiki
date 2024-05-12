@@ -285,7 +285,7 @@
 		<option value="unknown" hidden>Unknown</option>
 
 		{#each elementTypeOptions as [value, label]}
-			<option {value}>{label}</option>
+			<option {value} class="text-lg">{label}</option>
 		{/each}
 	</Select>
 </div>
