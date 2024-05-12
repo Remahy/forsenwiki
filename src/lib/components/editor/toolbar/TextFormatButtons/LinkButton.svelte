@@ -1,5 +1,5 @@
 <script>
-	import { TOGGLE_LINK_COMMAND, $isLinkNode as isLinkNode, toggleLink } from '@lexical/link';
+	import { TOGGLE_LINK_COMMAND, toggleLink } from '@lexical/link';
 	import {
 		COMMAND_PRIORITY_CRITICAL,
 		COMMAND_PRIORITY_HIGH,
@@ -51,11 +51,21 @@
 			component: LinkButtonModal,
 			hasLink,
 			/**
-			 * @param {string | null} url
-			 * @param {import("@lexical/link").LinkAttributes | undefined} attrs
+			 * @param {string | null} dUrl
+			 * @param {import("@lexical/link").LinkAttributes | undefined} dAttrs
 			 */
-			onSubmit: (url, attrs) => {
-				editor.update(() => toggleLink(url, attrs));
+			onSubmit: (dUrl, dAttrs) => {
+				editor.update(() => {
+					const selection = getSelection();
+
+					// Add as text if selection didn't have any.
+					if (selection && dUrl && !definedUrl) {
+						const title = dAttrs?.title;
+						selection.insertText(title || dUrl);
+					}
+
+					toggleLink(dUrl, dAttrs);
+				});
 			},
 			deleteLink: () => {
 				editor.update(() => toggleLink(null));
@@ -85,12 +95,12 @@
 			if (isALinkNode(node)) {
 				hasLink = true;
 				url = node.__url;
-				attrs = {...node}
+				attrs = { ...node };
 				isInternal = node.__isInternal;
 			} else if (isALinkNode(parent)) {
 				hasLink = true;
 				url = parent.__url;
-				attrs = {...parent}
+				attrs = { ...parent };
 				isInternal = parent.__isInternal;
 			} else {
 				hasLink = false;
@@ -136,7 +146,7 @@
 			editor.registerCommand(
 				TOGGLE_LINK_COMMAND,
 				(payload) => {
-					console.log(payload)
+					console.log(payload);
 					if (typeof payload === 'string') {
 						wrapperToggleLink(payload);
 						return true;
@@ -156,9 +166,9 @@
 
 <Button title="Insert link ({ctrlKey}K)" on:click={link} disabled={!canEdit} isActive={hasLink}>
 	{#if hasLink}
-		<div class="relative flex items-center p-2 -m-2">
+		<div class="relative -m-2 flex items-center p-2">
 			<Link2Icon />
-			<SettingsIcon size={"16"} class="absolute top-0 right-0" />
+			<SettingsIcon size={'16'} class="absolute right-0 top-0" />
 		</div>
 	{:else}
 		<Link2Icon />
