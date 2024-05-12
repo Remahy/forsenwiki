@@ -278,7 +278,6 @@
 		bind:ref={elementTypeElement}
 		on:change={elementType}
 		bind:value={currentElementType}
-		on:click={() => elementTypeElement.dispatchEvent(new Event('change'))}
 		class="-ml-10 bg-transparent px-10"
 	>
 		<option value="mixed" hidden>Mixed</option>
