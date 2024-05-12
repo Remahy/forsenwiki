@@ -82,15 +82,6 @@
 			const node = getSelectedNode(selection);
 			const parent = node.getParent();
 
-			/**
-			 * We use if else if chains here because JSDoc type guards don't work with double pipe (||).
-			 * ```js
-			 * // Broken
-			 * if (isALinkNode(node) || isALinkNode(parent)) {
-			 *   // `node` & `parent` is still not type guarded.
-			 * }
-			 * ```
-			 */
 			if (isALinkNode(node)) {
 				hasLink = true;
 				url = node.__url;
@@ -103,6 +94,9 @@
 				isInternal = parent.__isInternal;
 			} else {
 				hasLink = false;
+				url = '';
+				attrs = {};
+				isInternal = false;
 			}
 		}
 	};
