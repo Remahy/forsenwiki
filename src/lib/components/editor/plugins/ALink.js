@@ -5,7 +5,7 @@
 
 import { $applyNodeReplacement } from 'lexical'
 
-import { LinkNode } from '$lib/lexical.mjs'
+import { LinkNode } from '$lib/lexical'
 
 /**
  * @typedef {import("@lexical/link").LinkAttributes | undefined} LinkAttributes
@@ -21,7 +21,7 @@ export class ALinkNode extends LinkNode {
 	 * @param {string | undefined} key
 	 */
 	constructor(url, attrs, internal = false, key) {
-		super(url, attrs, key)
+		super(url, { ...attrs, target: internal ? attrs?.target : '_blank' }, key)
 
 		this.setIsInternal(internal);
 	}

@@ -1,4 +1,4 @@
-import { ALinkNode, LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical.mjs';
+import { ALinkNode, LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical';
 import { $createALinkNode } from '../plugins/ALink';
 
 const articleTheme = {

@@ -42,7 +42,7 @@
 	import Select from '$lib/components/Select.svelte';
 	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
 	import { getSelectedElements } from '$lib/environment/utils';
-	import { ListNode } from '$lib/lexical.mjs';
+	import { ListNode } from '$lib/lexical';
 
 	const { TYPES } = ELEMENT_CONSTANTS;
 	const elementTypeOptions = Object.entries(TYPES);
@@ -278,7 +278,6 @@
 		bind:ref={elementTypeElement}
 		on:change={elementType}
 		bind:value={currentElementType}
-		on:click={() => elementTypeElement.dispatchEvent(new Event('change'))}
 		class="-ml-10 bg-transparent px-10"
 	>
 		<option value="mixed" hidden>Mixed</option>

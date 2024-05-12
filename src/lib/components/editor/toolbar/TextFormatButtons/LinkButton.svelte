@@ -59,7 +59,7 @@
 					const selection = getSelection();
 
 					// Add as text if selection didn't have any.
-					if (selection && dUrl && !definedUrl) {
+					if (selection && dUrl && definedUrl === 'https://') {
 						const title = dAttrs?.title;
 						selection.insertText(title || dUrl);
 					}

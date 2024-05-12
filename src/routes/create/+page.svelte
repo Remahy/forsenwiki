@@ -9,6 +9,7 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Editor from '$lib/components/editor/editor.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
+	import { goto } from '$app/navigation';
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
@@ -46,10 +47,12 @@
 			}
 
 			if (res.status === 200) {
-				const json = await res.json();
-				console.log('Yay', JSON.stringify(json));
 				persistence.clearData()
-      	window.location.reload()
+
+				const json = await res.json();
+				const { id, postUpdate: { title } } = json;
+
+      	goto(`/article/${id}/${title}`)
 			}
 		});
 	};

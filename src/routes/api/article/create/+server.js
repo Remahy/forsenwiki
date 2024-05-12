@@ -38,6 +38,6 @@ export async function POST({ request, locals }) {
 	const createdArticle = await createArticle({ userId: session.user.id, data: { title, content }, ids: internalIds });
 
 	return json({
-		createdArticle
+		...createdArticle
 	});
 }
