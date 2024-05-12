@@ -1,5 +1,5 @@
 <script>
-	import { $getSelection as getSelection, SELECTION_CHANGE_COMMAND } from 'lexical';
+	import { COMMAND_PRIORITY_CRITICAL, $getSelection as getSelection, SELECTION_CHANGE_COMMAND } from 'lexical';
 	import {
 		$patchStyleText as patchStyleText,
 		$getSelectionStyleValueForProperty as getSelectionStyleValueForProperty
@@ -8,7 +8,7 @@
 
 	import Select from '$lib/components/Select.svelte';
 	import { TEXT_CONSTANTS } from '$lib/constants/text';
-	import { CriticalPriority } from '$lib/constants/lexical';
+	import { TypeIcon } from 'lucide-svelte';
 
 	const { FONTFAMILIES } = TEXT_CONSTANTS;
 	const validValues = Object.values(FONTFAMILIES);
@@ -93,22 +93,27 @@
 					updateToolbar();
 					return false;
 				},
-				CriticalPriority
+				COMMAND_PRIORITY_CRITICAL
 			);
 		});
 	});
 </script>
 
-<Select
-	title="Font family"
-	disabled={!canEdit}
-	bind:ref={fontElement}
-	on:change={font}
-	bind:value={currentFont}
-	on:click={() => fontElement.dispatchEvent(new Event('change'))}
->
-	<option value="mixed" hidden>Mixed</option>
-	<option value="" class="font-sans">Default font</option>
-	<option value="monospace" class="font-mono">Monospace</option>
-	<option value="OpenDyslexic" class="font-dyslexic">OpenDyslexic</option>
-</Select>
+<div class="flex items-center gap-2 pl-2">
+	<TypeIcon />
+
+	<Select
+		title="Font family"
+		disabled={!canEdit}
+		bind:ref={fontElement}
+		on:change={font}
+		bind:value={currentFont}
+		on:click={() => fontElement.dispatchEvent(new Event('change'))}
+		class="-ml-10 bg-transparent px-10"
+	>
+		<option value="mixed" hidden>Mixed</option>
+		<option value="" class="font-sans">Default font</option>
+		<option value="monospace" class="font-mono">Monospace</option>
+		<option value="OpenDyslexic" class="font-dyslexic">OpenDyslexic</option>
+	</Select>
+</div>

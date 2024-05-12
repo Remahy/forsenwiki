@@ -1,5 +1,6 @@
 <script>
 	import { getContext } from 'svelte';
+	import isUrl from 'is-url';
 	import {
 		$getRoot as getRoot,
 		$createParagraphNode as createParagraphNode,
@@ -13,7 +14,6 @@
 		LinkPlugin,
 		ListPlugin,
 		RichTextPlugin,
-		validateUrl
 	} from 'svelte-lexical';
 
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
@@ -51,8 +51,9 @@
 	<div class="flex grow flex-col">
 		<RichTextPlugin />
 
-		<LinkPlugin {validateUrl} />
 		<ListPlugin />
+
+		<LinkPlugin validateUrl={isUrl} />
 
 		<AutoFocusPlugin />
 

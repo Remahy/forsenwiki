@@ -45,7 +45,6 @@
 				isUploading = false;
 			}
 
-
 			if (res.status === 200) {
 				const json = await res.json();
 				console.log('Yay', JSON.stringify(json));

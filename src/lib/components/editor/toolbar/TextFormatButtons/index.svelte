@@ -1,5 +1,6 @@
 <script>
 	import {
+	COMMAND_PRIORITY_CRITICAL,
 		FORMAT_TEXT_COMMAND,
 		SELECTION_CHANGE_COMMAND,
 		$getSelection as getSelection
@@ -9,7 +10,7 @@
 
 	import Button from '$lib/components/Button.svelte';
 	import { ctrlKey } from '$lib/environment/environment';
-	import { CriticalPriority } from '$lib/constants/lexical';
+	import LinkButton from './LinkButton.svelte';
 
 	$: isBold = false;
 	$: isItalic = false;
@@ -63,7 +64,7 @@
 					updateToolbar();
 					return false;
 				},
-				CriticalPriority
+				COMMAND_PRIORITY_CRITICAL
 			);
 		});
 	});
@@ -73,6 +74,8 @@
 	<BoldIcon size="16" />
 </Button>
 
-<Button title="Italic ({ctrlKey}B)" on:click={italic} disabled={!canEdit} isActive={isItalic}>
+<Button title="Italic ({ctrlKey}I)" on:click={italic} disabled={!canEdit} isActive={isItalic}>
 	<ItalicIcon size="16" />
 </Button>
+
+<LinkButton />

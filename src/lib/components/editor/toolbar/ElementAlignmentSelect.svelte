@@ -1,11 +1,21 @@
 <script>
-	import { FORMAT_ELEMENT_COMMAND, SELECTION_CHANGE_COMMAND } from 'lexical';
-	import { getContext, onMount } from 'svelte';
+	import { COMMAND_PRIORITY_CRITICAL, FORMAT_ELEMENT_COMMAND, SELECTION_CHANGE_COMMAND } from 'lexical';
+	import { SvelteComponent, getContext, onMount } from 'svelte';
 
 	import Select from '$lib/components/Select.svelte';
 	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
 	import { getSelectedElements } from '$lib/environment/utils';
-	import { CriticalPriority } from '$lib/constants/lexical';
+	import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from 'lucide-svelte';
+
+	/**
+	 * @type {{[x: string]: typeof SvelteComponent<any>}}
+	 */
+	const alignmentIcons = {
+		default: AlignLeftIcon,
+		right: AlignRightIcon,
+		center: AlignCenterIcon,
+		justify: AlignJustifyIcon
+	};
 
 	const { ALIGNMENT } = ELEMENT_CONSTANTS;
 	const alignmentOptions = Object.entries(ALIGNMENT);
@@ -67,29 +77,40 @@
 
 			const editor = composer.getEditor();
 
+			editor.registerUpdateListener(({ editorState }) => {
+				editorState.read(() => {
+					updateToolbar();
+				});
+			});
+
 			editor.registerCommand(
 				SELECTION_CHANGE_COMMAND,
 				(_payload) => {
 					updateToolbar();
 					return false;
 				},
-				CriticalPriority
+				COMMAND_PRIORITY_CRITICAL
 			);
 		});
 	});
 </script>
 
-<Select
-	title="Element alignment"
-	disabled={!canEdit}
-	bind:ref={alignmentElement}
-	on:change={alignment}
-	bind:value={currentAlignment}
-	on:click={() => alignmentElement.dispatchEvent(new Event('change'))}
->
-	<option value="mixed" hidden>Mixed</option>
-	<option value="" selected>Default</option>
-	{#each alignmentOptions as [value, label]}
-		<option {value}>{label}</option>
-	{/each}
-</Select>
+<div class="flex items-center gap-2 pl-2">
+	<svelte:component this={alignmentIcons[currentAlignment] || alignmentIcons.default} />
+
+	<Select
+		title="Element alignment"
+		disabled={!canEdit}
+		bind:ref={alignmentElement}
+		on:change={alignment}
+		bind:value={currentAlignment}
+		on:click={() => alignmentElement.dispatchEvent(new Event('change'))}
+		class="-ml-10 bg-transparent px-10"
+	>
+		<option value="mixed" hidden>Mixed</option>
+		<option value="" selected>Default</option>
+		{#each alignmentOptions as [value, label]}
+			<option {value}>{label}</option>
+		{/each}
+	</Select>
+</div>

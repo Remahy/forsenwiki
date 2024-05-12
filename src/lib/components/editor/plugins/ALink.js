@@ -4,41 +4,51 @@
  */
 
 import { $applyNodeReplacement } from 'lexical'
-import { $createLinkNode } from '@lexical/link';
 
 import { LinkNode } from '$lib/lexical.mjs'
+
+/**
+ * @typedef {import("@lexical/link").LinkAttributes | undefined} LinkAttributes
+ */
 
 export class ALinkNode extends LinkNode {
 	__isInternal = false;
 
-	static getType () {
-		return 'a-link'
-	}
-
 	/**
 	 * @param {string} url
+	 * @param {LinkAttributes} attrs
 	 * @param {boolean} internal
 	 * @param {string | undefined} key
 	 */
-	constructor(url, internal, key) {
-		super(url, undefined, key)
+	constructor(url, attrs, internal = false, key) {
+		super(url, attrs, key)
 
-		this.__isInternal = internal;
+		this.setIsInternal(internal);
+	}
+
+	static getType() {
+		return 'a-link'
 	}
 
 	/**
 	 * @param {ALinkNode} node
 	 */
 	static clone(node) {
-		return new ALinkNode(node.__url, node.__isInternal, node.__key)
+		return new ALinkNode(
+			node.__url,
+			{ rel: node.__rel, target: node.__target, title: node.__title },
+			node.__isInternal,
+			node.__key
+		)
 	}
 
 	/** @param {any} serializedNode */
 	static importJSON(serializedNode) {
 		/** @type {ALinkNode} */
-		const node = /** @type {any} */ ($createLinkNode(serializedNode.url, { ...serializedNode }));
+		const node = /** @type {any} */ (new LinkNode(serializedNode.url, { ...serializedNode }));
 
 		node.setIsInternal(serializedNode.isInternal);
+		node.__type = ALinkNode.getType();
 
 		return node
 	}
@@ -65,17 +75,17 @@ export class ALinkNode extends LinkNode {
 
 /**
  * @param {string} url
+ * @param {LinkAttributes} attrs
  * @param {boolean} internal
  * @param {string | undefined} key
  */
-export function $createALinkNode(url, internal, key) {
-	const aLinkNode = new ALinkNode(url, internal, key)
-
-	return $applyNodeReplacement(aLinkNode)
+export function $createALinkNode(url, attrs, internal, key = undefined) {
+	return $applyNodeReplacement(new ALinkNode(url, attrs, internal, key))
 }
 
 /**
- * @param {LexicalNode} node
+ * @param {any} node
+ * @returns {node is ALinkNode}
  */
 export function $isALinkNode(node) {
 	return node instanceof ALinkNode

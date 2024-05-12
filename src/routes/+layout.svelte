@@ -2,6 +2,8 @@
 	import { setContext } from 'svelte';
 	import { writable } from 'svelte/store';
 
+	import Modal from '$lib/components/modal.svelte';
+
 	import '../app.pcss';
 	import Header from './Header.svelte';
 	import Footer from './Footer.svelte';
@@ -19,3 +21,5 @@
 
 	<Footer />
 </div>
+
+<Modal />

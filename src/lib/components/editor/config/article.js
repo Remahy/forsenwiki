@@ -1,4 +1,5 @@
 import { ALinkNode, LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical.mjs';
+import { $createALinkNode } from '../plugins/ALink';
 
 const articleTheme = {
 	paragraph: 'm-0'
@@ -30,7 +31,11 @@ export const articleConfig = (theme = articleTheme, editable, editorState, onErr
 			 * @param {LinkNode} node
 			 */
 			with: (node) => {
-				return new ALinkNode(node.getURL(), false, node.__key);
+				return $createALinkNode(
+					node.__url,
+					{ rel: node.__rel, target: node.__target, title: node.__title },
+					false
+				);
 			}
 		},
 		ListNode,

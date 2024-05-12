@@ -1,6 +1,7 @@
 // @ts-nocheck Lexical's types... Klassiker
 import { $getSelection, $isRangeSelection, $isNodeSelection, $isElementNode } from 'lexical';
 import { $findMatchingParent } from '@lexical/utils';
+import { $isAtNodeEnd as isAtNodeEnd } from '@lexical/selection';
 
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
@@ -47,3 +48,22 @@ export function getSelectedElements() {
 
   return [...elements.values()];
 }
+
+// from svelte-lexical
+export default function getSelectedNode(selection) {
+  const anchor = selection.anchor;
+  const focus = selection.focus;
+  const anchorNode = selection.anchor.getNode();
+  const focusNode = selection.focus.getNode();
+  if (anchorNode === focusNode) {
+    return anchorNode;
+  }
+  const isBackward = selection.isBackward();
+  if (isBackward) {
+    return isAtNodeEnd(focus) ? anchorNode : focusNode;
+  }
+  else {
+    return isAtNodeEnd(anchor) ? focusNode : anchorNode;
+  }
+}
+

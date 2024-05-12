@@ -1,5 +1,17 @@
 <script>
-	import { getContext, onMount } from 'svelte';
+	import { SvelteComponent, getContext, onMount } from 'svelte';
+	import {
+		FileQuestionIcon,
+		Heading1Icon,
+		Heading2Icon,
+		Heading3Icon,
+		Heading4Icon,
+		Heading5Icon,
+		ListIcon,
+		ListOrderedIcon,
+		PilcrowIcon,
+		QuoteIcon
+	} from 'lucide-svelte';
 	import {
 		$createHeadingNode as createHeadingNode,
 		$createQuoteNode as createQuoteNode,
@@ -16,7 +28,10 @@
 		$isRangeSelection as isRangeSelection,
 		$createParagraphNode as createParagraphNode,
 		$isRootOrShadowRoot as isRootOrShadowRoot,
-		SELECTION_CHANGE_COMMAND
+		SELECTION_CHANGE_COMMAND,
+
+		COMMAND_PRIORITY_CRITICAL
+
 	} from 'lexical';
 	import {
 		$getNearestNodeOfType as getNearestNodeOfType,
@@ -26,7 +41,6 @@
 
 	import Select from '$lib/components/Select.svelte';
 	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
-	import { CriticalPriority } from '$lib/constants/lexical';
 	import { getSelectedElements } from '$lib/environment/utils';
 	import { ListNode } from '$lib/lexical.mjs';
 
@@ -115,6 +129,22 @@
 		number: formatNumberedList,
 		paragraph: formatParagraph,
 		quote: formatQuote
+	};
+
+	/**
+	 * @type {{[x: string]: typeof SvelteComponent<any>}}
+	 */
+	const blockTypeIcons = {
+		default: FileQuestionIcon,
+		h1: Heading1Icon,
+		h2: Heading2Icon,
+		h3: Heading3Icon,
+		h4: Heading4Icon,
+		h5: Heading5Icon,
+		bullet: ListIcon,
+		number: ListOrderedIcon,
+		paragraph: PilcrowIcon,
+		quote: QuoteIcon
 	};
 
 	/** @param {Event} e */
@@ -233,24 +263,29 @@
 					updateToolbar();
 					return false;
 				},
-				CriticalPriority
+				COMMAND_PRIORITY_CRITICAL
 			);
 		});
 	});
 </script>
 
-<Select
-	title="Element type"
-	disabled={!canEdit}
-	bind:ref={elementTypeElement}
-	on:change={elementType}
-	bind:value={currentElementType}
-	on:click={() => elementTypeElement.dispatchEvent(new Event('change'))}
->
-	<option value="mixed" hidden>Mixed</option>
-	<option value="unknown" hidden>Unknown</option>
+<div class="flex items-center gap-2 pl-2">
+	<svelte:component this={blockTypeIcons[currentElementType] || blockTypeIcons.default} />
 
-	{#each elementTypeOptions as [value, label]}
-		<option {value}>{label}</option>
-	{/each}
-</Select>
+	<Select
+		title="Element type"
+		disabled={!canEdit}
+		bind:ref={elementTypeElement}
+		on:change={elementType}
+		bind:value={currentElementType}
+		on:click={() => elementTypeElement.dispatchEvent(new Event('change'))}
+		class="-ml-10 bg-transparent px-10"
+	>
+		<option value="mixed" hidden>Mixed</option>
+		<option value="unknown" hidden>Unknown</option>
+
+		{#each elementTypeOptions as [value, label]}
+			<option {value}>{label}</option>
+		{/each}
+	</Select>
+</div>

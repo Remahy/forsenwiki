@@ -1,11 +1,10 @@
 <script>
-	import { CAN_UNDO_COMMAND, UNDO_COMMAND, CAN_REDO_COMMAND, REDO_COMMAND } from 'lexical';
+	import { CAN_UNDO_COMMAND, UNDO_COMMAND, CAN_REDO_COMMAND, REDO_COMMAND, COMMAND_PRIORITY_LOW } from 'lexical';
 	import { Redo2Icon, Undo2Icon } from 'lucide-svelte';
 	import { getContext, onMount } from 'svelte';
 
 	import { ctrlKey } from '$lib/environment/environment';
 	import Button from '$lib/components/Button.svelte';
-	import { LowPriority } from '$lib/constants/lexical';
 
 	let canUndo = false;
 	let canRedo = false;
@@ -47,7 +46,7 @@
 					canRedo = payload;
 					return false;
 				},
-				LowPriority
+				COMMAND_PRIORITY_LOW
 			);
 
 			editor.registerCommand(
@@ -56,7 +55,7 @@
 					canUndo = payload;
 					return false;
 				},
-				LowPriority
+				COMMAND_PRIORITY_LOW
 			);
 		});
 	});
