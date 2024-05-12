@@ -42,7 +42,7 @@
 	import Select from '$lib/components/Select.svelte';
 	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
 	import { getSelectedElements } from '$lib/environment/utils';
-	import { ListNode } from '$lib/lexical.mjs';
+	import { ListNode } from '$lib/lexical';
 
 	const { TYPES } = ELEMENT_CONSTANTS;
 	const elementTypeOptions = Object.entries(TYPES);
