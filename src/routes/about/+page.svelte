@@ -46,16 +46,16 @@
 					target="github.com/remahy/forsenwiki"
 					class="flex items-center gap-2"
 				>
-					<GitHub size="18" /> <span class="grow">GitHub</span>
+					<GitHub size="18" /> <span class="grow">GitHub - Remahy/forsenwiki</span>
 				</a>
 			</li>
 			<li>
 				<a
-					href="https://www.twitch.tv/TaylorSwiftistan"
-					target="twitch.tv/TaylorSwiftistan"
+					href="https://www.twitch.tv/remahy"
+					target="twitch.tv/remahy"
 					class="flex items-center gap-2"
 				>
-					<TwitchGlitch size="18" /> <span>Twitch</span></a
+					<TwitchGlitch size="18" /> <span>Twitch - Remahy</span></a
 				>
 			</li>
 		</ul>

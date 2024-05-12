@@ -24,6 +24,7 @@
 			<p>forsen.wiki Version 0.0.1</p>
 			<div class="text-purple-800">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</div>
 			<ul class="flex flex-col gap-2 font-semibold">
+				<li class="font-normal">Not associated with Twitch.tv and/or Amazon</li>
 				<li>
 					<Link href="/about">
 						<span class="grow">About</span>

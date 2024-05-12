@@ -192,7 +192,7 @@
 			If you make a request, we have one month to respond to you. If you would like help on how to
 			exercise any of these rights, please contact us at our email:
 		</p>
-		<p>Write to us: mail.alremahy(<AtSignIcon style="display: inline;"/>)gmail.com</p>
+		<p>Write to us: forsenwiki(<AtSignIcon style="display: inline;"/>)gmail.com</p>
 		<h2>Links To Other websites</h2>
 		<p>
 			Our Service may contain links to other websites that are not operated by us. If you click on a
@@ -227,7 +227,7 @@
 		<h2>Contact Us</h2>
 		<p>If you have any questions about this Privacy Policy, please contact admin:</p>
 		<ul>
-			<li>By email: mail.alremahy(<AtSignIcon style="display: inline;" />)gmail.com</li>
+			<li>By email: forsenwiki(<AtSignIcon style="display: inline;" />)gmail.com</li>
 		</ul>
 	</section>
 </div>
