@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Unofficial Forsen Wiki</title>
+	<title>Community Forsen Wiki</title>
 	<meta name="description" content="forsen" />
 </svelte:head>
 

@@ -10,7 +10,7 @@ generator client {
 model User {
   id            String          @id @default(cuid())
   name          String?
-  email         String          @unique
+  email         String?
   emailVerified DateTime?
   image         String?
   accounts      Account[]
@@ -81,7 +81,8 @@ model Authenticator {
 // Yjs
 
 model YPost {
-  id String @id @default(cuid())
+  title String @unique
+  id    String @id @default(cuid())
 
   inRelations  YPostRelation[] @relation("toPost") /// Used for relations to (Manual - By script).
   outRelations YPostRelation[] @relation("fromPost") /// Used for relations from (Has been applied to).
@@ -106,7 +107,6 @@ model YPostRelation {
 model YPostUpdate {
   id String @id @default(cuid())
 
-  title   String
   content String @db.Text
 
   post   YPost  @relation(fields: [postId], references: [id], onDelete: Cascade)

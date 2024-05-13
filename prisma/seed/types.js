@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 
 async function yMain() {
 	const sysUser = await prisma.user.upsert({
-		where: { email: 'system@forsen.wiki' },
+		where: { email: 'system@forsen.wiki', id: SYSTEM },
 		update: {},
 		create: {
 			email: 'system@forsen.wiki',

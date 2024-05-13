@@ -21,7 +21,7 @@
 		</div>
 
 		<div class="flex h-full flex-col justify-end gap-2 overflow-hidden">
-			<p>forsen.wiki Version 0.0.1</p>
+			<p>forsen.wiki v0.0.1</p>
 			<div class="text-purple-800">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</div>
 			<ul class="flex flex-col gap-2 font-semibold">
 				<li class="font-normal">Not associated with Twitch.tv and/or Amazon</li>
