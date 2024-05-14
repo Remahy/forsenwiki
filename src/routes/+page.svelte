@@ -12,7 +12,7 @@
 		class="m-0 my-4 mt-0 w-full rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 sm:my-8 sm:mt-0"
 	>
 		<p class="m-0 text-center leading-10">
-			forsen.wiki is currently a <strong>work in progress</strong>.
+			forsen.wiki is currently <strong>work in progress</strong>.
 			<br />
 			Feel free to take a look around or{' '}
 			<a

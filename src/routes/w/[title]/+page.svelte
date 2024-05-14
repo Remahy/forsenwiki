@@ -1,5 +1,4 @@
 <script>
-	import Button from '$lib/components/Button.svelte';
 	import { EditIcon } from 'lucide-svelte';
 
 	/** @type {import('./$types').PageData} */
@@ -12,7 +11,7 @@
 			class="flex w-full items-center rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4"
 		>
 			<p class="grow">
-				forsen.wiki is currently a <strong>work in progress</strong>.
+				forsen.wiki is currently <strong>work in progress</strong>.
 			</p>
 		</header>
 
@@ -38,7 +37,10 @@
 				<p>
 					<span><strong>Authors:</strong></span>
 					<span>
-						{#each data.authors as author, index}{author.name}{index < data.authors.length - 1 ? ', ' : ''}{/each}
+						{#each data.authors as author, index}
+							{author.name}
+							{index < data.authors.length - 1 ? ', ' : ''}
+						{/each}
 					</span>
 				</p>
 			{/if}

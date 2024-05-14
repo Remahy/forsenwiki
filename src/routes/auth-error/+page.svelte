@@ -4,7 +4,7 @@
 </script>
 
 <div class="container mx-auto grow p-4 lg:p-0 lg:py-12 flex">
-	<Box class="grow bg-red-200 p-12">
+	<Box class="grow !bg-red-200 p-12">
 		<section class="prose prose-lg w-full max-w-[unset]">
 			<h1>OOPSIE WOOPSIE!!</h1>
 
