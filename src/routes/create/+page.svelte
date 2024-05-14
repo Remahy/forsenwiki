@@ -11,10 +11,16 @@
 	import { validateArticle } from '$lib/components/editor/validations';
 	import { goto } from '$app/navigation';
 
+	/** @type {Error | null} */
+	let error = null;
+
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
 	$: composer = $c;
 	$: canEdit = composer?.getEditor().isEditable();
+	$: composer?.getEditor()?.registerTextContentListener(() => {
+		error = null;
+	})
 
 	const y = getContext('YDOC');
 	$: yjsDocMap = $y;
@@ -40,8 +46,8 @@
 			try {
 				await validateArticle(editor);
 				res = await createArticle(yjsDocMap);
-			} catch (error) {
-				return;
+			} catch (err) {
+				throw err;
 			} finally {
 				isUploading = false;
 			}
@@ -50,9 +56,12 @@
 				persistence.clearData()
 
 				const json = await res.json();
-				const { id, postUpdate: { title } } = json;
+				const { title, /* postUpdate: { id } */ } = json;
 
-      	goto(`/article/${id}/${title}`)
+      	goto(`/w/${title}`)
+			} else if (res.status >= 400) {
+				const json = await res.json();
+				error = json;
 			}
 		});
 	};
@@ -73,6 +82,12 @@
 	</Box>
 
 	<Editor update={null} id={'new'} />
+	
+	{#if error}
+		<Box class="flex items-center p-2 !bg-red-200">
+			<p>{error.message}</p>
+		</Box>
+	{/if}
 
 	<Box class="flex items-center p-2">
 		<small class="grow">
@@ -81,7 +96,7 @@
 			>. Don't complain if your edits get deleted. <Clown />
 		</small>
 
-		<Button disabled={!canEdit || isUploading} on:click={submit}>
+		<Button disabled={!canEdit || isUploading || error} on:click={submit}>
 			{#if isUploading}
 				<Spinner />
 			{/if}

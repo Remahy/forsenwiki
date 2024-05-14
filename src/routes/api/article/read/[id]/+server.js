@@ -4,31 +4,33 @@ import { base64ToUint8Array } from 'uint8array-extras';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { updateToJSON } from '$lib/yjs/updateToJSON';
 import { toHTML } from '$lib/lexicalHTML.server';
-import { readArticleUpdatesByPostId, readLatestArticleUpdateByPostId } from '$lib/db/article/read';
+import { readYPostUpdatesByTitle } from '$lib/db/article/read';
 import { yPostUpdatesToBase64 } from '$lib/yjs/utils';
 
-/** @param {string} id @throws {number} */
-export const _getYPost = async (id) => {
+/**
+ * @param {string} title
+ * @throws {number}
+ */
+export const _getYPostByTitle = async (title) => {
 
-	const post = await readArticleUpdatesByPostId(id)
+	const post = await readYPostUpdatesByTitle(title)
+
 
 	if (!post) throw 404;
 
+
 	const base64String = yPostUpdatesToBase64(post.postUpdates)
 
-	// Use latest ONE postUpdate for post.postUpdates.
-	/** @type {{ title: string }[]} */
-	const postUpdates = /** @type {any} */(await readLatestArticleUpdateByPostId(id)).postUpdates;
-
-	return { post: { ...post, postUpdates }, update: base64String }
+	// Important: Make sure to set postUpdates to undefined or else user receives all content updates.
+	return { ...post, postUpdates: undefined, update: base64String }
 }
 
-/** @param {string} id */
-export const _getYPostAndHtml = async (id) => {
-	let post;
+/** @param {string} title */
+export const _getYPostAndHtml = async (title) => {
+	let yPost;
 
 	try {
-		post = await _getYPost(id)
+		yPost = await _getYPostByTitle(title)
 	} catch (err) {
 		if (typeof err === 'number') {
 			throw err
@@ -37,12 +39,11 @@ export const _getYPostAndHtml = async (id) => {
 		throw err;
 	}
 
-	if (!post) {
+	if (!yPost) {
 		throw 500;
 	}
 
-	const { update, post: { postUpdates } } = post;
-	const title = postUpdates[0].title;
+	const { update } = yPost;
 
 	/** @type {LexicalEditor} */
 	let editor;
@@ -57,8 +58,7 @@ export const _getYPostAndHtml = async (id) => {
 	}
 
 	return {
-		title,
-		post: post.post,
+		post: yPost,
 		update,
 		html,
 	};

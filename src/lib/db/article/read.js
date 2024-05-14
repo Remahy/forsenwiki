@@ -1,12 +1,12 @@
 import prisma from "$lib/prisma";
 
 /**
- * @param {string} postId
+ * @param {string} title
  */
-export async function readArticleUpdatesByPostId (postId) {
-  return prisma.yPost.findFirst({
+export async function readYPostUpdatesByTitle(title) {
+  return prisma.yPost.findUnique({
     where: {
-      id: postId
+      title,
     },
     include: {
       outRelations: {
@@ -16,7 +16,6 @@ export async function readArticleUpdatesByPostId (postId) {
             select: {
               postUpdates: {
                 select: {
-                  title: true,
                   id: true
                 },
                 take: 1
@@ -35,40 +34,14 @@ export async function readArticleUpdatesByPostId (postId) {
   })
 }
 
-/** @param {string} postId */
-export async function readLatestArticleUpdateByPostId (postId) {
-	return prisma.yPost.findFirst({
+/** @param {string} title */
+export async function readYPostByTitle(title) {
+  return prisma.yPost.findUnique({
     where: {
-      id: postId
+      title,
     },
-    include: {
-      outRelations: {
-        select: {
-          toPost: {
-            select: {
-              postUpdates: {
-                select: {
-                  title: true
-                },
-                take: 1
-              }
-            }
-          },
-          toPostId: true,
-          isSystem: true
-        }
-      },
-      postUpdates: {
-        select: {
-          title: true,
-          id: true,
-          createdTimestamp: true
-        },
-        orderBy: {
-          createdTimestamp: 'desc'
-        },
-        take: 1
-      }
+    select: {
+      id: true,
     }
-  })
+  });
 }

@@ -6,8 +6,10 @@ import { articleConfig } from '$lib/components/editor/config/article';
 import { updateToJSON } from '$lib/yjs/updateToJSON';
 import { validateArticle } from '$lib/components/editor/validations';
 import { InvalidArticle } from '$lib/errors/InvalidArticle';
-import { getArticleTitle, getArticleURLIds } from '$lib/components/editor/utils/getEntities';
+import { getArticleURLIds } from '$lib/components/editor/utils/getEntities';
+import { getArticleTitle } from '$lib/components/editor/utils/getArticleTitle';
 import { createArticle } from '$lib/db/article/create';
+import { readYPostByTitle } from '$lib/db/article/read';
 
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ request, locals }) {
@@ -33,9 +35,14 @@ export async function POST({ request, locals }) {
 		return error(400);
 	}
 
+	const foundTitle = await readYPostByTitle(title);
+	if (foundTitle) {
+		return error(400, 'Article with that title already exists.');
+	}
+
 	const internalIds = await getArticleURLIds(editor)
 
-	const createdArticle = await createArticle({ userId: session.user.id, data: { title, content }, ids: internalIds });
+	const createdArticle = await createArticle({ userId: session.user.id, title, data: { content }, ids: internalIds });
 
 	return json({
 		...createdArticle

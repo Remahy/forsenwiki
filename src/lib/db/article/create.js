@@ -1,15 +1,16 @@
 import prisma from "$lib/prisma";
 import { Y_POST_TYPES } from "$lib/constants/yPostTypes";
 
-/** @param {{ userId: string, data: { content: string, title: string }, ids: string[] }} obj */
-export const createArticle = async ({ userId, data, ids }) => {
+/** @param {{ userId: string, title: string, data: { content: string }, ids: string[] }} obj */
+export const createArticle = async ({ userId, title, data, ids }) => {
 	const outRelations = ids.map((id) => ({ isSystem: false, toPostId: id }))
 
-  const { id, postUpdate } = await prisma.$transaction(async (tx) => {
+  const { post, postUpdate } = await prisma.$transaction(async (tx) => {
 
     // Create yPost
-    const { id } = await tx.yPost.create({
+    const post = await tx.yPost.create({
       data: {
+        title,
         outRelations: {
           createMany: {
             data: [
@@ -22,6 +23,10 @@ export const createArticle = async ({ userId, data, ids }) => {
             skipDuplicates: true
           }
         }
+      },
+      select: {
+        id: true,
+        title: true,
       }
     })
 
@@ -30,7 +35,7 @@ export const createArticle = async ({ userId, data, ids }) => {
 				...data,
 				post: {
 					connect: {
-						id
+						id: post.id
 					}
 				},
 				metadata: {
@@ -45,14 +50,13 @@ export const createArticle = async ({ userId, data, ids }) => {
 			}
 		});
 
-    return { id, postUpdate }
+    return { post, postUpdate }
   })
 
   return {
-    id,
+    ...post,
     postUpdate: {
       id: postUpdate.id,
-      title: postUpdate.title
     }
   }
 };

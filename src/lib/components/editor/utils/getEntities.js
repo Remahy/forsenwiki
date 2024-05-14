@@ -1,7 +1,6 @@
-// @ts-nocheck Lexical's types... Klassiker
 import { $nodesOfType } from 'lexical';
 
-import { ALinkNode, HeadingNode } from '$lib/lexical';
+import { ALinkNode } from '$lib/lexical';
 
 /** @param {ALinkNode[]} links */
 export const getOnlyInternalLinks = (links) => links.filter((node) => node.getIsInternal());
@@ -29,24 +28,3 @@ export const getArticleURLIds = (editor) => {
 		})
 	})
 }
-
-/**
- * @param {LexicalEditor} editor
- * @throws {string}
- */
-export const getArticleTitle = async (editor) => {
-	return new Promise((resolve, reject) => {
-		editor.update(() => {
-			const headings = $nodesOfType(HeadingNode);
-			if (!headings.length) return reject('No headings');
-
-			const headingOnes = headings.filter((heading) => heading.getTag() === 'h1');
-			if (!headingOnes.length) return reject('No heading 1');
-
-			const titleContent = headingOnes[0].getTextContent().trim();
-			if (!titleContent.length) return reject('First heading 1 is empty');
-
-			resolve(encodeURIComponent(titleContent))
-		});
-	});
-};

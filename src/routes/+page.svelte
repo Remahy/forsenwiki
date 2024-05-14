@@ -17,7 +17,7 @@
 			Feel free to take a look around or{' '}
 			<a
 				href="/create/"
-				class="whitespace-nowrap rounded bg-violet-700 p-2 font-semibold text-white hover:bg-violet-800"
+				class="whitespace-nowrap rounded bg-violet-500 p-2 font-semibold text-white hover:bg-violet-800"
 				data-sveltekit-reload>Create new article</a
 			>
 		</p>
