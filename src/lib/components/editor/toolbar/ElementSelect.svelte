@@ -57,8 +57,8 @@
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
 	$: composer = $c;
-	$: canEdit = composer?.getEditor().isEditable();
-	$: editor = composer?.getEditor();
+	$: editor = composer?.getEditor?.();
+	$: canEdit = editor?.isEditable();
 
 	const formatParagraph = () => {
 		if (!editor) return;

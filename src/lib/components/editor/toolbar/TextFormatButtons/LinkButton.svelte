@@ -27,8 +27,8 @@
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
 	$: composer = $c;
-	$: canEdit = composer?.getEditor().isEditable();
-	$: editor = composer?.getEditor();
+	$: editor = composer?.getEditor?.();
+	$: canEdit = editor?.isEditable();
 
 	const link = () => {
 		if (!editor) return;
@@ -58,10 +58,14 @@
 				editor.update(() => {
 					const selection = getSelection();
 
-					// Add as text if selection didn't have any.
 					if (selection && dUrl && definedUrl === 'https://') {
-						const title = dAttrs?.title;
-						selection.insertText(title || dUrl);
+						const textLength = selection.getNodes().map((node) => node.getTextContentSize()).reduce((prev, curr) => prev + curr, 0)
+
+						// Add as text if selection didn't have any.
+						if (textLength === 0) {
+							const title = dAttrs?.title;
+							selection.insertText(title || dUrl);
+						}
 					}
 
 					toggleLink(dUrl, dAttrs);
