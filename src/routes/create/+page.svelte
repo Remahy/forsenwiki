@@ -1,5 +1,7 @@
 <script>
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
+
+	import { goto } from '$app/navigation';
 
 	import { createArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
@@ -9,7 +11,6 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Editor from '$lib/components/editor/editor.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
-	import { goto } from '$app/navigation';
 
 	/** @type {Error | null} */
 	let error = null;
@@ -17,14 +18,16 @@
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
 	$: composer = $c;
-	$: canEdit = composer?.getEditor().isEditable();
-	$: composer?.getEditor()?.registerTextContentListener(() => {
+	$: editor = composer?.getEditor?.();
+	$: canEdit = editor?.isEditable();
+
+	$: editor?.registerTextContentListener(() => {
 		error = null;
-	})
+	});
 
 	const y = getContext('YDOC');
 	$: yjsDocMap = $y;
-	
+
 	/** @type {Writable<YDOCPERSISTENCE>} */
 	const p = getContext('YDOCPERSISTENCE');
 	$: persistence = $p;
@@ -53,18 +56,25 @@
 			}
 
 			if (res.status === 200) {
-				persistence.clearData()
+				persistence.clearData();
 
 				const json = await res.json();
-				const { title, /* postUpdate: { id } */ } = json;
+				const { title /* postUpdate: { id } */ } = json;
 
-      	goto(`/w/${title}`)
+				goto(`/w/${title}`);
 			} else if (res.status >= 400) {
 				const json = await res.json();
 				error = json;
 			}
 		});
 	};
+
+	// This reloads pages when we leave create editor.
+	onMount(() => {
+		return () => {
+			window.location.reload();
+		};
+	});
 </script>
 
 <div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
@@ -82,9 +92,9 @@
 	</Box>
 
 	<Editor update={null} id={'new'} />
-	
+
 	{#if error}
-		<Box class="flex items-center p-2 !bg-red-200">
+		<Box class="flex items-center !bg-red-200 p-2">
 			<p>{error.message}</p>
 		</Box>
 	{/if}
