@@ -78,12 +78,11 @@
 				target="_blank">here</a
 			>.
 		</p>
-		<p>We request the following data from Twitch when you login:</p>
+		<p>We collect the following data from Twitch when you login:</p>
 		<ul>
 			<li>Twitch profile picture</li>
-			<li>Twitch profile display name</li>
+			<li>Twitch profile username</li>
 			<li>Twitch profile unique ID</li>
-			<li><strong>Twitch email address</strong></li>
 		</ul>
 		<h2>Use of Data</h2>
 		<p>The Service uses the collected data for various purposes:</p>
@@ -192,7 +191,7 @@
 			If you make a request, we have one month to respond to you. If you would like help on how to
 			exercise any of these rights, please contact us at our email:
 		</p>
-		<p>Write to us: forsenwiki(<AtSignIcon style="display: inline;"/>)gmail.com</p>
+		<p>Write to us: forsenwiki+gdpr(<AtSignIcon style="display: inline;"/>)gmail.com</p>
 		<h2>Links To Other websites</h2>
 		<p>
 			Our Service may contain links to other websites that are not operated by us. If you click on a
@@ -227,7 +226,7 @@
 		<h2>Contact Us</h2>
 		<p>If you have any questions about this Privacy Policy, please contact admin:</p>
 		<ul>
-			<li>By email: forsenwiki(<AtSignIcon style="display: inline;" />)gmail.com</li>
+			<li>By email: forsenwiki+privacy(<AtSignIcon style="display: inline;" />)gmail.com</li>
 		</ul>
 	</section>
 </div>
