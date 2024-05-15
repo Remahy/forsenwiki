@@ -1,5 +1,5 @@
 <script>
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import isUrl from 'is-url';
 	import {
 		$getRoot as getRoot,
@@ -47,6 +47,13 @@
 	$: getContext('COMPOSER').set(composer);
 
 	const providerFactory = instantiateProvider(update);
+
+	// This reloads pages when we leave editor.
+	onMount(() => {
+		return () => {
+			window.location.reload();
+		};
+	});
 </script>
 
 <Composer {initialConfig} bind:this={composer}>

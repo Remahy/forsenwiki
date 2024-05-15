@@ -1,7 +1,6 @@
 <script>
 	import { EditIcon } from 'lucide-svelte';
 
-	/** @type {import('./$types').PageData} */
 	export let data;
 </script>
 
@@ -13,6 +12,12 @@
 			<p class="grow">
 				forsen.wiki is currently <strong>work in progress</strong>.
 			</p>
+
+			<a
+				href="/w/{data.post.title}/edit"
+				class="flex gap-2 rounded bg-violet-500 p-2 font-semibold text-white hover:bg-violet-800"
+				data-sveltekit-reload><EditIcon /><span class="hidden md:inline">Edit article</span></a
+			>
 		</header>
 
 		<main class="prose max-w-[unset] grow">

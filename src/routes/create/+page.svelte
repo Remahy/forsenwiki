@@ -1,8 +1,6 @@
 <script>
-	import { getContext, onMount } from 'svelte';
-
+	import { getContext } from 'svelte';
 	import { goto } from '$app/navigation';
-
 	import { createArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -68,13 +66,6 @@
 			}
 		});
 	};
-
-	// This reloads pages when we leave create editor.
-	onMount(() => {
-		return () => {
-			window.location.reload();
-		};
-	});
 </script>
 
 <div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
