@@ -15,9 +15,7 @@ export const _getYPostByTitle = async (title) => {
 
 	const post = await readYPostUpdatesByTitle(title)
 
-
 	if (!post) throw 404;
-
 
 	const base64String = yPostUpdatesToBase64(post.postUpdates)
 
@@ -37,10 +35,6 @@ export const _getYPostAndHtml = async (title) => {
 		}
 
 		throw err;
-	}
-
-	if (!yPost) {
-		throw 500;
 	}
 
 	const { update } = yPost;
@@ -69,7 +63,7 @@ export async function GET({ params }) {
 	let res;
 
 	try {
-		res = await _getYPostAndHtml(params.id);
+		res = await _getYPostAndHtml(params.title);
 
 	} catch (err) {
 		if (typeof err === 'number') {

@@ -13,7 +13,7 @@ export function encodeYDocToUpdateV2(yDoc) {
 }
 
 /**
- * @param {Array<PrismaTypes.YPostUpdate>} postUpdates
+ * @param {Array<Pick<Prisma.YPostUpdate, 'content'>>} postUpdates
  */
 export function postUpdatesToUint8Arr (postUpdates) {
   return postUpdates.map(({ content }) => base64ToUint8Array(content))
@@ -42,7 +42,7 @@ export function diffUpdateUsingStateVector (newUpdate, existingStateVector) {
 }
 
 /**
- * @param {Array<PrismaTypes.YPostUpdate>} postUpdates
+ * @param {Array<Pick<Prisma.YPostUpdate, 'content'>>} postUpdates
  */
 export function yPostUpdatesToBase64 (postUpdates) {
   const uint8ArrayArray = postUpdatesToUint8Arr(postUpdates)

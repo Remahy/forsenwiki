@@ -1,6 +1,8 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 
+import * as P from '../node_modules/.prisma/client';
+
 declare global {
 	namespace App {
 		// interface Error {}
@@ -29,10 +31,8 @@ declare global {
 
 	export type YDOCPERSISTENCE = import('y-indexeddb').IndexeddbPersistence;
 
-	export namespace PrismaTypes {
-		export {
-			User, YPost, YPostRelation, YPostUpdate, YPostUpdateMetadata
-		}
+	export namespace Prisma {
+     export = P;
 	}
 }
 

@@ -45,3 +45,35 @@ export async function readYPostByTitle(title) {
     }
   });
 }
+
+/**
+ * @type {Prisma.Prisma.YPostRelationInclude}
+ */
+const includeToPostYPostUpdate = {
+  toPost: {
+    select: {
+      rawTitle: true,
+      title: true,
+      postUpdates: {
+        select: {
+          metadata: {
+            select: {
+              userId: true
+            }
+          },
+        }
+      }
+    }
+  }
+}
+
+/** @param {string} postId */
+export async function readSystemYPostRelations (postId) {
+  return prisma.yPostRelation.findMany({
+    where: {
+      isSystem: true,
+      fromPostId: postId
+    },
+    include: includeToPostYPostUpdate
+  })
+}
