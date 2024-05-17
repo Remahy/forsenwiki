@@ -11,7 +11,6 @@ import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { createArticle } from '$lib/db/article/create';
 import { readYPostByTitle } from '$lib/db/article/read';
 
-/** @type {import('./$types').RequestHandler} */
 export async function POST({ request, locals }) {
 	const session = await locals.auth();
 	if (!session || !session.user?.id) return ForbiddenError();

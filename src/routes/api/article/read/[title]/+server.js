@@ -58,7 +58,6 @@ export const _getYPostAndHtml = async (title) => {
 	};
 };
 
-/** @type {import('./$types').RequestHandler} */
 export async function GET({ params }) {
 	let res;
 

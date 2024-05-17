@@ -11,7 +11,6 @@ import { getArticleURLIds } from '$lib/components/editor/utils/getEntities';
 import { readSystemYPostRelations } from '$lib/db/article/read';
 import { updateArticleYPost } from '$lib/db/article/update';
 
-/** @type {import('./$types').RequestHandler} */
 export async function POST({ request, locals, params }) {
 	const session = await locals.auth();
 	if (!session || !session.user?.id) return ForbiddenError();
