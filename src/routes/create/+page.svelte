@@ -1,5 +1,5 @@
 <script>
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { createArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
@@ -14,9 +14,6 @@
 	let error = null;
 
 	let title = '';
-	/** @type {Error | null}*/
-	let titleError = null;
-
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
@@ -24,9 +21,7 @@
 	$: editor = composer?.getEditor?.();
 	$: canEdit = editor?.isEditable();
 
-	$: editor?.registerTextContentListener(() => {
-		error = null;
-	});
+	$: titleError = title.length === 0 ? new Error('No title set!') : null;
 
 	const y = getContext('YDOC');
 	$: yjsDocMap = $y;
@@ -53,8 +48,7 @@
 				await validateArticle(editor);
 
 				if (!title) {
-					titleError = new Error('No title set!')
-					throw titleError
+					throw new Error();
 				}
 
 				res = await createArticle(title, yjsDocMap);
@@ -78,6 +72,20 @@
 			}
 		});
 	};
+
+	onMount(() => {
+		c.subscribe((composer) => {
+			if (composer === null) {
+				return;
+			}
+
+			const editor = composer.getEditor();
+
+			editor.registerTextContentListener(() => {
+				error = null;
+			});
+		})
+	})
 </script>
 
 <div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
@@ -92,7 +100,7 @@
 
 	<label>
 		<strong>Title <small>(Must be unique)</small></strong>
-		<input class="w-full rounded p-2 {titleError && 'bg-red-200'}" bind:value={title} />
+		<input required class="w-full rounded p-2 {titleError && 'bg-red-200'}" bind:value={title} />
 		{#if titleError} <strong class="text-red-500">{titleError.message}</strong> {/if}
 	</label>
 
