@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 
 async function yMain() {
 	const sysUser = await prisma.user.upsert({
-		where: { email: 'system@forsen.wiki' },
+		where: { email: 'system@forsen.wiki', id: SYSTEM },
 		update: {},
 		create: {
 			email: 'system@forsen.wiki',
@@ -21,9 +21,9 @@ async function yMain() {
 		update: {},
 		create: {
 			id: SYSTEM,
+			title: SYSTEM.toUpperCase(),
 			postUpdates: {
 				create: {
-					title: 'SYSTEM',
 					content: '',
 					metadata: {
 						create: {
@@ -35,7 +35,6 @@ async function yMain() {
 						}
 					}
 				}
-
 			}
 		}
 	})
@@ -52,6 +51,7 @@ async function yMain() {
 				update: {},
 				create: {
 					id,
+					title: id.toUpperCase(),
 					outRelations: {
 						create: {
 							isSystem: true,
@@ -65,7 +65,6 @@ async function yMain() {
 					postUpdates: {
 						create: {
 							content: '',
-							title: id.toUpperCase(),
 							metadata: {
 								create: {
 									user: {

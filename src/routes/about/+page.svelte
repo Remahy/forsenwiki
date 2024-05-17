@@ -1,4 +1,5 @@
 <script>
+	import { AtSignIcon } from 'lucide-svelte';
 	import GitHub from '$lib/components/icons/GitHub.svelte';
 	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
 </script>
@@ -59,6 +60,8 @@
 				>
 			</li>
 		</ul>
+
+		<p><strong>Contact email:</strong> forsenwiki(<AtSignIcon style="display: inline;" />)gmail.com</p>
 
 		<h3>Privacy policy</h3>
 

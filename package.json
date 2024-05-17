@@ -58,6 +58,7 @@
 		"lexical": "0.14.5",
 		"linkedom-global": "^1.0.0",
 		"lucide-svelte": "^0.378.0",
+		"sanitize-filename": "^1.6.3",
 		"svelte-lexical": "^0.4.0",
 		"uint8array-extras": "^1.1.0",
 		"y-indexeddb": "^9.0.12",

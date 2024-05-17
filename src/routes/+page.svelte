@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Unofficial Forsen Wiki</title>
+	<title>Community Forsen Wiki</title>
 	<meta name="description" content="forsen" />
 </svelte:head>
 
@@ -12,12 +12,12 @@
 		class="m-0 my-4 mt-0 w-full rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 sm:my-8 sm:mt-0"
 	>
 		<p class="m-0 text-center leading-10">
-			forsen.wiki is currently a <strong>work in progress</strong>.
+			forsen.wiki is currently <strong>work in progress</strong>.
 			<br />
 			Feel free to take a look around or{' '}
 			<a
 				href="/create/"
-				class="whitespace-nowrap rounded bg-violet-700 p-2 font-semibold text-white hover:bg-violet-800"
+				class="whitespace-nowrap rounded bg-violet-500 p-2 font-semibold text-white hover:bg-violet-800"
 				data-sveltekit-reload>Create new article</a
 			>
 		</p>

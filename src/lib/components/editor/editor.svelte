@@ -1,5 +1,5 @@
 <script>
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import isUrl from 'is-url';
 	import {
 		$getRoot as getRoot,
@@ -13,7 +13,7 @@
 		ContentEditable,
 		LinkPlugin,
 		ListPlugin,
-		RichTextPlugin,
+		RichTextPlugin
 	} from 'svelte-lexical';
 
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
@@ -28,14 +28,16 @@
 	 * @param {LexicalEditor} editor
 	 */
 	function initialState(editor) {
-		editor.update(() => {
-			const root = getRoot();
-			const paragraph = createParagraphNode();
-			const text = createTextNode();
-			text.setTextContent('Edit me!');
-			paragraph.append(text);
-			root.append(paragraph);
-		});
+		editor.update(
+			() => {
+				const root = getRoot();
+				const paragraph = createParagraphNode();
+				const text = createTextNode();
+				paragraph.append(text);
+				root.append(paragraph);
+			},
+			{ tag: 'historic' }
+		);
 	}
 
 	const initialConfig = articleConfig({}, true, null);
@@ -45,6 +47,13 @@
 	$: getContext('COMPOSER').set(composer);
 
 	const providerFactory = instantiateProvider(update);
+
+	// This reloads pages when we leave editor.
+	onMount(() => {
+		return () => {
+			window.location.reload();
+		};
+	});
 </script>
 
 <Composer {initialConfig} bind:this={composer}>

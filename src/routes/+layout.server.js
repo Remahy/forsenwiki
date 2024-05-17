@@ -1,6 +1,3 @@
-/**
- * @param {import("./$types").LayoutServerLoad} event
- */
 export const load = async (event) => {
 	const session = await event.locals.auth()
 

@@ -1,56 +1,14 @@
 import { SvelteKitAuth } from "@auth/sveltekit"
 import Twitch from "@auth/sveltekit/providers/twitch"
 import { PrismaAdapter } from "@auth/prisma-adapter"
-import { AccountNotLinked } from '@auth/core/errors';
 
 import prisma from "$lib/prisma";
-
-/** @param {prisma} prisma @returns {import('@auth/core/adapters').Adapter} */
-const MyPrismaAdapter = (prisma) => ({
-	...PrismaAdapter(prisma),
-	// This needs to be fixed, these "throws" return ConfigError :/
-	async linkAccount(account) {
-		const {  provider, providerAccountId, access_token, userId } = account;
-
-		if (provider === 'twitch') {
-			const headers = new Headers();
-			headers.set('Authorization', `Bearer ${access_token}`)
-			headers.set('Client-Id', process.env.AUTH_TWITCH_ID || '')
-			const res = await fetch('https://api.twitch.tv/helix/users', { headers });
-
-			/**
-			 * @type {{ data: [{ created_at: string, type: '' | 'staff' | 'admin' | 'global_mod' }] }}
-			 */
-			const { data: [{ created_at, type }] } = await res.json();
-
-			if (type.length) {
-				// @ts-ignore
-				await PrismaAdapter(prisma).deleteUser(userId);
-				throw new AccountNotLinked('Your Twitch account is too special.')
-			}
-
-			const isWhitelisted = await prisma.whitelistedAccounts.findFirst({ where: { provider: provider, providerAccountId: providerAccountId } })
-
-			if (isWhitelisted) {
-				// @ts-ignore
-				return PrismaAdapter(prisma).linkAccount(account);
-			}
-
-			// Temporary 2 yr Twitch account creation limit
-			if (new Date().getTime() - new Date(created_at).getTime() < (31_556_952_000 * 2)) {
-				await PrismaAdapter(prisma).deleteUser?.(userId);
-				throw new AccountNotLinked('Your Twitch account is too young.')
-			}
-		}
-
-		// @ts-ignore
-		return PrismaAdapter(prisma).linkAccount(account);
-	},
-});
-
+import { AccountTooYoung } from "$lib/errors/auth/AccountTooYoung";
+import { AccountIsSpecial } from "$lib/errors/auth/AccountIsSpecial";
+import { NoUser } from "$lib/errors/auth/NoUser";
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
-	adapter: MyPrismaAdapter(prisma),
+	adapter: PrismaAdapter(prisma),
 	callbacks: {
 		async session({ session, user }) {
 			if (session.user) {
@@ -65,8 +23,77 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 	},
 	events: {
 		async createUser() {
-			// TODO: Create user profile.
+			// TODO: Create user bio page.
 		}
 	},
-	providers: [Twitch],
+	providers: [(config) => {
+		const twitch = Twitch(config);
+		return {
+			type: 'oauth',
+			id: twitch.id,
+			name: twitch.name,
+			token: {
+				url: `https://id.twitch.tv/oauth2/token?client_id=${process.env.AUTH_TWITCH_ID}&client_secret=${process.env.AUTH_TWITCH_SECRET}&grant_type=authorization_code`,
+				params: {
+					scope: ''
+				},
+			},
+			authorization: {
+				url: `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${process.env.AUTH_TWITCH_ID}`,
+				params: {
+					scope: ''
+				}
+			},
+			userinfo: {
+				url: 'https://api.twitch.tv/helix/users',
+				/**
+				 * @param {{ tokens: { access_token: string }, provider: { id: string, userinfo: { url: string }, clientId: string } }} arg
+				 */
+				async request({ tokens, provider }) {
+					const profiles = await fetch(provider.userinfo?.url, {
+						headers: {
+							Authorization: `Bearer ${tokens.access_token}`,
+							'Client-Id': provider.clientId,
+							"User-Agent": "authjs",
+						},
+					}).then(async (res) => await res.json())
+
+					const profile = profiles?.data?.[0];
+					if (!profile) {
+						throw new NoUser('Could not find Twitch user');
+					}
+
+					/**
+					 * @type {{ created_at: string, type: '' | 'staff' | 'admin' | 'global_mod' }}
+					 */
+					const { created_at, type } = profile;
+
+					if (type.length) {
+						throw new AccountIsSpecial('Your Twitch account is too special')
+					}
+
+					const isWhitelisted = await prisma.whitelistedAccounts.findFirst({
+						where: {
+							provider: provider.id,
+							providerAccountId: profile.id
+						}
+					})
+
+					// Temporary 2 yr Twitch account creation limit
+					if (new Date().getTime() - new Date(created_at).getTime() < (31_556_952_000 * 2) && !isWhitelisted) {
+						throw new AccountTooYoung('Your Twitch account is too young')
+					}
+
+					// https://authjs.dev/reference/core/types#profile
+					return {
+						id: profile.id,
+						name: profile.login,
+						picture: profile.profile_image_url
+					}
+				},
+			},
+			profile: twitch.profile,
+			style: twitch.style,
+		}
+	}],
 })

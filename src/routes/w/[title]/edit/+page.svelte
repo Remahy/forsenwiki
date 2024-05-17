@@ -1,32 +1,34 @@
 <script>
-	import { getContext } from 'svelte';
-	import { goto } from '$app/navigation';
-	import { createArticle } from '$lib/api/articles';
+	import { getContext, onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import Box from '$lib/components/Box.svelte';
+	import Link from '$lib/components/Link.svelte';
+	import Editor from '$lib/components/editor/editor.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Clown from '$lib/components/Clown.svelte';
-	import Link from '$lib/components/Link.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
-	import Editor from '$lib/components/editor/editor.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
+	import { updateArticle } from '$lib/api/articles';
+	import { goto } from '$app/navigation';
+
+	let id = $page.data.post.id;
+	let update = $page.data.update;
+	let title = $page.data.post.title;
+	let rawTitle = $page.data.post.rawTitle;
 
 	/** @type {Error | null} */
 	let error = null;
 
-	let title = '';
-	/** @type {Error | null}*/
-	let titleError = null;
+	/** @type {{[x: string]: Error}} */
+	let rawWarnings = {};
 
+	$: warnings = Object.values(rawWarnings);
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
 	$: composer = $c;
 	$: editor = composer?.getEditor?.();
 	$: canEdit = editor?.isEditable();
-
-	$: editor?.registerTextContentListener(() => {
-		error = null;
-	});
 
 	const y = getContext('YDOC');
 	$: yjsDocMap = $y;
@@ -52,12 +54,7 @@
 			try {
 				await validateArticle(editor);
 
-				if (!title) {
-					titleError = new Error('No title set!')
-					throw titleError
-				}
-
-				res = await createArticle(title, yjsDocMap);
+				res = await updateArticle(title, yjsDocMap);
 			} catch (err) {
 				// This throw prevents rest of code from running.
 				throw err;
@@ -78,29 +75,44 @@
 			}
 		});
 	};
+
+	onMount(() => {
+		c.subscribe((composer) => {
+			if (composer === null) {
+				return;
+			}
+
+			const editor = composer.getEditor();
+			editor.registerTextContentListener(() => {
+				error = null;
+			});
+		});
+	});
 </script>
 
 <div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
 	<Box class="mb-4 p-4">
 		<div class="prose !max-w-none">
 			<p>
-				Creating a new article.
+				Editing the <strong>"{rawTitle}"</strong> article.
 				<strong>Alpha: </strong> Your article drafts are automatically saved locally.*
 			</p>
 		</div>
 	</Box>
 
-	<label>
-		<strong>Title <small>(Must be unique)</small></strong>
-		<input class="w-full rounded p-2 {titleError && 'bg-red-200'}" bind:value={title} />
-		{#if titleError} <strong class="text-red-500">{titleError.message}</strong> {/if}
-	</label>
-
-	<Editor update={null} id={'new'} />
+	<Editor {update} {id} />
 
 	{#if error}
 		<Box class="flex items-center !bg-red-200 p-2">
 			<p>{error.message}</p>
+		</Box>
+	{/if}
+
+	{#if warnings.length}
+		<Box class="flex items-center !bg-yellow-200 p-2">
+			{#each warnings as warning}
+				<p>{warning.message}</p>
+			{/each}
 		</Box>
 	{/if}
 
