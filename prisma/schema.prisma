@@ -81,6 +81,7 @@ model Authenticator {
 // Yjs
 
 model YPost {
+  rawTitle String @default("")
   title String @unique
   id    String @id @default(cuid())
 

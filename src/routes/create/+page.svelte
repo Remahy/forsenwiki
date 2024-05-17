@@ -13,6 +13,11 @@
 	/** @type {Error | null} */
 	let error = null;
 
+	let title = '';
+	/** @type {Error | null}*/
+	let titleError = null;
+
+
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
 	$: composer = $c;
@@ -46,8 +51,15 @@
 
 			try {
 				await validateArticle(editor);
-				res = await createArticle(yjsDocMap);
+
+				if (!title) {
+					titleError = new Error('No title set!')
+					throw titleError
+				}
+
+				res = await createArticle(title, yjsDocMap);
 			} catch (err) {
+				// This throw prevents rest of code from running.
 				throw err;
 			} finally {
 				isUploading = false;
@@ -75,12 +87,14 @@
 				Creating a new article.
 				<strong>Alpha: </strong> Your article drafts are automatically saved locally.*
 			</p>
-			<p>
-				To submit, make sure you have at least one <strong>heading 1</strong> text, and at least one
-				<strong>paragraph</strong> text.
-			</p>
 		</div>
 	</Box>
+
+	<label>
+		<strong>Title <small>(Must be unique)</small></strong>
+		<input class="w-full rounded p-2 {titleError && 'bg-red-200'}" bind:value={title} />
+		{#if titleError} <strong class="text-red-500">{titleError.message}</strong> {/if}
+	</label>
 
 	<Editor update={null} id={'new'} />
 

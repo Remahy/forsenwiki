@@ -21,6 +21,8 @@
 		</header>
 
 		<main class="prose max-w-[unset] grow">
+			<h1>{data.post.rawTitle}</h1>
+
 			{@html data.html}
 		</main>
 
