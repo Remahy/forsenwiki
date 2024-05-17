@@ -63,13 +63,17 @@
 
 	{#if !disableCount}
 		<div class="flex items-center gap-1">
-			<small><strong>Words:</strong> {wordsCount}</small>
-			<Divider />
-			<small><strong>Characters:</strong> {characterCount}</small>
-			<Divider />
-			<small><strong>Forsen:</strong> {forsenCount}</small>
-			<Divider />
-			<!--<span><strong>Links:</strong> <span>{linkCount}</span></span>-->
+			{#if wordsCount || characterCount || forsenCount}
+				<small><strong>Words:</strong> {wordsCount}</small>
+				<Divider />
+				<small><strong>Characters:</strong> {characterCount}</small>
+				<Divider />
+				<small><strong>Forsen:</strong> {forsenCount}</small>
+				<Divider />
+				<!--<span><strong>Links:</strong> <span>{linkCount}</span></span>-->
+			{:else}
+				<small>Focus the editor to start the count.</small>
+			{/if}
 		</div>
 		<!--
 			<div class="flex flex-col gap-1">
