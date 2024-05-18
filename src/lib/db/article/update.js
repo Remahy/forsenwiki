@@ -4,9 +4,10 @@ import { postYRelationDeleteByFromPostId } from "./delete";
 
 /**
  * @param {Prisma.PrismaClient | Prisma.Prisma.TransactionClient} tx
- * @param {{ post: Pick<Prisma.YPost, 'id'>, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], systemRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[] }} arg2
+ * @param {{ post: Pick<Prisma.YPost, 'id' | 'rawTitle' | 'title'>, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], systemRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[] }} arg2
+ * @param {{ name: string }} user
  */
-export const updateEntity = async (tx, { post, outRelations, systemRelations }) => {
+export const updateEntity = async (tx, { post, outRelations, systemRelations }, user) => {
 	await postYRelationDeleteByFromPostId(tx, post.id)
 
 	await tx.yPost.update({
@@ -28,15 +29,20 @@ export const updateEntity = async (tx, { post, outRelations, systemRelations }) 
 				}
 			},
 			lastUpdated: new Date()
+		},
+		// @ts-ignore
+		_metadata: {
+			post,
+			user,
 		}
 	})
 }
 
 /**
- * @param {{ userId: string }} arg1
  * @param {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], transformedSystemRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], content: string }} data
+ * @param {{ name: string, id: string }} user
  */
-export const updateArticleYPost = async ({ userId }, data) => {
+export const updateArticleYPost = async (data, user) => {
 	const { post, outRelations, transformedSystemRelations, content } = data
 
 	return prisma.$transaction(async (tx) => {
@@ -44,7 +50,7 @@ export const updateArticleYPost = async ({ userId }, data) => {
 			post,
 			outRelations,
 			systemRelations: transformedSystemRelations
-		})
+		}, user)
 
 		/**
 			* @type {Pick<Prisma.YPostUpdate, 'content' | 'postId'>}
@@ -54,7 +60,7 @@ export const updateArticleYPost = async ({ userId }, data) => {
 			postId: post.id
 		}
 
-		return createYPostUpdate(tx, userId, dataToInsert)
+		return createYPostUpdate(tx, dataToInsert, user)
 	})
 }
 
@@ -62,15 +68,15 @@ export const updateArticleYPost = async ({ userId }, data) => {
 /**
  * Create YPostUpdateMetadata, & YPostUpdate
  * @param {Prisma.PrismaClient | Prisma.Prisma.TransactionClient} tx
- * @param {string} userId
  * @param {Pick<Prisma.YPostUpdate, 'content' | 'postId'>} data
+ * @param {{ name: string, id: string }} user
  */
-export const createYPostUpdate = async (tx, userId, data) => {
+export const createYPostUpdate = async (tx, data, user) => {
 	return tx.yPostUpdateMetadata.create({
 		data: {
 			user: {
 				connect: {
-					id: userId
+					id: user.id
 				}
 			},
 			postUpdate: {

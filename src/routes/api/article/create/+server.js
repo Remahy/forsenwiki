@@ -13,7 +13,7 @@ import { readYPostByTitle } from '$lib/db/article/read';
 
 export async function POST({ request, locals }) {
 	const session = await locals.auth();
-	if (!session || !session.user?.id) return ForbiddenError();
+	if (!session?.user?.id || !session?.user?.name) return ForbiddenError();
 
 	const { title: rawTitle, content } = await request.json();
 
@@ -43,9 +43,12 @@ export async function POST({ request, locals }) {
 		return error(400, 'Article with that title already exists.');
 	}
 
-	const internalIds = await getArticleURLIds(editor)
+	const internalIds = await getArticleURLIds(editor);
 
-	const createdArticle = await createArticle({ userId: session.user.id, title, data: { content }, ids: internalIds });
+	const body = { title, data: { content }, ids: internalIds };
+	const user = { name: session.user.name, id: session.user.id };
+
+	const createdArticle = await createArticle(body, user);
 
 	return json({
 		...createdArticle

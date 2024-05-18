@@ -59,6 +59,7 @@
 		"lucide-svelte": "^0.378.0",
 		"sanitize-filename": "^1.6.3",
 		"svelte-lexical": "^0.4.0",
+		"sveltekit-sse": "^0.13.0",
 		"uint8array-extras": "^1.1.0",
 		"y-indexeddb": "^9.0.12",
 		"yjs": "13.6.15"

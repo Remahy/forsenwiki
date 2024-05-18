@@ -13,7 +13,7 @@ import { updateArticleYPost } from '$lib/db/article/update';
 
 export async function POST({ request, locals, params }) {
 	const session = await locals.auth();
-	if (!session || !session.user?.id) return ForbiddenError();
+	if (!session?.user?.id || !session?.user?.name) return ForbiddenError();
 
 	const { content } = await request.json();
 
@@ -71,8 +71,10 @@ export async function POST({ request, locals, params }) {
 
 	const contentBase64 = uint8ArrayToBase64(diff)
 
-	const body = { post, outRelations, transformedSystemRelations, content: contentBase64 }
-	const updatedArticle = await updateArticleYPost({ userId: session.user.id }, body)
+	const body = { post, outRelations, transformedSystemRelations, content: contentBase64 };
+	const user = { name: session.user.name, id: session.user.id };
 
-	return json({...updatedArticle, title: post.title })
+	const updatedArticle = await updateArticleYPost(body, user)
+
+	return json({ ...updatedArticle, title: post.title });
 }

@@ -1,12 +1,14 @@
 import prisma from "$lib/prisma";
 import { Y_POST_TYPES } from "$lib/constants/yPostTypes";
 
-/** @param {{ userId: string, title: {raw: string, sanitized: string}, data: { content: string }, ids: string[] }} obj */
-export const createArticle = async ({ userId, title, data, ids }) => {
+/**
+ * @param {{ title: {raw: string, sanitized: string}, data: { content: string }, ids: string[] }} arg1
+ * @param {{ name: string, id: string }} user
+ */
+export const createArticle = async ({ title, data, ids }, user) => {
 	const outRelations = ids.map((id) => ({ isSystem: false, toPostId: id }))
 
   const { post, postUpdate } = await prisma.$transaction(async (tx) => {
-
     // Create yPost
     const post = await tx.yPost.create({
       data: {
@@ -29,6 +31,11 @@ export const createArticle = async ({ userId, title, data, ids }) => {
         id: true,
         title: true,
         rawTitle: true,
+        createdTimestamp: true
+      },
+      // @ts-ignore
+      _metadata: {
+        user,
       }
     })
 
@@ -44,7 +51,7 @@ export const createArticle = async ({ userId, title, data, ids }) => {
 					create: {
 						user: {
 							connect: {
-								id: userId
+								id: user.id
 							}
 						}
 					}

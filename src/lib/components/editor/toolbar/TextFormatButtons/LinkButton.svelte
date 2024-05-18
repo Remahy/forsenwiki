@@ -150,7 +150,6 @@
 			editor.registerCommand(
 				TOGGLE_LINK_COMMAND,
 				(payload) => {
-					console.log(payload);
 					if (typeof payload === 'string') {
 						wrapperToggleLink(payload);
 						return true;
