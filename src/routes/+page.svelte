@@ -2,15 +2,22 @@
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
+	import { page } from '$app/stores';
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';
 
-	/** @type {Writable<Array<{ title: string, rawTitle: string, createdTimestamp: string, author: string }>>} */
-	const latestArticles = writable([]);
-	/** @type {Writable<Array<{ title: string, rawTitle: string, lastUpdated: string, author: string }>>} */
-	const latestUpdates = writable([]);
-	/** @type {Writable<Array<{ name: string }>>} */
-	const latestUsers = writable([]);
+	/**
+	 * @typedef {import('./+page.server').LatestArticle} LatestArticle
+	 * @typedef {import('./+page.server').LatestUpdate} LatestUpdate
+	 * @typedef {import('./+page.server').LatestUser} LatestUser
+	 */
+
+	/** @type {Writable<LatestArticle[]>} */
+	const latestArticles = writable($page.data.latestArticles);
+	/** @type {Writable<LatestUpdate[]>} */
+	const latestUpdates = writable($page.data.latestUpdates);
+	/** @type {Writable<LatestUser[]>} */
+	const latestUsers = writable($page.data.latestUsers);
 
 	const value = source('/adonis/frontpage').select('article:create');
 	const value2 = source('/adonis/frontpage').select('article:update');
@@ -20,9 +27,15 @@
 		value.subscribe((v) => {
 			if (v) {
 				const values = $latestArticles;
-				const newLength = values.unshift(JSON.parse(v));
 
-				if (newLength > 10) values.pop();
+				/** @type {LatestArticle} */
+				const input = JSON.parse(v);
+				if (new Date(values[0].createdTimestamp).getTime() === new Date(input.createdTimestamp).getTime()) {
+					return;
+				}
+
+				const newLength = values.unshift(input);
+				if (newLength > 5) values.pop();
 
 				latestArticles.set(values);
 			}
@@ -30,9 +43,17 @@
 		value2.subscribe((v) => {
 			if (v) {
 				const values = $latestUpdates;
-				const newLength = values.unshift(JSON.parse(v));
 
-				if (newLength > 10) values.pop();
+				/** @type {LatestUpdate} */
+				const input = JSON.parse(v);
+
+				if (new Date(values[0].lastUpdated).getTime() === new Date(input.lastUpdated).getTime()) {
+					return;
+				}
+
+				const newLength = values.unshift(input);
+
+				if (newLength > 5) values.pop();
 
 				latestUpdates.set(values);
 			}
@@ -40,9 +61,16 @@
 		value3.subscribe((v) => {
 			if (v) {
 				const values = $latestUsers;
-				const newLength = values.unshift(JSON.parse(v));
 
-				if (newLength > 10) values.pop();
+				/** @type {LatestUser} */
+				const input = JSON.parse(v);
+				if (values[0].name === input.name) {
+					return;
+				}
+
+				const newLength = values.unshift(input);
+
+				if (newLength > 5) values.pop();
 
 				latestUsers.set(values);
 			}

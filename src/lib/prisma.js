@@ -22,7 +22,7 @@ const prisma = /** @type {any} */ (p.$extends({
 				_emit('article:create', {
 					title: args.data.title,
 					rawTitle: args.data.rawTitle,
-					createdTimestamp: args.data.createdTimestamp || new Date().toISOString(),
+					createdTimestamp: args.data.createdTimestamp?.toString() || new Date().toString(),
 					author: user.name
 				});
 
@@ -37,7 +37,7 @@ const prisma = /** @type {any} */ (p.$extends({
 				_emit('article:update', {
 					title: post.title,
 					rawTitle: post.rawTitle,
-					lastUpdated: args.data.lastUpdated,
+					lastUpdated: args.data.lastUpdated?.toString(),
 					author: user.name
 				});
 
