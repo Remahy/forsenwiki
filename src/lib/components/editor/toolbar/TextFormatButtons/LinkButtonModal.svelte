@@ -6,6 +6,7 @@
 	import Select from '$lib/components/Select.svelte';
 	import { sanitizeUrl } from 'svelte-lexical';
 	import isUrl from 'is-url';
+	import { onMount } from 'svelte';
 
 	/** @typedef {import('@lexical/link').LinkAttributes} LinkAttributes */
 
@@ -89,6 +90,13 @@
 		onSubmit(url, attrs);
 		$modal.isOpen = false;
 	};
+
+	onMount(() => {
+		// Trigger handleInputChange if we're, for example, provided an URL through a selection + copy & paste action.
+		if (url) {
+			handleInputChange(/** @type {any} */ ({ target: { value: url } }));
+		}
+	});
 </script>
 
 <div class="pointer-events-auto relative rounded border bg-white p-0 shadow">

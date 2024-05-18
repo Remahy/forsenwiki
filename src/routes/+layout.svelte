@@ -3,10 +3,10 @@
 	import { writable } from 'svelte/store';
 
 	import Modal from '$lib/components/modal.svelte';
+	import Header from '$lib/components/Header.svelte';
+	import Footer from '$lib/components/Footer.svelte';
 
 	import '../app.pcss';
-	import Header from './Header.svelte';
-	import Footer from './Footer.svelte';
 
 	/** @type {ComposerWritable} */
 	setContext('COMPOSER', writable(null));
