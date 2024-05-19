@@ -1,5 +1,5 @@
 /** @type { import("eslint").Linter.Config } */
-module.exports = {
+export default {
 	root: true,
 	extends: ['eslint:recommended', 'plugin:svelte/recommended', 'prettier'],
 	parserOptions: {
@@ -11,5 +11,18 @@ module.exports = {
 		browser: true,
 		es2022: true,
 		node: true
-	}
+	},
+		ignorePatterns: [
+		".DS_Store",
+		"node_modules",
+		"/build",
+		"/.svelte-kit",
+		"/package",
+		".env",
+		".env.*",
+		"!.env.example",
+		"pnpm-lock.yaml",
+		"package-lock.json",
+		"yarn.lock",
+	]
 };
