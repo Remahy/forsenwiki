@@ -4,3 +4,4 @@ export { HeadingNode, QuoteNode } from '@lexical/rich-text';
 export { ListItemNode, ListNode } from '@lexical/list';
 
 export { ALinkNode, $isALinkNode } from './components/editor/plugins/ALink';
+export { ImageNode, $isImageNode } from './components/editor/plugins/Image';

@@ -44,7 +44,7 @@ export const _getYPostAndHtml = async (title) => {
 	/** @type {string} */
 	let html;
 	try {
-		editor = updateToJSON(articleConfig({}, false, null), base64ToUint8Array(update))
+		editor = updateToJSON(articleConfig(null, false, null), base64ToUint8Array(update))
 		html = await toHTML(editor);
 
 	} catch (err) {

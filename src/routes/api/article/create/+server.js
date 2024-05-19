@@ -20,7 +20,7 @@ export async function POST({ request, locals }) {
 	let editor;
 	let title;
 	try {
-		editor = updateToJSON(articleConfig({}, false, null), base64ToUint8Array(content))
+		editor = updateToJSON(articleConfig(null, false, null), base64ToUint8Array(content))
 
 		await validateArticle(editor);
 

@@ -45,7 +45,7 @@ export async function POST({ request, locals, params }) {
 
 	let editor;
 	try {
-		editor = updateToJSON(articleConfig({}, false, null), combinedUpdate)
+		editor = updateToJSON(articleConfig(null, false, null), combinedUpdate)
 
 		await validateArticle(editor);
 	} catch (err) {

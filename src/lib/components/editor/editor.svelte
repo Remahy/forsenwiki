@@ -20,6 +20,7 @@
 	import Toolbar from './toolbar/index.svelte';
 	import Footer from './footer/index.svelte';
 	import { articleConfig } from './config/article';
+	import ImagePlugin from './plugins/ImagePlugin.svelte';
 
 	export let id;
 	export let update;
@@ -57,7 +58,7 @@
 </script>
 
 <Composer {initialConfig} bind:this={composer}>
-	<div class="flex grow flex-col">
+	<div class="flex grow flex-col editor-shell">
 		<RichTextPlugin />
 
 		<ListPlugin />
@@ -65,6 +66,8 @@
 		<LinkPlugin validateUrl={isUrl} />
 
 		<AutoFocusPlugin />
+
+		<ImagePlugin />
 
 		<CollaborationPlugin
 			{id}
