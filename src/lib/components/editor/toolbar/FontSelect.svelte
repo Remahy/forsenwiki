@@ -1,5 +1,10 @@
 <script>
-	import { COMMAND_PRIORITY_CRITICAL, $getSelection as getSelection, SELECTION_CHANGE_COMMAND } from 'lexical';
+	import {
+		$isNodeSelection as isNodeSelection,
+		COMMAND_PRIORITY_CRITICAL,
+		$getSelection as getSelection,
+		SELECTION_CHANGE_COMMAND
+	} from 'lexical';
 	import {
 		$patchStyleText as patchStyleText,
 		$getSelectionStyleValueForProperty as getSelectionStyleValueForProperty
@@ -59,7 +64,7 @@
 		/** @type {RangeSelection | null} */
 		const selection = /** @type {any} */ (getSelection());
 
-		if (selection !== null) {
+		if (selection !== null && !isNodeSelection(selection)) {
 			const value = getSelectionStyleValueForProperty(selection, 'font-family', 'default');
 
 			if (value === '' && !selection.isCollapsed()) {

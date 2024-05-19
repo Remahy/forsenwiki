@@ -14,7 +14,7 @@
 
 	import Button from '$lib/components/Button.svelte';
 	import { ctrlKey } from '$lib/environment/environment';
-	import getSelectedNode from '$lib/environment/utils';
+	import { getSelectedNode } from '$lib/components/editor/utils/getSelection';
 	import LinkButtonModal from './LinkButtonModal.svelte';
 	import { modal } from '$lib/stores/modal';
 	import { $isALinkNode as isALinkNode } from '../../plugins/ALink';

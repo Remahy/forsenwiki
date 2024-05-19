@@ -95,7 +95,7 @@
 		<div class="prose !max-w-none">
 			<p>
 				Editing the <strong>"{rawTitle}"</strong> article.
-				<strong>Alpha: </strong> Your article drafts are automatically saved locally.*
+				<strong>Alpha: </strong> Your article drafts are automatically saved locally.
 			</p>
 		</div>
 	</Box>

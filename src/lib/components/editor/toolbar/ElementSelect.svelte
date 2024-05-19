@@ -41,7 +41,7 @@
 
 	import Select from '$lib/components/Select.svelte';
 	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
-	import { getSelectedElements } from '$lib/environment/utils';
+	import { getSelectedElements } from '$lib/components/editor/utils/getSelection';
 	import { ListNode } from '$lib/lexical';
 
 	const { TYPES } = ELEMENT_CONSTANTS;

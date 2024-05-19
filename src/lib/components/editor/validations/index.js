@@ -1,4 +1,3 @@
-// @ts-nocheck Lexical's types... Klassiker
 import { $nodesOfType } from 'lexical';
 
 import { ParagraphNode, ALinkNode } from "$lib/lexical";
