@@ -85,12 +85,21 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
     return node;
   }
 
-  exportDOM(): DOMExportOutput {
+  exportDOM(editor: LexicalEditor): DOMExportOutput {
+    const theme = editor._config.theme
     const element = document.createElement('img');
     element.setAttribute('src', this.__src);
     element.setAttribute('alt', this.__altText);
     element.setAttribute('width', this.__width.toString());
     element.setAttribute('height', this.__height.toString());
+ 
+    element.style.width = this.__width.toString()+'px';
+    element.style.height = this.__height.toString()+'px';
+    element.style.maxWidth = this.__maxWidth.toString()+'px';
+
+    if (theme.image) {
+      element.setAttribute('class', theme.image);
+    }
 
     return {element};
   }

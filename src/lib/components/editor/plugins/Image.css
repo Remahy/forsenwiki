@@ -86,8 +86,9 @@
 /**/
 
 .editor-shell img.editor-image {
-  display: inline-block;
-  position: relative;
-  white-space: nowrap;
-    max-width: 100%;
+	display: inline-block;
+	position: relative;
+	white-space: nowrap;
+	max-width: 100%;
+	vertical-align: baseline;
 }
