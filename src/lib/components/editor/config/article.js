@@ -19,8 +19,8 @@ const onErrorDefault = (error) => {
  * @param {any} editorState
  * @param {typeof onErrorDefault} onError
  */
-export const articleConfig = (theme = articleTheme, editable, editorState, onError = onErrorDefault) => ({
-	theme,
+export const articleConfig = (theme, editable, editorState, onError = onErrorDefault) => ({
+	theme: theme || articleTheme,
 	namespace: 'editor',
 	editable,
 	nodes: [

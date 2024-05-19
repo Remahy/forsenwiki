@@ -40,7 +40,7 @@
 		);
 	}
 
-	const initialConfig = articleConfig({}, true, null);
+	const initialConfig = articleConfig(null, true, null);
 
 	/** @type {Composer | null} */
 	let composer = null;
