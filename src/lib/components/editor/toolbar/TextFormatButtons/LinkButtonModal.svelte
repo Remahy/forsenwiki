@@ -61,7 +61,7 @@
 	};
 
 	/** @param {string} value */
-	const handleInternalLink = (value) => {
+	const handleExternalLink = (value) => {
 		const sUrl = sanitizeUrl(value);
 		if (isUrl(sUrl)) {
 			isValidLink = true;
@@ -77,12 +77,12 @@
 		isValidLink = false;
 		error = '';
 
-		/** @type {HTMLSelectElement} */
+		/** @type {HTMLInputElement} */
 		const target = /** @type {any} */ (e.target);
 		if (target) {
 			const value = target.value;
 
-			if (currentLinkType === 'external') handleInternalLink(value);
+			if (currentLinkType === 'external') handleExternalLink(value);
 		}
 	};
 
