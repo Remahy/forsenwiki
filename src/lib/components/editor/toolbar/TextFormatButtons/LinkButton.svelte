@@ -1,5 +1,5 @@
 <script>
-	import { TOGGLE_LINK_COMMAND, toggleLink } from '@lexical/link';
+	import { TOGGLE_LINK_COMMAND, $toggleLink as toggleLink } from '@lexical/link';
 	import {
 		COMMAND_PRIORITY_CRITICAL,
 		COMMAND_PRIORITY_HIGH,
