@@ -15,8 +15,6 @@
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
 	$: composer = $c;
-	$: canEdit = composer?.getEditor().isEditable();
-	$: editor = composer?.getEditor();
 
 	const updateToolbar = () => {
 		/**
@@ -60,7 +58,14 @@
 
 {#if selectedImageNode}
 	<div class="flex items-center gap-2">
-		<span>Image options</span>
+		<div
+			class="flex select-none flex-col items-center justify-center font-mono text-xs leading-none text-gray-400"
+		>
+			<span>I</span>
+			<span>M</span>
+			<span>G</span>
+		</div>
+
 		<EditImage {selectedImageNode} />
 	</div>
 {/if}
