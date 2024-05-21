@@ -36,7 +36,6 @@
 	export let nodeKey: string;
 	export let width: 'inherit' | number;
 	export let height: 'inherit' | number;
-	export let maxWidth: number;
 	export let resizable: boolean;
 	export let editor: LexicalEditor;
 
@@ -213,11 +212,11 @@
 			src={src === TRANSPARENT_IMAGE ? IMAGE_OFF : src}
 			alt={altText}
 			bind:this={imageRef}
-			style="height:{heightCss};max-width:{maxWidth}px;width:{widthCss};"
+			style="height:{heightCss};px;width:{widthCss};"
 			draggable="false"
 		/>
 	{/await}
 </div>
 {#if resizable && isNodeSelection(selection) && isFocused}
-	<ImageResizer {editor} {imageRef} {maxWidth} {onResizeStart} {onResizeEnd} />
+	<ImageResizer {editor} {imageRef} {onResizeStart} {onResizeEnd} />
 {/if}

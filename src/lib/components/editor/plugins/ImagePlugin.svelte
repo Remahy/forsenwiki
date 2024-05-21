@@ -69,7 +69,6 @@
 					altText: node.__altText,
 					height: node.__height,
 					key: node.getKey(),
-					maxWidth: node.__maxWidth,
 					src: node.__src,
 					width: node.__width
 				},

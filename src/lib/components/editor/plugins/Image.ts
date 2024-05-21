@@ -18,7 +18,6 @@ export interface ImagePayload {
   altText: string;
   height?: number;
   key?: NodeKey;
-  maxWidth?: number;
   src: string;
   width?: number;
 }
@@ -37,7 +36,6 @@ export type SerializedImageNode = Spread<
   {
     altText: string;
     height?: number;
-    maxWidth: number;
     src: string;
     width?: number;
   },
@@ -54,7 +52,6 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
   __altText: string;
   __width: 'inherit' | number;
   __height: 'inherit' | number;
-  __maxWidth: number;
 
   static getType(): string {
     return 'image';
@@ -64,7 +61,6 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
     return new ImageNode(
       node.__src,
       node.__altText,
-      node.__maxWidth,
       node.__width,
       node.__height,
       node.__key,
@@ -72,12 +68,11 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
   }
 
   static importJSON(serializedNode: SerializedImageNode): ImageNode {
-    const {altText, height, width, maxWidth, src} =
+    const {altText, height, width, src} =
       serializedNode;
     const node = $createImageNode({
       altText,
       height,
-      maxWidth,
       src,
       width,
     });
@@ -95,7 +90,6 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
  
     element.style.width = this.__width.toString()+'px';
     element.style.height = this.__height.toString()+'px';
-    element.style.maxWidth = this.__maxWidth.toString()+'px';
 
     if (theme.image) {
       element.setAttribute('class', theme.image);
@@ -116,7 +110,6 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
   constructor(
     src: string,
     altText: string,
-    maxWidth: number,
     width?: 'inherit' | number,
     height?: 'inherit' | number,
     key?: NodeKey,
@@ -124,7 +117,6 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
     super(key);
     this.__src = src;
     this.__altText = altText;
-    this.__maxWidth = maxWidth;
     this.__width = width || 'inherit';
     this.__height = height || 'inherit';
   }
@@ -133,7 +125,6 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
     return {
       altText: this.getAltText(),
       height: this.__height === 'inherit' ? 0 : this.__height,
-      maxWidth: this.__maxWidth,
       src: this.getSrc(),
       type: 'image',
       version: 1,
@@ -192,7 +183,6 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
         altText: this.__altText,
         width: this.__width,
         height: this.__height,
-        maxWidth: this.__maxWidth,
         nodeKey: this.__key,
         resizable: true,
         editor: editor,
@@ -204,7 +194,6 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 export function $createImageNode({
   altText,
   height,
-  maxWidth = 500,
   src,
   width,
   key,
@@ -213,7 +202,6 @@ export function $createImageNode({
     new ImageNode(
       src,
       altText,
-      maxWidth,
       width,
       height,
       key,

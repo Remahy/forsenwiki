@@ -5,7 +5,6 @@
 	export let onResizeStart: () => void;
 	export let onResizeEnd: (width: 'inherit' | number, height: 'inherit' | number) => void;
 	export let imageRef: HTMLElement | null;
-	export let maxWidth: number | null;
 	export let editor: LexicalEditor;
 
 	let controlWrapperRef: HTMLDivElement;
@@ -50,11 +49,8 @@
 
 	const editorRootElement = editor.getRootElement();
 	// Find max width, accounting for editor padding.
-	const maxWidthContainer = maxWidth
-		? maxWidth
-		: editorRootElement !== null
-			? editorRootElement.getBoundingClientRect().width - 20
-			: 28;
+	const maxWidthContainer =
+		editorRootElement !== null ? editorRootElement.getBoundingClientRect().width - 20 : 28;
 	const maxHeightContainer =
 		editorRootElement !== null ? editorRootElement.getBoundingClientRect().height - 20 : 28;
 
