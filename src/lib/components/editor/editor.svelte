@@ -72,8 +72,7 @@
 		<CollaborationPlugin
 			{id}
 			{providerFactory}
-			shouldBootstrap={!update}
-			initialEditorState={initialState}
+			shouldBootstrap={false}
 		/>
 
 		<div class="w-full border border-b-0 p-2">
