@@ -3,7 +3,7 @@
 ## Developing
 
 - Install dependencies with `npm install`.
-- Add some environment variables to a `.env` file, use `.env.example` for available environment variables.
+- Copy `.env.example` to a new file named `.env` and change the content accordingly.
 - Run migrations & init seed `npm run prisma:migrate-dev && npm run prisma:seed`
 - Start a dev server:
 
