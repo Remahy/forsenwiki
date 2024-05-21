@@ -2,12 +2,6 @@
 	import { getContext, onMount } from 'svelte';
 	import isUrl from 'is-url';
 	import {
-		$getRoot as getRoot,
-		$createParagraphNode as createParagraphNode,
-		$createTextNode as createTextNode
-	} from 'lexical';
-	import {
-		AutoFocusPlugin,
 		CollaborationPlugin,
 		Composer,
 		ContentEditable,
@@ -24,22 +18,6 @@
 
 	export let id;
 	export let update;
-
-	/**
-	 * @param {LexicalEditor} editor
-	 */
-	function initialState(editor) {
-		editor.update(
-			() => {
-				const root = getRoot();
-				const paragraph = createParagraphNode();
-				const text = createTextNode();
-				paragraph.append(text);
-				root.append(paragraph);
-			},
-			{ tag: 'historic' }
-		);
-	}
 
 	const initialConfig = articleConfig(null, true, null);
 
