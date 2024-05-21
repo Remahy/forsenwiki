@@ -15,6 +15,7 @@
 	import Footer from './footer/index.svelte';
 	import { articleConfig } from './config/article';
 	import ImagePlugin from './plugins/ImagePlugin.svelte';
+	import AutoFocus from './plugins/AutoFocus.svelte';
 
 	export let id;
 	export let update;
@@ -43,7 +44,7 @@
 
 		<LinkPlugin validateUrl={isUrl} />
 
-		<AutoFocusPlugin />
+		<AutoFocus />
 
 		<ImagePlugin />
 
