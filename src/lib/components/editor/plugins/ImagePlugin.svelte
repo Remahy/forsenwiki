@@ -51,52 +51,6 @@
 
 	let img: HTMLImageElement;
 
-	onMount(() => {
-		if (!editor.hasNodes([ImageNode])) {
-			throw new Error('ImagesPlugin: ImageNode not registered on editor');
-		}
-
-		img = document.createElement('img');
-		img.src = TRANSPARENT_IMAGE;
-
-		return mergeRegister(
-			editor.registerCommand<InsertImagePayload>(
-				INSERT_IMAGE_COMMAND,
-				(payload) => {
-					const imageNode = createImageNode(payload);
-					insertNodes([imageNode]);
-					if (isRootOrShadowRoot(imageNode.getParentOrThrow())) {
-						wrapNodeInElement(imageNode, createParagraphNode).selectEnd();
-					}
-
-					return true;
-				},
-				COMMAND_PRIORITY_EDITOR
-			),
-			editor.registerCommand<DragEvent>(
-				DRAGSTART_COMMAND,
-				(event) => {
-					return onDragStart(event);
-				},
-				COMMAND_PRIORITY_HIGH
-			),
-			editor.registerCommand<DragEvent>(
-				DRAGOVER_COMMAND,
-				(event) => {
-					return onDragover(event);
-				},
-				COMMAND_PRIORITY_LOW
-			),
-			editor.registerCommand<DragEvent>(
-				DROP_COMMAND,
-				(event) => {
-					return onDrop(event, editor);
-				},
-				COMMAND_PRIORITY_HIGH
-			)
-		);
-	});
-
 	function onDragStart(event: DragEvent): boolean {
 		const node = getImageNodeInSelection();
 		if (!node) {
@@ -215,6 +169,52 @@
 
 		return range;
 	}
+
+	onMount(() => {
+		if (!editor.hasNodes([ImageNode])) {
+			throw new Error('ImagesPlugin: ImageNode not registered on editor');
+		}
+
+		img = document.createElement('img');
+		img.src = TRANSPARENT_IMAGE;
+
+		return mergeRegister(
+			editor.registerCommand<InsertImagePayload>(
+				INSERT_IMAGE_COMMAND,
+				(payload) => {
+					const imageNode = createImageNode(payload);
+					insertNodes([imageNode]);
+					if (isRootOrShadowRoot(imageNode.getParentOrThrow())) {
+						wrapNodeInElement(imageNode, createParagraphNode).selectEnd();
+					}
+
+					return true;
+				},
+				COMMAND_PRIORITY_EDITOR
+			),
+			editor.registerCommand<DragEvent>(
+				DRAGSTART_COMMAND,
+				(event) => {
+					return onDragStart(event);
+				},
+				COMMAND_PRIORITY_HIGH
+			),
+			editor.registerCommand<DragEvent>(
+				DRAGOVER_COMMAND,
+				(event) => {
+					return onDragover(event);
+				},
+				COMMAND_PRIORITY_LOW
+			),
+			editor.registerCommand<DragEvent>(
+				DROP_COMMAND,
+				(event) => {
+					return onDrop(event, editor);
+				},
+				COMMAND_PRIORITY_HIGH
+			)
+		);
+	});
 </script>
 
 <!--for ImageComponent history plugin -->
