@@ -11,6 +11,7 @@ import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { createArticle } from '$lib/db/article/create';
 import { readYPostByTitle } from '$lib/db/article/read';
 import { encodeYDocToUpdateV2ToBase64 } from '$lib/yjs/utils.js';
+import { validateAndUploadImages } from '$lib/components/editor/validations/images.js';
 
 export async function POST({ request, locals }) {
 	const session = await locals.auth();
@@ -26,6 +27,9 @@ export async function POST({ request, locals }) {
 
 		// Does not modify the editor.
 		await validateArticle(editor);
+
+		// Modifies the editor.
+		await validateAndUploadImages(editor);
 
 		title = sanitizeTitle(rawTitle);
 	} catch (err) {

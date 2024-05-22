@@ -10,6 +10,7 @@ import { InvalidArticle } from '$lib/errors/InvalidArticle';
 import { getArticleURLIds } from '$lib/components/editor/utils/getEntities';
 import { readSystemYPostRelations } from '$lib/db/article/read';
 import { updateArticleYPost } from '$lib/db/article/update';
+import { validateAndUploadImages } from '$lib/components/editor/validations/images'
 import { _getYPostByTitle } from '../../read/[title]/+server';
 
 export async function POST({ request, locals, params }) {
@@ -50,6 +51,9 @@ export async function POST({ request, locals, params }) {
 
 		// Does not modify the editor.
 		await validateArticle(editor);
+
+		// Modifies the editor.
+		await validateAndUploadImages(editor);
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidArticle(err);
