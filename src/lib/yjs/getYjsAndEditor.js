@@ -47,7 +47,7 @@ export function getYjsAndEditor(config, update) {
 
   editor.update(() => { }, { discrete: true })
 
-  // Enables us to read when changes happen.
+  // Enables "copyTarget"/Y.Doc to be updated when Lexical changes happen.
   editor.registerUpdateListener(
     ({
       dirtyElements,
