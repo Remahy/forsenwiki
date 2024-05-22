@@ -24,6 +24,6 @@ export const validateArticle = (editor) => {
 			}
 
 			resolve(true)
-		});
+		}, { discrete: true });
 	});
 }

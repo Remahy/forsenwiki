@@ -1,15 +1,16 @@
 import { error, json } from '@sveltejs/kit';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
-import { diffUpdateUsingStateVector, getStateVectorFromUpdate, mergePostUpdates, postUpdatesToUint8Arr } from '$lib/yjs/utils';
+
+import { diffUpdateUsingStateVector, encodeYDocToUpdateV2, getStateVectorFromUpdate, mergePostUpdates, postUpdatesToUint8Arr } from '$lib/yjs/utils';
 import { ForbiddenError } from '$lib/errors/Forbidden';
-import { _getYPostByTitle } from '../../read/[title]/+server';
-import { updateToJSON } from '$lib/yjs/updateToJSON';
+import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { validateArticle } from '$lib/components/editor/validations';
 import { InvalidArticle } from '$lib/errors/InvalidArticle';
 import { getArticleURLIds } from '$lib/components/editor/utils/getEntities';
 import { readSystemYPostRelations } from '$lib/db/article/read';
 import { updateArticleYPost } from '$lib/db/article/update';
+import { _getYPostByTitle } from '../../read/[title]/+server';
 
 export async function POST({ request, locals, params }) {
 	const session = await locals.auth();
@@ -37,16 +38,17 @@ export async function POST({ request, locals, params }) {
 	const [incomingUpdate] = postUpdatesToUint8Arr([{ content }])
 
 	// Diff the updates
-	// This is also what we save as a postUpdate
-	const diff = diffUpdateUsingStateVector(incomingUpdate, stateVector)
+	const initialDiff = diffUpdateUsingStateVector(incomingUpdate, stateVector)
 
 	// We use this update to validate if the contents are valid.
-	const combinedUpdate = mergePostUpdates([currentUpdate, diff])
+	const combinedUpdate = mergePostUpdates([currentUpdate, initialDiff])
 
-	let editor;
+	let e;
 	try {
-		editor = updateToJSON(articleConfig(null, false, null), combinedUpdate)
+		e = getYjsAndEditor(articleConfig(null, false, null), combinedUpdate)
+		const editor = e.editor;
 
+		// Does not modify the editor.
 		await validateArticle(editor);
 	} catch (err) {
 		if (typeof err === 'string') {
@@ -56,6 +58,14 @@ export async function POST({ request, locals, params }) {
 		console.error(err);
 		return error(400);
 	}
+	const { editor, doc } = e;
+
+	// By this point, we have probably modified the editor. Let's recreate a diff.
+	const backendUpdate = encodeYDocToUpdateV2(doc)
+
+	// Diff the updates
+	// This is also what we save as a postUpdate
+	const finalDiff = diffUpdateUsingStateVector(backendUpdate, stateVector)
 
 	const systemRelations = await readSystemYPostRelations(post.id)
 
@@ -69,7 +79,7 @@ export async function POST({ request, locals, params }) {
 		toPostId: mentionPostId
 	}))
 
-	const contentBase64 = uint8ArrayToBase64(diff)
+	const contentBase64 = uint8ArrayToBase64(finalDiff)
 
 	const body = { post, outRelations, transformedSystemRelations, content: contentBase64 };
 	const user = { name: session.user.name, id: session.user.id };
