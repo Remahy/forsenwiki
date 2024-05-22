@@ -41,6 +41,10 @@ export const validateAndUploadImages = (editor) => {
 					return;
 				}
 
+				if (src.startsWith('data:')) {
+					continue;
+				}
+
 				// Unset any images that aren't base64.
 				if (!src.startsWith('/static/')) {
 					image.setSrc(IMAGE_OFF);
