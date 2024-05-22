@@ -14,7 +14,6 @@
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
-	$: composer = $c;
 
 	const updateToolbar = () => {
 		/**
