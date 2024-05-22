@@ -12,7 +12,9 @@ export const validateArticle = (editor) => {
 	return new Promise((resolve, reject) => {
 		editor.update(() => {
 			const paragraphs = $nodesOfType(ParagraphNode);
-			if (!paragraphs.length) return reject('No paragraphs');
+			if (!paragraphs.length) {
+				return reject('No paragraphs');
+			}
 
 			const links = $nodesOfType(ALinkNode) || [];
 			const internalLinks = getOnlyInternalLinks(links);

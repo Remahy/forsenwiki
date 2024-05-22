@@ -7,6 +7,15 @@ import { Y } from "./index.mjs"
  */
 export function encodeYDocToUpdateV2(yDoc) {
   const yjsUpdateState = Y.encodeStateAsUpdateV2(yDoc)
+
+  return yjsUpdateState
+}
+
+/**
+ * @param {YDoc} yDoc
+ */
+export function encodeYDocToUpdateV2ToBase64(yDoc) {
+  const yjsUpdateState = Y.encodeStateAsUpdateV2(yDoc)
   const encodedContent = uint8ArrayToBase64(yjsUpdateState)
 
   return encodedContent

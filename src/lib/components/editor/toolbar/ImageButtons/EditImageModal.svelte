@@ -4,6 +4,7 @@
 	import { modal } from '$lib/stores/modal';
 	import Select from '$lib/components/Select.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import { MAX_IMAGE_SIZE_MIB } from '$lib/constants/image';
 
 	/** @type {string} */
 	export let src = '';
@@ -48,7 +49,7 @@
 				const size = file.size / 1048576;
 
 
-				if (size >= 5) {
+				if (size > MAX_IMAGE_SIZE_MIB) {
 					isValidImage = false;
 					error = `File size too large: Max is 5 MiB. Uploaded file size: ~${size.toFixed(2)} MiB`;
 					inputElement.value = '';

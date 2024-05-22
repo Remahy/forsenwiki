@@ -1,4 +1,4 @@
-import { encodeYDocToUpdateV2 } from "$lib/yjs/utils"
+import { encodeYDocToUpdateV2ToBase64 } from "$lib/yjs/utils"
 
 const headers = new Headers({ 'content-type': 'application/json' })
 
@@ -7,7 +7,7 @@ const headers = new Headers({ 'content-type': 'application/json' })
  * @param {YDoc} yDoc
  */
 export const createArticle = async (title, yDoc) => {
-	const encodedContent = encodeYDocToUpdateV2(yDoc)
+	const encodedContent = encodeYDocToUpdateV2ToBase64(yDoc)
 
 	const body = JSON.stringify({ title, content: encodedContent });
 
@@ -19,7 +19,7 @@ export const createArticle = async (title, yDoc) => {
  * @param {YDoc} yDoc
  */
 export const updateArticle = async (postTitle, yDoc) => {
-	const encodedContent = encodeYDocToUpdateV2(yDoc);
+	const encodedContent = encodeYDocToUpdateV2ToBase64(yDoc);
 
 	const body = JSON.stringify({ content: encodedContent });
 
