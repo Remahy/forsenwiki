@@ -24,6 +24,7 @@
 		$isNodeSelection as isNodeSelection,
 		$isRootOrShadowRoot as isRootOrShadowRoot,
 		$setSelection as setSelection,
+		$getNodeByKey as getNodeByKey,
 		COMMAND_PRIORITY_EDITOR,
 		COMMAND_PRIORITY_HIGH,
 		COMMAND_PRIORITY_LOW,
@@ -43,9 +44,10 @@
 		$isImageNode as isImageNode,
 		ImageNode,
 		TRANSPARENT_IMAGE,
-		type ImagePayload,
+		type ImagePayload
 	} from './Image';
 	import { CAN_USE_DOM } from '$lib/environment/utils';
+	import { DOMAIN } from '$lib/environment/environment';
 
 	const editor: LexicalEditor = getEditor();
 
@@ -169,6 +171,46 @@
 		return range;
 	}
 
+	function getBase64Image(img: { src: string }, node: ImageNode) {
+		return async () => {
+			try {
+				// Fetch the image as a Blob
+				const response = await fetch(img.src);
+				const blob = await response.blob();
+
+				const base64 = await new Promise<string>((resolve, reject) => {
+					try {
+						const reader = new FileReader();
+						reader.onloadend = () => {
+							// Base64 string with MIME type
+							const result = reader.result;
+
+							if (typeof result !== 'string') {
+								reject(new Error('FileReader onloadend did not return a string.'));
+								return;
+							}
+
+							resolve(result);
+						};
+
+						reader.onerror = (_) => {
+							throw reader.error;
+						};
+
+						reader.readAsDataURL(blob);
+					} catch (error) {
+						reject(error);
+					}
+				});
+
+				editor.update(() => node.setSrc(base64), { tag: 'history-merge' });
+			} catch (error) {
+				console.error('Error turning image into base64', error);
+				editor.update(() => node.setSrc(TRANSPARENT_IMAGE), { tag: 'history-merge' });
+			}
+		};
+	}
+
 	onMount(() => {
 		if (!editor.hasNodes([ImageNode])) {
 			throw new Error('ImagesPlugin: ImageNode not registered on editor');
@@ -178,6 +220,50 @@
 		img.src = TRANSPARENT_IMAGE;
 
 		return mergeRegister(
+			editor.registerMutationListener(ImageNode, (mutatedNodes) => {
+				const promises: any[] = [];
+
+				editor.update(async () => {
+					for (const [key, mutation] of mutatedNodes) {
+						if (mutation === 'destroyed') continue;
+
+						const node: ImageNode | null = getNodeByKey(key);
+						if (!node) {
+							console.warn('Could not find mutated image node by key', key, 'that was', mutation);
+							continue;
+						}
+
+						const src = node.getSrc();
+
+						if (src.startsWith('data:')) {
+							continue;
+						}
+
+						if (src.startsWith(`https://wsrv.nl/?url=${DOMAIN}`)) {
+							continue;
+						}
+
+						// Download image, turn it into base64.
+						const element = editor.getElementByKey(key) as HTMLImageElement | null;
+
+						if (!element) {
+							console.warn(
+								'Could not find mutated image node DOM node by key',
+								key,
+								'that was',
+								mutation
+							);
+							continue;
+						}
+
+						promises.push(getBase64Image({ src }, node));
+					}
+				});
+
+				if (promises.length) {
+					Promise.all(promises.map(fn => fn()));
+				}
+			}),
 			editor.registerCommand<InsertImagePayload>(
 				INSERT_IMAGE_COMMAND,
 				(payload) => {
