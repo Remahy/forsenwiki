@@ -6,14 +6,18 @@
 	<section class="prose prose-lg w-full max-w-[unset]">
 		<h1 id="privacy">Privacy Policy</h1>
 		<p>🐦</p>
-		<p>Effective date: May 8, 2024</p>
+		<p>Effective date: May 24, 2024</p>
 		<p>
 			ForsenWiki ("us", "we", or "our") operates the forsen.wiki website (hereinafter referred to as
 			the "Service").
 		</p>
 		<p>
-			This page informs you of our policies regarding the collection, use, and disclosure of
-			personal data when you use our Service and the choices you have associated with that data.
+			The Service is hosted on Hetzner (www.hetzner.com) with user content caching on wsrv.nl
+			(wsrv.nl) (both hereinafter referred to by name and as the "Service Providers").
+		</p>
+		<p>
+			This page informs you of our policies regarding the collection, use, and disclosure of data
+			when you use our Service and the choices you have associated with that data.
 		</p>
 		<p>
 			We use your data to provide and improve the Service. By using the Service, you agree to the
@@ -29,7 +33,7 @@
 		<p>
 			While using our Service, we may ask you to provide us with certain personally identifiable
 			information that can be used to contact or identify you ("Personal Data"). Personally
-			identifiable information may include, but is not limited to:
+			identifiable information includes:
 		</p>
 		<ul>
 			<li>Cookies and Usage Data</li>
@@ -37,11 +41,11 @@
 		</ul>
 		<h4>Usage Data</h4>
 		<p>
-			We may also collect information on how the Service is accessed and used ("Usage Data"). This
-			Usage Data may include information such as your computer's Internet Protocol address (e.g. IP
-			address), browser type, browser version, the pages of our Service that you visit, the time and
-			date of your visit, the time spent on those pages, unique device identifiers and other
-			diagnostic data.
+			We collect information on how the Service is accessed and used ("Usage Data"). This Usage Data
+			may include information such as your computer's Internet Protocol address (e.g. IP address),
+			browser type, browser version, the pages of our Service that you visit, the time and date of
+			your visit, the time spent on those pages, unique device identifiers and other diagnostic
+			data.
 		</p>
 		<h4>Tracking & Cookies Data</h4>
 		<p>
@@ -118,6 +122,34 @@
 			take place to an organization or a country unless there are adequate controls in place
 			including the security of your data and other personal information.
 		</p>
+		<h2>Processing of Data by Service Providers</h2>
+		<p>
+			The Service Providers we use may have access to your Personal Data. These third-party vendors
+			may collect, store, use, process and transfer information about Your activity on Our Service
+			in accordance with their Privacy Policies.
+		</p>
+		<p>We use Hetzner as Our hosting provider.</p>
+		<ul>
+			<li>To provide and maintain the Service</li>
+		</ul>
+		<p>
+			Read their Privacy Policy here: <a
+				href="https://www.hetzner.com/legal/privacy-policy/"
+				target="hetzner-privacy"
+				rel="noopener noreferrer">https://www.hetzner.com/legal/privacy-policy/</a
+			>
+		</p>
+		<p>We use wsrv.nl to cache user content.</p>
+		<ul>
+			<li>To provide and maintain the Service</li>
+		</ul>
+		<p>
+			Read their Privacy Policy here: <a
+				href="https://github.com/weserv/images/blob/5.x/Privacy-Policy.md"
+				target="weserv-privacy"
+				rel="noopener noreferrer">https://github.com/weserv/images/blob/5.x/Privacy-Policy.md</a
+			>
+		</p>
 		<h2>Disclosure Of Data</h2>
 		<h3>Legal Requirements</h3>
 		<p>
@@ -159,8 +191,8 @@
 		</p>
 		<ul>
 			<li>
-				The right to access - You have the right to request the Service for copies of your personal
-				data. You can find this under your user settings by clicking "My data".
+				The right to access - You have the right to request the Service for copies of your Personal
+				Data. You can find this under your user settings by clicking "My data".
 			</li>
 			<li>
 				The right to rectification - You have the right to request that the Service correct any
@@ -168,17 +200,17 @@
 				complete the information you believe is incomplete.
 			</li>
 			<li>
-				The right to erasure - You have the right to request that the Service erase your personal
-				data. You can do this under your user settings by clicking "Delete account".
+				The right to erasure - You have the right to request that the Service erase your Personal
+				Data. You can do this under your user settings by clicking "Delete account".
 			</li>
 			<li>
 				The right to restrict processing - You have the right to request that the Service restrict
-				the processing of your personal data. You can do this under your user settings by clicking
+				the processing of your Personal Data. You can do this under your user settings by clicking
 				"Delete account".
 			</li>
 			<li>
 				The right to object to processing - You have the right to object to the Service's processing
-				of your personal data. You can do this under your user settings by clicking "Delete
+				of your Personal Data. You can do this under your user settings by clicking "Delete
 				account".
 			</li>
 			<li>
@@ -191,7 +223,7 @@
 			If you make a request, we have one month to respond to you. If you would like help on how to
 			exercise any of these rights, please contact us at our email:
 		</p>
-		<p>Write to us: forsenwiki+gdpr(<AtSignIcon style="display: inline;"/>)gmail.com</p>
+		<p>Write to us: forsenwiki+gdpr(<AtSignIcon style="display: inline;" />)gmail.com</p>
 		<h2>Links To Other websites</h2>
 		<p>
 			Our Service may contain links to other websites that are not operated by us. If you click on a
