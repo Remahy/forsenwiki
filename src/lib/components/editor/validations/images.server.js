@@ -12,7 +12,7 @@ import { staticDir } from '../../../../../static';
 
 const cacheServiceBaseURL = 'https://wsrv.nl';
 const csbURL = new URL('', cacheServiceBaseURL);
-csbURL.searchParams.append('url', STATIC_DOMAIN);
+csbURL.searchParams.append('url', STATIC_DOMAIN + '/');
 const cacheServiceBaseURLWithStatic = csbURL.toString();
 
 /**
@@ -61,7 +61,7 @@ const uploadImage = async (base64String, title, sha256String, author) => {
 				name: title,
 				hash: sha256String,
 				authorId: author.id,
-			}
+			},
 		});
 	} catch (error) {
 		console.warn(error);
@@ -108,12 +108,12 @@ export const validateAndUploadImages = (editor, title, author) => {
 						const url = new URL('', cacheServiceBaseURL);
 
 						// Assume the image will be successfully uploaded to our server.
-						const ourUrl = new URL(hash, STATIC_DOMAIN);
+						const ourUrl = new URL(hash, STATIC_DOMAIN + '/');
 
 						url.searchParams.append('url', ourUrl.toString());
 						url.searchParams.append('filename', title);
 						url.searchParams.append('n', '-1');
-	
+
 						// Set image src to cache.
 						image.setSrc(url.toString());
 						continue;
