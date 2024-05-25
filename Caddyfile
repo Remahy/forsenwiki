@@ -1,8 +1,10 @@
 localhost:80 {
-	reverse_proxy * sveltekit:3000
-
-	handle_path /usercontent {
-		root * usercontent
+	handle_path /usercontent* {
+		root * /srv
 		file_server
+	}
+
+	handle {
+		reverse_proxy sveltekit:3000
 	}
 }

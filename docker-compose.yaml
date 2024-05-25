@@ -14,7 +14,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./usercontent:/usercontent
+      - ${DEV_STATIC_DIR}:/usercontent
     depends_on:
       - db
       - caddy
@@ -38,10 +38,9 @@ services:
       - "5443:443/udp"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
-      - ./site:/srv
+      - ${DEV_STATIC_DIR}:/srv
       - caddy_data:/data
       - caddy_config:/config
-      - ./usercontent:/usercontent
     depends_on:
       - db
 
