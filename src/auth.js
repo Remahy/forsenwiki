@@ -1,3 +1,4 @@
+import { AUTH_TWITCH_ID, AUTH_TWITCH_SECRET, AUTH_TRUST_HOST } from "$env/static/private";
 import { SvelteKitAuth } from "@auth/sveltekit"
 import Twitch from "@auth/sveltekit/providers/twitch"
 import { PrismaAdapter } from "@auth/prisma-adapter"
@@ -7,7 +8,13 @@ import { AccountTooYoung } from "$lib/errors/auth/AccountTooYoung";
 import { AccountIsSpecial } from "$lib/errors/auth/AccountIsSpecial";
 import { NoUser } from "$lib/errors/auth/NoUser";
 
+if (!AUTH_TWITCH_ID || !AUTH_TWITCH_SECRET) {
+	console.warn('Make sure AUTH_TWITCH_ID and AUTH_TWITCH_SECRET are defined in your environment file.');
+	process.exit(1);
+}
+
 export const { handle, signIn, signOut } = SvelteKitAuth({
+	trustHost: AUTH_TRUST_HOST === 'true' ? true : false,
 	adapter: PrismaAdapter(prisma),
 	callbacks: {
 		async session({ session, user }) {
@@ -33,13 +40,13 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 			id: twitch.id,
 			name: twitch.name,
 			token: {
-				url: `https://id.twitch.tv/oauth2/token?client_id=${process.env.AUTH_TWITCH_ID}&client_secret=${process.env.AUTH_TWITCH_SECRET}&grant_type=authorization_code`,
+				url: `https://id.twitch.tv/oauth2/token?client_id=${AUTH_TWITCH_ID}&client_secret=${AUTH_TWITCH_SECRET}&grant_type=authorization_code`,
 				params: {
 					scope: ''
 				},
 			},
 			authorization: {
-				url: `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${process.env.AUTH_TWITCH_ID}`,
+				url: `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${AUTH_TWITCH_ID}`,
 				params: {
 					scope: ''
 				}

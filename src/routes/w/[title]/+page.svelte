@@ -1,6 +1,8 @@
 <script>
 	import { EditIcon } from 'lucide-svelte';
 
+	import '$lib/components/editor/plugins/Image.css'
+
 	export let data;
 </script>
 
@@ -20,7 +22,7 @@
 			>
 		</header>
 
-		<main class="prose max-w-[unset] grow">
+		<main class="prose max-w-[unset] grow editor-shell">
 			<h1>{data.post.rawTitle}</h1>
 
 			{@html data.html}

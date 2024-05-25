@@ -1,8 +1,11 @@
-import { ALinkNode, LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical';
+import { LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical';
+import { ALinkNode, ImageNode } from '$lib/lexicalCustom';
 import { $createALinkNode } from '../plugins/ALink';
 
 const articleTheme = {
-	paragraph: 'm-0'
+	root: 'editor-shell',
+	paragraph: 'm-0',
+	image: 'm-0 editor-image',
 };
 
 /** 
@@ -19,8 +22,8 @@ const onErrorDefault = (error) => {
  * @param {any} editorState
  * @param {typeof onErrorDefault} onError
  */
-export const articleConfig = (theme = articleTheme, editable, editorState, onError = onErrorDefault) => ({
-	theme,
+export const articleConfig = (theme, editable, editorState, onError = onErrorDefault) => ({
+	theme: theme || articleTheme,
 	namespace: 'editor',
 	editable,
 	nodes: [
@@ -41,7 +44,8 @@ export const articleConfig = (theme = articleTheme, editable, editorState, onErr
 		ListNode,
 		ListItemNode,
 		HeadingNode,
-		QuoteNode
+		QuoteNode,
+		ImageNode,
 	],
 	/** @param {Error} error */
 	onError,

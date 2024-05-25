@@ -93,7 +93,7 @@
 		<div class="prose !max-w-none">
 			<p>
 				Creating a new article.
-				<strong>Alpha: </strong> Your article drafts are automatically saved locally.*
+				<strong>Alpha: </strong> Your article drafts are automatically saved locally.
 			</p>
 		</div>
 	</Box>
@@ -116,7 +116,7 @@
 		<small class="grow">
 			Make sure you read the <Link href="/terms" class="hover:!text-indigo-700"
 				>Terms & Conditions</Link
-			>. Don't complain if your edits get deleted. <Clown />
+			>. Anyone can edit this article once it's submitted. Don't complain if your article get modified or deleted. <Clown />
 		</small>
 
 		<Button disabled={!canEdit || isUploading || error} on:click={submit}>

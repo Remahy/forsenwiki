@@ -1,9 +1,17 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
-import * as path from 'path';
+import path from 'path';
 
 export default defineConfig({
 	plugins: [sveltekit()],
+	server: {
+		proxy: {
+			'/usercontent': {
+				target: 'http://localhost:5175/',
+				rewrite: (path) => path.replace(/^\/usercontent/, ''),
+			}
+		}
+	},
 	resolve: {
 		alias: {
 			yjs: path.resolve('./node_modules/yjs/dist/yjs.mjs'),

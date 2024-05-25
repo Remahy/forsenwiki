@@ -2,7 +2,7 @@ import { json, error } from '@sveltejs/kit';
 import { base64ToUint8Array } from 'uint8array-extras';
 
 import { articleConfig } from '$lib/components/editor/config/article';
-import { updateToJSON } from '$lib/yjs/updateToJSON';
+import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { toHTML } from '$lib/lexicalHTML.server';
 import { readYPostUpdatesByTitle } from '$lib/db/article/read';
 import { yPostUpdatesToBase64 } from '$lib/yjs/utils';
@@ -44,7 +44,9 @@ export const _getYPostAndHtml = async (title) => {
 	/** @type {string} */
 	let html;
 	try {
-		editor = updateToJSON(articleConfig({}, false, null), base64ToUint8Array(update))
+		let e = getYjsAndEditor(articleConfig(null, false, null), base64ToUint8Array(update))
+		editor = e.editor;
+
 		html = await toHTML(editor);
 
 	} catch (err) {

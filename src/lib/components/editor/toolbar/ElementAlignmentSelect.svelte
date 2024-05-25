@@ -4,7 +4,7 @@
 
 	import Select from '$lib/components/Select.svelte';
 	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
-	import { getSelectedElements } from '$lib/environment/utils';
+	import { getSelectedElements } from '$lib/components/editor/utils/getSelection';
 	import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from 'lucide-svelte';
 
 	/**

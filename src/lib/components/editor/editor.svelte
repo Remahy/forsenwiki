@@ -2,12 +2,6 @@
 	import { getContext, onMount } from 'svelte';
 	import isUrl from 'is-url';
 	import {
-		$getRoot as getRoot,
-		$createParagraphNode as createParagraphNode,
-		$createTextNode as createTextNode
-	} from 'lexical';
-	import {
-		AutoFocusPlugin,
 		CollaborationPlugin,
 		Composer,
 		ContentEditable,
@@ -20,27 +14,13 @@
 	import Toolbar from './toolbar/index.svelte';
 	import Footer from './footer/index.svelte';
 	import { articleConfig } from './config/article';
+	import ImagePlugin from './plugins/ImagePlugin.svelte';
+	import AutoFocus from './plugins/AutoFocus.svelte';
 
 	export let id;
 	export let update;
 
-	/**
-	 * @param {LexicalEditor} editor
-	 */
-	function initialState(editor) {
-		editor.update(
-			() => {
-				const root = getRoot();
-				const paragraph = createParagraphNode();
-				const text = createTextNode();
-				paragraph.append(text);
-				root.append(paragraph);
-			},
-			{ tag: 'historic' }
-		);
-	}
-
-	const initialConfig = articleConfig({}, true, null);
+	const initialConfig = articleConfig(null, true, null);
 
 	/** @type {Composer | null} */
 	let composer = null;
@@ -57,20 +37,21 @@
 </script>
 
 <Composer {initialConfig} bind:this={composer}>
-	<div class="flex grow flex-col">
+	<div class="flex grow flex-col editor-shell">
 		<RichTextPlugin />
 
 		<ListPlugin />
 
 		<LinkPlugin validateUrl={isUrl} />
 
-		<AutoFocusPlugin />
+		<AutoFocus />
+
+		<ImagePlugin />
 
 		<CollaborationPlugin
 			{id}
 			{providerFactory}
-			shouldBootstrap={!update}
-			initialEditorState={initialState}
+			shouldBootstrap={false}
 		/>
 
 		<div class="w-full border border-b-0 p-2">

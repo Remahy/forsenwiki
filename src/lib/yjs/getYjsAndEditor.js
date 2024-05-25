@@ -1,6 +1,6 @@
 // Realistically only used by backend.
 import { createHeadlessEditor } from '@lexical/headless';
-import { createBinding, syncYjsChangesToLexical } from '@lexical/yjs';
+import { createBinding, syncLexicalUpdateToYjs, syncYjsChangesToLexical } from '@lexical/yjs';
 
 import { Y } from './index.mjs';
 
@@ -9,9 +9,9 @@ import { Y } from './index.mjs';
 /**
  * @param {any} config
  * @param {Uint8Array} update
- * @returns {LexicalEditor}
+ * @returns {{editor: LexicalEditor, doc: Y.Doc}}
  */
-export function updateToJSON(config, update) {
+export function getYjsAndEditor(config, update) {
   const editor = createHeadlessEditor(config)
 
   const dummyId = 'dummy-id'
@@ -47,6 +47,31 @@ export function updateToJSON(config, update) {
 
   editor.update(() => { }, { discrete: true })
 
-  return editor;
+  // Enables "copyTarget"/Y.Doc to be updated when Lexical changes happen.
+  editor.registerUpdateListener(
+    ({
+      dirtyElements,
+      dirtyLeaves,
+      editorState,
+      normalizedNodes,
+      prevEditorState,
+      tags,
+    }) => {
+      if (tags.has('skip-collab') === false) {
+        syncLexicalUpdateToYjs(
+          copyBinding,
+          dummyProvider,
+          prevEditorState,
+          editorState,
+          dirtyElements,
+          dirtyLeaves,
+          normalizedNodes,
+          tags,
+        );
+      }
+    },
+  );
+
+  return { editor, doc: copyTarget };
 }
 

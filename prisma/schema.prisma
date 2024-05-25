@@ -22,6 +22,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   postUpdatesMetadata YPostUpdateMetadata[]
+
+  content Content[]
 }
 
 model Account {
@@ -133,4 +135,16 @@ model WhitelistedAccounts {
 
   provider          String
   providerAccountId String
+}
+
+model Content {
+  id String @id @default(cuid())
+
+  hash String @unique
+  name String
+
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+
+  createdAt DateTime @default(now())
 }

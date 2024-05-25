@@ -1,5 +1,5 @@
 <script>
-	import { TOGGLE_LINK_COMMAND, toggleLink } from '@lexical/link';
+	import { TOGGLE_LINK_COMMAND, $toggleLink as toggleLink } from '@lexical/link';
 	import {
 		COMMAND_PRIORITY_CRITICAL,
 		COMMAND_PRIORITY_HIGH,
@@ -14,10 +14,10 @@
 
 	import Button from '$lib/components/Button.svelte';
 	import { ctrlKey } from '$lib/environment/environment';
-	import getSelectedNode from '$lib/environment/utils';
-	import LinkButtonModal from './LinkButtonModal.svelte';
+	import { getSelectedNode } from '$lib/components/editor/utils/getSelection';
 	import { modal } from '$lib/stores/modal';
-	import { $isALinkNode as isALinkNode } from '../../plugins/ALink';
+	import { $isALinkNode as isALinkNode } from '$lib/lexicalCustom';
+	import LinkButtonModal from './LinkButtonModal.svelte';
 
 	$: hasLink = false;
 	$: url = '';

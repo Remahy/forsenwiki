@@ -5,15 +5,20 @@
 	import ElementAlignmentSelect from './ElementAlignmentSelect.svelte';
 	import FontSelect from './FontSelect.svelte';
 	import ElementSelect from './ElementSelect.svelte';
+	import InsertButton from './InsertButton/index.svelte';
+	import ImageButtons from './ImageButtons/index.svelte'
 </script>
 
 <div class="flex gap-2 flex-wrap">
 	<HistoryButtons />
 	<Divider />
 	<ElementSelect />
-	<Divider />
 	<FontSelect />
 	<TextFormatButtons />
 	<Divider />
 	<ElementAlignmentSelect />
+	<Divider />
+	<InsertButton />
+	<Divider />
+	<ImageButtons />
 </div>
