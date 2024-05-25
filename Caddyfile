@@ -1,4 +1,4 @@
-forsen.wiki {
+localhost:80 {
 	reverse_proxy * sveltekit:3000
 
 	handle_path /usercontent {
