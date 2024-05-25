@@ -42,6 +42,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"dotenv": "^16.4.5",
 		"@auth/prisma-adapter": "^2.1.0",
 		"@auth/sveltekit": "^1.1.0",
 		"@fontsource/opendyslexic": "^5.0.11",
