@@ -22,6 +22,7 @@ COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/types.js ./types.js
+COPY --from=build /app/.env ./env
 
 COPY ./start.sh ./start.sh
 
