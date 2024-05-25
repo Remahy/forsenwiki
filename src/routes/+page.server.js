@@ -43,7 +43,7 @@ const getLatest = async () => {
 				},
 				take: 1,
 				orderBy: {
-					createdTimestamp: 'desc'
+					createdTimestamp: 'asc'
 				}
 			}
 		},
