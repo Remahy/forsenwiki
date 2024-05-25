@@ -1,0 +1,8 @@
+forsen.wiki {
+	reverse_proxy * sveltekit:3000
+
+	handle_path /usercontent {
+		root * usercontent
+		file_server
+	}
+}
