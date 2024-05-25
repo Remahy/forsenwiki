@@ -1,4 +1,4 @@
-localhost:80 {
+forsen.wiki {
 	handle_path /usercontent* {
 		root * /srv
 		file_server
