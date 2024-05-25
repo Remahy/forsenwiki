@@ -27,9 +27,8 @@
 	import { onMount } from 'svelte';
 	import { mergeRegister } from '@lexical/utils';
 	import ImageResizer from './ImageResizer.svelte';
-	import { $isImageNode as isImageNode } from '$lib/lexical';
 	import { clearSelection, createNodeSelectionStore } from '$lib/components/editor/utils/getSelection';
-	import { IMAGE_OFF, TRANSPARENT_IMAGE } from './Image';
+	import { IMAGE_OFF, TRANSPARENT_IMAGE, $isImageNode as isImageNode } from './Image';
 
 	export let src: string;
 	export let altText: string;

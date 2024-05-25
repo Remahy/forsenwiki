@@ -5,7 +5,7 @@
 	import { modal } from '$lib/stores/modal';
 	import EditImageModal from './EditImageModal.svelte';
 
-	/** @type {import("../../plugins/Image").ImageNode} */
+	/** @type {import("$lib/lexicalCustom").ImageNode} */
 	export let selectedImageNode;
 
 	/** @type {ComposerWritable} */

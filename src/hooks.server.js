@@ -1,12 +1,6 @@
 import { sequence } from '@sveltejs/kit/hooks';
-import { checkStaticDir } from '../static.js';
+import '../static.js';
 import { handle as authenticationHandle } from './auth';
-import { building } from '$app/environment';
-
-if (!building) {
-	// Make sure static directory can be written to.
-	await checkStaticDir();
-}
 
 /** @type {import('@sveltejs/kit').Handle} */
 async function authorizationHandle({ event, resolve }) {

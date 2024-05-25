@@ -7,9 +7,9 @@
 		$getSelection as getSelection,
 		$isNodeSelection as isNodeSelection
 	} from 'lexical';
-	import { $isImageNode as isImageNode } from '../../plugins/Image';
+	import { $isImageNode as isImageNode } from '$lib/lexicalCustom';
 
-	/** @type {import( '../../plugins/Image').ImageNode | null} */
+	/** @type {import('$lib/lexicalCustom').ImageNode | null} */
 	let selectedImageNode = null;
 
 	/** @type {ComposerWritable} */

@@ -2,7 +2,8 @@
 	"name": "forsenwiki",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "vite dev & npm run dev:usercontent",
+		"dev:usercontent": "npx sirv-cli usercontent -p=5175",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
@@ -10,12 +11,14 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"prisma:migrate-dev": "prisma migrate dev",
-		"prisma:seed": "node ./prisma/seed/types.js"
+		"prisma:seed": "node ./prisma/seed/types.js",
+		"prisma:generate": "prisma generate",
+		"prisma:migrate-deploy": "prisma migrate deploy"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.3.0",
 		"@fontsource/fira-mono": "^5.0.13",
-		"@sveltejs/adapter-auto": "^3.2.0",
+		"@sveltejs/adapter-node": "^5.0.1",
 		"@sveltejs/kit": "^2.5.9",
 		"@sveltejs/vite-plugin-svelte": "^3.1.0",
 		"@tailwindcss/forms": "^0.5.7",

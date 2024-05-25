@@ -1,4 +1,5 @@
-import { ALinkNode, LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode, ImageNode } from '$lib/lexical';
+import { LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical';
+import { ALinkNode, ImageNode } from '$lib/lexicalCustom';
 import { $createALinkNode } from '../plugins/ALink';
 
 const articleTheme = {
