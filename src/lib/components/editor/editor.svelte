@@ -7,7 +7,7 @@
 		ContentEditable,
 		LinkPlugin,
 		ListPlugin,
-		RichTextPlugin
+		RichTextPlugin,
 	} from 'svelte-lexical';
 
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
@@ -37,7 +37,7 @@
 </script>
 
 <Composer {initialConfig} bind:this={composer}>
-	<div class="flex grow flex-col editor-shell">
+	<div class="editor-shell flex grow flex-col">
 		<RichTextPlugin />
 
 		<ListPlugin />
@@ -48,23 +48,19 @@
 
 		<ImagePlugin />
 
-		<CollaborationPlugin
-			{id}
-			{providerFactory}
-			shouldBootstrap={false}
-		/>
+		<CollaborationPlugin {id} {providerFactory} shouldBootstrap={false} />
 
-		<div class="w-full border border-b-0 p-2">
+		<div class="w-full border border-b-0 p-2 dark:border-violet-950 dark:bg-black">
 			<Toolbar />
 		</div>
 
-		<article class="flex grow flex-col border">
-			<div class="prose relative flex max-w-[unset] grow p-2">
+		<article class="flex grow flex-col border dark:border-violet-950 dark:bg-black">
+			<div class="prose relative flex max-w-[unset] grow p-2 dark:prose-invert">
 				<ContentEditable className="grow m-0 p-0 border-0 outline-0" />
 			</div>
 		</article>
 
-		<div class="w-full border border-t-0 p-2">
+		<div class="w-full border border-t-0 p-2 dark:border-violet-950 dark:bg-black">
 			<Footer />
 		</div>
 	</div>

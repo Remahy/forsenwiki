@@ -3,7 +3,7 @@
 </script>
 
 <div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
-	<section class="prose prose-lg w-full max-w-[unset]">
+	<section class="prose prose-lg w-full max-w-[unset] dark:prose-invert">
 		<h1 id="privacy">Privacy Policy</h1>
 		<p>🐦</p>
 		<p>Effective date: May 25, 2024</p>
@@ -108,8 +108,8 @@
 			where the data protection laws may differ than those from your jurisdiction.
 		</p>
 		<p>
-			If you are located outside Finland and choose to provide information
-			to us, please note that we transfer the data, including Personal Data, to Finland and process it there.
+			If you are located outside Finland and choose to provide information to us, please note that
+			we transfer the data, including Personal Data, to Finland and process it there.
 		</p>
 		<p>
 			Your consent to this Privacy Policy followed by your submission of such information represents

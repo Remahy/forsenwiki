@@ -9,16 +9,17 @@
 <svg
 	version="1.1"
 	width={size}
-	height={height}
+	{height}
 	xmlns="http://www.w3.org/2000/svg"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
 	viewBox="0 0 2400 2800"
 	style="enable-background:new 0 0 2400 2800;"
 	xml:space="preserve"
+	class="text-white"
 >
 	<g>
 		<polygon
-			fill="#ffffff"
+			fill="currentColor"
 			points="2200,1300 1800,1700 1400,1700 1050,2050 1050,1700 600,1700 600,200 2200,200"
 		/>
 		<g>

@@ -30,7 +30,10 @@
 
 				/** @type {LatestArticle} */
 				const input = JSON.parse(v);
-				if (new Date(values[0].createdTimestamp).getTime() === new Date(input.createdTimestamp).getTime()) {
+				if (
+					new Date(values[0].createdTimestamp).getTime() ===
+					new Date(input.createdTimestamp).getTime()
+				) {
 					return;
 				}
 
@@ -85,7 +88,7 @@
 
 <section class="container mx-auto flex grow flex-col p-4 lg:p-0 lg:py-12">
 	<div
-		class="m-0 my-4 mt-0 w-full rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 sm:my-8 sm:mt-0"
+		class="m-0 my-4 mt-0 w-full rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 sm:my-8 sm:mt-0 dark:from-violet-800/30 dark:to-violet-950/30"
 	>
 		<p class="m-0 text-center leading-10">
 			forsen.wiki is currently <strong>work in progress</strong>.

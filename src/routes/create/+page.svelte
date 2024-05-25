@@ -84,24 +84,28 @@
 			editor.registerTextContentListener(() => {
 				error = null;
 			});
-		})
-	})
+		});
+	});
 </script>
 
 <div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
 	<Box class="mb-4 p-4">
-		<div class="prose !max-w-none">
-			<p>
-				Creating a new article.
-				<strong>Alpha: </strong> Your article drafts are automatically saved locally.
-			</p>
-		</div>
+		<p>
+			Creating a new article.
+			<strong>Alpha: </strong> Your article drafts are automatically saved locally.
+		</p>
 	</Box>
 
 	<label>
 		<strong>Title <small>(Must be unique)</small></strong>
-		<input required class="w-full rounded p-2 {titleError && 'bg-red-200'}" bind:value={title} />
-		{#if titleError} <strong class="text-red-500">{titleError.message}</strong> {/if}
+		<input
+			required
+			class="w-full rounded p-2 {titleError && '!bg-red-200'} dark:border-violet-700 dark:bg-black"
+			bind:value={title}
+		/>
+		{#if titleError}
+			<strong class="text-red-500">{titleError.message}</strong>
+		{/if}
 	</label>
 
 	<Editor update={null} id={'new'} />
@@ -116,7 +120,8 @@
 		<small class="grow">
 			Make sure you read the <Link href="/terms" class="hover:!text-indigo-700"
 				>Terms & Conditions</Link
-			>. Anyone can edit this article once it's submitted. Don't complain if your article get modified or deleted. <Clown />
+			>. Anyone can edit this article once it's submitted. Don't complain if your article get
+			modified or deleted. <Clown />
 		</small>
 
 		<Button disabled={!canEdit || isUploading || error} on:click={submit}>

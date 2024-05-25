@@ -1,10 +1,10 @@
 <script>
-	import { page } from '$app/stores';
-
 	import { signIn, signOut } from '@auth/sveltekit/client';
+	import { page } from '$app/stores';
 	import Logo from '$lib/components/Logo.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import Search from './Search.svelte';
 
 	let isLoading = false;
 
@@ -19,7 +19,7 @@
 	};
 </script>
 
-<header class="bg-stone-100">
+<header class="bg-stone-100 dark:bg-violet-950 dark:bg-opacity-30">
 	<div class="container mx-auto flex">
 		<a href="/" class="hover:text-stone-500">
 			<div class="flex items-end gap-2 py-4 pl-4 lg:pl-0">
@@ -32,7 +32,9 @@
 		</a>
 
 		<nav class="flex grow items-end py-4 pr-4 lg:pr-0">
-			<div class="login flex grow items-center justify-end gap-2">
+			<div class="grow mx-8 lg:mx-16"><Search /></div>
+	
+			<div class="flex items-center justify-end gap-2">
 				{#if $page.data.session?.user}
 					<span>{$page.data.session.user.name}</span>
 					<Button on:click={signOutWrapper} class="p-1 text-sm" disabled={isLoading}>

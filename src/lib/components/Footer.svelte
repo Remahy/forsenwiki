@@ -3,7 +3,7 @@
 	import Link from '$lib/components/Link.svelte';
 </script>
 
-<footer class="bg-purple-950 text-white">
+<footer class="bg-purple-950 text-white dark:bg-violet-950 dark:bg-opacity-30 dark:text-[unset]">
 	<div
 		class="container mx-auto flex w-full flex-wrap items-stretch justify-between gap-8 gap-y-8 p-4 lg:p-0 lg:py-12"
 	>

@@ -48,7 +48,6 @@
 			if (file && file?.size) {
 				const size = file.size / 1048576;
 
-
 				if (size > MAX_IMAGE_SIZE_MIB) {
 					isValidImage = false;
 					error = `File size too large: Max is 5 MiB. Uploaded file size: ~${size.toFixed(2)} MiB`;
@@ -126,9 +125,11 @@
 	};
 </script>
 
-<div class="pointer-events-auto relative rounded border bg-white p-0 shadow">
-	<header class="flex items-center justify-between border-b p-6">
-		<h1 class="text-xl font-semibold text-gray-900 lg:text-2xl">Edit image</h1>
+<div
+	class="pointer-events-auto relative rounded border bg-white p-0 shadow dark:border-violet-900 dark:bg-neutral-950"
+>
+	<header class="flex items-center justify-between border-b p-6 dark:border-violet-900">
+		<h1 class="text-xl font-semibold lg:text-2xl">Edit image</h1>
 		<Button
 			class="ml-auto inline-flex items-center rounded-lg"
 			on:click={() => ($modal.isOpen = false)}
@@ -137,12 +138,12 @@
 		</Button>
 	</header>
 
-	<main class="flex flex-col gap-16 overflow-hidden border-b p-6">
+	<main class="flex flex-col gap-16 overflow-hidden border-b p-6 dark:border-violet-900">
 		<label class="flex flex-col gap-2" for="select">
 			<strong>Image source</strong>
 			<Select
 				id="select"
-				class="grow p-2"
+				class="grow !p-2 text-base"
 				bind:ref={selectLinkTypeElement}
 				bind:value={currentLinkType}
 				on:click={() => selectLinkTypeElement.dispatchEvent(new Event('change'))}
@@ -163,7 +164,7 @@
 			<input
 				type="file"
 				accept="image/*"
-				class="rounded p-2"
+				class="rounded border p-2 dark:border-violet-900"
 				bind:value={src}
 				on:input={handleInputChange}
 				bind:this={inputElement}
@@ -184,26 +185,38 @@
 		{#if src.length}
 			<label class="flex flex-col gap-2">
 				<strong>Alt text</strong>
-				<input class="rounded p-2" bind:value={altText} />
+				<input class="rounded bg-transparent p-2 dark:border-violet-900" bind:value={altText} />
 			</label>
 			<div class="flex gap-16">
 				<label class="inline-flex grow flex-col gap-2">
 					<span>
 						<strong>Width</strong>
 						{#if originalImageWidth}
-							<small class="text-gray-700">Original: <span>{originalImageWidth}</span></small>
+							<small class="text-gray-700 dark:text-[unset]"
+								>Original: <span>{originalImageWidth}</span></small
+							>
 						{/if}
 					</span>
-					<input type="number" class="w-full rounded p-2" bind:value={width} />
+					<input
+						type="number"
+						class="w-full rounded bg-transparent p-2 dark:border-violet-900"
+						bind:value={width}
+					/>
 				</label>
 				<label class="inline-flex grow flex-col gap-2">
 					<span>
 						<strong>Height</strong>
 						{#if originalImageHeight}
-							<small class="text-gray-700">Original: <span>{originalImageHeight}</span></small>
+							<small class="text-gray-700 dark:text-[unset]"
+								>Original: <span>{originalImageHeight}</span></small
+							>
 						{/if}
 					</span>
-					<input type="number" class="w-full rounded p-2" bind:value={height} />
+					<input
+						type="number"
+						class="w-full rounded bg-transparent p-2 dark:border-violet-900"
+						bind:value={height}
+					/>
 				</label>
 			</div>
 		{/if}

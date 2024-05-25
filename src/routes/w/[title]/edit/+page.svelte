@@ -1,6 +1,7 @@
 <script>
 	import { getContext, onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import Editor from '$lib/components/editor/editor.svelte';
@@ -9,7 +10,6 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
 	import { updateArticle } from '$lib/api/articles';
-	import { goto } from '$app/navigation';
 
 	let id = $page.data.post.id;
 	let update = $page.data.update;
@@ -92,12 +92,10 @@
 
 <div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
 	<Box class="mb-4 p-4">
-		<div class="prose !max-w-none">
-			<p>
-				Editing the <strong>"{rawTitle}"</strong> article.
-				<strong>Alpha: </strong> Your article drafts are automatically saved locally.
-			</p>
-		</div>
+		<p>
+			Editing the <strong>"{rawTitle}"</strong> article.
+			<strong>Alpha: </strong> Your article drafts are automatically saved locally.
+		</p>
 	</Box>
 
 	<Editor {update} {id} />
@@ -120,7 +118,11 @@
 		<small class="grow">
 			Make sure you read the <Link href="/terms" class="hover:!text-indigo-700"
 				>Terms & Conditions</Link
-			>. Anyone can edit this article. Don't complain if your edits get modified or deleted. <Clown />
+			>.
+			<span
+				>Anyone can edit this article. Don't complain if your edits get modified or deleted.</span
+			>
+			<Clown />
 		</small>
 
 		<Button disabled={!canEdit || isUploading || error} on:click={submit}>
