@@ -27,15 +27,15 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - 5434:5432
+      - 5432:5432
 
   caddy:
     image: caddy:latest
     restart: unless-stopped
     ports:
-      - "5080:80"
-      - "5443:443"
-      - "5443:443/udp"
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ${DEV_STATIC_DIR}:/srv
