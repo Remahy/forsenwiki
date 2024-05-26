@@ -1,4 +1,5 @@
 <script>
+	import { LogOutIcon } from 'lucide-svelte';
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
 	import Logo from '$lib/components/Logo.svelte';
@@ -17,6 +18,12 @@
 		isLoading = true;
 		signOut({ redirect: true });
 	};
+
+	let cachedImage = new URL('', 'https://wsrv.nl/');
+
+	if ($page.data.session?.user?.image) {
+		cachedImage.searchParams.set('url', $page.data.session?.user?.image);
+	}
 </script>
 
 <header class="bg-stone-100 dark:bg-violet-950 dark:bg-opacity-30">
@@ -31,19 +38,40 @@
 			</div>
 		</a>
 
-		<nav class="flex grow items-end py-4 pr-4 lg:pr-0">
-			<div class="grow mx-8 lg:mx-16"><Search /></div>
-	
-			<div class="flex items-center justify-end gap-2">
+		<nav class="flex grow items-end overflow-hidden py-4 pr-4 lg:pr-0">
+			<div class="mx-8 grow lg:mx-16"><Search /></div>
+
+			<div class="flex items-center justify-end overflow-hidden">
 				{#if $page.data.session?.user}
-					<span>{$page.data.session.user.name}</span>
-					<Button on:click={signOutWrapper} class="p-1 text-sm" disabled={isLoading}>
-						{#if isLoading}
-							<Spinner size="16" />
-							<span>Logging out...</span>
-						{:else}
-							<span>Log out</span>
+					<div
+						class="flex max-w-20 gap-2 overflow-hidden bg-stone-300 p-2 lg:max-w-40 dark:bg-violet-950"
+					>
+						{#if cachedImage}
+							<img
+								src={cachedImage.toString()}
+								class="-my-2 -ml-2 hidden h-10 w-auto lg:block"
+								alt="Twitch avatar"
+							/>
 						{/if}
+						<span
+							class="overflow-hidden text-ellipsis font-medium"
+							title={$page.data.session.user.name}>{$page.data.session.user.name}</span
+						>
+					</div>
+
+					<Button on:click={signOutWrapper} class="rounded-l-none p-1 text-sm" disabled={isLoading}>
+						<div class="hidden lg:block">
+							{#if isLoading}
+								<Spinner size="16" />
+								<span>Logging out...</span>
+							{:else}
+								<span>Log out</span>
+							{/if}
+						</div>
+						<div class="block lg:hidden">
+							<LogOutIcon />
+							<span class="hidden">Log out</span>
+						</div>
 					</Button>
 				{:else}
 					<Button on:click={signInWrapper} class="p-1 text-sm" disabled={isLoading}>
