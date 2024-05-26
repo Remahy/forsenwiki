@@ -1,5 +1,5 @@
-import { getCacheURL } from '$lib/components/editor/validations/images.server.js';
 import prisma from '$lib/prisma.js';
+import { getCacheURL } from '$lib/utils/getCacheURL.js';
 
 /**
  * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date }} QueryResult
@@ -62,7 +62,7 @@ export const load = async ({ url }) => {
 					name: {
 						contains: query.toLowerCase(),
 						mode: 'insensitive',
-					}
+					},
 				},
 			],
 		},
