@@ -33,22 +33,22 @@
 		DRAGSTART_COMMAND,
 		DROP_COMMAND,
 		type LexicalCommand,
-		type LexicalEditor
+		type LexicalEditor,
 	} from 'lexical';
 	import { $wrapNodeInElement as wrapNodeInElement, mergeRegister } from '@lexical/utils';
-
 	import { onMount } from 'svelte';
 	import { getEditor } from 'svelte-lexical';
+
+	import { CAN_USE_DOM } from '$lib/environment/utils';
+	import { cacheServiceBaseURLWithStatic } from '$lib/utils/getCacheURL';
+
 	import {
 		$createImageNode as createImageNode,
 		$isImageNode as isImageNode,
 		ImageNode,
 		TRANSPARENT_IMAGE,
-		type ImagePayload
+		type ImagePayload,
 	} from './Image';
-	import { CAN_USE_DOM } from '$lib/environment/utils';
-	import { DOMAIN } from '$lib/environment/environment';
-
 	const editor: LexicalEditor = getEditor();
 
 	let img: HTMLImageElement;
@@ -72,9 +72,9 @@
 					height: node.__height,
 					key: node.getKey(),
 					src: node.__src,
-					width: node.__width
+					width: node.__width,
 				},
-				type: 'image'
+				type: 'image',
 			})
 		);
 
@@ -239,7 +239,7 @@
 							continue;
 						}
 
-						if (src.startsWith(`https://wsrv.nl/?url=${DOMAIN}`)) {
+						if (src.startsWith(cacheServiceBaseURLWithStatic)) {
 							continue;
 						}
 
@@ -261,7 +261,7 @@
 				});
 
 				if (promises.length) {
-					Promise.all(promises.map(fn => fn()));
+					Promise.all(promises.map((fn) => fn()));
 				}
 			}),
 			editor.registerCommand<InsertImagePayload>(

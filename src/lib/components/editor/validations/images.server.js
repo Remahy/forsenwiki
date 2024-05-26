@@ -3,17 +3,12 @@ import fs from 'fs/promises';
 import crypto from 'crypto';
 import { $nodesOfType as nodesOfType } from 'lexical';
 
-import { STATIC_DOMAIN } from '$lib/environment/environment';
 import prisma from '$lib/prisma';
 import { ImageNode } from '$lib/lexicalCustom';
 import { MAX_IMAGE_SIZE_MIB } from '$lib/constants/image';
+import { cacheServiceBaseURLWithStatic, getCacheURL } from '$lib/utils/getCacheURL';
 import { IMAGE_OFF } from '../plugins/Image';
 import { staticDir } from '../../../../../static';
-
-const cacheServiceBaseURL = 'https://wsrv.nl';
-const csbURL = new URL('', cacheServiceBaseURL);
-csbURL.searchParams.append('url', STATIC_DOMAIN + '/');
-const cacheServiceBaseURLWithStatic = csbURL.toString();
 
 /**
  * @param {string} base64String
@@ -124,20 +119,4 @@ export const validateAndUploadImages = (editor, title, author) => {
 			{ discrete: true }
 		);
 	});
-};
-
-/**
- * @param {string} hash
- * @param {string} name
- */
-export const getCacheURL = (hash, name) => {
-	const url = new URL('', cacheServiceBaseURL);
-
-	const ourUrl = new URL(hash, STATIC_DOMAIN + '/');
-
-	url.searchParams.append('url', ourUrl.toString());
-	url.searchParams.append('filename', name);
-	url.searchParams.append('n', '-1');
-
-	return url;
 };
