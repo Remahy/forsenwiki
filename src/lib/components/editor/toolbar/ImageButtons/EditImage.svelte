@@ -81,24 +81,24 @@
 </script>
 
 <Button on:click={image} disabled={!canEdit}>Change image</Button>
-<label title="Height" class="flex items-center gap-2 pl-2 h-full">
+<label title="Height" class="flex h-full items-center gap-2 pl-2">
 	<span class="hidden">Height</span>
 	<RectangleVerticalIcon />
 
 	<input
-		class="-ml-10 w-28 bg-transparent h-full py-1 pl-10 pr-0 text-sm dark:border-violet-900"
-		bind:value={currentWidth}
+		class="-ml-10 h-full w-28 bg-transparent py-1 pl-10 pr-0 text-sm dark:border-violet-900"
+		bind:value={currentHeight}
 		on:change={onChange}
 		type="number"
 	/>
 </label>
-<label title="Width" class="flex items-center gap-2 pl-2 h-full">
+<label title="Width" class="flex h-full items-center gap-2 pl-2">
 	<span class="hidden">Width</span>
 	<RectangleHorizontalIcon />
 
 	<input
-		class="-ml-10 w-28 bg-transparent h-full py-1 pl-10 pr-0 text-sm dark:border-violet-900"
-		bind:value={currentHeight}
+		class="-ml-10 h-full w-28 bg-transparent py-1 pl-10 pr-0 text-sm dark:border-violet-900"
+		bind:value={currentWidth}
 		on:change={onChange}
 		type="number"
 	/>
