@@ -90,8 +90,7 @@ export const validateAndUploadImages = (editor, title, author) => {
 
 					if (src.startsWith('data:') && calculateOriginalFileSizeInMiB(src) > MAX_IMAGE_SIZE_MIB) {
 						image.setSrc(IMAGE_OFF);
-						reject(`Image too large: {${image.getKey()}}`);
-						return;
+						return reject(`Image too large: {${image.getKey()}}`);
 					}
 
 					if (src.startsWith('data:')) {
@@ -101,11 +100,28 @@ export const validateAndUploadImages = (editor, title, author) => {
 						uploadImage(src, newTitle, hash, author);
 
 						// Assume the image will be successfully uploaded to our server.
-						const url = getCacheURL(hash, title, { width: image.__width, height: image.__height  });
+						const url = getCacheURL(hash, title, { width: image.__width, height: image.__height });
 
 						// Set image src to cache.
 						image.setSrc(url.toString());
 						continue;
+					}
+
+					if (src.startsWith(cacheServiceBaseURLWithStatic)) {
+						const url = new URL(src);
+
+						// Resize image if user has changed it.
+						if (
+							url.searchParams.get('w') !== String(image.__width) ||
+							url.searchParams.get('h') !== String(image.__height)
+						) {
+							url.searchParams.set('w', String(image.__width));
+							url.searchParams.set('h', String(image.__height));
+
+							// Set image src to cache.
+							image.setSrc(url.toString());
+							continue;
+						}
 					}
 
 					// Unset any images that aren't base64.
