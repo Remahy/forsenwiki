@@ -101,7 +101,7 @@ export const validateAndUploadImages = (editor, title, author) => {
 						uploadImage(src, newTitle, hash, author);
 
 						// Assume the image will be successfully uploaded to our server.
-						const url = getCacheURL(hash, title);
+						const url = getCacheURL(hash, title, { width: image.__width, height: image.__height  });
 
 						// Set image src to cache.
 						image.setSrc(url.toString());
