@@ -1,13 +1,13 @@
 import { error } from '@sveltejs/kit';
 import { readAuthorsForYPostByTitle } from '$lib/db/article/read';
-import { _getYPostAndHtml } from '../../api/article/read/[title]/+server';
+import { _getYPost } from '../../api/article/read/[title]/+server';
 
 export async function load({ params }) {
 	const { title } = params;
 
 	let res;
 	try {
-		res = await _getYPostAndHtml(title);
+		res = await _getYPost(title, { update: false });
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);
