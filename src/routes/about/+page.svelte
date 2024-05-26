@@ -5,12 +5,12 @@
 </script>
 
 <svelte:head>
-	<title>About</title>
-	<meta name="description" content="About this app" />
+	<title>About forsen.wiki</title>
+	<meta name="description" content="Learn about the forsen... Wiki." />
 </svelte:head>
 
 <div class="container mx-auto p-4 lg:p-0 lg:py-12">
-	<section class="prose prose-lg w-full max-w-[unset]">
+	<section class="prose prose-lg w-full max-w-[unset] dark:prose-invert">
 		<h1>About</h1>
 
 		<p>
@@ -47,7 +47,8 @@
 					target="github.com/remahy/forsenwiki"
 					class="flex items-center gap-2"
 				>
-					<GitHub size="18" /> <span class="grow">GitHub - Remahy/forsenwiki</span>
+					<GitHub size="18" />
+					<span class="grow">GitHub - Remahy/forsenwiki</span>
 				</a>
 			</li>
 			<li>
@@ -61,7 +62,9 @@
 			</li>
 		</ul>
 
-		<p><strong>Contact email:</strong> forsenwiki(<AtSignIcon style="display: inline;" />)gmail.com</p>
+		<p>
+			<strong>Contact email:</strong> forsenwiki(<AtSignIcon style="display: inline;" />)gmail.com
+		</p>
 
 		<h3>Privacy policy</h3>
 

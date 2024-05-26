@@ -10,18 +10,18 @@
 		ListIcon,
 		ListOrderedIcon,
 		PilcrowIcon,
-		QuoteIcon
+		QuoteIcon,
 	} from 'lucide-svelte';
 	import {
 		$createHeadingNode as createHeadingNode,
 		$createQuoteNode as createQuoteNode,
-		$isHeadingNode as isHeadingNode
+		$isHeadingNode as isHeadingNode,
 	} from '@lexical/rich-text';
 	import {
 		$isListNode as isListNode,
 		$isListItemNode as isListItemNode,
 		INSERT_ORDERED_LIST_COMMAND,
-		INSERT_UNORDERED_LIST_COMMAND
+		INSERT_UNORDERED_LIST_COMMAND,
 	} from '@lexical/list';
 	import {
 		$getSelection as getSelection,
@@ -29,13 +29,11 @@
 		$createParagraphNode as createParagraphNode,
 		$isRootOrShadowRoot as isRootOrShadowRoot,
 		SELECTION_CHANGE_COMMAND,
-
-		COMMAND_PRIORITY_CRITICAL
-
+		COMMAND_PRIORITY_CRITICAL,
 	} from 'lexical';
 	import {
 		$getNearestNodeOfType as getNearestNodeOfType,
-		$findMatchingParent as findMatchingParent
+		$findMatchingParent as findMatchingParent,
 	} from '@lexical/utils';
 	import { $setBlocksType as setBlocksType } from '@lexical/selection';
 
@@ -128,7 +126,7 @@
 		bullet: formatBulletList,
 		number: formatNumberedList,
 		paragraph: formatParagraph,
-		quote: formatQuote
+		quote: formatQuote,
 	};
 
 	/**
@@ -144,7 +142,7 @@
 		bullet: ListIcon,
 		number: ListOrderedIcon,
 		paragraph: PilcrowIcon,
-		quote: QuoteIcon
+		quote: QuoteIcon,
 	};
 
 	/** @param {Event} e */
@@ -204,7 +202,7 @@
 
 							return 'unknown';
 						})
-					)
+					),
 				];
 
 				if (elementTypes.length > 1) {
@@ -278,7 +276,7 @@
 		bind:ref={elementTypeElement}
 		on:change={elementType}
 		bind:value={currentElementType}
-		class="-ml-10 bg-transparent px-10"
+		class="-ml-10 px-10"
 	>
 		<option value="mixed" hidden>Mixed</option>
 		<option value="unknown" hidden>Unknown</option>

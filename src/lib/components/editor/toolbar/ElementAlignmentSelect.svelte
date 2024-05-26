@@ -1,11 +1,15 @@
 <script>
-	import { COMMAND_PRIORITY_CRITICAL, FORMAT_ELEMENT_COMMAND, SELECTION_CHANGE_COMMAND } from 'lexical';
+	import {
+		COMMAND_PRIORITY_CRITICAL,
+		FORMAT_ELEMENT_COMMAND,
+		SELECTION_CHANGE_COMMAND,
+	} from 'lexical';
 	import { SvelteComponent, getContext, onMount } from 'svelte';
+	import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from 'lucide-svelte';
 
 	import Select from '$lib/components/Select.svelte';
 	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
 	import { getSelectedElements } from '$lib/components/editor/utils/getSelection';
-	import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from 'lucide-svelte';
 
 	/**
 	 * @type {{[x: string]: typeof SvelteComponent<any>}}
@@ -14,7 +18,7 @@
 		default: AlignLeftIcon,
 		right: AlignRightIcon,
 		center: AlignCenterIcon,
-		justify: AlignJustifyIcon
+		justify: AlignJustifyIcon,
 	};
 
 	const { ALIGNMENT } = ELEMENT_CONSTANTS;
@@ -96,7 +100,9 @@
 </script>
 
 <div class="flex items-center gap-2 pl-2">
-	<svelte:component this={alignmentIcons[currentAlignment] || alignmentIcons.default} />
+	<div class="">
+		<svelte:component this={alignmentIcons[currentAlignment] || alignmentIcons.default} />
+	</div>
 
 	<Select
 		title="Element alignment"
@@ -105,7 +111,7 @@
 		on:change={alignment}
 		bind:value={currentAlignment}
 		on:click={() => alignmentElement.dispatchEvent(new Event('change'))}
-		class="-ml-10 bg-transparent px-10"
+		class="-ml-10 px-10"
 	>
 		<option value="mixed" hidden>Mixed</option>
 		<option value="" selected class="text-lg">Default</option>

@@ -3,17 +3,17 @@
 		$isNodeSelection as isNodeSelection,
 		COMMAND_PRIORITY_CRITICAL,
 		$getSelection as getSelection,
-		SELECTION_CHANGE_COMMAND
+		SELECTION_CHANGE_COMMAND,
 	} from 'lexical';
 	import {
 		$patchStyleText as patchStyleText,
-		$getSelectionStyleValueForProperty as getSelectionStyleValueForProperty
+		$getSelectionStyleValueForProperty as getSelectionStyleValueForProperty,
 	} from '@lexical/selection';
 	import { getContext, onMount } from 'svelte';
+	import { TypeIcon } from 'lucide-svelte';
 
 	import Select from '$lib/components/Select.svelte';
 	import { TEXT_CONSTANTS } from '$lib/constants/text';
-	import { TypeIcon } from 'lucide-svelte';
 
 	const { FONTFAMILIES } = TEXT_CONSTANTS;
 	const validValues = Object.values(FONTFAMILIES);
@@ -114,7 +114,7 @@
 		on:change={font}
 		bind:value={currentFont}
 		on:click={() => fontElement.dispatchEvent(new Event('change'))}
-		class="-ml-10 bg-transparent px-10"
+		class="-ml-10 px-10"
 	>
 		<option value="mixed" hidden>Mixed</option>
 		<option value="" class="font-sans text-lg">Default font</option>

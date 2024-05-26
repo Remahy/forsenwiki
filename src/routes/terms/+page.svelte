@@ -1,5 +1,10 @@
+<svelte:head>
+	<title>Terms & Conditions</title>
+	<meta name="description" content="forsen.wiki" />
+</svelte:head>
+
 <div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
-	<section class="prose prose-lg w-full max-w-[unset]">
+	<section class="prose prose-lg w-full max-w-[unset] dark:prose-invert">
 		<h1>Terms & Conditions</h1>
 		<p>Effective date: May 8th, 2024</p>
 		<ol>

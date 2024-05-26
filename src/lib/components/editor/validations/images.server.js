@@ -105,14 +105,8 @@ export const validateAndUploadImages = (editor, title, author) => {
 						const newTitle = `${title}-${index}`;
 						uploadImage(src, newTitle, hash, author);
 
-						const url = new URL('', cacheServiceBaseURL);
-
 						// Assume the image will be successfully uploaded to our server.
-						const ourUrl = new URL(hash, STATIC_DOMAIN + '/');
-
-						url.searchParams.append('url', ourUrl.toString());
-						url.searchParams.append('filename', title);
-						url.searchParams.append('n', '-1');
+						const url = getCacheURL(hash, title);
 
 						// Set image src to cache.
 						image.setSrc(url.toString());
@@ -130,4 +124,20 @@ export const validateAndUploadImages = (editor, title, author) => {
 			{ discrete: true }
 		);
 	});
+};
+
+/**
+ * @param {string} hash
+ * @param {string} name
+ */
+export const getCacheURL = (hash, name) => {
+	const url = new URL('', cacheServiceBaseURL);
+
+	const ourUrl = new URL(hash, STATIC_DOMAIN + '/');
+
+	url.searchParams.append('url', ourUrl.toString());
+	url.searchParams.append('filename', name);
+	url.searchParams.append('n', '-1');
+
+	return url;
 };

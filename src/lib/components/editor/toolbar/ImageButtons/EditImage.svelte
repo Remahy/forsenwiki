@@ -1,8 +1,10 @@
 <script>
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { $getNodeByKey as getNodeByKey } from 'lexical';
+	import { RectangleHorizontalIcon, RectangleVerticalIcon } from 'lucide-svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { modal } from '$lib/stores/modal';
+	import { ImageNode } from '$lib/lexicalCustom';
 	import EditImageModal from './EditImageModal.svelte';
 
 	/** @type {import("$lib/lexicalCustom").ImageNode} */
@@ -13,6 +15,19 @@
 	$: composer = $c;
 	$: editor = composer?.getEditor?.();
 	$: canEdit = editor?.isEditable();
+
+	let currentWidth = selectedImageNode.__width;
+	let currentHeight = selectedImageNode.__height;
+
+	const onChange = () => {
+		if (!editor) {
+			return;
+		}
+
+		editor.update(() => {
+			selectedImageNode.setWidthAndHeight(currentWidth, currentHeight);
+		});
+	};
 
 	const image = () => {
 		if (!editor) return;
@@ -42,9 +57,49 @@
 					}
 				});
 			},
-			isOpen: true
+			isOpen: true,
 		});
 	};
+
+	onMount(() => {
+		c.subscribe((composer) => {
+			if (composer === null) {
+				return;
+			}
+
+			const editor = composer.getEditor();
+
+			editor.registerNodeTransform(ImageNode, (node) => {
+				if (node.getKey() === selectedImageNode.getKey()) {
+					currentWidth = node.__width;
+					currentHeight = node.__height;
+					selectedImageNode = node;
+				}
+			});
+		});
+	});
 </script>
 
-<Button on:click={image} disabled={!canEdit}>Edit image</Button>
+<Button on:click={image} disabled={!canEdit}>Change image</Button>
+<label title="Height" class="flex items-center gap-2 pl-2 h-full">
+	<span class="hidden">Height</span>
+	<RectangleVerticalIcon />
+
+	<input
+		class="-ml-10 w-28 bg-transparent h-full py-1 pl-10 pr-0 text-sm dark:border-violet-900"
+		bind:value={currentWidth}
+		on:change={onChange}
+		type="number"
+	/>
+</label>
+<label title="Width" class="flex items-center gap-2 pl-2 h-full">
+	<span class="hidden">Width</span>
+	<RectangleHorizontalIcon />
+
+	<input
+		class="-ml-10 w-28 bg-transparent h-full py-1 pl-10 pr-0 text-sm dark:border-violet-900"
+		bind:value={currentHeight}
+		on:change={onChange}
+		type="number"
+	/>
+</label>

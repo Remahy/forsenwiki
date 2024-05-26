@@ -2,15 +2,15 @@
 	import { getContext, onMount } from 'svelte';
 	import { PlusIcon } from 'lucide-svelte';
 	import { $wrapNodeInElement as wrapNodeInElement } from '@lexical/utils';
-
-	import Select from '$lib/components/Select.svelte';
-	import { TRANSPARENT_IMAGE, $createImageNode as createImageNode } from '../../plugins/Image';
 	import {
 		$createParagraphNode as createParagraphNode,
 		$insertNodes as insertNodes,
 		$isRootOrShadowRoot as isRootOrShadowRoot,
-		COMMAND_PRIORITY_EDITOR
+		COMMAND_PRIORITY_EDITOR,
 	} from 'lexical';
+
+	import Select from '$lib/components/Select.svelte';
+	import { TRANSPARENT_IMAGE, $createImageNode as createImageNode } from '../../plugins/Image';
 	import { INSERT_IMAGE_COMMAND } from '../../plugins/ImagePlugin.svelte';
 
 	/** @type {HTMLSelectElement} */
@@ -39,8 +39,8 @@
 		{
 			value: 'image',
 			label: 'Image',
-			insertFunc: insertImage
-		}
+			insertFunc: insertImage,
+		},
 	];
 
 	/** @param {Event} e */
@@ -62,7 +62,7 @@
 			element.insertFunc();
 		}
 
-		insertElementTypeElement.value = ''
+		insertElementTypeElement.value = '';
 	};
 
 	onMount(() => {
@@ -98,7 +98,7 @@
 		bind:value={currentInsertElementType}
 		bind:ref={insertElementTypeElement}
 		on:change={insertElementType}
-		class="-ml-10 bg-transparent px-10"
+		class="-ml-10 px-10"
 	>
 		<option value="">Insert</option>
 
