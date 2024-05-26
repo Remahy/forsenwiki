@@ -1,4 +1,5 @@
 import { error } from '@sveltejs/kit';
+import { readAuthorsForYPostByTitle } from '$lib/db/article/read';
 import { _getYPostAndHtml } from '../../api/article/read/[title]/+server';
 
 export async function load({ params }) {
@@ -15,10 +16,7 @@ export async function load({ params }) {
 		throw err;
 	}
 
-	/**
-	 * @type {Array<{ name: string }>}
-	 */
-	const authors = [];
+	const authors = await readAuthorsForYPostByTitle(title);
 
 	if (res) {
 		return { ...res, authors };
