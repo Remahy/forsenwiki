@@ -88,8 +88,8 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
     element.setAttribute('width', this.__width.toString());
     element.setAttribute('height', this.__height.toString());
  
-    element.style.width = this.__width.toString()+'px';
-    element.style.height = this.__height.toString()+'px';
+    // element.style.width = this.__width.toString()+'px';
+    // element.style.height = this.__height.toString()+'px';
 
     if (theme.image) {
       element.setAttribute('class', theme.image);
