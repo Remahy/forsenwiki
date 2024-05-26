@@ -10,7 +10,7 @@
 	};
 </script>
 
-<span on:click={playP} aria-hidden>🤡</span>
+<span on:click={playP} aria-hidden="true">🤡</span>
 
 <div hidden>
 	<audio src={p} bind:this={audioElement} />
