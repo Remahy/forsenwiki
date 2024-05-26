@@ -83,7 +83,10 @@
 
 <svelte:head>
 	<title>Community Forsen Wiki</title>
-	<meta name="description" content="All things forsen, forsen forsen forsen forsen forsen forsen, and more." />
+	<meta
+		name="description"
+		content="All things forsen, forsen forsen forsen forsen forsen forsen, and more."
+	/>
 </svelte:head>
 
 <section class="container mx-auto flex grow flex-col p-4 lg:p-0 lg:py-12">
@@ -96,7 +99,7 @@
 			Feel free to take a look around or{' '}
 			<a
 				href="/create/"
-				class="whitespace-nowrap rounded bg-violet-500 p-2 font-semibold text-white hover:bg-violet-800"
+				class="whitespace-nowrap rounded bg-violet-600 p-2 font-medium text-white hover:bg-violet-800"
 				data-sveltekit-reload>Create new article</a
 			>
 		</p>

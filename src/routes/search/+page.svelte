@@ -8,7 +8,10 @@
 
 <svelte:head>
 	<title>Search the Community Forsen Wiki</title>
-	<meta name="description" content="Query for forsen, forsen forsen forsen forsen forsen forsen, and more." />
+	<meta
+		name="description"
+		content="Query for forsen, forsen forsen forsen forsen forsen forsen, and more."
+	/>
 </svelte:head>
 
 <section class="container mx-auto flex grow flex-col p-4 lg:p-0 lg:py-12">
@@ -25,12 +28,12 @@
 		{#each results as result}
 			<a href={!result.type ? `/w/${result.title}` : result.title}>
 				<Box
-					class="border-2 gap-2 flex flex-col border-violet-400 p-4 hover:bg-violet-300 dark:border-violet-950 dark:hover:bg-violet-950 dark:hover:bg-opacity-60"
+					class="flex flex-col gap-2 border-2 border-violet-400 p-4 hover:bg-violet-300 dark:border-violet-950 dark:hover:bg-violet-950 dark:hover:bg-opacity-60"
 				>
 					<strong class="break-words">{result.rawTitle}</strong>
 					<p>Last updated: {new Date(result.lastUpdated).toLocaleString()}</p>
 					{#if result.type === 'content'}
-						<img src="{result.title}" alt="{result.rawTitle}" />
+						<img src={result.title} alt={result.rawTitle} />
 					{/if}
 				</Box>
 			</a>

@@ -15,5 +15,5 @@
 		bind:value={query}
 	/>
 
-	<Button type="submit" class="h-full rounded-l-none rounded-r"><SearchIcon /></Button>
+	<Button type="submit" class="h-full rounded-l-none rounded-r"><SearchIcon /><span class="hidden">Search</span></Button>
 </form>

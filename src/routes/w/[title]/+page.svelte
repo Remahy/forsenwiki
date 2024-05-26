@@ -8,7 +8,11 @@
 
 <svelte:head>
 	<title>{data.post.rawTitle} - Community Forsen Wiki</title>
-	<meta name="description" content="Read about &quot;{data.post.rawTitle}&quot; on forsen.wiki - All things forsen, and more." />
+	<meta
+		name="description"
+		content="Read about &quot;{data.post
+			.rawTitle}&quot; on forsen.wiki - All things forsen, and more."
+	/>
 </svelte:head>
 
 <div class="container mx-auto flex grow flex-col gap-8 p-4 lg:p-0 lg:py-12">
@@ -22,12 +26,12 @@
 
 			<a
 				href="/w/{data.post.title}/edit"
-				class="flex gap-2 rounded bg-violet-500 p-2 font-semibold text-white hover:bg-violet-800"
+				class="flex gap-2 rounded bg-violet-600 p-2 font-medium text-white hover:bg-violet-800"
 				data-sveltekit-reload><EditIcon /><span class="hidden md:inline">Edit article</span></a
 			>
 		</header>
 
-		<main class="editor-shell dark:prose-invert prose max-w-[unset] grow">
+		<main class="editor-shell prose max-w-[unset] grow dark:prose-invert">
 			<h1>{data.post.rawTitle}</h1>
 
 			{@html data.html}

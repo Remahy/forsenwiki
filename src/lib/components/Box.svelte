@@ -1,6 +1,6 @@
 <script>
-	/** @type {string | undefined} */
-	let className = undefined;
+	/** @type {string} */
+	let className = '';
 
 	export { className as class };
 </script>
