@@ -55,7 +55,7 @@
 		</div>
 
 		<article class="flex grow flex-col border dark:border-violet-950 dark:bg-black">
-			<div class="prose relative flex max-w-[unset] grow p-2 dark:prose-invert">
+			<div class="prose relative flex max-w-[unset] grow p-2 dark:prose-invert overflow-auto">
 				<ContentEditable className="grow m-0 p-0 border-0 outline-0" />
 			</div>
 		</article>

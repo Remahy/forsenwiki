@@ -12,51 +12,55 @@ import { yPostUpdatesToBase64 } from '$lib/yjs/utils';
  * @throws {number}
  */
 export const _getYPostByTitle = async (title) => {
-
-	const post = await readYPostUpdatesByTitle(title)
+	const post = await readYPostUpdatesByTitle(title);
 
 	if (!post) throw 404;
 
-	const base64String = yPostUpdatesToBase64(post.postUpdates)
+	const base64String = yPostUpdatesToBase64(post.postUpdates);
 
-	// Important: Make sure to set postUpdates to undefined or else user receives all content updates.
-	return { ...post, postUpdates: undefined, update: base64String }
-}
+	// Important: We're destructuring away postUpdates to make sure we don't return it.
+	// eslint-disable-next-line no-unused-vars
+	const { postUpdates, ..._post } = post;
 
-/** @param {string} title */
-export const _getYPostAndHtml = async (title) => {
+	return { ..._post, update: base64String };
+};
+
+/** @param {string} title @param {{ html?: boolean, update?: boolean }} returnProps */
+export const _getYPost = async (title, returnProps = { html: true, update: true }) => {
+	const { html: returnHTML = true, update: returnUpdate = true } = returnProps;
+
 	let yPost;
-
+	let update;
 	try {
-		yPost = await _getYPostByTitle(title)
+		const { update: _update, ..._yPost } = await _getYPostByTitle(title);
+		yPost = _yPost;
+		update = _update;
 	} catch (err) {
 		if (typeof err === 'number') {
-			throw err
+			throw err;
 		}
 
 		throw err;
 	}
-
-	const { update } = yPost;
 
 	/** @type {LexicalEditor} */
 	let editor;
 	/** @type {string} */
 	let html;
 	try {
-		let e = getYjsAndEditor(articleConfig(null, false, null), base64ToUint8Array(update))
+		let e = getYjsAndEditor(articleConfig(null, false, null), base64ToUint8Array(update));
 		editor = e.editor;
 
 		html = await toHTML(editor);
-
 	} catch (err) {
-		throw 500
+		console.error(err);
+		throw 500;
 	}
 
 	return {
 		post: yPost,
-		update,
-		html,
+		update: returnUpdate ? update : undefined,
+		html: returnHTML ? html : undefined,
 	};
 };
 
@@ -64,8 +68,7 @@ export async function GET({ params }) {
 	let res;
 
 	try {
-		res = await _getYPostAndHtml(params.title);
-
+		res = await _getYPost(params.title, { update: false });
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);
@@ -74,5 +77,5 @@ export async function GET({ params }) {
 		throw err;
 	}
 
-	return json(res)
+	return json(res);
 }

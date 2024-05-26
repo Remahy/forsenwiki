@@ -56,8 +56,7 @@
 					<span><strong>Authors:</strong></span>
 					<span>
 						{#each data.authors as author, index}
-							{author.name}
-							{index < data.authors.length - 1 ? ', ' : ''}
+							{author.name}{index < data.authors.length - 1 ? ', ' : ''}
 						{/each}
 					</span>
 				</p>
