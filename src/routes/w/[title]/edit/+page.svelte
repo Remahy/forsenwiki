@@ -90,6 +90,11 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Editing &quot;{rawTitle}&quot; - Community Forsen Wiki</title>
+	<meta name="description" content="Edit the &quot;{rawTitle}&quot; on forsen.wiki - All things forsen, and more." />
+</svelte:head>
+
 <div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
 	<Box class="mb-4 p-4">
 		<p>

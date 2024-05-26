@@ -5,8 +5,8 @@
 </script>
 
 <svelte:head>
-	<title>About</title>
-	<meta name="description" content="About this app" />
+	<title>About forsen.wiki</title>
+	<meta name="description" content="Learn about the forsen... Wiki." />
 </svelte:head>
 
 <div class="container mx-auto p-4 lg:p-0 lg:py-12">
@@ -47,7 +47,7 @@
 					target="github.com/remahy/forsenwiki"
 					class="flex items-center gap-2"
 				>
-					<GitHub size="18" color="currentColor" />
+					<GitHub size="18" />
 					<span class="grow">GitHub - Remahy/forsenwiki</span>
 				</a>
 			</li>
@@ -57,7 +57,7 @@
 					target="twitch.tv/remahy"
 					class="flex items-center gap-2"
 				>
-					<TwitchGlitch size="18" color="currentColor" /> <span>Twitch - Remahy</span></a
+					<TwitchGlitch size="18" /> <span>Twitch - Remahy</span></a
 				>
 			</li>
 		</ul>

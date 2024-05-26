@@ -6,6 +6,11 @@
 	export let data;
 </script>
 
+<svelte:head>
+	<title>{data.post.rawTitle} - Community Forsen Wiki</title>
+	<meta name="description" content="Read about &quot;{data.post.rawTitle}&quot; on forsen.wiki - All things forsen, and more." />
+</svelte:head>
+
 <div class="container mx-auto flex grow flex-col gap-8 p-4 lg:p-0 lg:py-12">
 	<article class="relative flex grow flex-col gap-8">
 		<header

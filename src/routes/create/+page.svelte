@@ -88,6 +88,11 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Creating new article for Community Forsen Wiki</title>
+	<meta name="description" content="Start writing about games and sh..." />
+</svelte:head>
+
 <div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
 	<Box class="mb-4 p-4">
 		<p>

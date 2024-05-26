@@ -7,6 +7,11 @@
 	const lul = new TextDecoder().decode(Uint8Array.from(atob(zu), (n) => n.codePointAt(0) || 0));
 </script>
 
+<svelte:head>
+	<title>Error {$page.status} - Community Forsen Wiki</title>
+	<meta name="description" content="Errors for ants." />
+</svelte:head>
+
 <div class="container mx-auto flex grow p-4 lg:p-0 lg:py-12">
 	<Box class="flex grow gap-2 !bg-red-200 p-12 dark:!bg-red-950 dark:!bg-opacity-50">
 		<div class="prose prose-2xl max-w-[unset] grow dark:prose-invert">

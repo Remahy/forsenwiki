@@ -2,6 +2,11 @@
 	import { AtSignIcon } from 'lucide-svelte';
 </script>
 
+<svelte:head>
+	<title>Privacy Policy</title>
+	<meta name="description" content="forsen.wiki" />
+</svelte:head>
+
 <div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
 	<section class="prose prose-lg w-full max-w-[unset] dark:prose-invert">
 		<h1 id="privacy">Privacy Policy</h1>
