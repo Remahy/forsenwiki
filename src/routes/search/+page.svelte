@@ -33,7 +33,7 @@
 					<strong class="break-words">{result.rawTitle}</strong>
 					<p>Last updated: {new Date(result.lastUpdated).toLocaleString()}</p>
 					{#if result.type === 'content'}
-						<img src={result.title} alt={result.rawTitle} />
+						<img src={result.title} alt={result.rawTitle} class="w-fit max-w-full" />
 					{/if}
 				</Box>
 			</a>
