@@ -42,7 +42,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"dotenv": "^16.4.5",
 		"@auth/prisma-adapter": "^2.1.0",
 		"@auth/sveltekit": "^1.1.0",
 		"@fontsource/opendyslexic": "^5.0.11",
@@ -58,6 +57,8 @@
 		"@lexical/utils": "0.15.0",
 		"@lexical/yjs": "0.15.0",
 		"@prisma/client": "^5.14.0",
+		"date-fns": "^3.6.0",
+		"dotenv": "^16.4.5",
 		"is-url": "^1.2.4",
 		"lexical": "0.15.0",
 		"linkedom-global": "^1.0.0",
