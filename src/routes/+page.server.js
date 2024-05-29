@@ -19,7 +19,7 @@ const usersQuery = {
 
 /** @type {{ latestArticles: LatestArticle[], latestUpdates: LatestUpdate[], latestUsers: LatestUser[] }} */
 let cache = { latestArticles: [], latestUpdates: [], latestUsers: [] };
-const lastCacheUpdate = Date.now();
+let lastCacheUpdate = Date.now() - 1_800_000;
 
 const getLatest = async () => {
 	if (Date.now() - lastCacheUpdate < 1_800_000) return cache;
@@ -105,6 +105,7 @@ const getLatest = async () => {
 		latestUpdates,
 		latestUsers,
 	};
+	lastCacheUpdate = Date.now();
 
 	return cache;
 };
