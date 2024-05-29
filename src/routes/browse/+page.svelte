@@ -12,7 +12,7 @@
 
 	// @ts-ignore - These detail props are callbacks.
 	function infiniteHandler({ detail: { complete, error, loaded } }) {
-		// Normally you'd make an http request here...
+		// Classic, good old, then & catch.
 		browseRequest(data[data.length - 1]?.id || '')
 			.then(async (res) => {
 				const newData = await res.json();
