@@ -3,6 +3,8 @@
 
 	import '$lib/components/editor/plugins/Image.css';
 
+	import Container from '$lib/components/Container.svelte';
+
 	export let data;
 </script>
 
@@ -15,7 +17,7 @@
 	/>
 </svelte:head>
 
-<div class="container mx-auto flex grow flex-col gap-8 p-4 lg:p-0 lg:py-12">
+<Container>
 	<article class="relative flex grow flex-col gap-8">
 		<header
 			class="flex w-full items-center rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 dark:from-violet-800/30 dark:to-violet-950/30"
@@ -63,4 +65,4 @@
 			{/if}
 		</footer>
 	</article>
-</div>
+</Container>
