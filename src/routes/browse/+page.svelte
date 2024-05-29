@@ -23,7 +23,10 @@
 					complete();
 				}
 			})
-			.catch((e) => error());
+			.catch((e) => {
+				console.error(e);
+				error();
+			});
 	}
 </script>
 
