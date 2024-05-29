@@ -2,6 +2,9 @@
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
+	import { formatRelative } from 'date-fns';
+	import { enGB } from 'date-fns/locale';
+
 	import { page } from '$app/stores';
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';
@@ -111,55 +114,57 @@
 				<div class="mb-2 border-b-2 border-violet-700 pb-2">
 					<h2 class="text-2xl">Recent updates</h2>
 				</div>
-				<ul class="mx-4 list-disc">
-					{#each $latestUpdates as update}
-						<li class="p-2 pl-0">
-							<Link href="/w/{update.title}">
-								<span>
-									<strong>{update.rawTitle}</strong> - {new Date(
-										update.lastUpdated
-									).toLocaleTimeString()} - By {update.author}
-								</span>
-							</Link>
-						</li>
-					{/each}
-				</ul>
+				{#each $latestUpdates as update}
+					<div class="p-2 pl-0">
+						<Link href="/w/{update.title}">
+							<span>
+								<strong>{update.rawTitle}</strong> - {formatRelative(
+									update.lastUpdated,
+									Date.now(),
+									{ locale: enGB }
+								)} - By {update.author}
+							</span>
+						</Link>
+					</div>
+				{/each}
 			</Box>
 
 			<Box class="grow p-4">
 				<div class="mb-2 border-b-2 border-violet-700 pb-2">
 					<h2 class="text-2xl">New articles</h2>
 				</div>
-				<ul class="mx-4 list-disc">
-					{#each $latestArticles as article}
-						<li class="p-2 pl-0">
-							<Link href="/w/{article.title}">
-								<span>
-									<strong>{article.rawTitle}</strong> - {new Date(
-										article.createdTimestamp
-									).toLocaleTimeString()} - By {article.author}
-								</span>
-							</Link>
-						</li>
-					{/each}
-				</ul>
+				{#each $latestArticles as article}
+					<div class="p-2 pl-0">
+						<Link href="/w/{article.title}">
+							<span>
+								<strong>{article.rawTitle}</strong> - {new Date(
+									article.createdTimestamp
+								).toDateString()} - By {article.author}
+							</span>
+						</Link>
+					</div>
+				{/each}
 			</Box>
 		</div>
 
-		<div class="lg:min-w-96">
-			<Box class="grow p-4">
+		<div class="lg:min-w-96 block lg:flex flex-col gap-4">
+			<Box class="mb-4 lg:mb-0 p-4 flex flex-col gap-2">
+				<div class="border-b-2 border-violet-700 pb-2">
+					<h2 class="text-2xl">Navigation</h2>
+				</div>
+				<a href="/browse" class="block whitespace-nowrap rounded bg-violet-600 p-2 font-medium text-white hover:bg-violet-800">All articles</a>
+			</Box>
+			<Box class="p-4">
 				<div class="mb-2 border-b-2 border-violet-700 pb-2">
 					<h2 class="text-2xl">New users</h2>
 				</div>
-				<ul class="mx-4 list-disc">
-					{#each $latestUsers as user}
-						<li class="p-2 pl-0">
-							<span>
-								<strong>{user.name}</strong>
-							</span>
-						</li>
-					{/each}
-				</ul>
+				{#each $latestUsers as user}
+					<div class="p-2 pl-0">
+						<span>
+							<strong>{user.name}</strong>
+						</span>
+					</div>
+				{/each}
 			</Box>
 		</div>
 	</div>

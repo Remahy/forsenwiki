@@ -8,6 +8,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import Clown from '$lib/components/Clown.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import Container from '$lib/components/Container.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
 	import { updateArticle } from '$lib/api/articles';
 
@@ -95,8 +96,8 @@
 	<meta name="description" content="Edit the &quot;{rawTitle}&quot; on forsen.wiki - All things forsen, and more." />
 </svelte:head>
 
-<div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
-	<Box class="mb-4 p-4">
+<Container>
+	<Box class="p-4">
 		<p>
 			Editing the <strong>"{rawTitle}"</strong> article.
 			<strong>Alpha: </strong> Your article drafts are automatically saved locally.
@@ -138,4 +139,4 @@
 			<span>Submit</span>
 		</Button>
 	</Box>
-</div>
+</Container>

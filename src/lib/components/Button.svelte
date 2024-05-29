@@ -1,7 +1,7 @@
 <script>
 	export let isActive = false;
 	/** @type {string | undefined} */
-	let className = undefined;
+	let className = '';
 
 	export { className as class };
 </script>

@@ -1,4 +1,4 @@
-import prisma from "$lib/prisma";
+import prisma from '$lib/prisma';
 
 /**
  * @typedef {{ rawTitle: string, title: string, createdTimestamp: string, author: string | null }} LatestArticle
@@ -9,20 +9,20 @@ import prisma from "$lib/prisma";
 /** @type {Prisma.Prisma.UserFindManyArgs} */
 const usersQuery = {
 	select: {
-		name: true
+		name: true,
 	},
 	orderBy: {
-		createdAt: 'desc'
+		createdAt: 'desc',
 	},
-	take: 5
+	take: 5,
 };
 
 /** @type {{ latestArticles: LatestArticle[], latestUpdates: LatestUpdate[], latestUsers: LatestUser[] }} */
 let cache = { latestArticles: [], latestUpdates: [], latestUsers: [] };
-const lastCacheUpdate = Date.now();
+let lastCacheUpdate = Date.now() - 1_800_000;
 
 const getLatest = async () => {
-	if (Date.now() - lastCacheUpdate > 1_800_000) return cache;
+	if (Date.now() - lastCacheUpdate < 1_800_000) return cache;
 
 	const yPosts = prisma.yPost.findMany({
 		select: {
@@ -35,23 +35,23 @@ const getLatest = async () => {
 						select: {
 							user: {
 								select: {
-									name: true
-								}
-							}
-						}
-					}
+									name: true,
+								},
+							},
+						},
+					},
 				},
 				take: 1,
 				orderBy: {
-					createdTimestamp: 'asc'
-				}
-			}
+					createdTimestamp: 'asc',
+				},
+			},
 		},
 		orderBy: {
-			createdTimestamp: 'desc'
+			createdTimestamp: 'desc',
 		},
-		take: 5
-	})
+		take: 5,
+	});
 
 	const yPostUpdates = prisma.yPostUpdate.findMany({
 		select: {
@@ -59,34 +59,38 @@ const getLatest = async () => {
 			post: {
 				select: {
 					title: true,
-					rawTitle: true
-				}
+					rawTitle: true,
+				},
 			},
 			metadata: {
 				select: {
 					user: {
 						select: {
-							name: true
-						}
-					}
-				}
-			}
+							name: true,
+						},
+					},
+				},
+			},
 		},
 		orderBy: {
-			createdTimestamp: 'desc'
+			createdTimestamp: 'desc',
 		},
-		take: 5
+		take: 5,
 	});
 
 	const users = prisma.user.findMany(usersQuery);
 
-	const [rawLatestArticles, rawLatestUpdates, latestUsers] = await Promise.all([yPosts, yPostUpdates, users]);
+	const [rawLatestArticles, rawLatestUpdates, latestUsers] = await Promise.all([
+		yPosts,
+		yPostUpdates,
+		users,
+	]);
 
 	const latestArticles = rawLatestArticles.map((post) => ({
 		rawTitle: post.rawTitle,
 		title: post.title,
 		createdTimestamp: post.createdTimestamp.toString(),
-		author: post.postUpdates[0].metadata.user.name
+		author: post.postUpdates[0].metadata.user.name,
 	}));
 
 	const latestUpdates = rawLatestUpdates.map((update) => ({
@@ -101,9 +105,10 @@ const getLatest = async () => {
 		latestUpdates,
 		latestUsers,
 	};
+	lastCacheUpdate = Date.now();
 
 	return cache;
-}
+};
 
 export function load() {
 	return getLatest();

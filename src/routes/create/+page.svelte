@@ -8,6 +8,7 @@
 	import Link from '$lib/components/Link.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Editor from '$lib/components/editor/editor.svelte';
+	import Container from '$lib/components/Container.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
 
 	/** @type {Error | null} */
@@ -93,8 +94,8 @@
 	<meta name="description" content="Start writing about games and sh..." />
 </svelte:head>
 
-<div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
-	<Box class="mb-4 p-4">
+<Container>
+	<Box class="p-4">
 		<p>
 			Creating a new article.
 			<strong>Alpha: </strong> Your article drafts are automatically saved locally.
@@ -137,4 +138,4 @@
 			<span>Submit</span>
 		</Button>
 	</Box>
-</div>
+</Container>

@@ -1,7 +1,11 @@
 <script>
 	import { EditIcon } from 'lucide-svelte';
+	import { formatRelative } from 'date-fns';
+	import { enGB } from 'date-fns/locale';
 
 	import '$lib/components/editor/plugins/Image.css';
+
+	import Container from '$lib/components/Container.svelte';
 
 	export let data;
 </script>
@@ -15,7 +19,7 @@
 	/>
 </svelte:head>
 
-<div class="container mx-auto flex grow flex-col gap-8 p-4 lg:p-0 lg:py-12">
+<Container>
 	<article class="relative flex grow flex-col gap-8">
 		<header
 			class="flex w-full items-center rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 dark:from-violet-800/30 dark:to-violet-950/30"
@@ -39,14 +43,14 @@
 
 		<footer class="rounded bg-violet-200 p-4 dark:bg-violet-950 dark:bg-opacity-30">
 			<p>
-				<span>
+				<span title={new Date(data.post.createdTimestamp).toString()}>
 					<strong>Created:</strong>
-					{new Date(data.post.createdTimestamp).toLocaleString()}
+					{new Date(data.post.createdTimestamp).toDateString()}
 				</span>
 				{#if data.post.lastUpdated.getTime() !== data.post.createdTimestamp.getTime()}
-					<span>
+					<span title={new Date(data.post.lastUpdated).toString()}>
 						<strong>Updated:</strong>
-						{new Date(data.post.lastUpdated).toLocaleString()}
+						{formatRelative(data.post.lastUpdated, Date.now(), { locale: enGB })}
 					</span>
 				{/if}
 			</p>
@@ -63,4 +67,4 @@
 			{/if}
 		</footer>
 	</article>
-</div>
+</Container>
