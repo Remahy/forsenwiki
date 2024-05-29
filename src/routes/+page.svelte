@@ -147,8 +147,14 @@
 			</Box>
 		</div>
 
-		<div class="lg:min-w-96">
-			<Box class="grow p-4">
+		<div class="lg:min-w-96 block lg:flex flex-col gap-4">
+			<Box class="mb-4 lg:mb-0 p-4 flex flex-col gap-2">
+				<div class="border-b-2 border-violet-700 pb-2">
+					<h2 class="text-2xl">Navigation</h2>
+				</div>
+				<a href="/browse" class="block whitespace-nowrap rounded bg-violet-600 p-2 font-medium text-white hover:bg-violet-800">All articles</a>
+			</Box>
+			<Box class="p-4">
 				<div class="mb-2 border-b-2 border-violet-700 pb-2">
 					<h2 class="text-2xl">New users</h2>
 				</div>
