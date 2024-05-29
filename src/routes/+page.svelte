@@ -4,6 +4,7 @@
 	import { source } from 'sveltekit-sse';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
+
 	import { page } from '$app/stores';
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';

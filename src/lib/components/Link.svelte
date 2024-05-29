@@ -2,8 +2,8 @@
 	/** @type {string} */
 	export let href;
 
-	/** @type {string | undefined} */
-	let className = undefined;
+	/** @type {string} */
+	let className = '';
 
 	export { className as class };
 </script>
