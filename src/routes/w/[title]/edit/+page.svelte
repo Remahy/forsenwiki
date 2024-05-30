@@ -100,7 +100,7 @@
 	<Box class="p-4">
 		<p>
 			Editing the <strong>"{rawTitle}"</strong> article.
-			<strong>Alpha: </strong> Your article drafts are automatically saved locally.
+			<strong>Your article drafts are automatically saved locally.</strong>
 		</p>
 	</Box>
 

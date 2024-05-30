@@ -1,6 +1,7 @@
 <script>
-	import Box from '$lib/components/Box.svelte';
 	import { page } from '$app/stores';
+	import LinkBox from '$lib/components/LinkBox.svelte';
+	import LinkButton from '$lib/components/LinkButton.svelte';
 
 	/** @type {import('./+page.server').QueryResult[]} */
 	let results = $page.data.results;
@@ -26,17 +27,15 @@
 
 	<div class="flex flex-col gap-2">
 		{#each results as result}
-			<a href={!result.type ? `/w/${result.title}` : result.title}>
-				<Box
-					class="flex flex-col gap-2 border-2 border-violet-400 p-4 hover:bg-violet-300 dark:border-violet-950 dark:hover:bg-violet-950 dark:hover:bg-opacity-60"
-				>
+			<LinkBox href={!result.type ? `/w/${result.title}` : result.title} class="flex">
+				<div class="flex grow flex-col gap-2">
 					<strong class="break-words">{result.rawTitle}</strong>
 					<p>Last updated: {new Date(result.lastUpdated).toLocaleString()}</p>
 					{#if result.type === 'content'}
 						<img src={result.title} alt={result.rawTitle} class="w-fit max-w-full" />
 					{/if}
-				</Box>
-			</a>
+				</div>
+			</LinkBox>
 		{/each}
 	</div>
 </section>
