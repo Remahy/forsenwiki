@@ -8,6 +8,7 @@
 	import { page } from '$app/stores';
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';
+	import LinkButton from '$lib/components/LinkButton.svelte';
 
 	/**
 	 * @typedef {import('./+page.server').LatestArticle} LatestArticle
@@ -100,11 +101,7 @@
 			forsen.wiki is currently <strong>work in progress</strong>.
 			<br />
 			Feel free to take a look around or{' '}
-			<a
-				href="/create/"
-				class="whitespace-nowrap rounded bg-violet-600 p-2 font-medium text-white hover:bg-violet-800"
-				data-sveltekit-reload>Create new article</a
-			>
+			<LinkButton href="/create/" class="whitespace-nowrap" reload>Create new article</LinkButton>
 		</p>
 	</div>
 
@@ -147,12 +144,12 @@
 			</Box>
 		</div>
 
-		<div class="lg:min-w-96 block lg:flex flex-col gap-4">
-			<Box class="mb-4 lg:mb-0 p-4 flex flex-col gap-2">
+		<div class="block flex-col gap-4 lg:flex lg:min-w-96">
+			<Box class="mb-4 flex flex-col gap-2 p-4 lg:mb-0">
 				<div class="border-b-2 border-violet-700 pb-2">
 					<h2 class="text-2xl">Navigation</h2>
 				</div>
-				<a href="/browse" class="block whitespace-nowrap rounded bg-violet-600 p-2 font-medium text-white hover:bg-violet-800">All articles</a>
+				<LinkButton href="/browse" class="block whitespace-nowrap">All articles</LinkButton>
 			</Box>
 			<Box class="p-4">
 				<div class="mb-2 border-b-2 border-violet-700 pb-2">

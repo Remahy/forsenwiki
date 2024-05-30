@@ -6,6 +6,7 @@
 	import '$lib/components/editor/plugins/Image.css';
 
 	import Container from '$lib/components/Container.svelte';
+	import LinkButton from '$lib/components/LinkButton.svelte';
 
 	export let data;
 </script>
@@ -28,11 +29,9 @@
 				forsen.wiki is currently <strong>work in progress</strong>.
 			</p>
 
-			<a
-				href="/w/{data.post.title}/edit"
-				class="flex gap-2 rounded bg-violet-600 p-2 font-medium text-white hover:bg-violet-800"
-				data-sveltekit-reload><EditIcon /><span class="hidden md:inline">Edit article</span></a
-			>
+			<LinkButton href="/w/{data.post.title}/edit" reload class="flex gap-2">
+				<EditIcon /><span class="hidden md:inline">Edit article</span>
+			</LinkButton>
 		</header>
 
 		<main class="editor-shell prose max-w-[unset] grow dark:prose-invert">
