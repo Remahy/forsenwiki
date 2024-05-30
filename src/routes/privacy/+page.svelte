@@ -1,5 +1,6 @@
 <script>
 	import { AtSignIcon } from 'lucide-svelte';
+	import Container from '$lib/components/Container.svelte';
 </script>
 
 <svelte:head>
@@ -7,7 +8,7 @@
 	<meta name="description" content="forsen.wiki" />
 </svelte:head>
 
-<div class="container mx-auto flex grow flex-col gap-2 p-4 lg:p-0 lg:py-12">
+<Container>
 	<section class="prose prose-lg w-full max-w-[unset] dark:prose-invert">
 		<h1 id="privacy">Privacy Policy</h1>
 		<p>🐦</p>
@@ -265,4 +266,4 @@
 			<li>By email: forsenwiki+privacy(<AtSignIcon style="display: inline;" />)gmail.com</li>
 		</ul>
 	</section>
-</div>
+</Container>
