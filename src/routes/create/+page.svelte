@@ -98,7 +98,7 @@
 	<Box class="p-4">
 		<p>
 			Creating a new article.
-			<strong>Alpha: </strong> Your article drafts are automatically saved locally.
+			<strong>Your article drafts are automatically saved locally.</strong>
 		</p>
 	</Box>
 
