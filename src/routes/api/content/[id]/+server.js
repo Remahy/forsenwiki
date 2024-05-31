@@ -36,7 +36,7 @@ export async function DELETE({ locals, params }) {
 	}
 
 	const { isModerator } = locals;
-	const isAuthor = session.user.id === res?.authorId + '1';
+	const isAuthor = session.user.id === res?.authorId;
 
 	const isAllowed = isModerator || isAuthor;
 
