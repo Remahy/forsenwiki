@@ -72,9 +72,9 @@
 </script>
 
 <Container class="overflow-hidden">
-	<div class="items-stretch gap-8 lg:flex">
-		<div class="mb-4 lg:mb-0 lg:w-fit">
-			<Box class="lg:min-h-96 lg:min-w-96">
+	<div class="items-stretch gap-8 xl:flex">
+		<div class="mb-4 xl:mb-0 xl:w-fit">
+			<Box class="xl:min-h-96 xl:min-w-96 xl:max-w-3xl">
 				<img {src} alt={result.name} class="w-fit max-w-full" />
 			</Box>
 		</div>
