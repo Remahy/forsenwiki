@@ -14,6 +14,8 @@ import { encodeYDocToUpdateV2ToBase64 } from '$lib/yjs/utils.js';
 import { validateAndUploadImages } from '$lib/components/editor/validations/images.server.js';
 
 export async function POST({ request, locals }) {
+	if (locals.isBlocked) return ForbiddenError();
+
 	const session = await locals.auth();
 	if (!session?.user?.id || !session?.user?.name) return ForbiddenError();
 

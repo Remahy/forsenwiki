@@ -21,7 +21,7 @@
 	>
 		<p class="m-0 text-center leading-10">
 			<strong>Tip:</strong>
-			<span>Searching by an author's username shows any content they've modified or created.</span>
+			<span>Searching by an author's username shows all content they've modified or created.</span>
 		</p>
 	</div>
 
@@ -35,6 +35,11 @@
 						<img src={result.title} alt={result.rawTitle} class="w-fit max-w-full" />
 					{/if}
 				</div>
+				{#if result.type === 'content'}
+					<div>
+						<LinkButton href="/content/{result.id}">Modify</LinkButton>
+					</div>
+				{/if}
 			</LinkBox>
 		{/each}
 	</div>

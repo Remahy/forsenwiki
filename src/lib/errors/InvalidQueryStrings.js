@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
 
 /** @param {string} message */
-export const ForbiddenError = (message = 'Forbidden') => {
-	error(401, {
+export const InvalidQueryStrings = (message = 'InvalidQuerystrings') => {
+	error(400, {
 		message,
 	});
 };

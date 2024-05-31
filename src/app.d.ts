@@ -8,6 +8,7 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			isModerator: boolean
+			isBlocked: boolean
 		}
 		// interface PageData {}
 		// interface PageState {}
