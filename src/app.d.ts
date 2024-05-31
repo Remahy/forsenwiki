@@ -6,7 +6,9 @@ import * as P from '../node_modules/.prisma/client';
 declare global {
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			isModerator: boolean
+		}
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}

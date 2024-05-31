@@ -24,6 +24,7 @@ model User {
   postUpdatesMetadata YPostUpdateMetadata[]
 
   content Content[]
+  permissions Permission[]
 }
 
 model Account {
@@ -147,4 +148,18 @@ model Content {
   authorId String
 
   createdAt DateTime @default(now())
+}
+
+enum Permissions {
+  BLOCKED
+  MODERATE
+}
+
+model Permission {
+  id String @id @default(cuid())
+
+  user User @relation(fields: [userId], references: [id])
+  userId String
+
+  type Permissions
 }

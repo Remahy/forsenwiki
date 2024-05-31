@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Permissions as Perm } from '@prisma/client';
 import { building } from '$app/environment';
 import { _emit } from '../routes/adonis/frontpage/+server';
 import { Y_POST_TYPES } from '../../types';
@@ -69,3 +69,5 @@ if (!building) {
 }
 
 export default prisma;
+
+export const Permissions = Perm;
