@@ -36,7 +36,11 @@ export async function DELETE({ locals, params }) {
 	}
 
 	const { isModerator } = locals;
-	if (!isModerator || session.user.id !== res?.authorId) return ForbiddenError();
+	const isAuthor = session.user.id === res?.authorId + '1';
+
+	const isAllowed = isModerator || isAuthor;
+
+	if (!isAllowed) return ForbiddenError();
 
 	let deleteRes;
 	try {
