@@ -41,6 +41,10 @@
 					</div>
 				{/if}
 			</LinkBox>
+		{:else}
+			{#if $page.url.searchParams.get('query')}
+				<p><strong>No search results found.</strong></p>
+			{/if}
 		{/each}
 	</div>
 </section>
