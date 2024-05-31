@@ -17,7 +17,7 @@
 	import { getSelectedNode } from '$lib/components/editor/utils/getSelection';
 	import { modal } from '$lib/stores/modal';
 	import { $isALinkNode as isALinkNode } from '$lib/lexicalCustom';
-	import LinkButtonModal from './LinkButtonModal.svelte';
+	import EditLinkButtonModal from './EditLinkButtonModal.svelte';
 
 	$: hasLink = false;
 	$: url = '';
@@ -48,7 +48,7 @@
 		if (!editor) return;
 
 		modal.set({
-			component: LinkButtonModal,
+			component: EditLinkButtonModal,
 			hasLink,
 			/**
 			 * @param {string | null} dUrl

@@ -10,7 +10,7 @@
 
 	import Button from '$lib/components/Button.svelte';
 	import { ctrlKey } from '$lib/environment/environment';
-	import LinkButton from './LinkButton.svelte';
+	import EditLinkButton from './EditLinkButton.svelte';
 
 	$: isBold = false;
 	$: isItalic = false;
@@ -78,4 +78,4 @@
 	<ItalicIcon size="16" />
 </Button>
 
-<LinkButton />
+<EditLinkButton />

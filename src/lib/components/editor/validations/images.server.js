@@ -1,14 +1,12 @@
-import path from 'path';
-import fs from 'fs/promises';
 import crypto from 'crypto';
 import { $nodesOfType as nodesOfType } from 'lexical';
 
-import prisma from '$lib/prisma';
 import { ImageNode } from '$lib/lexicalCustom';
 import { MAX_IMAGE_SIZE_MIB } from '$lib/constants/image';
 import { cacheServiceBaseURLWithStatic, getCacheURL } from '$lib/utils/getCacheURL';
+import { createContent } from '$lib/db/content/create';
+import { writeContent } from '$lib/fs/content';
 import { IMAGE_OFF } from '../plugins/Image';
-import { staticDir } from '../../../../../static';
 
 /**
  * @param {string} base64String
@@ -47,17 +45,8 @@ const uploadImage = async (base64String, title, sha256String, author) => {
 	const buffer = Buffer.from(stripped, 'base64');
 
 	try {
-		const p = path.join(staticDir, sha256String);
-
-		await fs.writeFile(p, buffer);
-
-		await prisma.content.create({
-			data: {
-				name: title,
-				hash: sha256String,
-				authorId: author.id,
-			},
-		});
+		await writeContent(buffer, sha256String);
+		await createContent({ name: title, hash: sha256String, authorId: author.id });
 	} catch (error) {
 		console.warn(error);
 	}

@@ -5,8 +5,8 @@
 
 	import { page } from '$app/stores';
 	import { browseRequest } from '$lib/api/browse';
-	import Box from '$lib/components/Box.svelte';
 	import Container from '$lib/components/Container.svelte';
+	import LinkBox from '$lib/components/LinkBox.svelte';
 
 	let data = $page.data.results;
 
@@ -37,25 +37,21 @@
 	</div>
 
 	{#each data as article}
-		<a href="/w/{article.title}">
-			<Box
-				class="flex flex-col gap-2 border-2 border-violet-400 p-6 hover:bg-violet-300 dark:border-violet-950 dark:hover:bg-violet-950 dark:hover:bg-opacity-60"
-			>
-				<div class="text-2xl font-bold">{article.rawTitle || article.title}</div>
-				<p>
-					<span title={new Date(article.createdTimestamp).toString()}>
-						<strong>Created:</strong>
-						{new Date(article.createdTimestamp).toDateString()}
+		<LinkBox class="flex flex-col gap-2" href="/w/{article.title}">
+			<div class="text-2xl font-bold">{article.rawTitle || article.title}</div>
+			<p>
+				<span title={new Date(article.createdTimestamp).toString()}>
+					<strong>Created:</strong>
+					{new Date(article.createdTimestamp).toDateString()}
+				</span>
+				{#if new Date(article.lastUpdated).getTime() !== new Date(article.createdTimestamp).getTime()}
+					<span title={new Date(article.lastUpdated).toString()}>
+						<strong>Updated:</strong>
+						{formatRelative(article.lastUpdated, Date.now(), { locale: enGB })}
 					</span>
-					{#if new Date(article.lastUpdated).getTime() !== new Date(article.createdTimestamp).getTime()}
-						<span title={new Date(article.lastUpdated).toString()}>
-							<strong>Updated:</strong>
-							{formatRelative(article.lastUpdated, Date.now(), { locale: enGB })}
-						</span>
-					{/if}
-				</p>
-			</Box>
-		</a>
+				{/if}
+			</p>
+		</LinkBox>
 	{/each}
 
 	<InfiniteLoading on:infinite={infiniteHandler}>

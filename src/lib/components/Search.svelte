@@ -4,6 +4,13 @@
 	import { page } from '$app/stores';
 
 	let query = $page.url.pathname === '/search' ? $page.url.searchParams.get('query') : '';
+
+	page.subscribe(({ url }) => {
+		if (url.pathname === '/search') {
+			const q = url.searchParams.get('query') || ''
+			query = q;
+		}
+	});
 </script>
 
 <form class="flex items-center" action="/search" data-sveltekit-reload>

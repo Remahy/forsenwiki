@@ -2,7 +2,7 @@ import prisma from '$lib/prisma.js';
 import { getCacheURL } from '$lib/utils/getCacheURL.js';
 
 /**
- * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date }} QueryResult
+ * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date, id: string }} QueryResult
  */
 
 /**
@@ -25,6 +25,7 @@ export const load = async ({ url }) => {
 			},
 		},
 		select: {
+			id: true,
 			rawTitle: true,
 			lastUpdated: true,
 			title: true,
@@ -44,6 +45,7 @@ export const load = async ({ url }) => {
 			},
 		},
 		select: {
+			id: true,
 			rawTitle: true,
 			lastUpdated: true,
 			title: true,
@@ -80,13 +82,14 @@ export const load = async ({ url }) => {
 	results.push(...metadataUserName);
 
 	for (let index = 0; index < contentUserName.length; index++) {
-		const { name, hash, createdAt } = contentUserName[index];
+		const { name, hash, createdAt, id } = contentUserName[index];
 
 		results.push({
 			type: 'content',
 			lastUpdated: createdAt,
 			rawTitle: name,
 			title: getCacheURL(hash, name).toString(),
+			id,
 		});
 	}
 

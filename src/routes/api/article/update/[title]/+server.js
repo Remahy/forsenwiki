@@ -20,6 +20,8 @@ import { validateAndUploadImages } from '$lib/components/editor/validations/imag
 import { _getYPostByTitle } from '../../read/[title]/+server';
 
 export async function POST({ request, locals, params }) {
+	if (locals.isBlocked) return ForbiddenError();
+
 	const session = await locals.auth();
 	if (!session?.user?.id || !session?.user?.name) return ForbiddenError();
 
