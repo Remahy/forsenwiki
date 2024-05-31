@@ -1,9 +1,9 @@
-import path from 'path';
-import fs from 'fs/promises';
 import { error, json } from '@sveltejs/kit';
 import prisma from '$lib/prisma.js';
 import { ForbiddenError } from '$lib/errors/Forbidden.js';
-import { staticDir } from '../../../../../static';
+import { deleteContent } from '$lib/db/content/delete';
+import { updateContentName } from '$lib/db/content/updateName';
+import { rmContentByFilename } from '$lib/fs/content/index.js';
 
 export async function POST({ request, locals, params }) {
 	const { isModerator } = locals;
@@ -18,7 +18,7 @@ export async function POST({ request, locals, params }) {
 
 	// TODO: Find all articles with this content and update their URL `fileName` field.
 
-	const res = await prisma.content.update({ where: { id }, data: { name }, select: { name: true } });
+	const res = await updateContentName(id, name);
 
 	return json(res);
 }
@@ -40,11 +40,9 @@ export async function DELETE({ locals, params }) {
 
 	let deleteRes;
 	try {
-		const p = path.join(staticDir, res.hash);
+		await rmContentByFilename(res.hash);
 
-		await fs.rm(p);
-
-		deleteRes = await prisma.content.delete({ where: { id } });
+		deleteRes = await deleteContent(id);
 	} catch (error) {
 		console.warn(error);
 	}
