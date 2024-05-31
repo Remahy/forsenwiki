@@ -38,6 +38,7 @@
 
 		if (res.status === 200) {
 			const json = await res.json();
+			window.location.reload();
 		} else if (res.status >= 400) {
 			const json = await res.json();
 			error = json;
