@@ -5,7 +5,6 @@ import { InvalidQueryStrings } from '$lib/errors/InvalidQueryStrings.js';
 
 export async function POST({ request, locals, url }) {
 	const { isModerator } = locals;
-	console.log(locals, isModerator);
 	if (!isModerator) return ForbiddenError();
 
 	const session = await locals.auth();
