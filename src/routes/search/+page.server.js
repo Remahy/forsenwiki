@@ -1,5 +1,5 @@
-import prisma from '$lib/prisma.js';
-import { getCacheURL } from '$lib/utils/getCacheURL.js';
+import prisma from '$lib/prisma';
+import { getCacheURL } from '$lib/utils/getCacheURL';
 
 /**
  * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date, id: string }} QueryResult

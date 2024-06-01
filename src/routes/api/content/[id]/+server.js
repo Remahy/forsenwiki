@@ -1,9 +1,9 @@
 import { error, json } from '@sveltejs/kit';
-import prisma from '$lib/prisma.js';
-import { ForbiddenError } from '$lib/errors/Forbidden.js';
+import prisma from '$lib/prisma';
+import { ForbiddenError } from '$lib/errors/Forbidden';
 import { deleteContent } from '$lib/db/content/delete';
 import { updateContentName } from '$lib/db/content/updateName';
-import { rmContentByFilename } from '$lib/fs/content/index.js';
+import { rmContentByFilename } from '$lib/fs/content';
 
 export async function POST({ request, locals, params }) {
 	const { isModerator } = locals;

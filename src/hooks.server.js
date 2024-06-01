@@ -1,5 +1,5 @@
 import { sequence } from '@sveltejs/kit/hooks';
-import prisma, { Permissions } from '$lib/prisma.js';
+import prisma, { Permissions } from '$lib/prisma';
 import '../static.js';
 import { handle as authenticationHandle } from './auth';
 
