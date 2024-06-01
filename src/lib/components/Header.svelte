@@ -6,6 +6,8 @@
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Search from './Search.svelte';
+	import Box from './Box.svelte';
+	import Link from './Link.svelte';
 
 	let isLoading = false;
 
@@ -24,6 +26,10 @@
 	if ($page.data.session?.user?.image) {
 		cachedImage.searchParams.set('url', $page.data.session?.user?.image);
 	}
+
+	const hasSeenPrivacyUpdateNotice = globalThis?.localStorage
+		? localStorage.getItem('privacy-update-june-1-2024')
+		: true;
 </script>
 
 <header class="bg-stone-100 dark:bg-violet-950 dark:bg-opacity-30">
@@ -86,4 +92,32 @@
 			</div>
 		</nav>
 	</div>
+
+	{#if !hasSeenPrivacyUpdateNotice}
+		<Box
+			class="!rounded-none !bg-yellow-900 !bg-opacity-20 dark:!bg-yellow-300 dark:!bg-opacity-20"
+		>
+			<div class="container mx-auto flex py-4">
+				<div class="grow">
+					<p>
+						<Link href="/privacy"
+							>Privacy policy has been updated. Please take a moment to read it.</Link
+						>
+					</p>
+					<p>
+						<strong>Changes:</strong> Added section about Cloudflare usage, updated contact emails.
+					</p>
+				</div>
+
+				<Button
+					on:click={() => {
+						localStorage.setItem('privacy-update-june-1-2024', 'true');
+						window.location.reload();
+					}}
+				>
+					Close
+				</Button>
+			</div>
+		</Box>
+	{/if}
 </header>

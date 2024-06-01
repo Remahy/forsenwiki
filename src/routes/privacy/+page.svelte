@@ -12,14 +12,14 @@
 	<section class="prose prose-lg w-full max-w-[unset] dark:prose-invert">
 		<h1 id="privacy">Privacy Policy</h1>
 		<p>🐦</p>
-		<p>Effective date: May 25, 2024</p>
+		<p>Effective date: June 1, 2024</p>
 		<p>
 			ForsenWiki ("us", "we", or "our") operates the forsen.wiki website (hereinafter referred to as
 			the "Service").
 		</p>
 		<p>
-			The Service is hosted on Hetzner (www.hetzner.com) with user content caching on wsrv.nl
-			(wsrv.nl) (both hereinafter referred to by name and as the "Service Providers").
+			The Service is hosted on Hetzner (www.hetzner.com) behind a Cloudflare (www.cloudflare.com) cache with user content caching on wsrv.nl
+			(wsrv.nl) (all three hereinafter referred to by name and as the "Service Providers").
 		</p>
 		<p>
 			This page informs you of our policies regarding the collection, use, and disclosure of data
@@ -141,7 +141,18 @@
 			Read their Privacy Policy here: <a
 				href="https://www.hetzner.com/legal/privacy-policy/"
 				target="hetzner-privacy"
-				rel="noopener noreferrer">https://www.hetzner.com/legal/privacy-policy/</a
+				rel="noopener noreferrer">hetzner/legal/privacy-policy/</a
+			>
+		</p>
+		<p>We use Cloudflare to cache the Service.</p>
+		<ul>
+			<li>To provide and maintain the Service</li>
+		</ul>
+		<p>
+			Read their Privacy Policy here: <a
+				href="https://www.cloudflare.com/privacypolicy/"
+				target="cloudflare-privacy"
+				rel="noopener noreferrer">cloudflare/privacypolicy</a
 			>
 		</p>
 		<p>We use wsrv.nl to cache user content.</p>
@@ -152,9 +163,10 @@
 			Read their Privacy Policy here: <a
 				href="https://github.com/weserv/images/blob/5.x/Privacy-Policy.md"
 				target="weserv-privacy"
-				rel="noopener noreferrer">https://github.com/weserv/images/blob/5.x/Privacy-Policy.md</a
+				rel="noopener noreferrer">weserv/Privacy-Policy.md</a
 			>
 		</p>
+		
 		<h2>Disclosure Of Data</h2>
 		<h3>Legal Requirements</h3>
 		<p>
@@ -228,7 +240,7 @@
 			If you make a request, we have one month to respond to you. If you would like help on how to
 			exercise any of these rights, please contact us at our email:
 		</p>
-		<p>Write to us: forsenwiki+gdpr(<AtSignIcon style="display: inline;" />)gmail.com</p>
+		<p>Write to us: gdpr(<AtSignIcon style="display: inline;" />)forsen.wiki</p>
 		<h2>Links To Other websites</h2>
 		<p>
 			Our Service may contain links to other websites that are not operated by us. If you click on a
@@ -263,7 +275,7 @@
 		<h2>Contact Us</h2>
 		<p>If you have any questions about this Privacy Policy, please contact admin:</p>
 		<ul>
-			<li>By email: forsenwiki+privacy(<AtSignIcon style="display: inline;" />)gmail.com</li>
+			<li>By email: privacy(<AtSignIcon style="display: inline;" />)forsen.wiki</li>
 		</ul>
 	</section>
 </Container>
