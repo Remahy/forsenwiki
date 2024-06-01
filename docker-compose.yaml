@@ -30,7 +30,7 @@ services:
       - 5432:5432
 
   caddy:
-    image: caddy:latest
+    image: serfriz/caddy-cloudflare:latest
     restart: unless-stopped
     ports:
       - "80:80"
