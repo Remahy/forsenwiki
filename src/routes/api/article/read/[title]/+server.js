@@ -74,7 +74,7 @@ export const _getYPost = async (title, returnProps = { html: true, update: true 
 		throw 500;
 	}
 
-	upsertHTML(yPost.id, html);
+	Promise.resolve(upsertHTML(yPost.id, html));
 
 	return {
 		post: yPost,
