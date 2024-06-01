@@ -34,14 +34,36 @@ export async function readYPostUpdatesByTitle(title) {
 	});
 }
 
-/** @param {string} title */
+/**
+ * @param {string} title
+ */
 export async function readYPostByTitle(title) {
 	return prisma.yPost.findUnique({
 		where: {
 			title,
 		},
-		select: {
-			id: true,
+		include: {
+			html: {
+				select: {
+					content: true,
+				},
+			},
+			outRelations: {
+				select: {
+					isSystem: true,
+					toPost: {
+						select: {
+							postUpdates: {
+								select: {
+									id: true,
+								},
+								take: 1,
+							},
+						},
+					},
+					toPostId: true,
+				},
+			},
 		},
 	});
 }

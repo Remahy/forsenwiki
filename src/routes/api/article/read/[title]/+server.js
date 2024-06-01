@@ -4,8 +4,9 @@ import { base64ToUint8Array } from 'uint8array-extras';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { toHTML } from '$lib/lexicalHTML.server';
-import { readYPostUpdatesByTitle } from '$lib/db/article/read';
+import { readYPostByTitle, readYPostUpdatesByTitle } from '$lib/db/article/read';
 import { yPostUpdatesToBase64 } from '$lib/yjs/utils';
+import { upsertHTML } from '$lib/db/article/html.js';
 
 /**
  * @param {string} title
@@ -28,6 +29,22 @@ export const _getYPostByTitle = async (title) => {
 /** @param {string} title @param {{ html?: boolean, update?: boolean }} returnProps */
 export const _getYPost = async (title, returnProps = { html: true, update: true }) => {
 	const { html: returnHTML = true, update: returnUpdate = true } = returnProps;
+
+	if (!returnUpdate && returnHTML) {
+		try {
+			const yPost = await readYPostByTitle(title);
+
+			if (yPost?.html?.content) {
+				return { post: { ...yPost, html: undefined }, html: yPost.html.content };
+			}
+		} catch (err) {
+			if (typeof err === 'number') {
+				return error(err);
+			}
+
+			throw err;
+		}
+	}
 
 	let yPost;
 	let update;
@@ -56,6 +73,8 @@ export const _getYPost = async (title, returnProps = { html: true, update: true 
 		console.error(err);
 		throw 500;
 	}
+
+	upsertHTML(yPost.id, html);
 
 	return {
 		post: yPost,
