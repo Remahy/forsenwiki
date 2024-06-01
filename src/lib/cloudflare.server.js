@@ -2,8 +2,6 @@ import { CLOUDFLARE_API_KEY, CLOUDFLARE_ZONE_ID, VITE_DOMAIN } from "$env/static
 
 const headers = new Headers({ 'content-type': 'application/json', 'X-Auth-Key': CLOUDFLARE_API_KEY });
 
-
-/** @param {string} zoneId */
 const url = `https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache`;
 
 /**
