@@ -9,11 +9,14 @@
 	>
 		<div class="flex h-full flex-col justify-end gap-2 overflow-hidden">
 			<License />
+
 			<div class="text-purple-800" aria-hidden="true">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</div>
+
 			<ul class="flex flex-col gap-2 font-semibold">
 				<li>
 					<Link href="/terms"><span class="grow">Terms & Conditions</span></Link>
 				</li>
+
 				<li>
 					<Link href="/privacy"><span class="grow">Privacy Policy</span></Link>
 				</li>
@@ -21,10 +24,13 @@
 		</div>
 
 		<div class="flex h-full flex-col justify-end gap-2 overflow-hidden">
-			<p>forsen.wiki v0.0.1</p>
+			<p>forsen.wiki v0.0.1 (Alpha)</p>
+
 			<div class="text-purple-800" aria-hidden="true">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</div>
+
 			<ul class="flex flex-col gap-2 font-semibold">
 				<li class="font-normal">Not associated with Twitch.tv and/or Amazon</li>
+
 				<li>
 					<Link href="/about">
 						<span class="grow">About</span>

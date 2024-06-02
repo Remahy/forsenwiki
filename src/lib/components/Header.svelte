@@ -1,5 +1,5 @@
 <script>
-	import { LogOutIcon } from 'lucide-svelte';
+	import { LogOutIcon, XIcon } from 'lucide-svelte';
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
 	import Logo from '$lib/components/Logo.svelte';
@@ -33,9 +33,9 @@
 </script>
 
 <header class="bg-stone-100 dark:bg-violet-950 dark:bg-opacity-30">
-	<div class="container mx-auto flex">
+	<nav class="container mx-auto flex items-center gap-4 p-4">
 		<a href="/" class="hover:text-stone-500">
-			<div class="flex items-end gap-2 py-4 pl-4 lg:pl-0">
+			<div class="flex items-end gap-2">
 				<Logo width="64" height="64" />
 				<div class="flex flex-col justify-end">
 					<small>Community</small>
@@ -44,9 +44,13 @@
 			</div>
 		</a>
 
-		<nav class="flex grow items-end overflow-hidden py-4 pr-4 lg:pr-0">
-			<div class="mx-8 grow lg:mx-16"><Search /></div>
+		<div class="mt-auto grow px-2 lg:px-16">
+			<div class="hidden sm:block">
+				<Search />
+			</div>
+		</div>
 
+		<div class="mt-auto flex items-end overflow-hidden">
 			<div class="flex items-center justify-end overflow-hidden">
 				{#if $page.data.session?.user}
 					<div
@@ -90,14 +94,14 @@
 					</Button>
 				{/if}
 			</div>
-		</nav>
-	</div>
+		</div>
+	</nav>
 
 	{#if !hasSeenPrivacyUpdateNotice}
 		<Box
 			class="!rounded-none !bg-yellow-900 !bg-opacity-20 dark:!bg-yellow-300 dark:!bg-opacity-20"
 		>
-			<div class="container mx-auto flex py-4">
+			<div class="container mx-auto flex p-4">
 				<div class="grow">
 					<p>
 						<Link href="/privacy"
@@ -110,12 +114,14 @@
 				</div>
 
 				<Button
+					class="m-auto"
 					on:click={() => {
 						localStorage.setItem('privacy-update-june-1-2024', 'true');
 						window.location.reload();
 					}}
 				>
-					Close
+					<span class="hidden lg:inline">Close</span>
+					<XIcon class="inline lg:hidden" />
 				</Button>
 			</div>
 		</Box>
