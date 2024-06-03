@@ -52,11 +52,11 @@ export async function POST({ request, locals, params }) {
 	const initialDiff = diffUpdateUsingStateVector(incomingUpdate, stateVector);
 
 	// We use this update to validate if the contents are valid.
-	const combinedUpdate = mergePostUpdates([currentUpdate, initialDiff]);
+	const combinedInitialUpdate = mergePostUpdates([currentUpdate, initialDiff]);
 
 	let e;
 	try {
-		e = getYjsAndEditor(articleConfig(null, false, null), combinedUpdate);
+		e = getYjsAndEditor(articleConfig(null, false, null), combinedInitialUpdate);
 		const editor = e.editor;
 
 		// Does not modify the editor.
@@ -81,6 +81,8 @@ export async function POST({ request, locals, params }) {
 	// This is also what we save as a postUpdate
 	const finalDiff = diffUpdateUsingStateVector(backendUpdate, stateVector);
 
+	const combinedFinalDiff = mergePostUpdates([initialDiff, finalDiff]);
+
 	const systemRelations = await readSystemYPostRelations(post.id);
 
 	const transformedSystemRelations = systemRelations.map((sysRelation) => ({
@@ -94,7 +96,7 @@ export async function POST({ request, locals, params }) {
 		toPostId: mentionPostId,
 	}));
 
-	const contentBase64 = uint8ArrayToBase64(finalDiff);
+	const contentBase64 = uint8ArrayToBase64(combinedFinalDiff);
 
 	const body = { post, outRelations, transformedSystemRelations, content: contentBase64 };
 	const user = { name: session.user.name, id: session.user.id };

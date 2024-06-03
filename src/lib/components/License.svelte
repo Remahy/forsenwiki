@@ -22,10 +22,10 @@
 			CC BY-SA 4.0
 		</span>
 
-		<div>
+		<span>
 			<img class="mb-1 inline-block h-6" src={cc} alt="CC" />
 			<img class="mb-1 inline-block h-6" src={by} alt="BY" />
 			<img class="mb-1 inline-block h-6" src={sa} alt="SA" />
-		</div>
+		</span>
 	</a>
 </p>
