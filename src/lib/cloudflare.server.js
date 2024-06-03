@@ -12,7 +12,12 @@ export const invalidateArticleCache = async (title) => {
 	if (!title) return;
 	
 	const body = {
-		files: [new URL(`/w/${title}`, VITE_DOMAIN), new URL(`/w/${title}/__data.json?x-sveltekit-invalidated=010`, VITE_DOMAIN)]
+		files: [
+			new URL(`/w/${title}`, VITE_DOMAIN),
+			new URL(`/w/${title}/__data.json?x-sveltekit-invalidated=010`, VITE_DOMAIN),
+			new URL(`/w/${title}/edit`, VITE_DOMAIN),
+			new URL(`/w/${title}/edit/__data.json?x-sveltekit-invalidated=010`, VITE_DOMAIN)
+		]
 	};
 
 	try {
