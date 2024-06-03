@@ -1,5 +1,5 @@
 <script>
-	import { LogOutIcon, XIcon } from 'lucide-svelte';
+	import { LogOutIcon, ScaleIcon, XIcon } from 'lucide-svelte';
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
 	import Logo from '$lib/components/Logo.svelte';
@@ -28,7 +28,7 @@
 	}
 
 	const hasSeenPrivacyUpdateNotice = globalThis?.localStorage
-		? localStorage.getItem('privacy-update-june-1-2024')
+		? localStorage.getItem('privacy-update-june-3-2024')
 		: true;
 </script>
 
@@ -101,22 +101,25 @@
 		<Box
 			class="!rounded-none !bg-yellow-900 !bg-opacity-20 dark:!bg-yellow-300 dark:!bg-opacity-20"
 		>
-			<div class="container mx-auto flex p-4">
+			<div class="container mx-auto flex items-center gap-4 p-4">
+				<ScaleIcon class="w-8 h-8 hidden lg:block"/>
 				<div class="grow">
 					<p>
 						<Link href="/privacy"
-							>Privacy policy has been updated. Please take a moment to read it.</Link
+							>(June 3) Privacy policy has been updated. Please take a moment to read it.</Link
 						>
 					</p>
+
 					<p>
-						<strong>Changes:</strong> Added section about Cloudflare usage, updated contact emails.
+						<strong>Changes:</strong> Removed section about tracking cookies, added section about collecting
+						statistics on an ongoing basis. Clarified purpose of Cloudflare.
 					</p>
 				</div>
 
 				<Button
 					class="m-auto"
 					on:click={() => {
-						localStorage.setItem('privacy-update-june-1-2024', 'true');
+						localStorage.setItem('privacy-update-june-3-2024', 'true');
 						window.location.reload();
 					}}
 				>

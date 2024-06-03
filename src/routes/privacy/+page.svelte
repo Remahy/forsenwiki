@@ -32,8 +32,8 @@
 		</p>
 		<h2>Information Collection And Use</h2>
 		<p>
-			We collect several different types of information for various purposes to provide and improve
-			our Service to you on an ongoing basis.
+			We collect several different types of information for legitimate purposes on an ongoing basis to provide and improve
+			our Service to you.
 		</p>
 		<h3>Types of Data Collected</h3>
 		<h4>Personal Data</h4>
