@@ -1,4 +1,5 @@
 <script>
+	import { NewspaperIcon, SearchIcon, SquarePenIcon } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
@@ -95,20 +96,21 @@
 
 <section class="container mx-auto flex grow flex-col p-4 lg:p-0 lg:py-12">
 	<div
-		class="m-0 my-4 mt-0 w-full rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 sm:my-8 sm:mt-0 dark:from-violet-800/30 dark:to-violet-950/30"
+		class="m-0 my-4 mt-0 w-full rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 dark:from-violet-800/30 dark:to-violet-950/30"
 	>
 		<p class="m-0 text-center leading-10">
-			forsen.wiki is currently <strong>work in progress</strong>.
-			<br />
-			Feel free to take a look around or{' '}
-			<LinkButton href="/create/" class="whitespace-nowrap" reload>Create new article</LinkButton>
+			<strong>ForsenWiki</strong>
+			<span> - </span>
+			<span>
+				Forsen mixes, news, big plays, tilts. Everything that is somewhat related to forsen.
+			</span>
 		</p>
 	</div>
 
 	<div class="block grow gap-4 lg:flex">
 		<div class="mb-4 flex grow flex-col lg:mb-0">
 			<Box class="mb-4 grow p-4">
-				<div class="mb-2 border-b-2 border-violet-700 pb-2">
+				<div class="mb-2 border-b-2 border-violet-700 pb-2 uppercase">
 					<h2 class="text-2xl">Recent updates</h2>
 				</div>
 				{#each $latestUpdates as update}
@@ -127,7 +129,7 @@
 			</Box>
 
 			<Box class="grow p-4">
-				<div class="mb-2 border-b-2 border-violet-700 pb-2">
+				<div class="mb-2 border-b-2 border-violet-700 pb-2 uppercase">
 					<h2 class="text-2xl">New articles</h2>
 				</div>
 				{#each $latestArticles as article}
@@ -146,15 +148,26 @@
 
 		<div class="block flex-col gap-4 lg:flex lg:min-w-96">
 			<Box class="mb-4 flex flex-col gap-2 p-4 lg:mb-0">
-				<div class="border-b-2 border-violet-700 pb-2">
+				<div class="mb-2 border-b-2 border-violet-700 pb-2 uppercase">
 					<h2 class="text-2xl">Navigation</h2>
 				</div>
-				<LinkButton href="/browse" class="block whitespace-nowrap">All articles</LinkButton>
+
+				<LinkButton href="/browse" class="flex gap-2 whitespace-nowrap">
+					<NewspaperIcon /> <span>All articles</span>
+				</LinkButton>
+				<LinkButton href="/create" class="flex gap-2 whitespace-nowrap" reload>
+					<SquarePenIcon /> <span>Create new article</span>
+				</LinkButton>
+				<LinkButton href="/search" class="flex gap-2 whitespace-nowrap">
+					<SearchIcon /> <span>Search</span>
+				</LinkButton>
 			</Box>
+
 			<Box class="p-4">
-				<div class="mb-2 border-b-2 border-violet-700 pb-2">
+				<div class="mb-2 border-b-2 border-violet-700 pb-2 uppercase">
 					<h2 class="text-2xl">New users</h2>
 				</div>
+
 				{#each $latestUsers as user}
 					<div class="p-2 pl-0">
 						<span>

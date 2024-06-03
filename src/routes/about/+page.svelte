@@ -63,7 +63,7 @@
 		</ul>
 
 		<p>
-			<strong>Contact email:</strong> forsenwiki(<AtSignIcon style="display: inline;" />)gmail.com
+			<strong>Contact email:</strong> info(<AtSignIcon style="display: inline;" />)forsen.wiki
 		</p>
 
 		<h3>Privacy policy</h3>

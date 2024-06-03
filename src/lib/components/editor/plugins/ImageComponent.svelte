@@ -22,13 +22,21 @@
 		KEY_BACKSPACE_COMMAND,
 		KEY_ESCAPE_COMMAND,
 		KEY_ENTER_COMMAND,
-		type BaseSelection
+		type BaseSelection,
 	} from 'lexical';
 	import { onMount } from 'svelte';
 	import { mergeRegister } from '@lexical/utils';
+	import {
+		clearSelection,
+		createNodeSelectionStore,
+	} from '$lib/components/editor/utils/getSelection';
 	import ImageResizer from './ImageResizer.svelte';
-	import { clearSelection, createNodeSelectionStore } from '$lib/components/editor/utils/getSelection';
-	import { IMAGE_OFF, TRANSPARENT_IMAGE, $isImageNode as isImageNode } from './Image';
+	import {
+		IMAGE_OFF,
+		LUCIDE_ICON_LOADER,
+		TRANSPARENT_IMAGE,
+		$isImageNode as isImageNode,
+	} from './Image';
 
 	export let src: string;
 	export let altText: string;
@@ -202,7 +210,17 @@
 
 <div {draggable}>
 	{#await promise}
-		<p>...loading image</p>
+		<img
+			class:focused={isFocused}
+			class:draggable={isFocused && isNodeSelection(selection)}
+			class="m-0 animate-spin rounded-full dark:bg-white"
+			src={LUCIDE_ICON_LOADER}
+			title="Loading image..."
+			alt={altText}
+			bind:this={imageRef}
+			style="height:{heightCss};px;width:{widthCss};"
+			draggable="false"
+		/>
 	{:then _}
 		<img
 			class:focused={isFocused}

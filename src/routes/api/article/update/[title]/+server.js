@@ -17,6 +17,9 @@ import { getArticleURLIds } from '$lib/components/editor/utils/getEntities';
 import { readSystemYPostRelations } from '$lib/db/article/read';
 import { updateArticleYPost } from '$lib/db/article/update';
 import { validateAndUploadImages } from '$lib/components/editor/validations/images.server';
+import { invalidateArticleCache } from '$lib/cloudflare.server';
+import { upsertHTML } from '$lib/db/article/html';
+import { toHTML } from '$lib/lexicalHTML';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 
 export async function POST({ request, locals, params }) {
@@ -97,6 +100,10 @@ export async function POST({ request, locals, params }) {
 	const user = { name: session.user.name, id: session.user.id };
 
 	const updatedArticle = await updateArticleYPost(body, user);
+
+	await upsertHTML(post.id, await toHTML(editor));
+
+	await invalidateArticleCache(post.title);
 
 	return json({ ...updatedArticle, title: post.title });
 }

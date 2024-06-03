@@ -93,6 +93,8 @@ model YPost {
 
   postUpdates YPostUpdate[]
 
+  html Html?
+
   lastUpdated      DateTime @default(now())
   createdTimestamp DateTime @default(now())
 }
@@ -162,4 +164,13 @@ model Permission {
   userId String
 
   type Permissions
+}
+
+model Html {
+  id String @id @default(cuid())
+
+  post YPost @relation(fields: [postId], references: [id])
+  postId String @unique
+
+  content String
 }

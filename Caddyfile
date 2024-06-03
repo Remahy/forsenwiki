@@ -1,9 +1,17 @@
+{
+	servers {
+		trusted_proxies cloudflare
+		trusted_proxies_strict
+		client_ip_headers X-Forwarded-For X-Real-IP
+	}
+}
+
 forsen.wiki {
 	@wsrv {
-		remote_ip 46.4.13.221
-		remote_ip 51.15.191.75
-		remote_ip 2a01:4f8:221:3d28::2
-		remote_ip 2001:bc8:6005:122:ae1f:6bff:fe21:58f2
+		client_ip 46.4.13.221
+		client_ip 51.15.191.75
+		client_ip 2a01:4f8:221:3d28::2
+		client_ip 2001:bc8:6005:122:ae1f:6bff:fe21:58f2
 	}
 
 	handle_path /usercontent* {
@@ -19,5 +27,21 @@ forsen.wiki {
 
 	handle {
 		reverse_proxy sveltekit:3000
+	}
+
+	log {
+		output file /var/log/access-forsen-wiki.log {
+			roll_keep_for 1d
+			roll_size 10MiB
+		}
+		format transform `{request>client_ip} - {request>user_id} [{ts}] "{request>method} {request>uri} {request>proto}" {status} {size} "{request>headers>Referer>[0]}" "{request>headers>User-Agent>[0]}"` {
+			time_format "02/Jan/2006:15:04:05 +0200"
+		}
+	}
+}
+
+stats.forsen.wiki {
+	handle {
+		reverse_proxy host.docker.internal:8081
 	}
 }

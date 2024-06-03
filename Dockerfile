@@ -8,6 +8,8 @@ RUN npm ci
 
 COPY . .
 
+ENV NODE_ENV=production
+
 RUN npm run prisma:generate
 RUN npm run build
 RUN npm prune --production
