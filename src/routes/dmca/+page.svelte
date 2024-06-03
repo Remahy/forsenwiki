@@ -12,11 +12,12 @@
 	<section class="prose prose-sm w-full max-w-[unset] dark:prose-invert">
 		<h1>DMCA</h1>
 		<p>
-			For all intents and purposes the use of the word "DMCA" is here is not to be read literally.
-			We take IP & right ownership very seriously, no Kappa. However, as forsen.wiki has no legal
-			entity in the USA, we currently only adhere to international Copyright law & WIPO. Regardless,
-			please use the following "DMCA" template when emailing us about alleged infringement and
-			requesting a takedown notice.
+			For the purposes of this document, the term 'DMCA' is used as a general reference to copyright
+			infringement procedures. forsen.wiki adheres to international copyright law and the
+			regulations of the World Intellectual Property Organization (WIPO)." We take IP & right
+			ownership very seriously, no Kappa. However, as forsen.wiki has no legal entity in the USA, we
+			adhere to international Copyright law & WIPO. Regardless, please use the following "DMCA"
+			template when emailing us about alleged infringement and requesting a takedown notice.
 		</p>
 
 		<hr />
