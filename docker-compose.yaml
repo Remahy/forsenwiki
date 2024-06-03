@@ -30,7 +30,9 @@ services:
       - 5432:5432
 
   caddy:
-    image: serfriz/caddy-cloudflare:latest
+    build: 
+      context: .
+      dockerfile: Dockerfile-caddy
     restart: unless-stopped
     ports:
       - "80:80"
@@ -41,8 +43,11 @@ services:
       - ${DEV_STATIC_DIR}:/srv
       - caddy_data:/data
       - caddy_config:/config
+      - ./forsen-wiki-logs:/var/log
     depends_on:
       - db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
   pgdata:
