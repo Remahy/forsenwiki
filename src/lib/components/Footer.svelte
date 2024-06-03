@@ -20,6 +20,12 @@
 				<li>
 					<Link href="/privacy"><span class="grow">Privacy Policy</span></Link>
 				</li>
+
+				<li>
+					<Link href="/dmca">
+						<span class="grow">DMCA</span>
+					</Link>
+				</li>
 			</ul>
 		</div>
 
@@ -30,6 +36,8 @@
 
 			<ul class="flex flex-col gap-2 font-semibold">
 				<li class="font-normal">Not associated with Twitch.tv and/or Amazon</li>
+				
+				<li class="font-normal">or forsen. This is run by the community.</li>
 
 				<li>
 					<Link href="/about">
