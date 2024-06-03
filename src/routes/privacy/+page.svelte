@@ -12,14 +12,15 @@
 	<section class="prose prose-lg w-full max-w-[unset] dark:prose-invert">
 		<h1 id="privacy">Privacy Policy</h1>
 		<p>🐦</p>
-		<p>Effective date: June 1, 2024</p>
+		<p>Effective date: June 3, 2024</p>
 		<p>
 			ForsenWiki ("us", "we", or "our") operates the forsen.wiki website (hereinafter referred to as
 			the "Service").
 		</p>
 		<p>
-			The Service is hosted on Hetzner (www.hetzner.com) behind a Cloudflare (www.cloudflare.com) cache with user content caching on wsrv.nl
-			(wsrv.nl) (all three hereinafter referred to by name and as the "Service Providers").
+			The Service is hosted on Hetzner (www.hetzner.com) behind a Cloudflare (www.cloudflare.com)
+			cache with user content caching on wsrv.nl (wsrv.nl) (all three hereinafter referred to by
+			name and as the "Service Providers").
 		</p>
 		<p>
 			This page informs you of our policies regarding the collection, use, and disclosure of data
@@ -32,7 +33,7 @@
 		<h2>Information Collection And Use</h2>
 		<p>
 			We collect several different types of information for various purposes to provide and improve
-			our Service to you.
+			our Service to you on an ongoing basis.
 		</p>
 		<h3>Types of Data Collected</h3>
 		<h4>Personal Data</h4>
@@ -48,7 +49,7 @@
 		<h4>Usage Data</h4>
 		<p>
 			We collect information on how the Service is accessed and used ("Usage Data"). This Usage Data
-			may include information such as your computer's Internet Protocol address (e.g. IP address),
+			includes information such as your computer's Internet Protocol address (e.g. IP address),
 			browser type, browser version, the pages of our Service that you visit, the time and date of
 			your visit, the time spent on those pages, unique device identifiers and other diagnostic
 			data.
@@ -60,16 +61,14 @@
 		</p>
 		<p>
 			Cookies are files with small amount of data which may include an anonymous unique identifier.
-			Cookies are sent to your browser from a website and stored on your device. Tracking
-			technologies also used are beacons, tags, and scripts to collect and track information and to
-			improve and analyze our Service.
+			Cookies are sent to your browser from a website and stored on your device.
 		</p>
 		<p>
 			You can instruct your browser to refuse all cookies or to indicate when a cookie is being
 			sent. However, if you do not accept cookies, you may not be able to use some portions of our
 			Service. You can learn more about how to manage cookies by <a
-				href="https://www.google.com/search?q=how+to+delete+cookies"
-				target="_blank">doing a quick google search</a
+				href="https://duckduckgo.com/?q=how+to+delete+cookies"
+				target="_blank">doing a quick online search</a
 			>.
 		</p>
 		<p>Examples of Cookies we use:</p>
@@ -138,18 +137,15 @@
 			<li>To provide and maintain the Service</li>
 		</ul>
 		<p>
-			Read their Privacy Policy here: <a
+			Read Hetzner's Privacy Policy here: <a
 				href="https://www.hetzner.com/legal/privacy-policy/"
 				target="hetzner-privacy"
 				rel="noopener noreferrer">hetzner/legal/privacy-policy/</a
 			>
 		</p>
-		<p>We use Cloudflare to cache the Service.</p>
-		<ul>
-			<li>To provide and maintain the Service</li>
-		</ul>
+		<p>We use Cloudflare to cache and protect the Service from denial of service attacks.</p>
 		<p>
-			Read their Privacy Policy here: <a
+			Read Cloudflare's Privacy Policy here: <a
 				href="https://www.cloudflare.com/privacypolicy/"
 				target="cloudflare-privacy"
 				rel="noopener noreferrer">cloudflare/privacypolicy</a
@@ -160,13 +156,12 @@
 			<li>To provide and maintain the Service</li>
 		</ul>
 		<p>
-			Read their Privacy Policy here: <a
+			Read wsrv.nl's Privacy Policy here: <a
 				href="https://github.com/weserv/images/blob/5.x/Privacy-Policy.md"
 				target="weserv-privacy"
 				rel="noopener noreferrer">weserv/Privacy-Policy.md</a
 			>
 		</p>
-		
 		<h2>Disclosure Of Data</h2>
 		<h3>Legal Requirements</h3>
 		<p>
