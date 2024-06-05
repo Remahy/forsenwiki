@@ -6,7 +6,7 @@ import { MAX_IMAGE_SIZE_MIB } from '$lib/constants/image';
 import { cacheServiceBaseURLWithStatic, getCacheURL } from '$lib/utils/getCacheURL';
 import { createContent } from '$lib/db/content/create';
 import { writeContent } from '$lib/fs/content';
-import { IMAGE_OFF } from '../plugins/Image';
+import { IMAGE_OFF } from '../plugins/Image/Image';
 
 /**
  * @param {string} base64String

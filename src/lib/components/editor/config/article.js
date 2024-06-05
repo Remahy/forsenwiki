@@ -1,6 +1,6 @@
 import { LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical';
 import { ALinkNode, ImageNode } from '$lib/lexicalCustom';
-import { $createALinkNode } from '../plugins/ALink';
+import { $createALinkNode } from '../plugins/Link/ALink';
 
 const articleTheme = {
 	root: 'editor-shell',
