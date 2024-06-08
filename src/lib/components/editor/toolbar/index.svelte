@@ -6,10 +6,10 @@
 	import FontSelect from './FontSelect.svelte';
 	import ElementSelect from './ElementSelect.svelte';
 	import InsertButton from './InsertButton/index.svelte';
-	import ImageButtons from './ImageButtons/index.svelte'
+	import ImageButtons from './ImageButtons/index.svelte';
 </script>
 
-<div class="flex gap-2 flex-wrap">
+<div class="flex flex-wrap gap-2">
 	<HistoryButtons />
 	<Divider />
 	<ElementSelect />
