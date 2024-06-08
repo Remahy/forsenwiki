@@ -8,13 +8,13 @@ const articleTheme = {
 	image: 'm-0 editor-image',
 };
 
-/** 
+/**
  * @param {Error} error
  * @returns {void}
  */
 const onErrorDefault = (error) => {
 	throw error;
-}
+};
 
 /**
  * @param {any} theme
@@ -39,7 +39,7 @@ export const articleConfig = (theme, editable, editorState, onError = onErrorDef
 					{ rel: node.__rel, target: node.__target, title: node.__title },
 					false
 				);
-			}
+			},
 		},
 		ListNode,
 		ListItemNode,
@@ -49,5 +49,5 @@ export const articleConfig = (theme, editable, editorState, onError = onErrorDef
 	],
 	/** @param {Error} error */
 	onError,
-	editorState
+	editorState,
 });

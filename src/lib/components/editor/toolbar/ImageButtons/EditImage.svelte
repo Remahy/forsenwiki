@@ -38,10 +38,10 @@
 			altText: selectedImageNode.getAltText(),
 			width: selectedImageNode.__width,
 			height: selectedImageNode.__height,
-			/** @param {import('../../plugins/Image').ImagePayload} data */
+			/** @param {import('../../plugins/Image/Image').ImagePayload} data */
 			onSubmit: (data) => {
 				editor.update(() => {
-					/** @type {import('../../plugins/Image').ImageNode} */
+					/** @type {import('../../plugins/Image/Image').ImageNode} */
 					const node = /** @type {any} */ (getNodeByKey(selectedImageNode.getKey()));
 
 					if (data.height && data.width && data.height >= 28 && data.width >= 28) {

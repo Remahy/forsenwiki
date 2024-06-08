@@ -18,7 +18,7 @@
 	/** @type {number} */
 	export let height = 24;
 
-	/** @param {import('../../plugins/Image').ImagePayload} data */
+	/** @param {import('../../plugins/Image/Image').ImagePayload} data */
 	export let onSubmit = (data) => {};
 
 	/** @type {HTMLSelectElement} */

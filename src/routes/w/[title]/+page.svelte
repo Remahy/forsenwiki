@@ -3,7 +3,7 @@
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
 
-	import '$lib/components/editor/plugins/Image.css';
+	import '$lib/components/editor/plugins/Image/Image.css';
 
 	import Container from '$lib/components/Container.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';

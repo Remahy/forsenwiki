@@ -14,7 +14,7 @@
 	import Toolbar from './toolbar/index.svelte';
 	import Footer from './footer/index.svelte';
 	import { articleConfig } from './config/article';
-	import ImagePlugin from './plugins/ImagePlugin.svelte';
+	import ImagePlugin from './plugins/Image/ImagePlugin.svelte';
 	import AutoFocus from './plugins/AutoFocus.svelte';
 
 	export let id;
