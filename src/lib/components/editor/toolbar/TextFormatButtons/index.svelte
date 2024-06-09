@@ -1,9 +1,9 @@
 <script>
 	import {
-	COMMAND_PRIORITY_CRITICAL,
+		COMMAND_PRIORITY_CRITICAL,
 		FORMAT_TEXT_COMMAND,
 		SELECTION_CHANGE_COMMAND,
-		$getSelection as getSelection
+		$getSelection as getSelection,
 	} from 'lexical';
 	import { BoldIcon, ItalicIcon } from 'lucide-svelte';
 	import { getContext, onMount } from 'svelte';
@@ -70,11 +70,23 @@
 	});
 </script>
 
-<Button title="Bold ({ctrlKey}B)" on:click={bold} disabled={!canEdit} isActive={isBold}>
+<Button
+	title="Bold ({ctrlKey}B)"
+	on:click={bold}
+	disabled={!canEdit}
+	isActive={isBold}
+	class="max-h-8 min-h-8 min-w-8 max-w-8 lg:max-h-[unset] lg:min-h-[unset]"
+>
 	<BoldIcon size="16" />
 </Button>
 
-<Button title="Italic ({ctrlKey}I)" on:click={italic} disabled={!canEdit} isActive={isItalic}>
+<Button
+	title="Italic ({ctrlKey}I)"
+	on:click={italic}
+	disabled={!canEdit}
+	isActive={isItalic}
+	class="max-h-8 min-h-8 min-w-8 max-w-8 lg:max-h-[unset] lg:min-h-[unset]"
+>
 	<ItalicIcon size="16" />
 </Button>
 

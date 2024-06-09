@@ -14,7 +14,7 @@
 	import Toolbar from './toolbar/index.svelte';
 	import Footer from './footer/index.svelte';
 	import { articleConfig } from './config/article';
-	import ImagePlugin from './plugins/ImagePlugin.svelte';
+	import ImagePlugin from './plugins/Image/ImagePlugin.svelte';
 	import AutoFocus from './plugins/AutoFocus.svelte';
 
 	export let id;
@@ -50,17 +50,25 @@
 
 		<CollaborationPlugin {id} {providerFactory} shouldBootstrap={false} />
 
-		<div class="w-full border border-b-0 p-2 dark:border-violet-950 dark:bg-black">
+		<div
+			class="sticky top-0 z-50 hidden w-full border p-2 lg:block dark:border-violet-950 dark:bg-black"
+		>
 			<Toolbar />
 		</div>
 
 		<article class="flex grow flex-col border dark:border-violet-950 dark:bg-black">
-			<div class="prose relative flex max-w-[unset] grow p-2 dark:prose-invert overflow-auto">
+			<div class="prose relative flex max-w-[unset] grow overflow-auto p-2 dark:prose-invert">
 				<ContentEditable className="grow m-0 p-0 border-0 outline-0" />
 			</div>
 		</article>
 
-		<div class="w-full border border-t-0 p-2 dark:border-violet-950 dark:bg-black">
+		<div
+			class="sticky bottom-0 z-50 block w-full border p-2 lg:hidden dark:border-violet-950 dark:bg-black"
+		>
+			<Toolbar />
+		</div>
+
+		<div class="hidden w-full border border-t-0 p-2 lg:block dark:border-violet-950 dark:bg-black">
 			<Footer />
 		</div>
 	</div>

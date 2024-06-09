@@ -10,8 +10,11 @@
 	} from 'lexical';
 
 	import Select from '$lib/components/Select.svelte';
-	import { TRANSPARENT_IMAGE, $createImageNode as createImageNode } from '../../plugins/Image';
-	import { INSERT_IMAGE_COMMAND } from '../../plugins/ImagePlugin.svelte';
+	import {
+		TRANSPARENT_IMAGE,
+		$createImageNode as createImageNode,
+	} from '../../plugins/Image/Image';
+	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
 
 	/** @type {HTMLSelectElement} */
 	let insertElementTypeElement;

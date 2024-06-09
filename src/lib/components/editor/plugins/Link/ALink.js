@@ -3,9 +3,9 @@
  * https://github.com/facebook/lexical/blob/7150421fabb25fef65f62e18e097d0a8d4a2cde9/packages/lexical-playground/src/nodes/MentionNode.ts
  */
 
-import { $applyNodeReplacement } from 'lexical'
+import { $applyNodeReplacement } from 'lexical';
 
-import { LinkNode } from '$lib/lexical'
+import { LinkNode } from '$lib/lexical';
 
 /**
  * @typedef {import("@lexical/link").LinkAttributes | undefined} LinkAttributes
@@ -21,13 +21,13 @@ export class ALinkNode extends LinkNode {
 	 * @param {string | undefined} key
 	 */
 	constructor(url, attrs, internal = false, key) {
-		super(url, { ...attrs, target: internal ? attrs?.target : '_blank' }, key)
+		super(url, { ...attrs, target: internal ? attrs?.target : '_blank' }, key);
 
 		this.setIsInternal(internal);
 	}
 
 	static getType() {
-		return 'a-link'
+		return 'a-link';
 	}
 
 	/**
@@ -39,7 +39,7 @@ export class ALinkNode extends LinkNode {
 			{ rel: node.__rel, target: node.__target, title: node.__title },
 			node.__isInternal,
 			node.__key
-		)
+		);
 	}
 
 	/** @param {any} serializedNode */
@@ -50,7 +50,7 @@ export class ALinkNode extends LinkNode {
 		node.setIsInternal(serializedNode.isInternal);
 		node.__type = ALinkNode.getType();
 
-		return node
+		return node;
 	}
 
 	/** @param {boolean} bool */
@@ -68,7 +68,7 @@ export class ALinkNode extends LinkNode {
 			...super.exportJSON(),
 			__isInternal: this.__isInternal,
 			type: this.getType(),
-		}
+		};
 	}
 }
 
@@ -79,7 +79,7 @@ export class ALinkNode extends LinkNode {
  * @param {string | undefined} key
  */
 export function $createALinkNode(url, attrs, internal, key = undefined) {
-	return $applyNodeReplacement(new ALinkNode(url, attrs, internal, key))
+	return $applyNodeReplacement(new ALinkNode(url, attrs, internal, key));
 }
 
 /**
@@ -87,5 +87,5 @@ export function $createALinkNode(url, attrs, internal, key = undefined) {
  * @returns {node is ALinkNode}
  */
 export function $isALinkNode(node) {
-	return node instanceof ALinkNode
+	return node instanceof ALinkNode;
 }

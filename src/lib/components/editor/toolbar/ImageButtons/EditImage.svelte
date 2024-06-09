@@ -38,10 +38,10 @@
 			altText: selectedImageNode.getAltText(),
 			width: selectedImageNode.__width,
 			height: selectedImageNode.__height,
-			/** @param {import('../../plugins/Image').ImagePayload} data */
+			/** @param {import('../../plugins/Image/Image').ImagePayload} data */
 			onSubmit: (data) => {
 				editor.update(() => {
-					/** @type {import('../../plugins/Image').ImageNode} */
+					/** @type {import('../../plugins/Image/Image').ImageNode} */
 					const node = /** @type {any} */ (getNodeByKey(selectedImageNode.getKey()));
 
 					if (data.height && data.width && data.height >= 28 && data.width >= 28) {
@@ -80,24 +80,29 @@
 	});
 </script>
 
-<Button on:click={image} disabled={!canEdit}>Change image</Button>
-<label title="Height" class="flex h-full items-center gap-2 pl-2">
+<Button
+	on:click={image}
+	disabled={!canEdit}
+	class="max-h-8 min-h-8 lg:max-h-[unset] lg:min-h-[unset] text-xs">Change image</Button
+>
+
+<label title="Height" class="flex items-center gap-2 pl-2">
 	<span class="hidden">Height</span>
 	<RectangleVerticalIcon />
 
 	<input
-		class="-ml-10 h-full w-28 bg-transparent py-1 pl-10 pr-0 text-sm dark:border-violet-900"
+		class="-ml-10 h-8 lg:h-full w-28 bg-transparent py-1 pl-10 pr-0 text-sm dark:border-violet-900"
 		bind:value={currentHeight}
 		on:change={onChange}
 		type="number"
 	/>
 </label>
-<label title="Width" class="flex h-full items-center gap-2 pl-2">
+<label title="Width" class="flex items-center gap-2 pl-2">
 	<span class="hidden">Width</span>
 	<RectangleHorizontalIcon />
 
 	<input
-		class="-ml-10 h-full w-28 bg-transparent py-1 pl-10 pr-0 text-sm dark:border-violet-900"
+		class="-ml-10 h-8 lg:h-full w-28 bg-transparent py-1 pl-10 pr-0 text-sm dark:border-violet-900"
 		bind:value={currentWidth}
 		on:change={onChange}
 		type="number"
