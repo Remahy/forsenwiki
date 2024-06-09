@@ -1,4 +1,5 @@
 import { CLOUDFLARE_API_TOKEN, CLOUDFLARE_ZONE_ID } from '$env/static/private';
+import { DOMAIN } from './environment/environment';
 
 const headers = new Headers({
 	'content-type': 'application/json',
@@ -16,13 +17,10 @@ export const invalidateArticleCache = async (title) => {
 
 	const body = {
 		files: [
-			new URL(`/w/${title}`, import.meta.env.VITE_DOMAIN),
-			new URL(`/w/${title}/__data.json?x-sveltekit-invalidated=010`, import.meta.env.VITE_DOMAIN),
-			new URL(`/w/${title}/edit`, import.meta.env.VITE_DOMAIN),
-			new URL(
-				`/w/${title}/edit/__data.json?x-sveltekit-invalidated=010`,
-				import.meta.env.VITE_DOMAIN
-			),
+			new URL(`/w/${title}`, DOMAIN),
+			new URL(`/w/${title}/__data.json?x-sveltekit-invalidated=010`, DOMAIN),
+			new URL(`/w/${title}/edit`, DOMAIN),
+			new URL(`/w/${title}/edit/__data.json?x-sveltekit-invalidated=010`, DOMAIN),
 		],
 	};
 
