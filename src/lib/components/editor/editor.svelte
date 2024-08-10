@@ -51,7 +51,7 @@
 		<CollaborationPlugin {id} {providerFactory} shouldBootstrap={false} />
 
 		<div
-			class="sticky top-0 z-50 hidden w-full border p-2 lg:block dark:border-violet-950 dark:bg-black"
+			class="sticky top-0 z-40 hidden w-full border p-2 lg:block dark:border-violet-950 dark:bg-black"
 		>
 			<Toolbar />
 		</div>
@@ -63,7 +63,7 @@
 		</article>
 
 		<div
-			class="sticky bottom-0 z-50 block w-full border p-2 lg:hidden dark:border-violet-950 dark:bg-black"
+			class="sticky bottom-0 z-40 block w-full border p-2 lg:hidden dark:border-violet-950 dark:bg-black"
 		>
 			<Toolbar />
 		</div>

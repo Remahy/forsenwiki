@@ -49,6 +49,8 @@
 		TRANSPARENT_IMAGE,
 		type ImagePayload,
 	} from './Image';
+	import EditImageModal from '../../toolbar/ImageButtons/EditImageModal.svelte';
+	import { modal } from '$lib/stores/modal';
 	const editor: LexicalEditor = getEditor();
 
 	let img: HTMLImageElement;
@@ -211,6 +213,42 @@
 		};
 	}
 
+	function wrapperInsertImage(payload: ImagePayload) {
+		const placeholderNode = createImageNode(payload);
+
+		modal.set({
+			component: EditImageModal,
+			src: placeholderNode.getSrc(),
+			altText: placeholderNode.getAltText(),
+			width: placeholderNode.__width,
+			height: placeholderNode.__height,
+			/** @param {import('../../plugins/Image/Image').ImagePayload} data */
+			onSubmit: (data: ImagePayload) => {
+				editor.update(() => {
+					const node = createImageNode(payload);
+
+					if (data.height && data.width && data.height >= 28 && data.width >= 28) {
+						node.setWidthAndHeight(data.width, data.height);
+					}
+
+					if (data.altText.length) {
+						node.setAltText(data.altText);
+					}
+
+					if (data.src) {
+						node.setSrc(data.src);
+					}
+
+					insertNodes([node]);
+					if (isRootOrShadowRoot(node.getParentOrThrow())) {
+						wrapNodeInElement(node, createParagraphNode).selectEnd();
+					}
+				});
+			},
+			isOpen: true,
+		});
+	}
+
 	onMount(() => {
 		if (!editor.hasNodes([ImageNode])) {
 			throw new Error('ImagesPlugin: ImageNode not registered on editor');
@@ -267,11 +305,7 @@
 			editor.registerCommand<InsertImagePayload>(
 				INSERT_IMAGE_COMMAND,
 				(payload) => {
-					const imageNode = createImageNode(payload);
-					insertNodes([imageNode]);
-					if (isRootOrShadowRoot(imageNode.getParentOrThrow())) {
-						wrapNodeInElement(imageNode, createParagraphNode).selectEnd();
-					}
+					wrapperInsertImage(payload);
 
 					return true;
 				},

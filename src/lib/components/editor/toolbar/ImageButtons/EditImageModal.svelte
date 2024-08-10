@@ -74,6 +74,8 @@
 				img.onload = () => {
 					originalImageWidth = img.width;
 					originalImageHeight = img.height;
+					width = img.width;
+					height = img.height;
 				};
 
 				img.onerror = () => {

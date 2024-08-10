@@ -1,13 +1,13 @@
 <script>
 	import { getContext, onMount } from 'svelte';
 	import { PlusIcon } from 'lucide-svelte';
-	import { $wrapNodeInElement as wrapNodeInElement } from '@lexical/utils';
 	import {
 		$createParagraphNode as createParagraphNode,
 		$insertNodes as insertNodes,
 		$isRootOrShadowRoot as isRootOrShadowRoot,
 		COMMAND_PRIORITY_EDITOR,
 	} from 'lexical';
+	import { $wrapNodeInElement as wrapNodeInElement } from '@lexical/utils';
 
 	import Select from '$lib/components/Select.svelte';
 	import {
