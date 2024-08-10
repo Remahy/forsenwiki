@@ -5,6 +5,6 @@
 	export { className as class };
 </script>
 
-<div class="container mx-auto flex grow flex-col gap-4 p-4 lg:py-12 {className}">
+<div class="container mx-auto flex grow flex-col gap-4 p-8 lg:py-12 {className}">
 	<slot />
 </div>

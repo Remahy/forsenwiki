@@ -9,7 +9,7 @@
 	<meta name="description" content="Learn about the forsen... Wiki." />
 </svelte:head>
 
-<div class="container mx-auto p-4 lg:p-0 lg:py-12">
+<div class="container mx-auto p-8 lg:py-12">
 	<section class="prose prose-lg w-full max-w-[unset] dark:prose-invert">
 		<h1>About</h1>
 
