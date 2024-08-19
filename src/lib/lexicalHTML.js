@@ -6,15 +6,15 @@ import { $generateHtmlFromNodes } from '@lexical/html';
  * @returns {Promise<string>}
  */
 export async function toHTML(editor) {
-  return new Promise((resolve) => {
-    editor.update(() => {
-      const textInEditor = $getRoot().getTextContent().trim()
+	return new Promise((resolve) => {
+		editor.update(() => {
+			const textInEditor = $getRoot().getTextContent().trim();
 
-      if (textInEditor.length > 0) {
-        resolve($generateHtmlFromNodes(editor, null))
-      } else {
-        resolve('')
-      }
-    })
-  })
+			if (textInEditor.length > 0) {
+				resolve($generateHtmlFromNodes(editor, null));
+			} else {
+				resolve('');
+			}
+		});
+	});
 }
