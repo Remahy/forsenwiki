@@ -13,7 +13,7 @@ import { readYPostByTitle } from '$lib/db/article/read';
 import { encodeYDocToUpdateV2ToBase64 } from '$lib/yjs/utils';
 import { validateAndUploadImages } from '$lib/components/editor/validations/images.server';
 import { upsertHTML } from '$lib/db/article/html';
-import { toHTML } from '$lib/lexicalHTML';
+import { toHTML } from '$lib/lexicalHTML.server';
 
 export async function POST({ request, locals }) {
 	if (locals.isBlocked) return ForbiddenError();
