@@ -16,6 +16,7 @@
 	import { articleConfig } from './config/article';
 	import ImagePlugin from './plugins/Image/ImagePlugin.svelte';
 	import AutoFocus from './plugins/AutoFocus.svelte';
+	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 
 	export let id;
 	export let update;
@@ -47,6 +48,8 @@
 		<AutoFocus />
 
 		<ImagePlugin />
+
+		<VideoEmbedPlugin />
 
 		<CollaborationPlugin {id} {providerFactory} shouldBootstrap={false} />
 

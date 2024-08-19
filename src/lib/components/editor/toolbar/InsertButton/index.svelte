@@ -15,6 +15,7 @@
 		$createImageNode as createImageNode,
 	} from '../../plugins/Image/Image';
 	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
+	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 
 	/** @type {HTMLSelectElement} */
 	let insertElementTypeElement;
@@ -38,11 +39,27 @@
 		});
 	};
 
+	const insertVideo = () => {
+		if (!editor) return;
+
+		editor.dispatchCommand(INSERT_VIDEOEMBED_COMMAND, {
+			platform: 'youtube',
+			src: 'https://www.youtube.com/watch?v=68ugkg9RePc',
+			width: 1280,
+			height: 720,
+		});
+	};
+
 	const insertElementTypeOptions = [
 		{
 			value: 'image',
 			label: 'Image',
 			insertFunc: insertImage,
+		},
+		{
+			value: 'video',
+			label: 'Video',
+			insertFunc: insertVideo,
 		},
 	];
 

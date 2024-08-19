@@ -1,11 +1,13 @@
 import { LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical';
-import { ALinkNode, ImageNode } from '$lib/lexicalCustom';
+import { ALinkNode, ImageNode, VideoEmbedNode } from '$lib/lexicalCustom';
 import { $createALinkNode } from '../plugins/Link/ALink';
 
 const articleTheme = {
 	root: 'editor-shell',
 	paragraph: 'm-0',
 	image: 'm-0 editor-image',
+	// TODO: The 'editor-image' is for resizing capabilities, just fix the css rules instead.
+	video: 'm-0 editor-image editor-video'
 };
 
 /**
@@ -46,6 +48,7 @@ export const articleConfig = (theme, editable, editorState, onError = onErrorDef
 		HeadingNode,
 		QuoteNode,
 		ImageNode,
+		VideoEmbedNode,
 	],
 	/** @param {Error} error */
 	onError,
