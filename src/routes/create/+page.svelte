@@ -34,6 +34,10 @@
 
 	let isUploading = false;
 
+	const unsetError = () => {
+		error = null;
+	}
+
 	const submit = async () => {
 		if (!yjsDocMap) return;
 		if (!canEdit) return;
@@ -84,7 +88,7 @@
 			const editor = composer.getEditor();
 
 			editor.registerTextContentListener(() => {
-				error = null;
+				unsetError()
 			});
 		});
 	});
@@ -106,6 +110,7 @@
 	<label>
 		<strong>Title <small>(Must be unique)</small></strong>
 		<input
+			on:input={unsetError}
 			required
 			class="w-full rounded p-2 {titleError && '!bg-red-200'} dark:border-violet-700 dark:bg-black"
 			bind:value={title}
@@ -118,7 +123,7 @@
 	<Editor update={null} id={'new'} />
 
 	{#if error}
-		<Box class="flex items-center !bg-red-200 p-2">
+		<Box class="flex items-center !bg-red-200 p-2 dark:text-black">
 			<p>{error.message}</p>
 		</Box>
 	{/if}
@@ -137,7 +142,7 @@
 			{/if}
 
 			<span class="hidden lg:inline">Submit</span>
-			<FileUpIcon class="inline lg:hidden"/>
+			<FileUpIcon class="inline lg:hidden" />
 		</Button>
 	</Box>
 </Container>
