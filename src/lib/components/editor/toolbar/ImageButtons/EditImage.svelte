@@ -80,29 +80,25 @@
 	});
 </script>
 
-<Button
-	on:click={image}
-	disabled={!canEdit}
-	class="max-h-8 min-h-8 lg:max-h-[unset] lg:min-h-[unset] text-xs">Change image</Button
->
+<Button on:click={image} disabled={!canEdit} class="text-xs">Change image</Button>
 
-<label title="Height" class="flex items-center gap-2 pl-2">
+<label title="Height" class="flex h-full items-center gap-2 pl-2">
 	<span class="hidden">Height</span>
 	<RectangleVerticalIcon />
 
 	<input
-		class="-ml-10 h-8 lg:h-full w-28 bg-transparent py-1 pl-10 pr-0 text-sm dark:border-violet-900"
+		class="-ml-10 h-full w-28 bg-transparent p-0 pl-10 text-sm dark:border-violet-900"
 		bind:value={currentHeight}
 		on:change={onChange}
 		type="number"
 	/>
 </label>
-<label title="Width" class="flex items-center gap-2 pl-2">
+<label title="Width" class="flex h-full items-center gap-2 pl-2">
 	<span class="hidden">Width</span>
 	<RectangleHorizontalIcon />
 
 	<input
-		class="-ml-10 h-8 lg:h-full w-28 bg-transparent py-1 pl-10 pr-0 text-sm dark:border-violet-900"
+		class="-ml-10 h-full w-28 bg-transparent p-0 pl-10 text-sm dark:border-violet-900"
 		bind:value={currentWidth}
 		on:change={onChange}
 		type="number"

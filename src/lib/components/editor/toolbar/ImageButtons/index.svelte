@@ -1,6 +1,5 @@
 <script>
 	import { getContext, onMount } from 'svelte';
-	import EditImage from './EditImage.svelte';
 	import {
 		COMMAND_PRIORITY_CRITICAL,
 		SELECTION_CHANGE_COMMAND,
@@ -8,6 +7,7 @@
 		$isNodeSelection as isNodeSelection
 	} from 'lexical';
 	import { $isImageNode as isImageNode } from '$lib/lexicalCustom';
+	import EditImage from './EditImage.svelte';
 
 	/** @type {import('$lib/lexicalCustom').ImageNode | null} */
 	let selectedImageNode = null;

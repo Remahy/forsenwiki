@@ -222,7 +222,6 @@
 			altText: placeholderNode.getAltText(),
 			width: placeholderNode.__width,
 			height: placeholderNode.__height,
-			/** @param {import('../../plugins/Image/Image').ImagePayload} data */
 			onSubmit: (data: ImagePayload) => {
 				editor.update(() => {
 					const node = createImageNode(payload);
