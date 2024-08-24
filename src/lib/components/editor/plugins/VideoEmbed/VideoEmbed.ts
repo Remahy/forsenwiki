@@ -336,6 +336,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		return {
 			componentClass: VideoEmbedComponent,
 			props: {
+				node: this,
 				platform: this.__platform,
 				src: this.__src,
 				format: this.__format,
