@@ -14,6 +14,7 @@
 		COMMAND_PRIORITY_EDITOR,
 		$getNodeByKey as getNodeByKey,
 		type LexicalCommand,
+		$getSelection as getSelection,
 	} from 'lexical';
 	import { $wrapNodeInElement as wrapNodeInElement, mergeRegister } from '@lexical/utils';
 
@@ -28,6 +29,11 @@
 	function wrapperInsertVideoEmbed(payload: VideoEmbedPayload) {
 		editor.update(() => {
 			const node = createVideoEmbedNode(payload);
+			
+			const selection = getSelection();
+			if (!selection?.isCollapsed()) {
+				return;
+			}
 
 			insertNodes([node]);
 
@@ -42,7 +48,7 @@
 			}
 
 			const nextNode = node.getNextSibling();
-			if (!nextNode) {
+			if (!nextNode && isRootOrShadowRoot(node.getParentOrThrow())) {
 				const p = createParagraphNode();
 				node.insertAfter(p, false);
 			}

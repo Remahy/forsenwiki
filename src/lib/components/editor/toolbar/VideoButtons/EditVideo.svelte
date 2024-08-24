@@ -1,6 +1,5 @@
 <script>
 	import { getContext, onMount, SvelteComponent } from 'svelte';
-	import { $getNodeByKey as getNodeByKey } from 'lexical';
 	import { FileQuestionIcon, LinkIcon, YoutubeIcon } from 'lucide-svelte';
 	import { VideoEmbedNode } from '$lib/lexicalCustom';
 	import Select from '$lib/components/Select.svelte';
@@ -34,16 +33,34 @@
 	const { PLATFORMS } = VIDEO_CONSTANTS;
 	const platformOptions = Object.entries(PLATFORMS);
 
-	const platform = () => {};
+	/**
+	 * @param {Event} e
+	 */
+	const platform = (e) => {
+		const { value } = /** @type {HTMLSelectElement} */ (e.currentTarget);
 
-	const onChange = () => {
 		if (!editor) {
 			return;
 		}
 
-		// editor.update(() => {
-		// 	selectedVideoEmbedNode.setWidthAndHeight(currentWidth, currentHeight);
-		// });
+		editor.update(() => {
+			selectedVideoEmbedNode.setPlatform(value);
+		});
+	};
+
+	/**
+	 * @param {Event} e
+	 */
+	const url = (e) => {
+		const { value } = /** @type {HTMLInputElement} */ (e.target);
+
+		if (!editor) {
+			return;
+		}
+
+		editor.update(() => {
+			selectedVideoEmbedNode.setSrc(value);
+		});
 	};
 
 	onMount(() => {
@@ -72,7 +89,7 @@
 		bind:ref={platformElement}
 		on:change={platform}
 		bind:value={currentPlatform}
-		class="-ml-10 px-10 h-full"
+		class="-ml-10 h-full px-10"
 	>
 		<option value="unknown" hidden>Unknown</option>
 
@@ -87,9 +104,9 @@
 	<LinkIcon />
 
 	<input
-		class="-ml-10 w-auto bg-transparent py-1 pl-10 pr-0 text-sm lg:h-full dark:border-violet-900 h-full"
+		class="-ml-10 h-full w-auto bg-transparent py-1 pl-10 pr-0 text-sm lg:h-full dark:border-violet-900"
 		bind:value={currentURL}
-		on:change={onChange}
+		on:change={url}
 		type="url"
 	/>
 </label>

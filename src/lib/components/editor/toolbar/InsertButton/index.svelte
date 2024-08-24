@@ -44,7 +44,7 @@
 
 		editor.dispatchCommand(INSERT_VIDEOEMBED_COMMAND, {
 			platform: 'youtube',
-			src: 'https://www.youtube.com/watch?v=68ugkg9RePc',
+			src: '',
 			width: 1280,
 			height: 720,
 		});

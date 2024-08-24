@@ -23,12 +23,24 @@ import { DOMAIN } from '$lib/environment/environment';
 
 import VideoEmbedComponent from './VideoEmbedComponent.svelte';
 import { DecoratorBlockNode, type SerializedDecoratorBlockNode } from './DecoratorBlockNode';
+import { VIDEO_CONSTANTS } from '$lib/constants/video';
+
+export type SupportedPlatforms = 'twitch' | 'youtube';
 
 export const getURLAndTitle = (
-	platform: string,
+	platform: SupportedPlatforms,
 	src: string,
 	parentUrl: string
 ): { url: string; title: string } | undefined => {
+	try {
+		new URL('', src)
+	} catch {
+		return {
+			url: '',
+			title: 'Unknown source',
+		};
+	}
+
 	if (platform === 'youtube') {
 		const url = new URL('', src);
 		const v = url.searchParams.get('v');
@@ -52,15 +64,18 @@ export const getURLAndTitle = (
 		const isClipUrl = url.hostname === 'clips.twitch.tv';
 
 		if (isClipUrl) {
-			const clipSlug = url.pathname;
-			const clipsTwitchURL = new URL('embed', 'https://clips.twitch.tv/');
-			clipsTwitchURL.searchParams.set('clip', clipSlug);
-			clipsTwitchURL.searchParams.set('parent', parent);
+			const clipSlug = url.pathname.split('/').pop();
 
-			return {
-				url: clipsTwitchURL.toString(),
-				title: 'Twitch clip',
-			};
+			if (clipSlug) {
+				const clipsTwitchURL = new URL('embed', 'https://clips.twitch.tv/');
+				clipsTwitchURL.searchParams.set('clip', clipSlug);
+				clipsTwitchURL.searchParams.set('parent', parent);
+
+				return {
+					url: clipsTwitchURL.toString(),
+					title: 'Twitch clip',
+				};
+			}
 		}
 
 		const isTwitchUrl = url.hostname === 'www.twitch.tv' || url.hostname === 'twitch.tv';
@@ -81,13 +96,16 @@ export const getURLAndTitle = (
 			return {
 				url: playerTwitchURL.toString(),
 				title: 'Twitch video',
-			}
+			};
 		}
 	}
 };
 
 function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
-	const { url, title } = getURLAndTitle(node.__platform, node.__src, parentUrl) || { url: '', title: 'Unknown source' };
+	const { url, title } = getURLAndTitle(node.__platform, node.__src, parentUrl) || {
+		url: '',
+		title: 'Unknown source',
+	};
 
 	const element = document.createElement('iframe');
 	element.setAttribute('data-lexical-youtube', node.__src);
@@ -101,6 +119,30 @@ function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
 	);
 	element.setAttribute('allowfullscreen', 'true');
 	element.setAttribute('title', title);
+
+	return { element };
+}
+
+function generateTwitchIframe(node: VideoEmbedNode, parentUrl: string) {
+	const { url, title } = getURLAndTitle(node.__platform, node.__src, parentUrl) || {
+		url: '',
+		title: 'Unknown source',
+	};
+
+	const element = document.createElement('iframe');
+	element.setAttribute('data-lexical-twitch', node.__src);
+
+	element.setAttribute('width', node.__width.toString() || 'inherit');
+	element.setAttribute('height', node.__height.toString() || 'inherit');
+	element.setAttribute('src', url);
+	element.setAttribute('frameborder', '0');
+	element.setAttribute(
+		'allow',
+		'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+	);
+	element.setAttribute('allowfullscreen', 'true');
+	element.setAttribute('title', title);
+
 	return { element };
 }
 
@@ -111,12 +153,12 @@ export type VideoEmbedComponentProps = Readonly<{
 	// }>;
 	format: ElementFormatType | null;
 	nodeKey: NodeKey;
-	platform: string;
+	platform: SupportedPlatforms;
 	src: string;
 }>;
 
 export type VideoEmbedPayload = {
-	platform: 'twitch' | 'youtube' | string;
+	platform: SupportedPlatforms;
 	src: string;
 	width: number | 'inherit';
 	height: number | 'inherit';
@@ -152,7 +194,7 @@ function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput 
 }
 
 export class VideoEmbedNode extends DecoratorBlockNode {
-	__platform: string;
+	__platform: SupportedPlatforms;
 	__src: string;
 	__width: 'inherit' | number;
 	__height: 'inherit' | number;
@@ -191,7 +233,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	}
 
 	constructor(
-		platform: string,
+		platform: SupportedPlatforms,
 		src: string,
 		width: number | 'inherit',
 		height: number | 'inherit',
@@ -210,8 +252,13 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 			return generateYouTubeIframe(this, DOMAIN);
 		}
 
+		if (this.__platform) {
+			return generateTwitchIframe(this, DOMAIN);
+		}
+
 		const element = document.createElement('a');
 		element.href = sanitizeUrl(this.__src);
+		element.textContent = `${VIDEO_CONSTANTS.PLATFORMS[this.__platform]} link`
 
 		return { element };
 	}
@@ -272,10 +319,10 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		writable.__src = src;
 	}
 
-	setPlatform(platform: 'twitch' | 'youtube') {
+	setPlatform(platform: string) {
 		const writable = this.getWritable();
 		if (['twitch', 'youtube'].includes(platform)) {
-			writable.__platform = platform;
+			writable.__platform = platform as SupportedPlatforms;
 		}
 	}
 

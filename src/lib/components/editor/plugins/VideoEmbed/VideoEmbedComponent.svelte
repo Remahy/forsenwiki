@@ -32,10 +32,10 @@
 		createNodeSelectionStore,
 	} from '$lib/components/editor/utils/getSelection';
 	import ImageResizer from '../Image/ImageResizer.svelte';
-	import { getURLAndTitle, $isVideoEmbedNode as isVideoEmbedNode } from './VideoEmbed';
+	import { getURLAndTitle, $isVideoEmbedNode as isVideoEmbedNode, type SupportedPlatforms } from './VideoEmbed';
 
 	export let src: string;
-	export let platform: string;
+	export let platform: SupportedPlatforms;
 	export let nodeKey: string;
 	export let height: number | 'inherit';
 	export let width: number | 'inherit';
