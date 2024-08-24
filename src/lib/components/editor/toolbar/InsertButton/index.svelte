@@ -84,29 +84,6 @@
 
 		insertElementTypeElement.value = '';
 	};
-
-	onMount(() => {
-		c.subscribe((composer) => {
-			if (!composer) {
-				return;
-			}
-
-			const editor = composer.getEditor();
-
-			editor.registerCommand(
-				INSERT_IMAGE_COMMAND,
-				(payload) => {
-					const imageNode = createImageNode(payload);
-					insertNodes([imageNode]);
-					if (isRootOrShadowRoot(imageNode.getParentOrThrow())) {
-						wrapNodeInElement(imageNode, createParagraphNode).selectEnd();
-					}
-					return true;
-				},
-				COMMAND_PRIORITY_EDITOR
-			);
-		});
-	});
 </script>
 
 <div class="flex items-center gap-2 pl-2">

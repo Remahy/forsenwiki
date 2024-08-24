@@ -33,11 +33,13 @@
 	import ImageResizer from './ImageResizer.svelte';
 	import {
 		IMAGE_OFF,
+		ImageNode,
 		LUCIDE_ICON_LOADER,
 		TRANSPARENT_IMAGE,
 		$isImageNode as isImageNode,
 	} from './Image';
 
+	export let node: ImageNode;
 	export let src: string;
 	export let altText: string;
 	export let nodeKey: string;
@@ -52,7 +54,6 @@
 	let selection: BaseSelection | null = null;
 
 	let imageRef: HTMLImageElement | null;
-	let buttonRef: HTMLButtonElement | null;
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
 	let isResizing = false;
 
@@ -87,33 +88,20 @@
 
 	const onEnter = (event: KeyboardEvent) => {
 		const latestSelection = getSelection();
-		const buttonElem = buttonRef;
 		if (
 			$isSelected &&
 			isNodeSelection(latestSelection) &&
 			latestSelection.getNodes().length === 1
 		) {
-			if (buttonElem !== null && buttonElem !== document.activeElement) {
-				event.preventDefault();
-				buttonElem.focus();
-				return true;
-			}
+
 		}
 		return false;
 	};
 
 	const onEscape = (event: KeyboardEvent) => {
-		if (buttonRef === event.target) {
-			selection = null;
-			editor.update(() => {
-				$isSelected = true;
-				const parentRootElement = editor.getRootElement();
-				if (parentRootElement !== null) {
-					parentRootElement.focus();
-				}
-			});
-			return true;
-		}
+		clearSelection(editor);
+		$isSelected = false;
+		editor.update(() => node.selectNext());
 		return false;
 	};
 
@@ -126,6 +114,7 @@
 		if (event.target === imageRef) {
 			if (event.shiftKey) {
 				$isSelected = !$isSelected;
+				editor.update(() => node.selectNext());
 			} else {
 				clearSelection(editor);
 				$isSelected = true;

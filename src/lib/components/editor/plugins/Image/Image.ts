@@ -44,7 +44,7 @@ export type SerializedImageNode = Spread<
 
 type DecoratorImageType = {
 	componentClass: typeof SvelteComponent<any>;
-	props: ComponentProps<ImageComponent>;
+	props: ComponentProps<ImageComponent> & { node: ImageNode };
 };
 
 export class ImageNode extends DecoratorNode<DecoratorImageType> {
@@ -169,6 +169,7 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 		return {
 			componentClass: ImageComponent,
 			props: {
+				node: this,
 				src: this.__src,
 				altText: this.__altText,
 				width: this.__width,
