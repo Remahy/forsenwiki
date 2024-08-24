@@ -126,8 +126,10 @@
 
 	<Box class="flex items-center gap-4 p-2">
 		<small class="grow">
-			Make sure you read the <Link href="/terms" class="hover:!text-indigo-700"
-				>Terms & Conditions</Link
+			Make sure you read the <Link
+				href="/terms"
+				class="hover:!text-indigo-700"
+				target="forsenwiki-tos">Terms & Conditions</Link
 			>.
 			<span
 				>Anyone can edit this article. Don't complain if your edits get modified or deleted.</span
@@ -141,7 +143,7 @@
 			{/if}
 
 			<span class="hidden lg:inline">Submit</span>
-			<FileUpIcon class="inline lg:hidden"/>
+			<FileUpIcon class="inline lg:hidden" />
 		</Button>
 	</Box>
 </Container>

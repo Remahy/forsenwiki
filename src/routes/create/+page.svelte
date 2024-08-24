@@ -36,7 +36,7 @@
 
 	const unsetError = () => {
 		error = null;
-	}
+	};
 
 	const submit = async () => {
 		if (!yjsDocMap) return;
@@ -88,7 +88,7 @@
 			const editor = composer.getEditor();
 
 			editor.registerTextContentListener(() => {
-				unsetError()
+				unsetError();
 			});
 		});
 	});
@@ -130,8 +130,10 @@
 
 	<Box class="flex items-center gap-4 p-2">
 		<small class="grow">
-			Make sure you read the <Link href="/terms" class="hover:!text-indigo-700"
-				>Terms & Conditions</Link
+			Make sure you read the <Link
+				href="/terms"
+				class="hover:!text-indigo-700"
+				target="forsenwiki-tos">Terms & Conditions</Link
 			>. Anyone can edit this article once it's submitted. Don't complain if your article get
 			modified or deleted. <Clown />
 		</small>
