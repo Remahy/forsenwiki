@@ -1,17 +1,21 @@
 <script>
 	import { getContext, onMount } from 'svelte';
 	import { PlusIcon } from 'lucide-svelte';
-	import { $wrapNodeInElement as wrapNodeInElement } from '@lexical/utils';
 	import {
 		$createParagraphNode as createParagraphNode,
 		$insertNodes as insertNodes,
 		$isRootOrShadowRoot as isRootOrShadowRoot,
 		COMMAND_PRIORITY_EDITOR,
 	} from 'lexical';
+	import { $wrapNodeInElement as wrapNodeInElement } from '@lexical/utils';
 
 	import Select from '$lib/components/Select.svelte';
-	import { TRANSPARENT_IMAGE, $createImageNode as createImageNode } from '../../plugins/Image';
-	import { INSERT_IMAGE_COMMAND } from '../../plugins/ImagePlugin.svelte';
+	import {
+		TRANSPARENT_IMAGE,
+		$createImageNode as createImageNode,
+	} from '../../plugins/Image/Image';
+	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
+	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 
 	/** @type {HTMLSelectElement} */
 	let insertElementTypeElement;
@@ -35,11 +39,27 @@
 		});
 	};
 
+	const insertVideo = () => {
+		if (!editor) return;
+
+		editor.dispatchCommand(INSERT_VIDEOEMBED_COMMAND, {
+			platform: 'youtube',
+			src: '',
+			width: 1280,
+			height: 720,
+		});
+	};
+
 	const insertElementTypeOptions = [
 		{
 			value: 'image',
 			label: 'Image',
 			insertFunc: insertImage,
+		},
+		{
+			value: 'video',
+			label: 'Video',
+			insertFunc: insertVideo,
 		},
 	];
 
@@ -64,29 +84,6 @@
 
 		insertElementTypeElement.value = '';
 	};
-
-	onMount(() => {
-		c.subscribe((composer) => {
-			if (!composer) {
-				return;
-			}
-
-			const editor = composer.getEditor();
-
-			editor.registerCommand(
-				INSERT_IMAGE_COMMAND,
-				(payload) => {
-					const imageNode = createImageNode(payload);
-					insertNodes([imageNode]);
-					if (isRootOrShadowRoot(imageNode.getParentOrThrow())) {
-						wrapNodeInElement(imageNode, createParagraphNode).selectEnd();
-					}
-					return true;
-				},
-				COMMAND_PRIORITY_EDITOR
-			);
-		});
-	});
 </script>
 
 <div class="flex items-center gap-2 pl-2">

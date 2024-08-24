@@ -19,7 +19,7 @@ import { updateArticleYPost } from '$lib/db/article/update';
 import { validateAndUploadImages } from '$lib/components/editor/validations/images.server';
 import { invalidateArticleCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/article/html';
-import { toHTML } from '$lib/lexicalHTML';
+import { toHTML } from '$lib/lexicalHTML.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 
 export async function POST({ request, locals, params }) {

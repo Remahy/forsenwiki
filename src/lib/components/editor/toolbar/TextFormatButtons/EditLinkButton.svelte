@@ -7,7 +7,7 @@
 		KEY_MODIFIER_COMMAND,
 		SELECTION_CHANGE_COMMAND,
 		$getSelection as getSelection,
-		$isRangeSelection as isRangeSelection
+		$isRangeSelection as isRangeSelection,
 	} from 'lexical';
 	import { Link2Icon, SettingsIcon } from 'lucide-svelte';
 	import { getContext, onMount } from 'svelte';
@@ -59,7 +59,10 @@
 					const selection = getSelection();
 
 					if (selection && dUrl && definedUrl === 'https://') {
-						const textLength = selection.getNodes().map((node) => node.getTextContentSize()).reduce((prev, curr) => prev + curr, 0)
+						const textLength = selection
+							.getNodes()
+							.map((node) => node.getTextContentSize())
+							.reduce((prev, curr) => prev + curr, 0);
 
 						// Add as text if selection didn't have any.
 						if (textLength === 0) {
@@ -77,7 +80,7 @@
 			url: definedUrl || url,
 			attrs: definedAttrs || attrs,
 			isInternal,
-			isOpen: true
+			isOpen: true,
 		});
 	};
 
@@ -167,7 +170,13 @@
 	});
 </script>
 
-<Button title="Insert link ({ctrlKey}K)" on:click={link} disabled={!canEdit} isActive={hasLink}>
+<Button
+	title="Insert link ({ctrlKey}K)"
+	on:click={link}
+	disabled={!canEdit}
+	isActive={hasLink}
+	class="max-h-8 min-h-8 min-w-8 max-w-8 lg:max-h-[unset] lg:min-h-[unset]"
+>
 	{#if hasLink}
 		<div class="relative -m-2 flex items-center p-2">
 			<Link2Icon />

@@ -16,7 +16,7 @@
 	/>
 </svelte:head>
 
-<section class="container mx-auto flex grow flex-col gap-4 p-4 lg:p-0 lg:py-12">
+<section class="container mx-auto flex grow flex-col gap-4 p-8 lg:py-12">
 	<div
 		class="w-full rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 dark:from-violet-800/30 dark:to-violet-950/30"
 	>
@@ -30,7 +30,7 @@
 
 	<div class="flex flex-col gap-2">
 		{#each results as result}
-			<LinkBox href={!result.type ? `/w/${result.title}` : result.title} class="flex">
+			<LinkBox href={!result.type ? `/w/${result.title}` : `/content/${result.id}`} class="flex">
 				<div class="flex grow flex-col gap-2">
 					<strong class="break-words">{result.rawTitle}</strong>
 					<p>Last updated: {new Date(result.lastUpdated).toLocaleString()}</p>
@@ -40,7 +40,7 @@
 				</div>
 				{#if result.type === 'content'}
 					<div>
-						<LinkButton href="/content/{result.id}">Modify</LinkButton>
+						<LinkButton href="{result.title}">Open</LinkButton>
 					</div>
 				{/if}
 			</LinkBox>

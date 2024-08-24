@@ -8,8 +8,8 @@
 	<meta name="description" content="Errors for ants." />
 </svelte:head>
 
-<div class="container mx-auto flex grow p-4 lg:p-0 lg:py-12">
-	<Box class="grow !bg-red-200 p-12 dark:!bg-red-950 dark:!bg-opacity-50">
+<div class="container mx-auto flex grow p-4 lg:py-12">
+	<Box class="grow !bg-red-200 p-4 py-12 dark:!bg-red-950 dark:!bg-opacity-50">
 		<section class="prose prose-lg w-full max-w-[unset] dark:prose-invert">
 			<h1>OOPSIE WOOPSIE!!</h1>
 

@@ -1,5 +1,6 @@
 <script>
 	import { getContext, onMount } from 'svelte';
+	import { FileUpIcon } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { createArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
@@ -32,6 +33,10 @@
 	$: persistence = $p;
 
 	let isUploading = false;
+
+	const unsetError = () => {
+		error = null;
+	}
 
 	const submit = async () => {
 		if (!yjsDocMap) return;
@@ -83,7 +88,7 @@
 			const editor = composer.getEditor();
 
 			editor.registerTextContentListener(() => {
-				error = null;
+				unsetError()
 			});
 		});
 	});
@@ -105,6 +110,7 @@
 	<label>
 		<strong>Title <small>(Must be unique)</small></strong>
 		<input
+			on:input={unsetError}
 			required
 			class="w-full rounded p-2 {titleError && '!bg-red-200'} dark:border-violet-700 dark:bg-black"
 			bind:value={title}
@@ -117,12 +123,12 @@
 	<Editor update={null} id={'new'} />
 
 	{#if error}
-		<Box class="flex items-center !bg-red-200 p-2">
+		<Box class="flex items-center !bg-red-200 p-2 dark:text-black">
 			<p>{error.message}</p>
 		</Box>
 	{/if}
 
-	<Box class="flex items-center p-2">
+	<Box class="flex items-center gap-4 p-2">
 		<small class="grow">
 			Make sure you read the <Link href="/terms" class="hover:!text-indigo-700"
 				>Terms & Conditions</Link
@@ -130,12 +136,13 @@
 			modified or deleted. <Clown />
 		</small>
 
-		<Button disabled={!canEdit || isUploading || error} on:click={submit}>
+		<Button disabled={!canEdit || isUploading || error} on:click={submit} title="Submit">
 			{#if isUploading}
 				<Spinner />
 			{/if}
 
-			<span>Submit</span>
+			<span class="hidden lg:inline">Submit</span>
+			<FileUpIcon class="inline lg:hidden" />
 		</Button>
 	</Box>
 </Container>

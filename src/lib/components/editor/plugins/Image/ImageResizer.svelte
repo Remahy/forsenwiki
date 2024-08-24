@@ -17,12 +17,12 @@
 		east: 1 << 0,
 		north: 1 << 3,
 		south: 1 << 1,
-		west: 1 << 2
+		west: 1 << 2,
 	};
 
 	const userSelect = {
 		priority: '',
-		value: 'default'
+		value: 'default',
 	};
 
 	const positioningRef: {
@@ -44,7 +44,7 @@
 		startHeight: 0,
 		startWidth: 0,
 		startX: 0,
-		startY: 0
+		startY: 0,
 	};
 
 	const editorRootElement = editor.getRootElement();

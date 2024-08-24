@@ -7,22 +7,22 @@
 	white-space: nowrap; /* without this, image editor is having extra height (// TODO: see if still required after fully porting lexical) */
 }
 
-.editor-shell .editor-image img {
+.editor-shell .editor-image * {
 	max-width: unset;
 	cursor: default;
 }
 
-.editor-shell .editor-image img.focused {
+.editor-shell .editor-image *.focused {
 	outline: 2px solid rgb(60, 132, 244);
 	-webkit-user-select: none;
 	user-select: none;
 }
 
-.editor-shell .editor-image img.focused.draggable {
+.editor-shell .editor-image *.focused.draggable {
 	cursor: grab;
 }
 
-.editor-shell .editor-image img.focused.draggable:active {
+.editor-shell .editor-image *.focused.draggable:active {
 	cursor: grabbing;
 }
 
@@ -85,7 +85,7 @@
 
 /**/
 
-.editor-shell img.editor-image {
+.editor-shell *.editor-image {
 	display: inline-block;
 	position: relative;
 	white-space: nowrap;

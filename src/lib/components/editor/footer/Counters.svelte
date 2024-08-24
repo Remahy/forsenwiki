@@ -16,7 +16,7 @@
 
 	/** @param {string | null | undefined} text */
 	const countForsen = (text) => {
-		return text?.match(/forsen/g)?.length || 0;
+		return text?.toLowerCase().match(/forsen/g)?.length || 0;
 	};
 
 	/** @param {string | null | undefined} text */

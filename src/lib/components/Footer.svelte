@@ -5,7 +5,7 @@
 
 <footer class="bg-purple-950 text-white dark:bg-violet-950 dark:bg-opacity-30 dark:text-[unset]">
 	<div
-		class="container mx-auto flex w-full flex-wrap items-stretch justify-between gap-8 gap-y-8 p-8 lg:p-0 lg:py-12"
+		class="container mx-auto flex w-full flex-wrap items-stretch justify-between gap-8 gap-y-8 p-8 lg:py-12"
 	>
 		<div class="flex h-full flex-col justify-end gap-2 overflow-hidden">
 			<License />

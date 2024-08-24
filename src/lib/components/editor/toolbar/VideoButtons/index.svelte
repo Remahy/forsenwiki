@@ -6,11 +6,11 @@
 		$getSelection as getSelection,
 		$isNodeSelection as isNodeSelection
 	} from 'lexical';
-	import { $isImageNode as isImageNode } from '$lib/lexicalCustom';
-	import EditImage from './EditImage.svelte';
+	import { $isVideoEmbedNode as isVideoEmbedNode } from '$lib/lexicalCustom';
+	import EditVideo from './EditVideo.svelte';
 
-	/** @type {import('$lib/lexicalCustom').ImageNode | null} */
-	let selectedImageNode = null;
+	/** @type {import('$lib/lexicalCustom').VideoEmbedNode | null} */
+	let selectedVideoEmbedNode = null;
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
@@ -23,16 +23,16 @@
 
 		if (isNodeSelection(selection)) {
 			const [node] = selection.getNodes();
-			if (!isImageNode(node)) {
-				selectedImageNode = null;
+			if (!isVideoEmbedNode(node)) {
+				selectedVideoEmbedNode = null;
 				return;
 			}
 
-			selectedImageNode = node;
+			selectedVideoEmbedNode = node;
 			return;
 		}
 
-		selectedImageNode = null;
+		selectedVideoEmbedNode = null;
 	};
 
 	onMount(() => {
@@ -55,16 +55,16 @@
 	});
 </script>
 
-{#if selectedImageNode}
+{#if selectedVideoEmbedNode}
 	<div class="flex items-center gap-2">
 		<div
 			class="flex select-none flex-col items-center justify-center font-mono text-xs leading-none text-gray-400"
 		>
+			<span>V</span>
 			<span>I</span>
-			<span>M</span>
-			<span>G</span>
+			<span>D</span>
 		</div>
 
-		<EditImage {selectedImageNode} />
+		<EditVideo {selectedVideoEmbedNode} />
 	</div>
 {/if}
