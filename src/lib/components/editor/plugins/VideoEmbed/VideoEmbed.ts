@@ -49,6 +49,13 @@ export const getURLAndTitle = (
 			? url.pathname.split('/').pop()?.split('?').shift()
 			: null;
 
+		if ((v || youtuBE || vPathname) === null) {
+			return {
+				url: '',
+				title: 'Unknown source',
+			};
+		}
+
 		return {
 			url: `https://www.youtube-nocookie.com/embed/${v || youtuBE || vPathname}`,
 			title: 'YouTube video',
