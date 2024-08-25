@@ -33,7 +33,7 @@ export const getURLAndTitle = (
 	parentUrl: string
 ): { url: string; title: string } | undefined => {
 	try {
-		new URL('', src)
+		new URL('', src);
 	} catch {
 		return {
 			url: '',
@@ -119,6 +119,12 @@ function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
 	);
 	element.setAttribute('allowfullscreen', 'true');
 	element.setAttribute('title', title);
+	element.setAttribute('loading', 'lazy');
+
+	if (!url) {
+		element.setAttribute('class', 'bg-violet-500 bg-opacity-50');
+		element.srcdoc = `<p style="color:#fff;"><strong>No URL is provided for this YouTube embed.</strong></p>`;
+	}
 
 	return { element };
 }
@@ -142,6 +148,12 @@ function generateTwitchIframe(node: VideoEmbedNode, parentUrl: string) {
 	);
 	element.setAttribute('allowfullscreen', 'true');
 	element.setAttribute('title', title);
+	element.setAttribute('loading', 'lazy');
+
+	if (!url) {
+		element.setAttribute('class', 'bg-violet-500 bg-opacity-50');
+		element.srcdoc = `<p style="color:#fff;"><strong>No URL is provided for this Twitch embed.</strong></p>`;
+	}
 
 	return { element };
 }
@@ -258,7 +270,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 
 		const element = document.createElement('a');
 		element.href = sanitizeUrl(this.__src);
-		element.textContent = `${VIDEO_CONSTANTS.PLATFORMS[this.__platform]} link`
+		element.textContent = `${VIDEO_CONSTANTS.PLATFORMS[this.__platform]} link`;
 
 		return { element };
 	}

@@ -180,6 +180,7 @@
 >
 	<iframe
 		class="pointer-events-none"
+		srcdoc={!url ? `<p style="color:#fff;"><strong>No URL is provided for this ${platform.toUpperCase()} embed.</strong></p>` : undefined}
 		{width}
 		{height}
 		src={url}
