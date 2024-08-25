@@ -21,9 +21,11 @@
 		signOut({ redirect: true });
 	};
 
-	let cachedImage = new URL('', 'https://wsrv.nl/');
+	/** @type {URL | undefined} */
+	let cachedImage;
 
 	if ($page.data.session?.user?.image) {
+		cachedImage = new URL('', 'https://wsrv.nl/');
 		cachedImage.searchParams.set('url', $page.data.session?.user?.image);
 	}
 
