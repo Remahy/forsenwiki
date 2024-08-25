@@ -20,6 +20,7 @@ import { adjustAndUploadImages } from '$lib/components/editor/validations/images
 import { invalidateArticleCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/article/html';
 import { toHTML } from '$lib/lexicalHTML.server';
+import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 
 export async function POST({ request, locals, params }) {
@@ -64,6 +65,7 @@ export async function POST({ request, locals, params }) {
 
 		// Modifies the editor.
 		await adjustAndUploadImages(editor, post.title, { id: session.user.id });
+		await adjustVideoEmbedNodeSiblings(editor);
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidArticle(err);

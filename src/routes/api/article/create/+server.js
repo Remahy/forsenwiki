@@ -14,6 +14,7 @@ import { encodeYDocToUpdateV2ToBase64 } from '$lib/yjs/utils';
 import { adjustAndUploadImages } from '$lib/components/editor/validations/images.server';
 import { upsertHTML } from '$lib/db/article/html';
 import { toHTML } from '$lib/lexicalHTML.server';
+import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 
 export async function POST({ request, locals }) {
 	if (locals.isBlocked) return ForbiddenError();
@@ -36,6 +37,7 @@ export async function POST({ request, locals }) {
 
 		// Modifies the editor.
 		await adjustAndUploadImages(editor, title.sanitized, { id: session.user.id });
+		await adjustVideoEmbedNodeSiblings(editor);
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidArticle(err);
