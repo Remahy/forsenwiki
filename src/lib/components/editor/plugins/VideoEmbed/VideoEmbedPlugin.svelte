@@ -9,12 +9,12 @@
 	import {
 		$insertNodes as insertNodes,
 		createCommand,
-		$isRootOrShadowRoot as isRootOrShadowRoot,
 		$createParagraphNode as createParagraphNode,
 		COMMAND_PRIORITY_EDITOR,
 		$getNodeByKey as getNodeByKey,
 		type LexicalCommand,
 		$getSelection as getSelection,
+		RootNode,
 	} from 'lexical';
 	import { $wrapNodeInElement as wrapNodeInElement, mergeRegister } from '@lexical/utils';
 
@@ -29,7 +29,7 @@
 	function wrapperInsertVideoEmbed(payload: VideoEmbedPayload) {
 		editor.update(() => {
 			const node = createVideoEmbedNode(payload);
-			
+
 			const selection = getSelection();
 			if (!selection?.isCollapsed()) {
 				return;
@@ -37,20 +37,11 @@
 
 			insertNodes([node]);
 
-			if (isRootOrShadowRoot(node.getParentOrThrow())) {
-				wrapNodeInElement(node, createParagraphNode);
-			}
+			const parent = node.getParent() as RootNode;
 
-			const prevNode = node.getPreviousSibling();
-			if (!prevNode) {
-				const p = createParagraphNode();
-				node.insertBefore(p);
-			}
-
-			const nextNode = node.getNextSibling();
-			if (!nextNode && isRootOrShadowRoot(node.getParentOrThrow())) {
-				const p = createParagraphNode();
-				node.insertAfter(p, false);
+			if (!parent) {
+				node.remove();
+				return;
 			}
 		});
 	}
