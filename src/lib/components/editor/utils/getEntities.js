@@ -25,6 +25,6 @@ export const getArticleURLIds = (editor) => {
 				.filter((url) => !internalLinkURLs.includes(url));
 
 			resolve(ids);
-		})
-	})
-}
+		});
+	});
+};

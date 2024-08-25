@@ -16,7 +16,7 @@ import { InvalidArticle } from '$lib/errors/InvalidArticle';
 import { getArticleURLIds } from '$lib/components/editor/utils/getEntities';
 import { readSystemYPostRelations } from '$lib/db/article/read';
 import { updateArticleYPost } from '$lib/db/article/update';
-import { validateAndUploadImages } from '$lib/components/editor/validations/images.server';
+import { adjustAndUploadImages } from '$lib/components/editor/validations/images.server';
 import { invalidateArticleCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/article/html';
 import { toHTML } from '$lib/lexicalHTML.server';
@@ -63,7 +63,7 @@ export async function POST({ request, locals, params }) {
 		await validateArticle(editor);
 
 		// Modifies the editor.
-		await validateAndUploadImages(editor, post.title, { id: session.user.id });
+		await adjustAndUploadImages(editor, post.title, { id: session.user.id });
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidArticle(err);
