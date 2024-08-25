@@ -31,7 +31,7 @@ export const getURLAndTitle = (
 	platform: SupportedPlatforms,
 	src: string,
 	parentUrl: string
-): { url: string; title: string } | undefined => {
+): { url: string; title: string } => {
 	try {
 		new URL('', src);
 	} catch {
@@ -106,13 +106,15 @@ export const getURLAndTitle = (
 			};
 		}
 	}
-};
 
-function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
-	const { url, title } = getURLAndTitle(node.__platform, node.__src, parentUrl) || {
+	return {
 		url: '',
 		title: 'Unknown source',
 	};
+};
+
+function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
+	const { url, title } = getURLAndTitle(node.__platform, node.__src, parentUrl);
 
 	const element = document.createElement('iframe');
 	element.setAttribute('data-lexical-youtube', node.__src);
@@ -130,17 +132,14 @@ function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
 
 	if (!url) {
 		element.setAttribute('class', 'bg-violet-500 bg-opacity-50');
-		element.srcdoc = `<p style="color:#fff;"><strong>No URL is provided for this YouTube embed.</strong></p>`;
+		element.srcdoc = `<p style="color:#fff;"><strong>No valid URL is provided for this YouTube embed.</strong></p>`;
 	}
 
 	return { element };
 }
 
 function generateTwitchIframe(node: VideoEmbedNode, parentUrl: string) {
-	const { url, title } = getURLAndTitle(node.__platform, node.__src, parentUrl) || {
-		url: '',
-		title: 'Unknown source',
-	};
+	const { url, title } = getURLAndTitle(node.__platform, node.__src, parentUrl);
 
 	const element = document.createElement('iframe');
 	element.setAttribute('data-lexical-twitch', node.__src);
@@ -159,7 +158,7 @@ function generateTwitchIframe(node: VideoEmbedNode, parentUrl: string) {
 
 	if (!url) {
 		element.setAttribute('class', 'bg-violet-500 bg-opacity-50');
-		element.srcdoc = `<p style="color:#fff;"><strong>No URL is provided for this Twitch embed.</strong></p>`;
+		element.srcdoc = `<p style="color:#fff;"><strong>No valid URL is provided for this Twitch embed.</strong></p>`;
 	}
 
 	return { element };

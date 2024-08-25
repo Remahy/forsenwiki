@@ -55,8 +55,8 @@
 
 	$: isFocused = $isSelected || isResizing;
 	$: parsedSrc = getURLAndTitle(platform, src, DOMAIN);
-	$: url = parsedSrc?.url;
-	$: title = parsedSrc?.title || 'Unknown source';
+	$: url = parsedSrc.url;
+	$: title = parsedSrc.title;
 
 	const onRightClick = (event: MouseEvent): void => {
 		editor.getEditorState().read(() => {
@@ -180,7 +180,7 @@
 >
 	<iframe
 		class="pointer-events-none"
-		srcdoc={!url ? `<p style="color:#fff;"><strong>No URL is provided for this ${platform.toUpperCase()} embed.</strong></p>` : undefined}
+		srcdoc={!url ? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform.toUpperCase()} embed.</strong></p>` : undefined}
 		{width}
 		{height}
 		src={url}
