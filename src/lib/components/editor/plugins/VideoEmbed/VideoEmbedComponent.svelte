@@ -32,8 +32,14 @@
 		createNodeSelectionStore,
 	} from '$lib/components/editor/utils/getSelection';
 	import ImageResizer from '../Image/ImageResizer.svelte';
-	import { getURLAndTitle, $isVideoEmbedNode as isVideoEmbedNode, type SupportedPlatforms } from './VideoEmbed';
+	import {
+		getURLAndTitle,
+		$isVideoEmbedNode as isVideoEmbedNode,
+		VideoEmbedNode,
+		type SupportedPlatforms,
+	} from './VideoEmbed';
 
+	export let node: VideoEmbedNode;
 	export let src: string;
 	export let platform: SupportedPlatforms;
 	export let nodeKey: string;
@@ -44,14 +50,13 @@
 
 	let selection: BaseSelection | null = null;
 	let embedRef: HTMLDivElement | null;
-	let buttonRef: HTMLButtonElement | null;
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
 	let isResizing = false;
 
 	$: isFocused = $isSelected || isResizing;
 	$: parsedSrc = getURLAndTitle(platform, src, DOMAIN);
-	$: url = parsedSrc?.url;
-	$: title = parsedSrc?.title || 'Unknown source';
+	$: url = parsedSrc.url;
+	$: title = parsedSrc.title;
 
 	const onRightClick = (event: MouseEvent): void => {
 		editor.getEditorState().read(() => {
@@ -82,33 +87,19 @@
 
 	const onEnter = (event: KeyboardEvent) => {
 		const latestSelection = getSelection();
-		const buttonElem = buttonRef;
 		if (
 			$isSelected &&
 			isNodeSelection(latestSelection) &&
 			latestSelection.getNodes().length === 1
 		) {
-			if (buttonElem !== null && buttonElem !== document.activeElement) {
-				event.preventDefault();
-				buttonElem.focus();
-				return true;
-			}
 		}
 		return false;
 	};
 
 	const onEscape = (event: KeyboardEvent) => {
-		if (buttonRef === event.target) {
-			selection = null;
-			editor.update(() => {
-				$isSelected = true;
-				const parentRootElement = editor.getRootElement();
-				if (parentRootElement !== null) {
-					parentRootElement.focus();
-				}
-			});
-			return true;
-		}
+		clearSelection(editor);
+		$isSelected = false;
+		editor.update(() => node.selectNext());
 		return false;
 	};
 
@@ -182,13 +173,14 @@
 
 <div
 	bind:this={embedRef}
-	class="bg-violet-500 bg-opacity-50 overflow-hidden"
+	class="overflow-hidden bg-violet-500 bg-opacity-50"
 	class:focused={isFocused}
 	class:draggable={isFocused && isNodeSelection(selection)}
 	draggable="false"
 >
 	<iframe
 		class="pointer-events-none"
+		srcdoc={!url ? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform.toUpperCase()} embed.</strong></p>` : undefined}
 		{width}
 		{height}
 		src={url}

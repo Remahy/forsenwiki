@@ -58,7 +58,7 @@ const uploadImage = async (base64String, title, sha256String, author) => {
  * @param {Pick<Prisma.User, 'id'>} author
  * @throws {string}
  */
-export const validateAndUploadImages = (editor, title, author) => {
+export const adjustAndUploadImages = (editor, title, author) => {
 	return new Promise((resolve, reject) => {
 		editor.update(
 			async () => {

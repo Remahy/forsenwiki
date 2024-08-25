@@ -31,9 +31,9 @@ export const getURLAndTitle = (
 	platform: SupportedPlatforms,
 	src: string,
 	parentUrl: string
-): { url: string; title: string } | undefined => {
+): { url: string; title: string } => {
 	try {
-		new URL('', src)
+		new URL('', src);
 	} catch {
 		return {
 			url: '',
@@ -48,6 +48,13 @@ export const getURLAndTitle = (
 		const vPathname = url.pathname.startsWith('/v/')
 			? url.pathname.split('/').pop()?.split('?').shift()
 			: null;
+
+		if ((v || youtuBE || vPathname) === null) {
+			return {
+				url: '',
+				title: 'Unknown source',
+			};
+		}
 
 		return {
 			url: `https://www.youtube-nocookie.com/embed/${v || youtuBE || vPathname}`,
@@ -99,13 +106,15 @@ export const getURLAndTitle = (
 			};
 		}
 	}
-};
 
-function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
-	const { url, title } = getURLAndTitle(node.__platform, node.__src, parentUrl) || {
+	return {
 		url: '',
 		title: 'Unknown source',
 	};
+};
+
+function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
+	const { url, title } = getURLAndTitle(node.__platform, node.__src, parentUrl);
 
 	const element = document.createElement('iframe');
 	element.setAttribute('data-lexical-youtube', node.__src);
@@ -119,15 +128,18 @@ function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
 	);
 	element.setAttribute('allowfullscreen', 'true');
 	element.setAttribute('title', title);
+	element.setAttribute('loading', 'lazy');
+
+	if (!url) {
+		element.setAttribute('class', 'bg-violet-500 bg-opacity-50');
+		element.srcdoc = `<p style="color:#fff;"><strong>No valid URL is provided for this YouTube embed.</strong></p>`;
+	}
 
 	return { element };
 }
 
 function generateTwitchIframe(node: VideoEmbedNode, parentUrl: string) {
-	const { url, title } = getURLAndTitle(node.__platform, node.__src, parentUrl) || {
-		url: '',
-		title: 'Unknown source',
-	};
+	const { url, title } = getURLAndTitle(node.__platform, node.__src, parentUrl);
 
 	const element = document.createElement('iframe');
 	element.setAttribute('data-lexical-twitch', node.__src);
@@ -142,6 +154,12 @@ function generateTwitchIframe(node: VideoEmbedNode, parentUrl: string) {
 	);
 	element.setAttribute('allowfullscreen', 'true');
 	element.setAttribute('title', title);
+	element.setAttribute('loading', 'lazy');
+
+	if (!url) {
+		element.setAttribute('class', 'bg-violet-500 bg-opacity-50');
+		element.srcdoc = `<p style="color:#fff;"><strong>No valid URL is provided for this Twitch embed.</strong></p>`;
+	}
 
 	return { element };
 }
@@ -258,7 +276,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 
 		const element = document.createElement('a');
 		element.href = sanitizeUrl(this.__src);
-		element.textContent = `${VIDEO_CONSTANTS.PLATFORMS[this.__platform]} link`
+		element.textContent = `${VIDEO_CONSTANTS.PLATFORMS[this.__platform]} link`;
 
 		return { element };
 	}
@@ -336,6 +354,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		return {
 			componentClass: VideoEmbedComponent,
 			props: {
+				node: this,
 				platform: this.__platform,
 				src: this.__src,
 				format: this.__format,
