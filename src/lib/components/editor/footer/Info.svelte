@@ -31,8 +31,10 @@
 		if (selection) {
 			const nodes = selection.getNodes();
 			const nonTextNodes = nodes.map((node) => node.getType() === 'text' ? node.getParent() : node).filter(isDefined);
-			keys = nonTextNodes.length <= 5 ? nonTextNodes.map((node) => node.getKey()).join(', ') : 'Many';
-			types = nonTextNodes.length <= 5 ? nonTextNodes.map((node) => node.getType()).join(', ') : 'Many';
+			const uniqueNodes = nonTextNodes.filter((n, index, arr) => arr.indexOf(n) === index);
+
+			keys = uniqueNodes.length <= 5 ? uniqueNodes.map((node) => node.getKey()).join(', ') : 'Many';
+			types = uniqueNodes.length <= 5 ? uniqueNodes.map((node) => node.getType()).join(', ') : 'Many';
 			return;
 		}
 
