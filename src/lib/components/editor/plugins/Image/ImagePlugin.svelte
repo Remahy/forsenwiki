@@ -76,7 +76,7 @@
 					src: node.__src,
 					width: node.__width,
 				},
-				type: 'image',
+				type: ImageNode.getType(),
 			})
 		);
 
@@ -226,7 +226,12 @@
 				editor.update(() => {
 					const node = createImageNode(payload);
 
-					if (data.height && data.width && data.height >= 28 && data.width >= 28) {
+					if (
+						typeof data.width === 'number' &&
+						typeof data.height === 'number' &&
+						data.width >= 28 &&
+						data.height >= 28
+					) {
 						node.setWidthAndHeight(data.width, data.height);
 					}
 

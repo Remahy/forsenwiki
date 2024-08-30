@@ -15,11 +15,11 @@ import { SvelteComponent, type ComponentProps } from 'svelte';
 import ImageComponent from './ImageComponent.svelte';
 
 export interface ImagePayload {
-	altText: string;
-	height?: number;
-	key?: NodeKey;
 	src: string;
-	width?: number;
+	altText: string;
+	width?: number | 'inherit';
+	height?: number | 'inherit';
+	key?: NodeKey;
 }
 
 function convertImageElement(domNode: Node): null | DOMConversionOutput {
@@ -34,10 +34,10 @@ function convertImageElement(domNode: Node): null | DOMConversionOutput {
 
 export type SerializedImageNode = Spread<
 	{
-		altText: string;
-		height?: number;
 		src: string;
-		width?: number;
+		altText: string;
+		width?: number | 'inherit';
+		height?: number | 'inherit';
 	},
 	SerializedLexicalNode
 >;
@@ -64,10 +64,10 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 	static importJSON(serializedNode: SerializedImageNode): ImageNode {
 		const { altText, height, width, src } = serializedNode;
 		const node = $createImageNode({
-			altText,
-			height,
 			src,
+			altText,
 			width,
+			height,
 		});
 
 		return node;
@@ -116,12 +116,12 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 
 	exportJSON(): SerializedImageNode {
 		return {
-			altText: this.getAltText(),
-			height: this.__height === 'inherit' ? 0 : this.__height,
 			src: this.getSrc(),
-			type: 'image',
+			altText: this.getAltText(),
+			width: this.__width,
+			height: this.__height,
+			type: ImageNode.getType(),
 			version: 1,
-			width: this.__width === 'inherit' ? 0 : this.__width,
 		};
 	}
 
@@ -165,7 +165,7 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 		return this.__altText;
 	}
 
-	decorate(editor: LexicalEditor, config: EditorConfig): DecoratorImageType {
+	decorate(editor: LexicalEditor, _config: EditorConfig): DecoratorImageType {
 		return {
 			componentClass: ImageComponent,
 			props: {
@@ -182,7 +182,7 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 	}
 }
 
-export function $createImageNode({ altText, height, src, width, key }: ImagePayload): ImageNode {
+export function $createImageNode({ src, altText, width, height, key }: ImagePayload): ImageNode {
 	return $applyNodeReplacement(new ImageNode(src, altText, width, height, key));
 }
 
