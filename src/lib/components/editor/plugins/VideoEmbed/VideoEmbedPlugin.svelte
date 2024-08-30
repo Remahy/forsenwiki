@@ -16,7 +16,7 @@
 		$getSelection as getSelection,
 		RootNode,
 	} from 'lexical';
-	import { $wrapNodeInElement as wrapNodeInElement, mergeRegister } from '@lexical/utils';
+	import { mergeRegister } from '@lexical/utils';
 
 	import {
 		$createVideoEmbedNode as createVideoEmbedNode,

@@ -10,18 +10,19 @@
 	import {
 		$getSelection as getSelection,
 		$isNodeSelection as isNodeSelection,
-		type LexicalEditor,
-		type LexicalCommand,
 		$getNodeByKey as getNodeByKey,
 		$isRangeSelection as isRangeSelection,
 		createCommand,
 		COMMAND_PRIORITY_LOW,
 		CLICK_COMMAND,
-		type BaseSelection,
 		KEY_DELETE_COMMAND,
 		KEY_BACKSPACE_COMMAND,
 		KEY_ENTER_COMMAND,
 		KEY_ESCAPE_COMMAND,
+		type LexicalEditor,
+		type LexicalCommand,
+		type BaseSelection,
+		type NodeKey,
 	} from 'lexical';
 	import { mergeRegister } from '@lexical/utils';
 	import { onMount } from 'svelte';
@@ -42,7 +43,7 @@
 	export let node: VideoEmbedNode;
 	export let src: string;
 	export let platform: SupportedPlatforms;
-	export let nodeKey: string;
+	export let nodeKey: NodeKey;
 	export let height: number | 'inherit';
 	export let width: number | 'inherit';
 	export let resizable: boolean;

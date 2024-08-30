@@ -6,16 +6,17 @@
  *
  */
 
-import type {
-	DOMConversionMap,
-	DOMConversionOutput,
-	DOMExportOutput,
-	EditorConfig,
-	ElementFormatType,
-	LexicalEditor,
-	LexicalNode,
-	NodeKey,
-	Spread,
+import {
+	$applyNodeReplacement,
+	type DOMConversionMap,
+	type DOMConversionOutput,
+	type DOMExportOutput,
+	type EditorConfig,
+	type ElementFormatType,
+	type LexicalEditor,
+	type LexicalNode,
+	type NodeKey,
+	type Spread,
 } from 'lexical';
 import { sanitizeUrl } from 'svelte-lexical';
 
@@ -245,7 +246,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	exportJSON(): SerializedVideoEmbedNode {
 		return {
 			...super.exportJSON(),
-			type: 'videoembed',
+			type: VideoEmbedNode.getType(),
 			platform: this.__platform,
 			src: this.__src,
 			width: this.__width,
@@ -381,8 +382,10 @@ export function $createVideoEmbedNode({
 	src,
 	width,
 	height,
-}: VideoEmbedPayload): VideoEmbedNode {
-	return new VideoEmbedNode(platform, src, width, height);
+	format,
+	key,
+}: VideoEmbedPayload & { format?: ElementFormatType, key?: NodeKey }): VideoEmbedNode {
+	return $applyNodeReplacement(new VideoEmbedNode(platform, src, width, height, format, key));
 }
 
 export function $isVideoEmbedNode(
