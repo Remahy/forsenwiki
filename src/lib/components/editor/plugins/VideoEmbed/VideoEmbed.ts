@@ -185,12 +185,12 @@ export type VideoEmbedPayload = {
 export type SerializedVideoEmbedNode = Spread<VideoEmbedPayload, SerializedDecoratorBlockNode>;
 
 function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput {
-	const youtubeVideoSrc = domNode.getAttribute('data-lexical-youtube');
 	const width = domNode.getAttribute('width') ? Number(domNode.getAttribute('width')) : 'inherit';
 	const height = domNode.getAttribute('height')
 		? Number(domNode.getAttribute('height'))
 		: 'inherit';
 
+	const youtubeVideoSrc = domNode.getAttribute('data-lexical-youtube');
 	if (youtubeVideoSrc) {
 		const node = $createVideoEmbedNode({
 			platform: 'youtube',
@@ -201,10 +201,14 @@ function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput 
 		return { node };
 	}
 
-	const twitchClipSrc = domNode.getAttribute('data-lexical-twitch-clip');
-
+	const twitchClipSrc = domNode.getAttribute('data-lexical-twitch');
 	if (twitchClipSrc) {
-		const node = $createVideoEmbedNode({ platform: 'youtube', src: twitchClipSrc, width, height });
+		const node = $createVideoEmbedNode({
+			platform: 'twitch',
+			src: twitchClipSrc,
+			width,
+			height,
+		});
 		return { node };
 	}
 
@@ -218,7 +222,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	__height: 'inherit' | number;
 
 	static getType(): string {
-		return 'youtube';
+		return 'videoembed';
 	}
 
 	static clone(node: VideoEmbedNode): VideoEmbedNode {
@@ -284,9 +288,13 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	static importDOM(): DOMConversionMap | null {
 		return {
 			iframe: (domNode: HTMLElement) => {
-				if (!domNode.hasAttribute('data-lexical-youtube')) {
+				if (
+					!domNode.hasAttribute('data-lexical-youtube') ||
+					!domNode.hasAttribute('data-lexical-twitch')
+				) {
 					return null;
 				}
+
 				return {
 					conversion: $convertVideoElement,
 					priority: 1,
