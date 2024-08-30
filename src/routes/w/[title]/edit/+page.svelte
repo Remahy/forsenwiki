@@ -111,13 +111,13 @@
 	<Editor {update} {id} />
 
 	{#if error}
-		<Box class="flex items-center !bg-red-200 p-2">
+		<Box class="flex items-center !bg-red-200 dark:text-black p-2">
 			<p>{error.message}</p>
 		</Box>
 	{/if}
 
 	{#if warnings.length}
-		<Box class="flex items-center !bg-yellow-200 p-2">
+		<Box class="flex items-center !bg-yellow-200 dark:text-black p-2">
 			{#each warnings as warning}
 				<p>{warning.message}</p>
 			{/each}
