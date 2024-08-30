@@ -7,6 +7,7 @@
 <script lang="ts">
 	import '../Image/Image.css';
 
+	import { onMount } from 'svelte';
 	import {
 		$getSelection as getSelection,
 		$isNodeSelection as isNodeSelection,
@@ -25,7 +26,6 @@
 		type NodeKey,
 	} from 'lexical';
 	import { mergeRegister } from '@lexical/utils';
-	import { onMount } from 'svelte';
 
 	import { DOMAIN } from '$lib/environment/environment';
 	import {

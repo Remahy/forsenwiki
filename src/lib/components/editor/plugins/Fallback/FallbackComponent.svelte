@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import {
 		$getSelection as getSelection,
 		$isNodeSelection as isNodeSelection,
@@ -13,10 +14,9 @@
 		type BaseSelection,
 		type NodeKey,
 	} from 'lexical';
+	import { mergeRegister } from '@lexical/utils';
 	import { clearSelection, createNodeSelectionStore } from '../../utils/getSelection';
 	import { $isFallbackNode as isFallbackNode, type FallbackNode } from './Fallback';
-	import { mergeRegister } from '@lexical/utils';
-	import { onMount } from 'svelte';
 
 	export let node: FallbackNode;
 	export let nodeKey: NodeKey;

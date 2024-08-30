@@ -41,7 +41,8 @@
 
 	import { CAN_USE_DOM } from '$lib/environment/utils';
 	import { cacheServiceBaseURLWithStatic } from '$lib/utils/getCacheURL';
-
+	import { modal } from '$lib/stores/modal';
+	import EditImageModal from '../../toolbar/ImageButtons/EditImageModal.svelte';
 	import {
 		$createImageNode as createImageNode,
 		$isImageNode as isImageNode,
@@ -49,8 +50,7 @@
 		TRANSPARENT_IMAGE,
 		type ImagePayload,
 	} from './Image';
-	import EditImageModal from '../../toolbar/ImageButtons/EditImageModal.svelte';
-	import { modal } from '$lib/stores/modal';
+
 	const editor: LexicalEditor = getEditor();
 
 	let img: HTMLImageElement;
