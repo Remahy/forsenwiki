@@ -30,7 +30,7 @@
 		</div>
 
 		<div class="flex h-full flex-col justify-end gap-2 overflow-hidden">
-			<p>forsen.wiki v0.0.1 (Alpha)</p>
+			<p>forsen.wiki 1.0.0-beta.2</p>
 
 			<div class="text-purple-800" aria-hidden="true">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</div>
 
