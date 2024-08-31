@@ -8,7 +8,7 @@
 	<meta name="description" content="forsen.wiki" />
 </svelte:head>
 
-<Container>
+<Container class="p-8">
 	<section class="prose prose-sm w-full max-w-[unset] dark:prose-invert">
 		<h1>DMCA</h1>
 		<p>

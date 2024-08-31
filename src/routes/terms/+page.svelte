@@ -7,7 +7,7 @@
 	<meta name="description" content="forsen.wiki" />
 </svelte:head>
 
-<Container>
+<Container class="p-8">
 	<section class="prose prose-lg w-full max-w-[unset] dark:prose-invert">
 		<h1>Terms & Conditions</h1>
 		<p>Effective date: May 8th, 2024</p>
