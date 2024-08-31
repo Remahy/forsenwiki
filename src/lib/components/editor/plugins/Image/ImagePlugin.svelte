@@ -41,7 +41,8 @@
 
 	import { CAN_USE_DOM } from '$lib/environment/utils';
 	import { cacheServiceBaseURLWithStatic } from '$lib/utils/getCacheURL';
-
+	import { modal } from '$lib/stores/modal';
+	import EditImageModal from '../../toolbar/ImageButtons/EditImageModal.svelte';
 	import {
 		$createImageNode as createImageNode,
 		$isImageNode as isImageNode,
@@ -49,8 +50,7 @@
 		TRANSPARENT_IMAGE,
 		type ImagePayload,
 	} from './Image';
-	import EditImageModal from '../../toolbar/ImageButtons/EditImageModal.svelte';
-	import { modal } from '$lib/stores/modal';
+
 	const editor: LexicalEditor = getEditor();
 
 	let img: HTMLImageElement;
@@ -76,7 +76,7 @@
 					src: node.__src,
 					width: node.__width,
 				},
-				type: 'image',
+				type: ImageNode.getType(),
 			})
 		);
 
@@ -226,7 +226,12 @@
 				editor.update(() => {
 					const node = createImageNode(payload);
 
-					if (data.height && data.width && data.height >= 28 && data.width >= 28) {
+					if (
+						typeof data.width === 'number' &&
+						typeof data.height === 'number' &&
+						data.width >= 28 &&
+						data.height >= 28
+					) {
 						node.setWidthAndHeight(data.width, data.height);
 					}
 

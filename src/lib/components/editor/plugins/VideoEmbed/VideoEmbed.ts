@@ -6,16 +6,17 @@
  *
  */
 
-import type {
-	DOMConversionMap,
-	DOMConversionOutput,
-	DOMExportOutput,
-	EditorConfig,
-	ElementFormatType,
-	LexicalEditor,
-	LexicalNode,
-	NodeKey,
-	Spread,
+import {
+	$applyNodeReplacement,
+	type DOMConversionMap,
+	type DOMConversionOutput,
+	type DOMExportOutput,
+	type EditorConfig,
+	type ElementFormatType,
+	type LexicalEditor,
+	type LexicalNode,
+	type NodeKey,
+	type Spread,
 } from 'lexical';
 import { sanitizeUrl } from 'svelte-lexical';
 
@@ -185,12 +186,12 @@ export type VideoEmbedPayload = {
 export type SerializedVideoEmbedNode = Spread<VideoEmbedPayload, SerializedDecoratorBlockNode>;
 
 function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput {
-	const youtubeVideoSrc = domNode.getAttribute('data-lexical-youtube');
 	const width = domNode.getAttribute('width') ? Number(domNode.getAttribute('width')) : 'inherit';
 	const height = domNode.getAttribute('height')
 		? Number(domNode.getAttribute('height'))
 		: 'inherit';
 
+	const youtubeVideoSrc = domNode.getAttribute('data-lexical-youtube');
 	if (youtubeVideoSrc) {
 		const node = $createVideoEmbedNode({
 			platform: 'youtube',
@@ -201,10 +202,14 @@ function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput 
 		return { node };
 	}
 
-	const twitchClipSrc = domNode.getAttribute('data-lexical-twitch-clip');
-
+	const twitchClipSrc = domNode.getAttribute('data-lexical-twitch');
 	if (twitchClipSrc) {
-		const node = $createVideoEmbedNode({ platform: 'youtube', src: twitchClipSrc, width, height });
+		const node = $createVideoEmbedNode({
+			platform: 'twitch',
+			src: twitchClipSrc,
+			width,
+			height,
+		});
 		return { node };
 	}
 
@@ -218,7 +223,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	__height: 'inherit' | number;
 
 	static getType(): string {
-		return 'youtube';
+		return 'videoembed';
 	}
 
 	static clone(node: VideoEmbedNode): VideoEmbedNode {
@@ -241,7 +246,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	exportJSON(): SerializedVideoEmbedNode {
 		return {
 			...super.exportJSON(),
-			type: 'videoembed',
+			type: VideoEmbedNode.getType(),
 			platform: this.__platform,
 			src: this.__src,
 			width: this.__width,
@@ -284,9 +289,13 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	static importDOM(): DOMConversionMap | null {
 		return {
 			iframe: (domNode: HTMLElement) => {
-				if (!domNode.hasAttribute('data-lexical-youtube')) {
+				if (
+					!domNode.hasAttribute('data-lexical-youtube') ||
+					!domNode.hasAttribute('data-lexical-twitch')
+				) {
 					return null;
 				}
+
 				return {
 					conversion: $convertVideoElement,
 					priority: 1,
@@ -373,8 +382,10 @@ export function $createVideoEmbedNode({
 	src,
 	width,
 	height,
-}: VideoEmbedPayload): VideoEmbedNode {
-	return new VideoEmbedNode(platform, src, width, height);
+	format,
+	key,
+}: VideoEmbedPayload & { format?: ElementFormatType, key?: NodeKey }): VideoEmbedNode {
+	return $applyNodeReplacement(new VideoEmbedNode(platform, src, width, height, format, key));
 }
 
 export function $isVideoEmbedNode(

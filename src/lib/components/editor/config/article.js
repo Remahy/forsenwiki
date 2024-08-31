@@ -1,6 +1,7 @@
 import { LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical';
 import { ALinkNode, ImageNode, VideoEmbedNode } from '$lib/lexicalCustom';
 import { $createALinkNode } from '../plugins/Link/ALink';
+import { DeprecatedVideoEmbedNode } from '../plugins/Deprecated/DeprecatedVideoEmbedNode';
 
 const articleTheme = {
 	root: 'editor-shell',
@@ -49,6 +50,9 @@ export const articleConfig = (theme, editable, editorState, onError = onErrorDef
 		QuoteNode,
 		ImageNode,
 		VideoEmbedNode,
+
+		// Old nodes / Migration nodes
+		DeprecatedVideoEmbedNode,
 	],
 	/** @param {Error} error */
 	onError,
