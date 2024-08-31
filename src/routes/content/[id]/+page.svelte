@@ -24,6 +24,7 @@
 		isUpdating = true;
 
 		let res;
+
 		try {
 			if (!name || !name.length || name === result.name) {
 				error = new Error('Error: Name is unchanged or not set!');
@@ -32,18 +33,19 @@
 
 			res = await changeName(id, name);
 		} catch (err) {
-			// This throw prevents rest of code from running.
-			throw err;
+			error = new Error(err?.toString());
 		} finally {
 			isUpdating = false;
 		}
 
+		if (!res) {
+			return;
+		}
+
 		if (res.status === 200) {
-			const json = await res.json();
 			window.location.reload();
 		} else if (res.status >= 400) {
-			const json = await res.json();
-			error = json;
+			error = await res.json();
 		}
 	};
 
@@ -55,18 +57,19 @@
 		try {
 			res = await deleteContent(id);
 		} catch (err) {
-			// This throw prevents rest of code from running.
-			error = new Error(err?.toString())
-			throw err;
+			error = new Error(err?.toString());
 		} finally {
 			isUpdating = false;
 		}
 
+		if (!res) {
+			return;
+		}
+
 		if (res.status === 200) {
-			goto(`/search?query=${result.name}`, {  });
+			goto(`/search?query=${result.name}`, {});
 		} else if (res.status >= 400) {
-			const json = await res.json();
-			error = json;
+			error = await res.json();
 		}
 	};
 </script>
