@@ -1,5 +1,5 @@
 <script>
-	import { getContext, onMount, SvelteComponent } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { FileQuestionIcon, LinkIcon, YoutubeIcon } from 'lucide-svelte';
 	import { VideoEmbedNode } from '$lib/lexicalCustom';
 	import Select from '$lib/components/Select.svelte';
@@ -22,7 +22,7 @@
 	let currentURL = selectedVideoEmbedNode.__src;
 
 	/**
-	 * @type {{[x: string]: typeof SvelteComponent<any>}}
+	 * @type {{[x: string]: typeof import('svelte').SvelteComponent<any>}}
 	 */
 	const platformIcons = {
 		youtube: YoutubeIcon,

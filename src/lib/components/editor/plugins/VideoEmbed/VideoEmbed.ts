@@ -385,7 +385,7 @@ export function $createVideoEmbedNode({
 	height,
 	format,
 	key,
-}: VideoEmbedPayload & { format?: ElementFormatType, key?: NodeKey }): VideoEmbedNode {
+}: VideoEmbedPayload & { format?: ElementFormatType; key?: NodeKey }): VideoEmbedNode {
 	return $applyNodeReplacement(new VideoEmbedNode(platform, src, width, height, format, key));
 }
 

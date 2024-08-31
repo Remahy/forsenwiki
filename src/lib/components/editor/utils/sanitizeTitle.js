@@ -1,5 +1,5 @@
-import isUrl from "is-url";
-import sanitize from "sanitize-filename";
+import isUrl from 'is-url';
+import sanitize from 'sanitize-filename';
 
 /** @param {string} title */
 export const sanitizeTitle = (title) => {
@@ -13,7 +13,7 @@ export const sanitizeTitle = (title) => {
 
 	// Extreme replacement, when previous steps fail to produce a valid url.
 	if (!isUrl(`https://example.com/${lowerCaseTitle}`)) {
-		const onlyASCIITitle = lowerCaseTitle.replace(/\W+/g, '')
+		const onlyASCIITitle = lowerCaseTitle.replace(/\W+/g, '');
 		return { raw, sanitized: encodeURIComponent(onlyASCIITitle) };
 	}
 

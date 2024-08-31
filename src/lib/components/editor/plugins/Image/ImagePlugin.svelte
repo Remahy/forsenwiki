@@ -1,11 +1,4 @@
 <script context="module" lang="ts">
-	declare global {
-		interface DragEvent {
-			rangeOffset?: number;
-			rangeParent?: Node;
-		}
-	}
-
 	export const INSERT_IMAGE_COMMAND: LexicalCommand<InsertImagePayload> = createCommand();
 	export type InsertImagePayload = Readonly<ImagePayload>;
 

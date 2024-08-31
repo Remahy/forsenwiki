@@ -2,7 +2,7 @@
 	import {
 		COMMAND_PRIORITY_CRITICAL,
 		SELECTION_CHANGE_COMMAND,
-		$getSelection as getSelection
+		$getSelection as getSelection,
 	} from 'lexical';
 	import { getContext, onMount } from 'svelte';
 
@@ -30,11 +30,14 @@
 
 		if (selection) {
 			const nodes = selection.getNodes();
-			const nonTextNodes = nodes.map((node) => node.getType() === 'text' ? node.getParent() : node).filter(isDefined);
+			const nonTextNodes = nodes
+				.map((node) => (node.getType() === 'text' ? node.getParent() : node))
+				.filter(isDefined);
 			const uniqueNodes = nonTextNodes.filter((n, index, arr) => arr.indexOf(n) === index);
 
 			keys = uniqueNodes.length <= 5 ? uniqueNodes.map((node) => node.getKey()).join(', ') : 'Many';
-			types = uniqueNodes.length <= 5 ? uniqueNodes.map((node) => node.getType()).join(', ') : 'Many';
+			types =
+				uniqueNodes.length <= 5 ? uniqueNodes.map((node) => node.getType()).join(', ') : 'Many';
 			return;
 		}
 
@@ -52,7 +55,7 @@
 
 			editor.registerCommand(
 				SELECTION_CHANGE_COMMAND,
-				(_payload) => {
+				() => {
 					update();
 					return false;
 				},

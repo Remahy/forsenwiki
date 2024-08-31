@@ -4,7 +4,7 @@
 		COMMAND_PRIORITY_CRITICAL,
 		SELECTION_CHANGE_COMMAND,
 		$getSelection as getSelection,
-		$isNodeSelection as isNodeSelection
+		$isNodeSelection as isNodeSelection,
 	} from 'lexical';
 	import { $isVideoEmbedNode as isVideoEmbedNode } from '$lib/lexicalCustom';
 	import EditVideo from './EditVideo.svelte';
@@ -45,7 +45,7 @@
 
 			editor.registerCommand(
 				SELECTION_CHANGE_COMMAND,
-				(_payload) => {
+				() => {
 					updateToolbar();
 					return false;
 				},

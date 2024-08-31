@@ -43,7 +43,7 @@
 		return false;
 	};
 
-	const onEnter = (event: KeyboardEvent) => {
+	const onEnter = () => {
 		const latestSelection = getSelection();
 		if (
 			$isSelected &&
@@ -54,7 +54,7 @@
 		return false;
 	};
 
-	const onEscape = (event: KeyboardEvent) => {
+	const onEscape = () => {
 		clearSelection(editor);
 		$isSelected = false;
 		editor.update(() => node.selectNext());

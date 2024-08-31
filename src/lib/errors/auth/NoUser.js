@@ -1,3 +1,3 @@
 export class NoUser extends Error {
-  static type = 'NoUser'
+	static type = 'NoUser';
 }

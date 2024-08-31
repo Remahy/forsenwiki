@@ -1,3 +1,3 @@
 export class AccountIsSpecial extends Error {
-  static type = 'AccountIsSpecial'
+	static type = 'AccountIsSpecial';
 }

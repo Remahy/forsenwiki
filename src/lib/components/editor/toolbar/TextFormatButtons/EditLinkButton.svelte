@@ -128,7 +128,7 @@
 
 			editor.registerCommand(
 				SELECTION_CHANGE_COMMAND,
-				(_payload) => {
+				() => {
 					updateToolbar();
 					return false;
 				},

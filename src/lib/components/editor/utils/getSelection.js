@@ -1,4 +1,12 @@
-import { $getSelection, $isRangeSelection, $isNodeSelection, $isElementNode, $createNodeSelection, $getNodeByKey, $setSelection } from 'lexical';
+import {
+	$getSelection,
+	$isRangeSelection,
+	$isNodeSelection,
+	$isElementNode,
+	$createNodeSelection,
+	$getNodeByKey,
+	$setSelection,
+} from 'lexical';
 import { $findMatchingParent } from '@lexical/utils';
 import { $isAtNodeEnd as isAtNodeEnd } from '@lexical/selection';
 import { writable } from 'svelte/store';
@@ -23,11 +31,10 @@ export function getSelectedElements() {
 		const node = nodes[index];
 		const parent = $findMatchingParent(
 			node,
-			(parentNode) =>
-				$isElementNode(parentNode) && !parentNode.isInline(),
+			(parentNode) => $isElementNode(parentNode) && !parentNode.isInline()
 		);
 		if (!parent) continue;
-		elements.set(parent.getKey(), /** @type {ElementNode} */(parent))
+		elements.set(parent.getKey(), /** @type {ElementNode} */ (parent));
 	}
 
 	return [...elements.values()];
@@ -48,8 +55,7 @@ export function getSelectedNode(selection) {
 	const isBackward = selection.isBackward();
 	if (isBackward) {
 		return isAtNodeEnd(focus) ? anchorNode : focusNode;
-	}
-	else {
+	} else {
 		return isAtNodeEnd(anchor) ? focusNode : anchorNode;
 	}
 }
@@ -112,4 +118,3 @@ export function createNodeSelectionStore(editor, nodeKey) {
 		},
 	};
 }
-

@@ -86,7 +86,7 @@
 		return false;
 	};
 
-	const onEnter = (event: KeyboardEvent) => {
+	const onEnter = () => {
 		const latestSelection = getSelection();
 		if (
 			$isSelected &&
@@ -97,7 +97,7 @@
 		return false;
 	};
 
-	const onEscape = (event: KeyboardEvent) => {
+	const onEscape = () => {
 		clearSelection(editor);
 		$isSelected = false;
 		editor.update(() => node.selectNext());
@@ -181,7 +181,9 @@
 >
 	<iframe
 		class="pointer-events-none"
-		srcdoc={!url ? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform.toUpperCase()} embed.</strong></p>` : undefined}
+		srcdoc={!url
+			? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform.toUpperCase()} embed.</strong></p>`
+			: undefined}
 		{width}
 		{height}
 		src={url}
