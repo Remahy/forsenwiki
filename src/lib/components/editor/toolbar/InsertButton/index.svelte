@@ -1,19 +1,9 @@
 <script>
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 	import { PlusIcon } from 'lucide-svelte';
-	import {
-		$createParagraphNode as createParagraphNode,
-		$insertNodes as insertNodes,
-		$isRootOrShadowRoot as isRootOrShadowRoot,
-		COMMAND_PRIORITY_EDITOR,
-	} from 'lexical';
-	import { $wrapNodeInElement as wrapNodeInElement } from '@lexical/utils';
 
 	import Select from '$lib/components/Select.svelte';
-	import {
-		TRANSPARENT_IMAGE,
-		$createImageNode as createImageNode,
-	} from '../../plugins/Image/Image';
+	import { TRANSPARENT_IMAGE } from '../../plugins/Image/Image';
 	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
 	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 

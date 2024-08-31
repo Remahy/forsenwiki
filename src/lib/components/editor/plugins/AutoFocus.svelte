@@ -17,9 +17,9 @@
 
 			if (el) {
 				setTimeout(() => {
-					editor.getRootElement()?.focus()
+					editor.getRootElement()?.focus();
 				}, 0);
 			}
-		})
+		});
 	});
 </script>

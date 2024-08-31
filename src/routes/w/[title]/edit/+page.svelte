@@ -51,17 +51,20 @@
 
 		editor.update(async () => {
 			isUploading = true;
+
 			let res;
 
 			try {
 				await validateArticle(editor);
-
 				res = await updateArticle(title, yjsDocMap);
-			} catch (err) {
-				// This throw prevents rest of code from running.
-				throw err;
+			} catch {
+				// noop
 			} finally {
 				isUploading = false;
+			}
+
+			if (!res) {
+				return;
 			}
 
 			if (res.status === 200) {
@@ -111,13 +114,13 @@
 	<Editor {update} {id} />
 
 	{#if error}
-		<Box class="flex items-center !bg-red-200 dark:text-black p-2">
+		<Box class="flex items-center !bg-red-200 p-2 dark:text-black">
 			<p>{error.message}</p>
 		</Box>
 	{/if}
 
 	{#if warnings.length}
-		<Box class="flex items-center !bg-yellow-200 dark:text-black p-2">
+		<Box class="flex items-center !bg-yellow-200 p-2 dark:text-black">
 			{#each warnings as warning}
 				<p>{warning.message}</p>
 			{/each}

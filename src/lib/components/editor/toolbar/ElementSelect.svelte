@@ -1,5 +1,5 @@
 <script>
-	import { SvelteComponent, getContext, onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import {
 		FileQuestionIcon,
 		Heading1Icon,
@@ -130,7 +130,7 @@
 	};
 
 	/**
-	 * @type {{[x: string]: typeof SvelteComponent<any>}}
+	 * @type {{[x: string]: typeof import('svelte').SvelteComponent<any>}}
 	 */
 	const blockTypeIcons = {
 		default: FileQuestionIcon,
@@ -257,7 +257,7 @@
 
 			editor.registerCommand(
 				SELECTION_CHANGE_COMMAND,
-				(_payload) => {
+				() => {
 					updateToolbar();
 					return false;
 				},

@@ -4,7 +4,7 @@
 		FORMAT_ELEMENT_COMMAND,
 		SELECTION_CHANGE_COMMAND,
 	} from 'lexical';
-	import { SvelteComponent, getContext, onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from 'lucide-svelte';
 
 	import Select from '$lib/components/Select.svelte';
@@ -12,7 +12,7 @@
 	import { getSelectedElements } from '$lib/components/editor/utils/getSelection';
 
 	/**
-	 * @type {{[x: string]: typeof SvelteComponent<any>}}
+	 * @type {{[x: string]: typeof import('svelte').SvelteComponent<any>}}
 	 */
 	const alignmentIcons = {
 		default: AlignLeftIcon,
@@ -89,7 +89,7 @@
 
 			editor.registerCommand(
 				SELECTION_CHANGE_COMMAND,
-				(_payload) => {
+				() => {
 					updateToolbar();
 					return false;
 				},

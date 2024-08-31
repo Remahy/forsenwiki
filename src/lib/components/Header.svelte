@@ -1,5 +1,5 @@
 <script>
-	import { LogOutIcon, ScaleIcon, XIcon } from 'lucide-svelte';
+	import { LogOutIcon } from 'lucide-svelte';
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
 	import Logo from '$lib/components/Logo.svelte';

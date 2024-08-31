@@ -48,21 +48,25 @@
 
 		editor.update(async () => {
 			isUploading = true;
+
 			let res;
 
 			try {
 				await validateArticle(editor);
 
 				if (!title) {
-					throw new Error();
+					throw new Error('No title set.');
 				}
 
 				res = await createArticle(title, yjsDocMap);
 			} catch (err) {
-				// This throw prevents rest of code from running.
-				throw err;
+				error = new Error(err?.toString());
 			} finally {
 				isUploading = false;
+			}
+
+			if (!res) {
+				return;
 			}
 
 			if (res.status === 200) {

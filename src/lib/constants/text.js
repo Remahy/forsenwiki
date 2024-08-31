@@ -6,4 +6,4 @@ const FONTFAMILIES = Object.freeze({
 
 export const TEXT_CONSTANTS = {
 	FONTFAMILIES,
-}
+};
