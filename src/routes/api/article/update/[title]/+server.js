@@ -89,6 +89,8 @@ export async function POST({ request, locals, params }) {
 
 	const combinedFinalDiff = mergePostUpdates([initialDiff, finalDiff]);
 
+	const { byteLength } = combinedFinalDiff;
+
 	const systemRelations = await readSystemYPostRelations(post.id);
 
 	const transformedSystemRelations = systemRelations.map((sysRelation) => ({
@@ -105,9 +107,9 @@ export async function POST({ request, locals, params }) {
 	const contentBase64 = uint8ArrayToBase64(combinedFinalDiff);
 
 	const body = { post, outRelations, transformedSystemRelations, content: contentBase64 };
-	const user = { name: session.user.name, id: session.user.id };
+	const metadata = { user: { name: session.user.name, id: session.user.id }, byteLength };
 
-	const updatedArticle = await updateArticleYPost(body, user);
+	const updatedArticle = await updateArticleYPost(body, metadata);
 
 	await upsertHTML(post.id, await toHTML(editor));
 

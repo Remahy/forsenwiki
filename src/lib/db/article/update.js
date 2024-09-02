@@ -42,9 +42,10 @@ const updateEntity = async (tx, { post, outRelations, systemRelations }, user) =
  * Create YPostUpdateMetadata, & YPostUpdate
  * @param {Prisma.PrismaClient | Prisma.Prisma.TransactionClient} tx
  * @param {Pick<Prisma.YPostUpdate, 'content' | 'postId'>} data
- * @param {{ name: string, id: string }} user
+ * @param {{ user: { name: string, id: string }, byteLength: number }} metadata
  */
-const createYPostUpdate = async (tx, data, user) => {
+const createYPostUpdate = async (tx, data, metadata) => {
+	const { user, byteLength } = metadata;
 	return tx.yPostUpdateMetadata
 		.create({
 			data: {
@@ -53,6 +54,7 @@ const createYPostUpdate = async (tx, data, user) => {
 						id: user.id,
 					},
 				},
+				byteLength,
 				postUpdate: {
 					create: {
 						...data,
@@ -65,10 +67,12 @@ const createYPostUpdate = async (tx, data, user) => {
 
 /**
  * @param {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], transformedSystemRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], content: string }} data
- * @param {{ name: string, id: string }} user
+ * @param {{ user: { name: string, id: string }, byteLength: number }} metadata
  */
-export const updateArticleYPost = async (data, user) => {
+export const updateArticleYPost = async (data, metadata) => {
 	const { post, outRelations, transformedSystemRelations, content } = data;
+
+	const { user } = metadata;
 
 	return prisma.$transaction(async (tx) => {
 		await updateEntity(
@@ -89,6 +93,6 @@ export const updateArticleYPost = async (data, user) => {
 			postId: post.id,
 		};
 
-		return createYPostUpdate(tx, dataToInsert, user);
+		return createYPostUpdate(tx, dataToInsert, metadata);
 	});
 };

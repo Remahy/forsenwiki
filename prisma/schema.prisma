@@ -130,6 +130,8 @@ model YPostUpdateMetadata {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
+  byteLength BigInt?
+
   postUpdate YPostUpdate?
 }
 

@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import { base64ToUint8Array } from 'uint8array-extras';
+import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { articleConfig } from '$lib/components/editor/config/article';
@@ -10,7 +10,7 @@ import { getArticleURLIds } from '$lib/components/editor/utils/getEntities';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { createArticle } from '$lib/db/article/create';
 import { readYPostByTitle } from '$lib/db/article/read';
-import { encodeYDocToUpdateV2ToBase64 } from '$lib/yjs/utils';
+import { encodeYDocToUpdateV2 } from '$lib/yjs/utils';
 import { adjustAndUploadImages } from '$lib/components/editor/validations/images.server';
 import { upsertHTML } from '$lib/db/article/html';
 import { toHTML } from '$lib/lexicalHTML.server';
@@ -54,7 +54,11 @@ export async function POST({ request, locals }) {
 	}
 
 	// By this point, we have probably modified the editor. Let's recreate the content.
-	const backendContent = encodeYDocToUpdateV2ToBase64(doc);
+	const backendUpdate = encodeYDocToUpdateV2(doc);
+
+	const { byteLength } = backendUpdate;
+
+	const backendContent = uint8ArrayToBase64(backendUpdate);
 
 	if (!title) {
 		return error(400, 'No title provided');
@@ -68,9 +72,9 @@ export async function POST({ request, locals }) {
 	const internalIds = await getArticleURLIds(editor);
 
 	const body = { title, data: { content: backendContent }, ids: internalIds };
-	const user = { name: session.user.name, id: session.user.id };
+	const metadata = { user: { name: session.user.name, id: session.user.id }, byteLength };
 
-	const createdArticle = await createArticle(body, user);
+	const createdArticle = await createArticle(body, metadata);
 
 	await upsertHTML(createdArticle.id, await toHTML(editor));
 

@@ -74,6 +74,7 @@ export async function readYPostUpdatesIdsByTitle(title) {
 									name: true,
 								},
 							},
+							byteLength: true,
 						},
 					},
 				},

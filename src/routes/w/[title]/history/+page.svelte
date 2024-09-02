@@ -44,7 +44,12 @@
 						<Link href="/w/{title}/history/{postUpdate.id}"
 							>{new Date(postUpdate.createdTimestamp).toLocaleString()}</Link
 						> by {postUpdate.metadata.user.name}
-						{#if index === 0}(current){/if}
+						{#if postUpdate.metadata.byteLength}
+							<span class="opacity-50">({postUpdate.metadata.byteLength})</span>
+						{/if}
+						{#if index === 0}
+							(current)
+						{/if}
 					</li>
 				{/each}
 			</ul>
