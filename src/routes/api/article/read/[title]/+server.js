@@ -9,6 +9,23 @@ import { yPostUpdatesToBase64 } from '$lib/yjs/utils';
 import { upsertHTML } from '$lib/db/article/html.js';
 
 /**
+ * TODO: Move elsewhere.
+ * @param {string} update
+ */
+export const _updateToHTML = async (update) => {
+	try {
+		const { editor } = getYjsAndEditor(articleConfig(null, false, null), base64ToUint8Array(update));
+
+		const html = await toHTML(editor);
+
+		return html;
+	} catch (err) {
+		console.error(err);
+		throw 500;
+	}
+};
+
+/**
  * @param {string} title
  * @throws {number}
  */
@@ -48,19 +65,7 @@ export const _getYPostHTML = async (title) => {
 
 	const { post, update } = await _getYPostUpdate(title);
 
-	/** @type {LexicalEditor} */
-	let editor;
-	/** @type {string} */
-	let html;
-	try {
-		let e = getYjsAndEditor(articleConfig(null, false, null), base64ToUint8Array(update));
-		editor = e.editor;
-
-		html = await toHTML(editor);
-	} catch (err) {
-		console.error(err);
-		throw 500;
-	}
+	const html = await _updateToHTML(update);
 
 	Promise.resolve(upsertHTML(post.id, html));
 

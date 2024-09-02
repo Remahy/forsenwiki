@@ -28,11 +28,13 @@ export async function POST({ request, locals }) {
 
 	const { title: rawTitle, content } = await request.json();
 
-	let e;
+	let editor;
 	let title;
+	let doc;
 	try {
-		e = getYjsAndEditor(articleConfig(null, false, null), base64ToUint8Array(content));
-		const { editor } = e;
+		const yjs = getYjsAndEditor(articleConfig(null, false, null), base64ToUint8Array(content));
+		editor = yjs.editor;
+		doc = yjs.doc;
 
 		// Does not modify the editor.
 		await validateArticle(editor);
@@ -50,7 +52,6 @@ export async function POST({ request, locals }) {
 		console.error(err);
 		return error(400);
 	}
-	const { editor, doc } = e;
 
 	// By this point, we have probably modified the editor. Let's recreate the content.
 	const backendContent = encodeYDocToUpdateV2ToBase64(doc);
