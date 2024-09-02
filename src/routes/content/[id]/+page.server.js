@@ -6,7 +6,7 @@ export async function load({ params }) {
 
 	const content = await prisma.content.findUnique({
 		where: { id },
-		select: { hash: true, author: { select: { name: true } }, createdAt: true, name: true },
+		select: { hash: true, author: { select: { name: true } }, createdTimestamp: true, name: true },
 	});
 
 	if (!content) {
