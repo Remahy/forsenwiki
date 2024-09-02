@@ -31,7 +31,9 @@
 	$: canEdit = editor?.isEditable();
 
 	const link = () => {
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		if (!hasLink) {
 			return editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://');
@@ -45,7 +47,9 @@
 	 * @param {{ target?: string | null, rel?: string | null, title?: string | null } | undefined} definedAttrs
 	 */
 	const wrapperToggleLink = (definedUrl, definedAttrs = undefined) => {
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		modal.set({
 			component: EditLinkButtonModal,

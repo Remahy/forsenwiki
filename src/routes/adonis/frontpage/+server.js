@@ -15,7 +15,10 @@ export function _emit(type, value) {
 export function POST() {
 	return produce(async function start({ emit }) {
 		return eventStore.subscribe((event) => {
-			if (!event) return;
+			if (!event) {
+				return;
+			}
+
 			const { type, value } = event;
 
 			emit(type, value);

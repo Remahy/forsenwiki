@@ -10,7 +10,8 @@ export default [
 	...svelte.configs['flat/recommended'],
 	{
 		rules: {
-			semi: ['error', 'always']
+			semi: ['error', 'always'],
+			curly: ['error'],
 		},
 		languageOptions: {
 			sourceType: 'module',
@@ -18,8 +19,8 @@ export default [
 			globals: {
 				...globals.browser,
 				...globals.node,
-				...globals.es2021
-			}
+				...globals.es2021,
+			},
 		},
 		ignores: [
 			'.DS_Store',
@@ -32,7 +33,7 @@ export default [
 			'!.env.example',
 			'pnpm-lock.yaml',
 			'package-lock.json',
-			'yarn.lock'
-		]
-	}
+			'yarn.lock',
+		],
+	},
 ];

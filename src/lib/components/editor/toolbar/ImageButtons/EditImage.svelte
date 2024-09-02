@@ -30,7 +30,9 @@
 	};
 
 	const image = () => {
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		modal.set({
 			component: EditImageModal,
@@ -44,7 +46,12 @@
 					/** @type {import('../../plugins/Image/Image').ImageNode} */
 					const node = /** @type {any} */ (getNodeByKey(selectedImageNode.getKey()));
 
-					if (data.height && data.width && data.height >= 28 && data.width >= 28) {
+					if (
+						typeof data.width === 'number' &&
+						typeof data.height === 'number' &&
+						data.height >= 28 &&
+						data.width >= 28
+					) {
 						node.setWidthAndHeight(data.width, data.height);
 					}
 
@@ -106,5 +113,7 @@
 </label>
 
 {#if currentWidth === 'inherit' && currentHeight === 'inherit'}
-	<div class="self-end" title="Width and height have been set to inherit the original size."><small>inherit</small></div>
+	<div class="self-end" title="Width and height have been set to inherit the original size.">
+		<small>inherit</small>
+	</div>
 {/if}

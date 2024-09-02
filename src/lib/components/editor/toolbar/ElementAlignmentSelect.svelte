@@ -64,7 +64,9 @@
 	};
 
 	const updateToolbar = () => {
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		editor.update(() => {
 			const nodes = getSelectedElements();

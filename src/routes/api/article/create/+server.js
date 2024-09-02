@@ -17,10 +17,14 @@ import { toHTML } from '$lib/lexicalHTML.server';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 
 export async function POST({ request, locals }) {
-	if (locals.isBlocked) return ForbiddenError();
+	if (locals.isBlocked) {
+		return ForbiddenError();
+	}
 
 	const session = await locals.auth();
-	if (!session?.user?.id || !session?.user?.name) return ForbiddenError();
+	if (!session?.user?.id || !session?.user?.name) {
+		return ForbiddenError();
+	}
 
 	const { title: rawTitle, content } = await request.json();
 

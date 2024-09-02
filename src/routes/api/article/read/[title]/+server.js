@@ -15,7 +15,9 @@ import { upsertHTML } from '$lib/db/article/html.js';
 export const _getYPostByTitle = async (title) => {
 	const post = await readYPostUpdatesByTitle(title);
 
-	if (!post) throw 404;
+	if (!post) {
+		throw 404;
+	}
 
 	const base64String = yPostUpdatesToBase64(post.postUpdates);
 

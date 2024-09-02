@@ -24,10 +24,14 @@ import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations
 import { _getYPostByTitle } from '../../read/[title]/+server';
 
 export async function POST({ request, locals, params }) {
-	if (locals.isBlocked) return ForbiddenError();
+	if (locals.isBlocked) {
+		return ForbiddenError();
+	}
 
 	const session = await locals.auth();
-	if (!session?.user?.id || !session?.user?.name) return ForbiddenError();
+	if (!session?.user?.id || !session?.user?.name) {
+		return ForbiddenError();
+	}
 
 	const { content } = await request.json();
 
