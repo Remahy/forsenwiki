@@ -28,39 +28,25 @@ export const _getYPostByTitle = async (title) => {
 	return { ..._post, update: base64String };
 };
 
-/** @param {string} title @param {{ html?: boolean, update?: boolean }} returnProps */
-export const _getYPost = async (title, returnProps = { html: true, update: true }) => {
-	const { html: returnHTML = true, update: returnUpdate = true } = returnProps;
-
-	if (!returnUpdate && returnHTML) {
-		try {
-			const yPost = await readYPostByTitle(title);
-
-			if (yPost?.html?.content) {
-				return { post: { ...yPost, html: undefined }, html: yPost.html.content };
-			}
-		} catch (err) {
-			if (typeof err === 'number') {
-				return error(err);
-			}
-
-			throw err;
-		}
-	}
-
-	let yPost;
-	let update;
+/**
+ * @param {string} title
+ */
+export const _getYPostHTML = async (title) => {
 	try {
-		const { update: _update, ..._yPost } = await _getYPostByTitle(title);
-		yPost = _yPost;
-		update = _update;
+		const yPost = await readYPostByTitle(title);
+
+		if (yPost?.html?.content) {
+			return { post: { ...yPost, html: undefined }, html: yPost.html.content };
+		}
 	} catch (err) {
 		if (typeof err === 'number') {
-			throw err;
+			return error(err);
 		}
 
 		throw err;
 	}
+
+	const { post, update } = await _getYPostUpdate(title);
 
 	/** @type {LexicalEditor} */
 	let editor;
@@ -76,20 +62,40 @@ export const _getYPost = async (title, returnProps = { html: true, update: true 
 		throw 500;
 	}
 
-	Promise.resolve(upsertHTML(yPost.id, html));
+	Promise.resolve(upsertHTML(post.id, html));
+
+	return { post, html };
+};
+
+/**
+ * @param {string} title
+ */
+export const _getYPostUpdate = async (title) => {
+	let yPost;
+	let update;
+	try {
+		const { update: _update, ..._yPost } = await _getYPostByTitle(title);
+		yPost = _yPost;
+		update = _update;
+	} catch (err) {
+		if (typeof err === 'number') {
+			throw err;
+		}
+
+		throw err;
+	}
 
 	return {
 		post: yPost,
-		update: returnUpdate ? update : undefined,
-		html: returnHTML ? html : undefined,
+		update,
 	};
 };
 
 export async function GET({ params }) {
-	let res;
-
 	try {
-		res = await _getYPost(params.title, { update: false });
+		const res = await _getYPostHTML(params.title);
+
+		return json(res);
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);
@@ -97,6 +103,4 @@ export async function GET({ params }) {
 
 		throw err;
 	}
-
-	return json(res);
 }
