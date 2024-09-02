@@ -1,0 +1,53 @@
+<script>
+	import Box from '$lib/components/Box.svelte';
+	import Container from '$lib/components/Container.svelte';
+	import Link from '$lib/components/Link.svelte';
+	import LinkButton from '$lib/components/LinkButton.svelte';
+	import { EditIcon, FileIcon } from 'lucide-svelte';
+
+	export let data;
+
+	const { title, rawTitle, postUpdates } = data;
+</script>
+
+<svelte:head>
+	<title>&quot;{data.post.rawTitle}&quot; history - Community Forsen Wiki</title>
+	<meta
+		name="description"
+		content="History for &quot;{data.post
+			.rawTitle}&quot; on forsen.wiki - All things forsen, and more."
+	/>
+</svelte:head>
+
+<Container>
+	<div
+		class="flex w-full items-center gap-2 rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 dark:from-violet-800/30 dark:to-violet-950/30"
+	>
+		<p class="grow">
+			<strong>History for &quot;{rawTitle}&quot;</strong>
+		</p>
+
+		<LinkButton href="/w/{data.post.title}" class="flex items-center gap-2 text-sm">
+			<FileIcon size="16" /><span class="hidden md:inline">View article</span>
+		</LinkButton>
+
+		<LinkButton href="/w/{data.post.title}/edit" reload class="flex items-center gap-2 text-sm">
+			<EditIcon size="16" /><span class="hidden md:inline">Edit article</span>
+		</LinkButton>
+	</div>
+
+	<Box class="p-4">
+		<div class="prose max-w-[unset] dark:prose-invert">
+			<ul>
+				{#each postUpdates as postUpdate, index}
+					<li class:mt-3={index !== 0}>
+						<Link href="/w/{title}/history/{postUpdate.id}"
+							>{new Date(postUpdate.createdTimestamp).toLocaleString()}</Link
+						> by {postUpdate.metadata.user.name}
+						{#if index === 0}(current){/if}
+					</li>
+				{/each}
+			</ul>
+		</div>
+	</Box>
+</Container>

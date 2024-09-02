@@ -37,6 +37,57 @@ export async function readYPostUpdatesByTitle(title) {
 /**
  * @param {string} title
  */
+export async function readYPostUpdatesWithIdByTitle(title) {
+	return prisma.yPost.findUnique({
+		where: {
+			title,
+		},
+		include: {
+			postUpdates: {
+				select: {
+					id: true,
+					createdTimestamp: true,
+					content: true,
+				},
+			},
+		},
+	});
+}
+
+/**
+ * @param {string} title
+ */
+export async function readYPostUpdatesIdsByTitle(title) {
+	return prisma.yPost.findUnique({
+		where: {
+			title,
+		},
+		include: {
+			postUpdates: {
+				select: {
+					id: true,
+					createdTimestamp: true,
+					metadata: {
+						select: {
+							user: {
+								select: {
+									name: true,
+								},
+							},
+						},
+					},
+				},
+				orderBy: {
+					createdTimestamp: 'desc',
+				},
+			},
+		},
+	});
+}
+
+/**
+ * @param {string} title
+ */
 export async function readYPostByTitle(title) {
 	return prisma.yPost.findUnique({
 		where: {
