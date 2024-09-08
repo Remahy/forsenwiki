@@ -14,10 +14,10 @@
 	import { updateArticle } from '$lib/api/articles';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 
-	let id = $page.data.post.id;
-	let update = $page.data.update;
-	let title = $page.data.post.title;
-	let rawTitle = $page.data.post.rawTitle;
+	const {
+		post: { id, title, rawTitle },
+		update,
+	} = $page.data;
 
 	/** @type {Error | null} */
 	let error = null;

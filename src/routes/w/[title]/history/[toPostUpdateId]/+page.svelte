@@ -1,11 +1,21 @@
 <script>
+	import { FileIcon, GitCompareIcon, HistoryIcon } from 'lucide-svelte';
 	import Container from '$lib/components/Container.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
-	import { FileIcon, HistoryIcon } from 'lucide-svelte';
 
 	export let data;
 
-	const { title, rawTitle, createdTimestamp, author, current, byteLength } = data;
+	const {
+		title,
+		rawTitle,
+		createdTimestamp,
+		author,
+		current,
+		byteLength,
+		toPostUpdateId,
+		livePostUpdateId,
+		html,
+	} = data;
 
 	const date = new Date(createdTimestamp).toLocaleString();
 
@@ -37,15 +47,28 @@
 						class="flex items-center gap-2 text-sm"
 						title="View live article"
 					>
-						<FileIcon size="16" /><span class="hidden lg:inline">View live article</span>
+						<FileIcon size="16" />
+						<span class="hidden lg:inline">View live article</span>
 					</LinkButton>
 
+					{#if !current}
+						<LinkButton
+							href="/w/{title}/history/{toPostUpdateId}..{livePostUpdateId}"
+							class="flex items-center gap-2 text-sm"
+							title="Compare to live article"
+						>
+							<GitCompareIcon size="16" />
+							<span class="hidden lg:inline">Compare to live article</span>
+						</LinkButton>
+					{/if}
+
 					<LinkButton
-						href="/w/{data.post.title}/history"
+						href="/w/{title}/history"
 						class="flex items-center gap-2 text-sm"
 						title="Return to history list"
 					>
-						<HistoryIcon size="16" /><span class="hidden lg:inline">Return to history list</span>
+						<HistoryIcon size="16" />
+						<span class="hidden lg:inline">Return to history list</span>
 					</LinkButton>
 				</div>
 			</div>
@@ -62,14 +85,14 @@
 						{authorName}
 					</span>
 				</p>
-				<p><strong>Length:</strong> {byteLength} bytes.</p>
+				<p><strong>Update length:</strong> {byteLength} bytes.</p>
 			</div>
 		</header>
 
 		<main class="editor-shell prose max-w-[unset] grow dark:prose-invert">
-			<h1>{data.post.rawTitle}</h1>
+			<h1>{rawTitle}</h1>
 
-			{@html data.html}
+			{@html html}
 		</main>
 	</article>
 </Container>

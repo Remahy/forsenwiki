@@ -44,6 +44,8 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 		html,
 		current,
 		byteLength,
+		toPostUpdateId: id,
+		livePostUpdateId: res.postUpdates[res.postUpdates.length - 1].id,
 	};
 }
 

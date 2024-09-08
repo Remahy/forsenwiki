@@ -219,21 +219,23 @@
 				editor.update(() => {
 					const node = createImageNode(payload);
 
+					const { width, height, altText, src } = data;
+
 					if (
-						typeof data.width === 'number' &&
-						typeof data.height === 'number' &&
-						data.width >= 28 &&
-						data.height >= 28
+						typeof width === 'number' &&
+						typeof height === 'number' &&
+						width >= 28 &&
+						height >= 28
 					) {
-						node.setWidthAndHeight(data.width, data.height);
+						node.setWidthAndHeight(width, height);
 					}
 
-					if (data.altText.length) {
-						node.setAltText(data.altText);
+					if (altText.length) {
+						node.setAltText(altText);
 					}
 
-					if (data.src) {
-						node.setSrc(data.src);
+					if (src) {
+						node.setSrc(src);
 					}
 
 					insertNodes([node]);

@@ -46,21 +46,23 @@
 					/** @type {import('../../plugins/Image/Image').ImageNode} */
 					const node = /** @type {any} */ (getNodeByKey(selectedImageNode.getKey()));
 
+					const { width, height, altText, src } = data;
+
 					if (
-						typeof data.width === 'number' &&
-						typeof data.height === 'number' &&
-						data.height >= 28 &&
-						data.width >= 28
+						typeof width === 'number' &&
+						typeof height === 'number' &&
+						height >= 28 &&
+						width >= 28
 					) {
-						node.setWidthAndHeight(data.width, data.height);
+						node.setWidthAndHeight(width, height);
 					}
 
-					if (data.altText.length) {
-						node.setAltText(data.altText);
+					if (altText.length) {
+						node.setAltText(altText);
 					}
 
-					if (data.src) {
-						node.setSrc(data.src);
+					if (src) {
+						node.setSrc(src);
 					}
 				});
 			},

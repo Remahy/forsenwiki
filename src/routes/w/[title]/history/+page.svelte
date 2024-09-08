@@ -7,15 +7,14 @@
 
 	export let data;
 
-	const { title, rawTitle, postUpdates } = data;
+	const { title, rawTitle, postUpdates, totalByteLength } = data;
 </script>
 
 <svelte:head>
-	<title>&quot;{data.post.rawTitle}&quot; history - Community Forsen Wiki</title>
+	<title>&quot;{rawTitle}&quot; history - Community Forsen Wiki</title>
 	<meta
 		name="description"
-		content="History for &quot;{data.post
-			.rawTitle}&quot; on forsen.wiki - All things forsen, and more."
+		content="History for &quot;{rawTitle}&quot; on forsen.wiki - All things forsen, and more."
 	/>
 </svelte:head>
 
@@ -31,17 +30,17 @@
 			</div>
 
 			<div class="flex shrink-0 items-start gap-2">
-				<LinkButton href="/w/{data.post.title}" class="flex items-center gap-2 text-sm">
+				<LinkButton href="/w/{title}" class="flex items-center gap-2 text-sm">
 					<FileIcon size="16" /><span class="hidden md:inline">View article</span>
 				</LinkButton>
 
-				<LinkButton href="/w/{data.post.title}/edit" reload class="flex items-center gap-2 text-sm">
+				<LinkButton href="/w/{title}/edit" reload class="flex items-center gap-2 text-sm">
 					<EditIcon size="16" /><span class="hidden md:inline">Edit article</span>
 				</LinkButton>
 			</div>
 		</div>
 
-		<p><strong>Current total length:</strong> {data.totalByteLength} bytes.</p>
+		<p><strong>Current total length:</strong> {totalByteLength} bytes.</p>
 	</div>
 
 	<Box class="p-4">

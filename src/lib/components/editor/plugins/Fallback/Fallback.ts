@@ -40,7 +40,7 @@ export class FallbackNode extends DecoratorBlockNode {
 		const data = JSON.parse(this.__data);
 
 		italic.style.color = '#000';
-		italic.textContent = `Invalid node of type: "${data.type}"`;
+		italic.textContent = `Invalid node of type: "${data?.type}"`;
 
 		strong.appendChild(italic);
 		p.appendChild(strong);
