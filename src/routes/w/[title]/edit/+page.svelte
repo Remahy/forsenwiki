@@ -112,19 +112,23 @@
 </svelte:head>
 
 <Container>
-	<Box class="flex items-center gap-2 p-4">
-		<p class="grow">
-			Editing the <strong>"{rawTitle}"</strong> article.
-			<strong>Your article drafts are automatically saved locally.</strong>
-		</p>
+	<Box class="flex gap-2 p-4">
+		<div class="flex grow items-center overflow-hidden">
+			<p>
+				Editing the <strong>"{rawTitle}"</strong> article.
+				<strong>Your article drafts are automatically saved locally.</strong>
+			</p>
+		</div>
 
-		<LinkButton href="/w/{title}/history" class="flex items-center gap-2 text-sm">
-			<HistoryIcon size="16" /><span class="hidden md:inline">History</span>
-		</LinkButton>
+		<div class="flex shrink-0 items-start gap-2">
+			<LinkButton href="/w/{title}/history" class="flex items-center gap-2 text-sm">
+				<HistoryIcon size="16" /><span class="hidden md:inline">History</span>
+			</LinkButton>
 
-		<LinkButton href="/w/{title}" class="flex items-center gap-2 text-sm">
-			<FileIcon size="16" /><span class="hidden md:inline">View article</span>
-		</LinkButton>
+			<LinkButton href="/w/{title}" class="flex items-center gap-2 text-sm">
+				<FileIcon size="16" /><span class="hidden md:inline">View article</span>
+			</LinkButton>
+		</div>
 	</Box>
 
 	<Editor {update} {id} />

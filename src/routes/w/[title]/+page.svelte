@@ -23,19 +23,29 @@
 <Container>
 	<article class="relative flex grow flex-col gap-8">
 		<header
-			class="flex w-full items-center gap-2 rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 dark:from-violet-800/30 dark:to-violet-950/30"
+			class="rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 dark:from-violet-800/30 dark:to-violet-950/30"
 		>
-			<p class="grow">
-				forsen.wiki is currently <strong>work in progress</strong>.
-			</p>
+			<div class="flex w-full gap-2">
+				<div class="flex grow items-center overflow-hidden">
+					<p>
+						forsen.wiki is currently <strong>work in progress</strong>.
+					</p>
+				</div>
 
-			<LinkButton href="/w/{data.post.title}/history" class="flex items-center gap-2 text-sm">
-				<HistoryIcon size="16" /><span class="hidden md:inline">History</span>
-			</LinkButton>
+				<div class="flex shrink-0 items-start gap-2">
+					<LinkButton href="/w/{data.post.title}/history" class="flex items-center gap-2 text-sm">
+						<HistoryIcon size="16" /><span class="hidden md:inline">History</span>
+					</LinkButton>
 
-			<LinkButton href="/w/{data.post.title}/edit" reload class="flex items-center gap-2 text-sm">
-				<EditIcon size="16" /><span class="hidden md:inline">Edit article</span>
-			</LinkButton>
+					<LinkButton
+						href="/w/{data.post.title}/edit"
+						reload
+						class="flex items-center gap-2 text-sm"
+					>
+						<EditIcon size="16" /><span class="hidden md:inline">Edit article</span>
+					</LinkButton>
+				</div>
+			</div>
 		</header>
 
 		<main class="editor-shell prose max-w-[unset] grow dark:prose-invert">

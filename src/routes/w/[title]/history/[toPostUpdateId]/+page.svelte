@@ -24,26 +24,30 @@
 		<header
 			class="rounded bg-gradient-to-br from-yellow-200 to-yellow-300 p-4 dark:from-yellow-800/30 dark:to-yellow-950/30"
 		>
-			<div class="flex w-full items-center gap-2">
-				<p class="grow">
-					<strong>{displayTitle}</strong>
-				</p>
+			<div class="flex w-full gap-2">
+				<div class="flex grow items-center overflow-hidden">
+					<p>
+						<strong>{displayTitle}</strong>
+					</p>
+				</div>
 
-				<LinkButton
-					href="/w/{title}"
-					class="flex items-center gap-2 text-sm"
-					title="View live article"
-				>
-					<FileIcon size="16" /><span class="hidden lg:inline">View live article</span>
-				</LinkButton>
+				<div class="flex shrink-0 items-start gap-2">
+					<LinkButton
+						href="/w/{title}"
+						class="flex items-center gap-2 text-sm"
+						title="View live article"
+					>
+						<FileIcon size="16" /><span class="hidden lg:inline">View live article</span>
+					</LinkButton>
 
-				<LinkButton
-					href="/w/{data.post.title}/history"
-					class="flex items-center gap-2 text-sm"
-					title="Return to history list"
-				>
-					<HistoryIcon size="16" /><span class="hidden lg:inline">Return to history list</span>
-				</LinkButton>
+					<LinkButton
+						href="/w/{data.post.title}/history"
+						class="flex items-center gap-2 text-sm"
+						title="Return to history list"
+					>
+						<HistoryIcon size="16" /><span class="hidden lg:inline">Return to history list</span>
+					</LinkButton>
+				</div>
 			</div>
 
 			<div class="mt-4">
