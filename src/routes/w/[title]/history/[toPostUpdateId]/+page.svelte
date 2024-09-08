@@ -13,7 +13,7 @@
 		current,
 		byteLength,
 		toPostUpdateId,
-		livePostUpdateId,
+		recentPostUpdateId,
 		html,
 	} = data;
 
@@ -53,7 +53,7 @@
 
 					{#if !current}
 						<LinkButton
-							href="/w/{title}/history/{toPostUpdateId}..{livePostUpdateId}"
+							href="/w/{title}/history/{toPostUpdateId}..{recentPostUpdateId}"
 							class="flex items-center gap-2 text-sm"
 							title="Compare to live article"
 						>

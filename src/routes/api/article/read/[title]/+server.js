@@ -6,7 +6,7 @@ import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { toHTML } from '$lib/lexicalHTML.server';
 import { readYPostByTitle, readYPostUpdatesByTitle } from '$lib/db/article/read';
 import { yPostUpdatesToBase64 } from '$lib/yjs/utils';
-import { upsertHTML } from '$lib/db/article/html.js';
+import { upsertHTML } from '$lib/db/article/html';
 
 /**
  * TODO: Move elsewhere.
@@ -14,7 +14,10 @@ import { upsertHTML } from '$lib/db/article/html.js';
  */
 export const _updateToHTML = async (update) => {
 	try {
-		const { editor } = getYjsAndEditor(articleConfig(null, false, null), base64ToUint8Array(update));
+		const { editor } = getYjsAndEditor(
+			articleConfig(null, false, null),
+			base64ToUint8Array(update)
+		);
 
 		const html = await toHTML(editor);
 

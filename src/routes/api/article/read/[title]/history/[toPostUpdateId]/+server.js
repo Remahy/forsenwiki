@@ -1,8 +1,8 @@
 import { error, json } from '@sveltejs/kit';
 import { readYPostUpdatesWithIdByTitle } from '$lib/db/article/read';
-import { _updateToHTML } from '../../+server.js';
-import { yPostUpdatesToBase64 } from '$lib/yjs/utils.js';
-import { readAuthorForYPostUpdate } from '$lib/db/metadata/read.js';
+import { _updateToHTML } from '../../+server';
+import { yPostUpdatesToBase64 } from '$lib/yjs/utils';
+import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
 
 /**
  * @param {string} title
@@ -32,11 +32,15 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 		metadata: { byteLength },
 	} = res.postUpdates[toPostUpdateIdIndex];
 
-	const author = await readAuthorForYPostUpdate(id);
-
 	const toPostUpdates = res.postUpdates.slice(0, toPostUpdateIdIndex);
 	const base64String = yPostUpdatesToBase64(toPostUpdates);
-	const html = await _updateToHTML(base64String);
+
+	const recentPostUpdateId = res.postUpdates[res.postUpdates.length - 1].id;
+
+	const [author, html] = await Promise.all([
+		readAuthorForYPostUpdate(id),
+		_updateToHTML(base64String),
+	]);
 
 	return {
 		createdTimestamp,
@@ -45,13 +49,15 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 		current,
 		byteLength,
 		toPostUpdateId: id,
-		livePostUpdateId: res.postUpdates[res.postUpdates.length - 1].id,
+		recentPostUpdateId,
 	};
 }
 
 export async function GET({ params }) {
+	const { title, toPostUpdateId } = params;
+
 	try {
-		const res = await _getToYPostUpdateIdByTitle(params.title, params.toPostUpdateId);
+		const res = await _getToYPostUpdateIdByTitle(title, toPostUpdateId);
 
 		return json(res);
 	} catch (err) {
