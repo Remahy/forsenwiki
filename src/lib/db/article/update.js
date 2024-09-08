@@ -3,11 +3,19 @@ import { Y_POST_TYPES } from '../../../../types';
 import { postYRelationDeleteByFromPostId } from './delete';
 
 /**
+ * @typedef {{ post: Pick<Prisma.YPost, 'id' | 'rawTitle' | 'title'>,
+ *   outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[],
+ *   systemRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[],
+ *   metadata: { totalByteLength: number }
+ * }} UpdateYPost
+ */
+
+/**
  * @param {Prisma.PrismaClient | Prisma.Prisma.TransactionClient} tx
- * @param {{ post: Pick<Prisma.YPost, 'id' | 'rawTitle' | 'title'>, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], systemRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[] }} arg2
+ * @param {UpdateYPost} arg2
  * @param {{ name: string }} user
  */
-const updateEntity = async (tx, { post, outRelations, systemRelations }, user) => {
+const updateYPost = async (tx, { post, outRelations, systemRelations, metadata }, user) => {
 	await postYRelationDeleteByFromPostId(tx, post.id);
 
 	await tx.yPost.update({
@@ -28,6 +36,7 @@ const updateEntity = async (tx, { post, outRelations, systemRelations }, user) =
 					skipDuplicates: true,
 				},
 			},
+			totalByteLength: metadata.totalByteLength,
 			lastUpdated: new Date(),
 		},
 		// @ts-ignore
@@ -67,7 +76,7 @@ const createYPostUpdate = async (tx, data, metadata) => {
 
 /**
  * @param {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], transformedSystemRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], content: string }} data
- * @param {{ user: { name: string, id: string }, byteLength: number }} metadata
+ * @param {{ user: { name: string, id: string }, byteLength: number, totalByteLength: number }} metadata
  */
 export const updateArticleYPost = async (data, metadata) => {
 	const { post, outRelations, transformedSystemRelations, content } = data;
@@ -75,12 +84,13 @@ export const updateArticleYPost = async (data, metadata) => {
 	const { user } = metadata;
 
 	return prisma.$transaction(async (tx) => {
-		await updateEntity(
+		await updateYPost(
 			tx,
 			{
 				post,
 				outRelations,
 				systemRelations: transformedSystemRelations,
+				metadata,
 			},
 			user
 		);

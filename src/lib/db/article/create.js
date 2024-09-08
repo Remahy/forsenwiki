@@ -28,6 +28,8 @@ export const createArticle = async ({ title, data, ids }, metadata) => {
 						skipDuplicates: true,
 					},
 				},
+				// Update's byteLength is the current total byteLength on creation.
+				totalByteLength: metadata.byteLength,
 			},
 			select: {
 				id: true,

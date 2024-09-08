@@ -48,6 +48,11 @@ export async function readYPostUpdatesWithIdByTitle(title) {
 					id: true,
 					createdTimestamp: true,
 					content: true,
+					metadata: {
+						select: {
+							byteLength: true,
+						}
+					}
 				},
 			},
 		},

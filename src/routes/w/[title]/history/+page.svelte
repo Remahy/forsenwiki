@@ -21,19 +21,21 @@
 
 <Container>
 	<div
-		class="flex w-full items-center gap-2 rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 dark:from-violet-800/30 dark:to-violet-950/30"
+		class="rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 dark:from-violet-800/30 dark:to-violet-950/30"
 	>
-		<p class="grow">
-			<strong>History for &quot;{rawTitle}&quot;</strong>
-		</p>
+		<div class="flex w-full items-center gap-2">
+			<p class="grow"><strong>History for &quot;{rawTitle}&quot;</strong></p>
 
-		<LinkButton href="/w/{data.post.title}" class="flex items-center gap-2 text-sm">
-			<FileIcon size="16" /><span class="hidden md:inline">View article</span>
-		</LinkButton>
+			<LinkButton href="/w/{data.post.title}" class="flex items-center gap-2 text-sm">
+				<FileIcon size="16" /><span class="hidden md:inline">View article</span>
+			</LinkButton>
 
-		<LinkButton href="/w/{data.post.title}/edit" reload class="flex items-center gap-2 text-sm">
-			<EditIcon size="16" /><span class="hidden md:inline">Edit article</span>
-		</LinkButton>
+			<LinkButton href="/w/{data.post.title}/edit" reload class="flex items-center gap-2 text-sm">
+				<EditIcon size="16" /><span class="hidden md:inline">Edit article</span>
+			</LinkButton>
+		</div>
+
+		<p><strong>Current total length:</strong> {data.totalByteLength} bytes.</p>
 	</div>
 
 	<Box class="p-4">

@@ -91,6 +91,9 @@ export async function POST({ request, locals, params }) {
 
 	const { byteLength } = combinedFinalDiff;
 
+	// Total size of the YDoc with the new update.
+	const { byteLength: totalByteLength } = mergePostUpdates([currentUpdate, combinedFinalDiff]);
+
 	const systemRelations = await readSystemYPostRelations(post.id);
 
 	const transformedSystemRelations = systemRelations.map((sysRelation) => ({
@@ -107,7 +110,7 @@ export async function POST({ request, locals, params }) {
 	const contentBase64 = uint8ArrayToBase64(combinedFinalDiff);
 
 	const body = { post, outRelations, transformedSystemRelations, content: contentBase64 };
-	const metadata = { user: { name: session.user.name, id: session.user.id }, byteLength };
+	const metadata = { user: { name: session.user.name, id: session.user.id }, byteLength, totalByteLength };
 
 	const updatedArticle = await updateArticleYPost(body, metadata);
 

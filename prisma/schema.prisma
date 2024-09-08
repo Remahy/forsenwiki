@@ -95,6 +95,8 @@ model YPost {
 
   html Html?
 
+  totalByteLength BigInt?
+
   lastUpdated      DateTime @default(now())
   createdTimestamp DateTime @default(now())
 }

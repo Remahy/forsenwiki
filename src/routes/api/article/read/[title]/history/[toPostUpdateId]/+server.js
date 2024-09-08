@@ -26,7 +26,11 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 		current = true;
 	}
 
-	const { id, createdTimestamp } = res.postUpdates[toPostUpdateIdIndex];
+	const {
+		id,
+		createdTimestamp,
+		metadata: { byteLength },
+	} = res.postUpdates[toPostUpdateIdIndex];
 
 	const author = await readAuthorForYPostUpdate(id);
 
@@ -39,6 +43,7 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 		author,
 		html,
 		current,
+		byteLength,
 	};
 }
 

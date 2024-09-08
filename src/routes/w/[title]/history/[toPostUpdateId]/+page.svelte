@@ -5,7 +5,7 @@
 
 	export let data;
 
-	const { title, rawTitle, createdTimestamp, author, current } = data;
+	const { title, rawTitle, createdTimestamp, author, current, byteLength } = data;
 
 	const date = new Date(createdTimestamp).toLocaleString();
 
@@ -58,6 +58,7 @@
 						{authorName}
 					</span>
 				</p>
+				<p><strong>Length:</strong> {byteLength} bytes.</p>
 			</div>
 		</header>
 
