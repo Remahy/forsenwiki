@@ -33,7 +33,7 @@ export class DeprecatedVideoEmbedNode extends FallbackNode {
 	}
 
 	exportJSON() {
-		return super.exportJSON();
+		return { ...super.exportJSON(), type: 'youtube' };
 	}
 
 	// TODO: Implement migration of deprecated node to new node.
