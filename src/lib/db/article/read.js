@@ -29,6 +29,9 @@ export async function readYPostUpdatesByTitle(title) {
 				select: {
 					content: true,
 				},
+				orderBy: {
+					createdTimestamp: 'asc',
+				},
 			},
 		},
 	});
@@ -51,8 +54,11 @@ export async function readYPostUpdatesWithIdByTitle(title) {
 					metadata: {
 						select: {
 							byteLength: true,
-						}
-					}
+						},
+					},
+				},
+				orderBy: {
+					createdTimestamp: 'asc',
 				},
 			},
 		},
@@ -140,6 +146,9 @@ const includeToPostYPostUpdate = {
 							userId: true,
 						},
 					},
+				},
+				orderBy: {
+					createdTimestamp: 'asc',
 				},
 			},
 		},
