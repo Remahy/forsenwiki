@@ -18,7 +18,7 @@ export class ALinkNode extends LinkNode {
 	 * @param {string} url
 	 * @param {LinkAttributes} attrs
 	 * @param {boolean} internal
-	 * @param {string | undefined} key
+	 * @param {string} [key]
 	 */
 	constructor(url, attrs, internal = false, key) {
 		super(url, { ...attrs, target: internal ? attrs?.target : '_blank' }, key);
@@ -76,9 +76,9 @@ export class ALinkNode extends LinkNode {
  * @param {string} url
  * @param {LinkAttributes} attrs
  * @param {boolean} internal
- * @param {string | undefined} key
+ * @param {string} [key]
  */
-export function $createALinkNode(url, attrs, internal, key = undefined) {
+export function $createALinkNode(url, attrs, internal, key) {
 	return $applyNodeReplacement(new ALinkNode(url, attrs, internal, key));
 }
 

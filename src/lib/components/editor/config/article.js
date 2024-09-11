@@ -8,7 +8,7 @@ const articleTheme = {
 	paragraph: 'm-0',
 	image: 'm-0 editor-image',
 	// TODO: The 'editor-image' is for resizing capabilities, just fix the css rules instead.
-	video: 'm-0 editor-image editor-video'
+	video: 'm-0 editor-image editor-video',
 };
 
 /**
@@ -24,6 +24,7 @@ const onErrorDefault = (error) => {
  * @param {boolean} editable
  * @param {any} editorState
  * @param {typeof onErrorDefault} onError
+ * @returns {import('lexical').CreateEditorArgs}
  */
 export const articleConfig = (theme, editable, editorState, onError = onErrorDefault) => ({
 	theme: theme || articleTheme,
@@ -43,6 +44,7 @@ export const articleConfig = (theme, editable, editorState, onError = onErrorDef
 					false
 				);
 			},
+			withKlass: ALinkNode,
 		},
 		ListNode,
 		ListItemNode,

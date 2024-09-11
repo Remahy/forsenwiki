@@ -44,9 +44,9 @@
 
 	/**
 	 * @param {string | null} definedUrl
-	 * @param {{ target?: string | null, rel?: string | null, title?: string | null } | undefined} definedAttrs
+	 * @param {{ target?: string | null, rel?: string | null, title?: string | null }} [definedAttrs]
 	 */
-	const wrapperToggleLink = (definedUrl, definedAttrs = undefined) => {
+	const wrapperToggleLink = (definedUrl, definedAttrs) => {
 		if (!editor) {
 			return;
 		}
@@ -56,7 +56,7 @@
 			hasLink,
 			/**
 			 * @param {string | null} dUrl
-			 * @param {import("@lexical/link").LinkAttributes | undefined} dAttrs
+			 * @param {import("@lexical/link").LinkAttributes} [dAttrs]
 			 */
 			onSubmit: (dUrl, dAttrs) => {
 				editor.update(() => {
