@@ -10,11 +10,20 @@ export class DeprecatedVideoEmbedNode extends FallbackNode {
 	}
 
 	static clone(node: any) {
-		return new DeprecatedVideoEmbedNode(node.__platform, node.__src, node.__width, node.__height, node.__format, node.__key);
+		return new DeprecatedVideoEmbedNode(
+			node.__platform,
+			node.__src,
+			node.__width,
+			node.__height,
+			node.__format,
+			node.__key
+		);
 	}
 
 	static importJSON(serializedNode: any) {
-		return FallbackNode.importJSON(serializedNode);
+		const superJSON = FallbackNode.importJSON(serializedNode);
+		superJSON.__type = DeprecatedVideoEmbedNode.getType();
+		return superJSON;
 	}
 
 	constructor(
@@ -23,9 +32,19 @@ export class DeprecatedVideoEmbedNode extends FallbackNode {
 		width: number | 'inherit',
 		height: number | 'inherit',
 		format?: ElementFormatType,
-		key?: NodeKey,
+		key?: NodeKey
 	) {
-		super({ format, key, data: JSON.stringify({ type: DeprecatedVideoEmbedNode.getType(), platform, src, width, height }) });
+		super({
+			format,
+			key,
+			data: JSON.stringify({
+				type: DeprecatedVideoEmbedNode.getType(),
+				platform,
+				src,
+				width,
+				height,
+			}),
+		});
 	}
 
 	decorate(editor: LexicalEditor) {
