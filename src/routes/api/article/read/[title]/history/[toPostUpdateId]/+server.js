@@ -32,7 +32,7 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 		metadata: { byteLength },
 	} = res.postUpdates[toPostUpdateIdIndex];
 
-	const toPostUpdates = res.postUpdates.slice(0, toPostUpdateIdIndex);
+	const toPostUpdates = res.postUpdates.slice(0, toPostUpdateIdIndex + 1);
 	const base64String = yPostUpdatesToBase64(toPostUpdates);
 
 	const recentPostUpdateId = res.postUpdates[res.postUpdates.length - 1].id;
