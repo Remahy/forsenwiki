@@ -72,6 +72,11 @@ export class DiffTextNode extends TextNode {
 					span.style.color = 'green';
 				}
 
+				// TODO: Does this ever happen?
+				if (added && removed) {
+					span.style.color = 'orange';
+				}
+
 				dom.element.appendChild(span);
 			}
 		}

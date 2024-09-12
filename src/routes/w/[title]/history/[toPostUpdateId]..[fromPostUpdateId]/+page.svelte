@@ -11,10 +11,8 @@
 		rawTitle,
 		toDate,
 		toAuthor,
-		// toUpdate,
 		fromDate,
 		fromAuthor,
-		// fromUpdate,
 		diffHTML,
 		diffJSON,
 		editorJSON,
@@ -24,10 +22,6 @@
 	const fD = fromDate.toLocaleString();
 
 	const displayTitle = `Comparing "${tD}" vs "${fD}"`;
-
-	// console.log(JSON.stringify(toUpdate, null, 2));
-	// console.log(JSON.stringify(fromUpdate, null, 2));
-	// console.log(JSON.stringify(diffHTML, null, 2));
 </script>
 
 <svelte:head>

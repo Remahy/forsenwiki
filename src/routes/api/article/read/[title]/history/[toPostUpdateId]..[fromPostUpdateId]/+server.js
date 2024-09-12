@@ -178,8 +178,6 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		fromPostUpdateId,
 		fromDate,
 		fromAuthor,
-		fromUpdate,
-		toUpdate,
 		diffJSON: cleanedDiffJSON,
 		editorJSON: editor.toJSON(),
 		diffHTML,
