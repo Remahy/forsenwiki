@@ -8,6 +8,11 @@
 	export let data;
 
 	const { title, rawTitle, postUpdates, totalByteLength } = data;
+
+	let to = 0;
+	let from = 1;
+
+	$: link = `history/${postUpdates[to].id}..${postUpdates[from].id}`;
 </script>
 
 <svelte:head>
@@ -44,19 +49,49 @@
 	</div>
 
 	<Box class="p-4">
-		<div class="prose max-w-[unset] dark:prose-invert">
+		<div class="flex">
+			<LinkButton href={link} class="flex items-center gap-2 text-sm">
+				Compare selected versions</LinkButton
+			>
+		</div>
+
+		<div class="prose mt-3 max-w-[unset] dark:prose-invert">
 			<ul>
 				{#each postUpdates as postUpdate, index}
-					<li class:mt-3={index !== 0}>
-						<Link href="/w/{title}/history/{postUpdate.id}"
-							>{new Date(postUpdate.createdTimestamp).toLocaleString()}</Link
-						> by {postUpdate.metadata.user.name}
-						{#if postUpdate.metadata.byteLength}
-							<span class="opacity-50">({postUpdate.metadata.byteLength})</span>
-						{/if}
-						{#if index === 0}
-							(current)
-						{/if}
+					<li
+						class:mt-3={index !== 0}
+						class:outline-dashed={index === from || index === to}
+						class:outline-1={index === from || index === to}
+					>
+						<div class="flex items-center">
+							{#if to < index}
+								<input type="radio" value={index} bind:group={from} />
+							{:else}
+								<input type="radio" disabled class="invisible" />
+							{/if}
+
+							{#if from > index}
+								<input type="radio" value={index} bind:group={to} />
+							{:else}
+								<input type="radio" disabled class="invisible" />
+							{/if}
+
+							<span>
+								<Link href="/w/{title}/history/{postUpdate.id}" class="ml-2">
+									{new Date(postUpdate.createdTimestamp).toLocaleString()}
+								</Link>
+
+								<span>by {postUpdate.metadata.user.name}</span>
+
+								{#if postUpdate.metadata.byteLength}
+									<span class="opacity-50">({postUpdate.metadata.byteLength})</span>
+								{/if}
+
+								{#if index === 0}
+									(current)
+								{/if}
+							</span>
+						</div>
 					</li>
 				{/each}
 			</ul>
