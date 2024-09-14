@@ -9,8 +9,8 @@
 
 	const { title, rawTitle, postUpdates, totalByteLength } = data;
 
-	let to = 0;
-	let from = 1;
+	let to = 1;
+	let from = 0;
 
 	$: link = `history/${postUpdates[to].id}..${postUpdates[from].id}`;
 </script>
@@ -60,18 +60,18 @@
 				{#each postUpdates as postUpdate, index}
 					<li
 						class:mt-3={index !== 0}
-						class:outline-dashed={index === from || index === to}
-						class:outline-1={index === from || index === to}
+						class:outline-dashed={index === to || index === from}
+						class:outline-1={index === to || index === from}
 					>
 						<div class="flex items-center">
-							{#if to < index}
-								<input type="radio" value={index} bind:group={from} />
+							{#if from < index}
+								<input type="radio" value={index} bind:group={to} />
 							{:else}
 								<input type="radio" disabled class="invisible" />
 							{/if}
 
-							{#if from > index}
-								<input type="radio" value={index} bind:group={to} />
+							{#if to > index}
+								<input type="radio" value={index} bind:group={from} />
 							{:else}
 								<input type="radio" disabled class="invisible" />
 							{/if}
