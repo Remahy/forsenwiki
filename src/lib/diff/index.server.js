@@ -2,11 +2,6 @@ import JSONDiffer from 'json-diff';
 import { diffChars as CharDiffer } from 'diff';
 
 /**
- * @typedef {import('$lib/components/editor/plugins/Diff/Types').JSONDiffType} JSONDiffType
- * @typedef {{ type: JSONDiffType, text: { __old: any, __new: any, diff: import('diff').Change[] }}} __Change
- */
-
-/**
  * Used to clean up object properties with changed values.
  * @param {Record<string, string | number | { __old: string, __new: string }>} obj
  */
@@ -51,7 +46,6 @@ function cleanPropertyDiffChanges(obj) {
 	}
 
 	if (typeof obj.___change === 'object') {
-		// const { type } = /** @type {{ type: string }} */ (obj);
 		const { ___change } =
 			/** @type {{ ___change: { [x: string]: { __old: string, __new: string } } }} */ (
 				/** @type {unknown} */ (obj)
@@ -94,7 +88,7 @@ function diffSemanticsFlat(list) {
 			}
 
 			obj.___change = {
-				type: change,
+				___type: change,
 			};
 
 			obj = cleanPropertyDiffChanges(obj);

@@ -44,8 +44,8 @@ export class DiffQuoteNode extends QuoteNode {
 	exportDOM(editor) {
 		const dom = super.exportDOM(editor);
 
-		if (dom.element instanceof HTMLElement && this.___change?.type) {
-			applyCSSColorDiff(dom.element, this.___change.type);
+		if (dom.element instanceof HTMLElement && this.___change?.___type) {
+			applyCSSColorDiff(dom.element, this.___change.___type);
 		}
 
 		return dom;

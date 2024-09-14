@@ -2,7 +2,7 @@ import type { Change } from 'diff';
 
 export type JSONDiffType = ' ' | '~' | '+' | '-';
 
-export type ___ChangeTextNode = { type: JSONDiffType } & Record<
+export type ___ChangeTextNode = { ___type: JSONDiffType } & Record<
 	string,
 	{
 		__old: any;
@@ -11,7 +11,7 @@ export type ___ChangeTextNode = { type: JSONDiffType } & Record<
 	}
 >;
 
-export type ___Change = { type: JSONDiffType } & Record<
+export type ___Change = { ___type: JSONDiffType } & Record<
 	string,
 	{
 		__old: any;
