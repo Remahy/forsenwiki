@@ -3,21 +3,17 @@ import {
 	ALinkNode,
 	ImageNode,
 	VideoEmbedNode,
-	DeprecatedVideoEmbedNode,
 	DiffTextNode,
 	DiffParagraphNode,
 	DiffQuoteNode,
+	DiffHeadingNode,
+
 	FallbackNode,
+	DeprecatedVideoEmbedNode,
 } from '$lib/lexicalCustom';
 import { $createALinkNode } from '../plugins/Link/ALink';
 
-const articleTheme = {
-	root: 'editor-shell',
-	paragraph: 'm-0',
-	image: 'm-0 editor-image',
-	// TODO: The 'editor-image' is for resizing capabilities, just fix the css rules instead.
-	video: 'm-0 editor-image editor-video',
-};
+import { articleTheme } from './article';
 
 /**
  * @param {Error} error
@@ -65,6 +61,7 @@ export const diffConfig = (theme, editable, editorState, onError = onErrorDefaul
 		DiffTextNode,
 		DiffParagraphNode,
 		DiffQuoteNode,
+		DiffHeadingNode,
 
 		// Old nodes / Migration nodes
 		FallbackNode,
