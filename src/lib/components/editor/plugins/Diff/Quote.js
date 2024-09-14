@@ -1,5 +1,5 @@
 import { QuoteNode } from '@lexical/rich-text';
-import { applyCSSColorDiff } from './utils';
+import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
  * @typedef {import("lexical").NodeKey} NodeKey
@@ -49,6 +49,8 @@ export class DiffQuoteNode extends QuoteNode {
 			Object.prototype.hasOwnProperty.call(this.___change, '___type')
 		) {
 			applyCSSColorDiff(dom.element, this.___change.___type);
+
+			addInformationHover(dom.element, this.___change);
 		}
 
 		return dom;

@@ -1,5 +1,5 @@
 import { ParagraphNode } from 'lexical';
-import { applyCSSColorDiff } from './utils';
+import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
  * @typedef {import("lexical").NodeKey} NodeKey
@@ -51,6 +51,8 @@ export class DiffParagraphNode extends ParagraphNode {
 			Object.prototype.hasOwnProperty.call(this.___change, '___type')
 		) {
 			applyCSSColorDiff(dom.element, this.___change.___type);
+
+			addInformationHover(dom.element, this.___change);
 		}
 
 		return dom;
