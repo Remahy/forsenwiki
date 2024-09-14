@@ -28,6 +28,10 @@ function cleanPropertyDiffChanges(obj) {
 			continue;
 		}
 
+		if (value == null) {
+			continue;
+		}
+
 		if (!(value.__old || value.__new)) {
 			continue;
 		}
