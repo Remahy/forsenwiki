@@ -45,6 +45,39 @@ function cleanPropertyDiffChanges(obj) {
 		};
 	}
 
+	for (let index = 0; index < entries.length; index++) {
+		const [key, value] = entries[index];
+
+		let cleanKey;
+		let v;
+		if (key.endsWith('__added') && key.length > '__added'.length) {
+			cleanKey = /** @type {string} */ (key.split('__').shift());
+
+			v = { __new: value };
+		} else if (key.endsWith('__deleted') && key.length > '__deleted'.length) {
+			cleanKey = /** @type {string} */ (key.split('__').shift());
+
+			v = { __old: value };
+		}
+
+		if (!cleanKey) {
+			continue;
+		}
+
+		if (typeof obj.___change !== 'object') {
+			throw new Error('___change returned a non valid value.');
+		}
+
+		obj[cleanKey] = value;
+
+		delete obj[key];
+
+		obj.___change = {
+			...(obj.___change || {}),
+			[cleanKey]: v,
+		};
+	}
+
 	if (typeof obj.___change === 'object') {
 		const { ___change } =
 			/** @type {{ ___change: { [x: string]: { __old: string, __new: string } } }} */ (
