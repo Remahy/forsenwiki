@@ -7,7 +7,7 @@ import { ParagraphNode } from 'lexical';
  */
 
 export class DiffParagraphNode extends ParagraphNode {
-	/** @type {undefined | ' ' | '~' | '+' | '-'} */
+	/** @type {import('./Types').___Change} */
 	___change;
 
 	/**
@@ -46,8 +46,8 @@ export class DiffParagraphNode extends ParagraphNode {
 	exportDOM(editor) {
 		const dom = super.exportDOM(editor);
 
-		if (dom.element instanceof HTMLElement) {
-			switch (this.___change) {
+		if (dom.element instanceof HTMLElement && this.___change?.type) {
+			switch (this.___change?.type) {
 				case '~':
 					// Modified.
 					dom.element.style.outline = '1px orange dotted';
