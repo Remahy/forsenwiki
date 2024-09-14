@@ -1,4 +1,4 @@
-import { ParagraphNode } from 'lexical';
+import { QuoteNode } from '@lexical/rich-text';
 import { applyCSSColorDiff } from './utils';
 
 /**
@@ -7,12 +7,12 @@ import { applyCSSColorDiff } from './utils';
  * @typedef {import("lexical").EditorConfig} EditorConfig
  */
 
-export class DiffParagraphNode extends ParagraphNode {
+export class DiffQuoteNode extends QuoteNode {
 	/** @type {import('./Types').___Change} */
 	___change;
 
 	/**
-	 * @param {ParagraphNode} node
+	 * @param {QuoteNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
@@ -22,22 +22,20 @@ export class DiffParagraphNode extends ParagraphNode {
 		this.setFormat(node.getFormatType());
 		this.setIndent(node.getIndent());
 		this.setStyle(node.getStyle());
-		this.setTextFormat(node.getTextFormat());
-		this.setTextStyle(node.getTextStyle());
 
 		// @ts-ignore
 		this.___change = node.___change;
 	}
 
 	/**
-	 * @param {DiffParagraphNode} node
+	 * @param {DiffQuoteNode} node
 	 */
 	static clone(node) {
-		return new DiffParagraphNode(node, node.__key);
+		return new DiffQuoteNode(node, node.__key);
 	}
 
 	static getType() {
-		return 'diff-paragraph';
+		return 'diff-quote';
 	}
 
 	/**
@@ -50,7 +48,6 @@ export class DiffParagraphNode extends ParagraphNode {
 			applyCSSColorDiff(dom.element, this.___change.type);
 		}
 
-
 		return dom;
 	}
 
@@ -58,12 +55,12 @@ export class DiffParagraphNode extends ParagraphNode {
 	 * @param {any} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const paragraph = ParagraphNode.importJSON(serializedNode);
+		const quote = QuoteNode.importJSON(serializedNode);
 
 		// @ts-ignore
-		paragraph.___change = serializedNode.___change;
+		quote.___change = serializedNode.___change;
 
-		const node = new DiffParagraphNode(paragraph);
+		const node = new DiffQuoteNode(quote);
 		return node;
 	}
 
@@ -73,8 +70,8 @@ export class DiffParagraphNode extends ParagraphNode {
 }
 
 /**
- * @param {ParagraphNode} node
+ * @param {QuoteNode} node
  */
-export function $createDiffParagraphNode(node) {
-	return new DiffParagraphNode(node);
+export function $createDiffQuoteNode(node) {
+	return new DiffQuoteNode(node);
 }

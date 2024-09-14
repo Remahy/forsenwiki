@@ -1,10 +1,4 @@
-import {
-	LinkNode,
-	ListNode,
-	ListItemNode,
-	HeadingNode,
-	QuoteNode,
-} from '$lib/lexical';
+import { LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical';
 import {
 	ALinkNode,
 	ImageNode,
@@ -12,6 +6,7 @@ import {
 	DeprecatedVideoEmbedNode,
 	DiffTextNode,
 	DiffParagraphNode,
+	DiffQuoteNode,
 	FallbackNode,
 } from '$lib/lexicalCustom';
 import { $createALinkNode } from '../plugins/Link/ALink';
@@ -59,14 +54,17 @@ export const diffConfig = (theme, editable, editorState, onError = onErrorDefaul
 			},
 			withKlass: ALinkNode,
 		},
-		DiffTextNode,
-		DiffParagraphNode,
+		QuoteNode,
 		ListNode,
 		ListItemNode,
 		HeadingNode,
-		QuoteNode,
 		ImageNode,
 		VideoEmbedNode,
+
+		// Diff nodes.
+		DiffTextNode,
+		DiffParagraphNode,
+		DiffQuoteNode,
 
 		// Old nodes / Migration nodes
 		FallbackNode,

@@ -8,3 +8,4 @@ export { DeprecatedVideoEmbedNode } from './components/editor/plugins/Deprecated
 export { FallbackNode } from './components/editor/plugins/Fallback/Fallback';
 export { DiffTextNode } from './components/editor/plugins/Diff/Text';
 export { DiffParagraphNode } from './components/editor/plugins/Diff/Paragraph';
+export { DiffQuoteNode } from './components/editor/plugins/Diff/Quote';
