@@ -86,7 +86,7 @@
 					<span><strong>Red:</strong> Deleted &#40;-&#41;</span>
 				</p>
 				<p class="p-1 text-orange-500 outline-dashed outline-1 dark:text-orange-300">
-					<span><strong>Orange:</strong> &#40;~&#41;</span>
+					<span><strong>Orange:</strong> Modified &#40;~&#41;</span>
 				</p>
 				<p class="p-1 text-green-500 outline outline-1">
 					<span><strong>Green:</strong> Added &#40;+&#41;</span>
