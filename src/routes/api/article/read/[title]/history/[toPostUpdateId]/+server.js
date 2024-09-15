@@ -1,8 +1,9 @@
 import { error, json } from '@sveltejs/kit';
 import { readYPostUpdatesWithIdByTitle } from '$lib/db/article/read';
-import { _updateToHTML } from '../../+server';
 import { yPostUpdatesToBase64 } from '$lib/yjs/utils';
 import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
+import { replacer } from '$lib/utils/json';
+import { _updateToHTML } from '../../+server';
 
 /**
  * @param {string} title
@@ -59,7 +60,9 @@ export async function GET({ params }) {
 	try {
 		const res = await _getToYPostUpdateIdByTitle(title, toPostUpdateId);
 
-		return json(res);
+		const safeJSON = JSON.stringify(res, replacer);
+
+		return json(safeJSON);
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);
