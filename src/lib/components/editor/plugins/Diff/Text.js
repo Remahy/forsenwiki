@@ -102,9 +102,9 @@ export class DiffTextNode extends TextNode {
 	}
 }
 
-/**
- * @param {TextNode} node
- */
-export function $createDiffTextNode(node) {
-	return new DiffTextNode(node);
-}
+// /**
+//  * @param {TextNode} node
+//  */
+// export function $createDiffTextNode(node) {
+// 	return new DiffTextNode(node);
+// }

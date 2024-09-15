@@ -74,9 +74,9 @@ export class DiffQuoteNode extends QuoteNode {
 	}
 }
 
-/**
- * @param {QuoteNode} node
- */
-export function $createDiffQuoteNode(node) {
-	return new DiffQuoteNode(node);
-}
+// /**
+//  * @param {QuoteNode} node
+//  */
+// export function $createDiffQuoteNode(node) {
+// 	return new DiffQuoteNode(node);
+// }

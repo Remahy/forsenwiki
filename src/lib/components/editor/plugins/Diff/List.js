@@ -75,9 +75,9 @@ export class DiffListNode extends ListNode {
 	}
 }
 
-/**
- * @param {ListNode} node
- */
-export function $createDiffHeadingNode(node) {
-	return new DiffListNode(node);
-}
+// /**
+//  * @param {ListNode} node
+//  */
+// export function $createDiffListNode(node) {
+// 	return new DiffListNode(node);
+// }

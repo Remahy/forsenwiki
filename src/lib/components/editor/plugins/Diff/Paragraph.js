@@ -76,9 +76,9 @@ export class DiffParagraphNode extends ParagraphNode {
 	}
 }
 
-/**
- * @param {ParagraphNode} node
- */
-export function $createDiffParagraphNode(node) {
-	return new DiffParagraphNode(node);
-}
+// /**
+//  * @param {ParagraphNode} node
+//  */
+// export function $createDiffParagraphNode(node) {
+// 	return new DiffParagraphNode(node);
+// }

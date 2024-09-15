@@ -74,9 +74,9 @@ export class DiffHeadingNode extends HeadingNode {
 	}
 }
 
-/**
- * @param {HeadingNode} node
- */
-export function $createDiffHeadingNode(node) {
-	return new DiffHeadingNode(node);
-}
+// /**
+//  * @param {HeadingNode} node
+//  */
+// export function $createDiffHeadingNode(node) {
+// 	return new DiffHeadingNode(node);
+// }
