@@ -12,6 +12,7 @@ export { DiffParagraphNode } from './components/editor/plugins/Diff/Paragraph';
 export { DiffQuoteNode } from './components/editor/plugins/Diff/Quote';
 export { DiffTextNode } from './components/editor/plugins/Diff/Text';
 export { DiffImageNode } from './components/editor/plugins/Diff/Image';
+export { DiffVideoEmbedNode } from './components/editor/plugins/Diff/VideoEmbed';
 
 export { DeprecatedVideoEmbedNode } from './components/editor/plugins/Deprecated/DeprecatedVideoEmbedNode';
 export { FallbackNode } from './components/editor/plugins/Fallback/Fallback';
