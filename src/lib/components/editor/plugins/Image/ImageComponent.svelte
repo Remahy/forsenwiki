@@ -53,7 +53,7 @@
 
 	let selection: BaseSelection | null = null;
 
-	let imageRef: HTMLImageElement | null;
+	let imageRef: HTMLElement | HTMLImageElement | null;
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
 	let isResizing = false;
 
@@ -93,7 +93,6 @@
 			isNodeSelection(latestSelection) &&
 			latestSelection.getNodes().length === 1
 		) {
-
 		}
 		return false;
 	};
@@ -187,7 +186,7 @@
 		editor.update(() => {
 			const node = getNodeByKey(nodeKey);
 			if (isImageNode(node)) {
-				node.setWidthAndHeight(nextWidth, nextHeight);
+				node.setWidthAndHeight({ width: nextWidth, height: nextHeight });
 			}
 		});
 	};
@@ -199,17 +198,17 @@
 
 <div {draggable}>
 	{#await promise}
-		<img
+		<figure
+			style="height:{heightCss};px;width:{widthCss};"
+			class="m-0 flex animate-pulse items-center justify-center p-0 dark:bg-violet-200 dark:bg-opacity-50"
 			class:focused={isFocused}
 			class:draggable={isFocused && isNodeSelection(selection)}
-			class="m-0 animate-spin rounded-full dark:bg-white"
-			src={LUCIDE_ICON_LOADER}
 			title="Loading image..."
-			alt={altText}
 			bind:this={imageRef}
-			style="height:{heightCss};px;width:{widthCss};"
 			draggable="false"
-		/>
+		>
+			<img class="m-0 animate-spin rounded-full" src={LUCIDE_ICON_LOADER} alt={altText} />
+		</figure>
 	{:then _}
 		<img
 			class:focused={isFocused}

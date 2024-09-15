@@ -25,7 +25,7 @@
 		}
 
 		editor.update(() => {
-			selectedImageNode.setWidthAndHeight(currentWidth, currentHeight);
+			selectedImageNode.setWidthAndHeight({ width: currentWidth, height: currentHeight });
 		});
 	};
 
@@ -34,12 +34,15 @@
 			return;
 		}
 
+		const { width: selectedImageNodeWidth, height: selectedImageNodeHeight } =
+			selectedImageNode.getWidthAndHeight();
+
 		modal.set({
 			component: EditImageModal,
 			src: selectedImageNode.getSrc(),
 			altText: selectedImageNode.getAltText(),
-			width: selectedImageNode.__width,
-			height: selectedImageNode.__height,
+			width: selectedImageNodeWidth,
+			height: selectedImageNodeHeight,
 			/** @param {import('../../plugins/Image/Image').ImagePayload} data */
 			onSubmit: (data) => {
 				editor.update(() => {
@@ -54,7 +57,7 @@
 						height >= 28 &&
 						width >= 28
 					) {
-						node.setWidthAndHeight(width, height);
+						node.setWidthAndHeight({ width, height });
 					}
 
 					if (altText.length) {
@@ -79,9 +82,10 @@
 			const editor = composer.getEditor();
 
 			editor.registerNodeTransform(ImageNode, (node) => {
+				const { width, height } = node.getWidthAndHeight();
 				if (node.getKey() === selectedImageNode.getKey()) {
-					currentWidth = node.__width;
-					currentHeight = node.__height;
+					currentWidth = width;
+					currentHeight = height;
 					selectedImageNode = node;
 				}
 			});

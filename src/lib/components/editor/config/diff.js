@@ -11,6 +11,7 @@ import {
 	DiffListItemNode,
 	FallbackNode,
 	DeprecatedVideoEmbedNode,
+	DiffImageNode,
 } from '$lib/lexicalCustom';
 import { $createALinkNode } from '../plugins/Link/ALink';
 
@@ -65,6 +66,7 @@ export const diffConfig = (theme, editable, editorState, onError = onErrorDefaul
 		DiffHeadingNode,
 		DiffListNode,
 		DiffListItemNode,
+		DiffImageNode,
 
 		// Old nodes / Migration nodes
 		FallbackNode,

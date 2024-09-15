@@ -57,6 +57,9 @@
 		if (!dataTransfer) {
 			return false;
 		}
+
+		const { width, height } = node.getWidthAndHeight();
+
 		dataTransfer.setData('text/plain', '_');
 		dataTransfer.setDragImage(img, 0, 0);
 		dataTransfer.setData(
@@ -64,10 +67,10 @@
 			JSON.stringify({
 				data: {
 					altText: node.__altText,
-					height: node.__height,
 					key: node.getKey(),
 					src: node.__src,
-					width: node.__width,
+					width,
+					height,
 				},
 				type: ImageNode.getType(),
 			})
@@ -209,12 +212,15 @@
 	function wrapperInsertImage(payload: ImagePayload) {
 		const placeholderNode = createImageNode(payload);
 
+		const { width: placeholderNodeWidth, height: placeholderNodeHeight } =
+			placeholderNode.getWidthAndHeight();
+
 		modal.set({
 			component: EditImageModal,
 			src: placeholderNode.getSrc(),
 			altText: placeholderNode.getAltText(),
-			width: placeholderNode.__width,
-			height: placeholderNode.__height,
+			width: placeholderNodeWidth,
+			height: placeholderNodeHeight,
 			onSubmit: (data: ImagePayload) => {
 				editor.update(() => {
 					const node = createImageNode(payload);
@@ -227,7 +233,7 @@
 						width >= 28 &&
 						height >= 28
 					) {
-						node.setWidthAndHeight(width, height);
+						node.setWidthAndHeight({ width, height });
 					}
 
 					if (altText.length) {
