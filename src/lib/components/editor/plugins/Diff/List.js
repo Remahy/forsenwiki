@@ -40,6 +40,19 @@ export class DiffListNode extends ListNode {
 	}
 
 	/**
+	 * @param {any} serializedNode
+	 */
+	static importJSON(serializedNode) {
+		const list = ListNode.importJSON(serializedNode);
+
+		// @ts-ignore
+		list.___change = serializedNode.___change;
+
+		const node = new DiffListNode(list);
+		return node;
+	}
+
+	/**
 	 * @param {LexicalEditor} editor
 	 */
 	exportDOM(editor) {
@@ -55,19 +68,6 @@ export class DiffListNode extends ListNode {
 		}
 
 		return dom;
-	}
-
-	/**
-	 * @param {any} serializedNode
-	 */
-	static importJSON(serializedNode) {
-		const list = ListNode.importJSON(serializedNode);
-
-		// @ts-ignore
-		list.___change = serializedNode.___change;
-
-		const node = new DiffListNode(list);
-		return node;
 	}
 
 	exportJSON() {

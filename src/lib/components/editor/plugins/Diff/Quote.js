@@ -39,6 +39,19 @@ export class DiffQuoteNode extends QuoteNode {
 	}
 
 	/**
+	 * @param {any} serializedNode
+	 */
+	static importJSON(serializedNode) {
+		const quote = QuoteNode.importJSON(serializedNode);
+
+		// @ts-ignore
+		quote.___change = serializedNode.___change;
+
+		const node = new DiffQuoteNode(quote);
+		return node;
+	}
+
+	/**
 	 * @param {LexicalEditor} editor
 	 */
 	exportDOM(editor) {
@@ -54,19 +67,6 @@ export class DiffQuoteNode extends QuoteNode {
 		}
 
 		return dom;
-	}
-
-	/**
-	 * @param {any} serializedNode
-	 */
-	static importJSON(serializedNode) {
-		const quote = QuoteNode.importJSON(serializedNode);
-
-		// @ts-ignore
-		quote.___change = serializedNode.___change;
-
-		const node = new DiffQuoteNode(quote);
-		return node;
 	}
 
 	exportJSON() {

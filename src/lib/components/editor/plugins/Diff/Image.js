@@ -38,31 +38,6 @@ export class DiffImageNode extends ImageNode {
 	}
 
 	/**
-	 * @param {LexicalEditor} editor
-	 */
-	exportDOM(editor) {
-		const dom = super.exportDOM(editor);
-
-		if (
-			dom.element instanceof HTMLElement &&
-			Object.prototype.hasOwnProperty.call(this.___change, '___type')
-		) {
-			applyCSSColorDiff(dom.element, this.___change.___type);
-
-			const span = document.createElement('span');
-			span.classList.add('m-0', 'p-0', 'relative');
-			span.appendChild(dom.element);
-
-			addInformationHover(dom.element, this.___change);
-
-			// We need to wrap ImageNode in a span to make sure 'relative' class works properly.
-			dom.element = span;
-		}
-
-		return dom;
-	}
-
-	/**
 	 * @param {any} serializedNode
 	 */
 	static importJSON(serializedNode) {
@@ -73,6 +48,29 @@ export class DiffImageNode extends ImageNode {
 
 		const node = new DiffImageNode(image);
 		return node;
+	}
+
+	/**
+	 * @param {LexicalEditor} editor
+	 */
+	exportDOM(editor) {
+		const dom = super.exportDOM(editor);
+
+		if (
+			dom.element instanceof HTMLElement &&
+			Object.prototype.hasOwnProperty.call(this.___change, '___type')
+		) {
+			const span = document.createElement('span');
+			span.appendChild(dom.element);
+
+			applyCSSColorDiff(span, this.___change.___type);
+			addInformationHover(span, this.___change);
+
+			// We need to wrap ImageNode in a span to make sure 'relative' class works properly.
+			dom.element = span;
+		}
+
+		return dom;
 	}
 
 	exportJSON() {

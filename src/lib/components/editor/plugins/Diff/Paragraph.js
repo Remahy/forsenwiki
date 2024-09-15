@@ -41,6 +41,19 @@ export class DiffParagraphNode extends ParagraphNode {
 	}
 
 	/**
+	 * @param {any} serializedNode
+	 */
+	static importJSON(serializedNode) {
+		const paragraph = ParagraphNode.importJSON(serializedNode);
+
+		// @ts-ignore
+		paragraph.___change = serializedNode.___change;
+
+		const node = new DiffParagraphNode(paragraph);
+		return node;
+	}
+
+	/**
 	 * @param {LexicalEditor} editor
 	 */
 	exportDOM(editor) {
@@ -56,19 +69,6 @@ export class DiffParagraphNode extends ParagraphNode {
 		}
 
 		return dom;
-	}
-
-	/**
-	 * @param {any} serializedNode
-	 */
-	static importJSON(serializedNode) {
-		const paragraph = ParagraphNode.importJSON(serializedNode);
-
-		// @ts-ignore
-		paragraph.___change = serializedNode.___change;
-
-		const node = new DiffParagraphNode(paragraph);
-		return node;
 	}
 
 	exportJSON() {

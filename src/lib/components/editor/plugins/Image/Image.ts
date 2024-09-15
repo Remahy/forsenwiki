@@ -88,6 +88,68 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 		return node;
 	}
 
+	static importDOM(): DOMConversionMap | null {
+		return {
+			img: (node: Node) => ({
+				conversion: convertImageElement,
+				priority: 0,
+			}),
+		};
+	}
+	
+	// Getters
+
+	getWidthAndHeight() {
+		return { width: this.__width, height: this.__height };
+	}
+
+	getSrc(): string {
+		return this.__src;
+	}
+
+	getAltText(): string {
+		return this.__altText;
+	}
+
+	// Setters
+
+	setWidthAndHeight({
+		width,
+		height,
+	}: {
+		width: 'inherit' | number;
+		height: 'inherit' | number;
+	}): void {
+		const writable = this.getWritable();
+		writable.__width = width;
+		writable.__height = height;
+	}
+
+	setSrc(src: string): void {
+		const writable = this.getWritable();
+		writable.__src = src;
+	}
+
+	setAltText(altText: string): void {
+		const writable = this.getWritable();
+		writable.__altText = altText;
+	}
+
+	exportJSON(): SerializedImageNode {
+		const { width, height } = this.getWidthAndHeight();
+
+		return {
+			src: this.getSrc(),
+			altText: this.getAltText(),
+			width,
+			height,
+			type: ImageNode.getType(),
+			version: 1,
+		};
+	}
+
+	// View
+
 	exportDOM(editor: LexicalEditor): DOMExportOutput {
 		const theme = editor._config.theme;
 		const element = document.createElement('img');
@@ -108,64 +170,6 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 
 		return { element };
 	}
-
-	static importDOM(): DOMConversionMap | null {
-		return {
-			img: (node: Node) => ({
-				conversion: convertImageElement,
-				priority: 0,
-			}),
-		};
-	}
-
-	exportJSON(): SerializedImageNode {
-		const { width, height } = this.getWidthAndHeight();
-
-		return {
-			src: this.getSrc(),
-			altText: this.getAltText(),
-			width,
-			height,
-			type: ImageNode.getType(),
-			version: 1,
-		};
-	}
-
-	setWidthAndHeight({
-		width,
-		height,
-	}: {
-		width: 'inherit' | number;
-		height: 'inherit' | number;
-	}): void {
-		const writable = this.getWritable();
-		writable.__width = width;
-		writable.__height = height;
-	}
-
-	getWidthAndHeight() {
-		return { width: this.__width, height: this.__height };
-	}
-
-	setSrc(src: string): void {
-		const writable = this.getWritable();
-		writable.__src = src;
-	}
-
-	getSrc(): string {
-		return this.__src;
-	}
-
-	setAltText(altText: string): void {
-		const writable = this.getWritable();
-		writable.__altText = altText;
-	}
-
-	getAltText(): string {
-		return this.__altText;
-	}
-
-	// View
 
 	createDOM(config: EditorConfig): HTMLElement {
 		const span = document.createElement('span');

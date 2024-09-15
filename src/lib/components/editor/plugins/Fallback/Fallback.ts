@@ -12,17 +12,17 @@ import FallbackComponent from './FallbackComponent.svelte';
 export class FallbackNode extends DecoratorBlockNode {
 	__data: string;
 
+	constructor({ data, format, key }: { format?: ElementFormatType; key?: NodeKey; data: string }) {
+		super(format, key);
+		this.__data = data;
+	}
+
 	static getType(): string {
 		return 'fallback';
 	}
 
 	static clone(node: any): FallbackNode {
 		return new FallbackNode({ data: node.__data, format: node.__format, key: node.__key });
-	}
-
-	constructor({ data, format, key }: { format?: ElementFormatType; key?: NodeKey; data: string }) {
-		super(format, key);
-		this.__data = data;
 	}
 
 	exportDOM(): DOMExportOutput {

@@ -53,14 +53,18 @@ export class ALinkNode extends LinkNode {
 		return node;
 	}
 
-	/** @param {boolean} bool */
-	setIsInternal(bool) {
-		this.__isInternal = bool;
-	}
+	// Getters
 
 	/** @returns {boolean} */
 	getIsInternal() {
 		return this.__isInternal;
+	}
+
+	// Setters
+	/** @param {boolean} bool */
+
+	setIsInternal(bool) {
+		this.__isInternal = bool;
 	}
 
 	exportJSON() {

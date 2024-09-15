@@ -5,27 +5,6 @@ import type { SupportedPlatforms } from '../VideoEmbed/VideoEmbed';
 // Example of how to still support deprecated nodes.
 
 export class DeprecatedVideoEmbedNode extends FallbackNode {
-	static getType(): string {
-		return 'youtube';
-	}
-
-	static clone(node: any) {
-		return new DeprecatedVideoEmbedNode(
-			node.__platform,
-			node.__src,
-			node.__width,
-			node.__height,
-			node.__format,
-			node.__key
-		);
-	}
-
-	static importJSON(serializedNode: any) {
-		const superJSON = FallbackNode.importJSON(serializedNode);
-		superJSON.__type = DeprecatedVideoEmbedNode.getType();
-		return superJSON;
-	}
-
 	constructor(
 		platform: SupportedPlatforms,
 		src: string,
@@ -45,6 +24,27 @@ export class DeprecatedVideoEmbedNode extends FallbackNode {
 				height,
 			}),
 		});
+	}
+
+	static getType(): string {
+		return 'youtube';
+	}
+
+	static clone(node: any) {
+		return new DeprecatedVideoEmbedNode(
+			node.__platform,
+			node.__src,
+			node.__width,
+			node.__height,
+			node.__format,
+			node.__key
+		);
+	}
+
+	static importJSON(serializedNode: any) {
+		const superJSON = FallbackNode.importJSON(serializedNode);
+		superJSON.__type = DeprecatedVideoEmbedNode.getType();
+		return superJSON;
 	}
 
 	decorate(editor: LexicalEditor) {

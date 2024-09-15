@@ -41,6 +41,19 @@ export class DiffTextNode extends TextNode {
 	}
 
 	/**
+	 * @param {any} serializedNode
+	 */
+	static importJSON(serializedNode) {
+		const textNode = TextNode.importJSON(serializedNode);
+		const node = new DiffTextNode(textNode);
+
+		// @ts-ignore
+		node.___change = serializedNode.___change;
+
+		return node;
+	}
+
+	/**
 	 * @param {LexicalEditor} editor
 	 */
 	exportDOM(editor) {
@@ -82,19 +95,6 @@ export class DiffTextNode extends TextNode {
 		}
 
 		return dom;
-	}
-
-	/**
-	 * @param {any} serializedNode
-	 */
-	static importJSON(serializedNode) {
-		const textNode = TextNode.importJSON(serializedNode);
-		const node = new DiffTextNode(textNode);
-
-		// @ts-ignore
-		node.___change = serializedNode.___change;
-
-		return node;
 	}
 
 	exportJSON() {

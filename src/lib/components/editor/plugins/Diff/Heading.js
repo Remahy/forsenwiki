@@ -39,6 +39,19 @@ export class DiffHeadingNode extends HeadingNode {
 	}
 
 	/**
+	 * @param {any} serializedNode
+	 */
+	static importJSON(serializedNode) {
+		const heading = HeadingNode.importJSON(serializedNode);
+
+		// @ts-ignore
+		heading.___change = serializedNode.___change;
+
+		const node = new DiffHeadingNode(heading);
+		return node;
+	}
+
+	/**
 	 * @param {LexicalEditor} editor
 	 */
 	exportDOM(editor) {
@@ -54,19 +67,6 @@ export class DiffHeadingNode extends HeadingNode {
 		}
 
 		return dom;
-	}
-
-	/**
-	 * @param {any} serializedNode
-	 */
-	static importJSON(serializedNode) {
-		const heading = HeadingNode.importJSON(serializedNode);
-
-		// @ts-ignore
-		heading.___change = serializedNode.___change;
-
-		const node = new DiffHeadingNode(heading);
-		return node;
 	}
 
 	exportJSON() {
