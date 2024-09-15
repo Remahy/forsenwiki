@@ -7,7 +7,8 @@ import {
 	DiffParagraphNode,
 	DiffQuoteNode,
 	DiffHeadingNode,
-
+	DiffListNode,
+	DiffListItemNode,
 	FallbackNode,
 	DeprecatedVideoEmbedNode,
 } from '$lib/lexicalCustom';
@@ -62,6 +63,8 @@ export const diffConfig = (theme, editable, editorState, onError = onErrorDefaul
 		DiffParagraphNode,
 		DiffQuoteNode,
 		DiffHeadingNode,
+		DiffListNode,
+		DiffListItemNode,
 
 		// Old nodes / Migration nodes
 		FallbackNode,
