@@ -62,6 +62,7 @@
 						class:mt-3={index !== 0}
 						class:outline-dashed={index === to || index === from}
 						class:outline-1={index === to || index === from}
+						class={(index === to || index === from) ? 'dark:outline-white/25' : ''}
 					>
 						<div class="flex items-center">
 							{#if from < index}
