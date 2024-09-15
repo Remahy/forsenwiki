@@ -88,7 +88,7 @@ function cleanPropertyDiffChanges(obj) {
 		if (typeof ___change.text === 'object') {
 			const { text } = ___change;
 
-			if (text.__old) {
+			if (typeof text.__old === 'string' && typeof text.__new === 'string') {
 				const diff = CharDiffer(text.__old, text.__new);
 				// @ts-ignore
 				text.diff = diff;
