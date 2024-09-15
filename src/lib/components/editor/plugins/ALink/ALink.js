@@ -45,7 +45,7 @@ export class ALinkNode extends LinkNode {
 	/** @param {any} serializedNode */
 	static importJSON(serializedNode) {
 		/** @type {ALinkNode} */
-		const node = /** @type {any} */ (new LinkNode(serializedNode.url, { ...serializedNode }));
+		const node = /** @type {any} */ (new ALinkNode(serializedNode.url, { ...serializedNode }));
 
 		node.setIsInternal(serializedNode.isInternal);
 		node.__type = ALinkNode.getType();
@@ -61,8 +61,8 @@ export class ALinkNode extends LinkNode {
 	}
 
 	// Setters
-	/** @param {boolean} bool */
 
+	/** @param {boolean} bool */
 	setIsInternal(bool) {
 		this.__isInternal = bool;
 	}

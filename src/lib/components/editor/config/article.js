@@ -1,6 +1,6 @@
 import { LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical';
 import { ALinkNode, ImageNode, VideoEmbedNode } from '$lib/lexicalCustom';
-import { $createALinkNode } from '../plugins/Link/ALink';
+import { $createALinkNode } from '../plugins/ALink/ALink';
 import { DeprecatedVideoEmbedNode } from '../plugins/Deprecated/DeprecatedVideoEmbedNode';
 
 export const articleTheme = {
