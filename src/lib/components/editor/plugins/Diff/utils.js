@@ -7,7 +7,7 @@ export const applyCSSColorDiff = (element, changeType) => {
 		case '~':
 			// Modified.
 			element.style.outline = '1px rgba(255, 127.5, 0, 0.5) dotted';
-			element.classList.add('bg-orange-500', 'bg-opacity-10');
+			element.classList.add('bg-orange-300', 'bg-opacity-10');
 			break;
 		case '+':
 			// Added.

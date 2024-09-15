@@ -77,6 +77,27 @@
 					</span>
 				</p>
 			</div>
+
+			<div class="mt-2 flex flex-col gap-2 rounded bg-white p-2 text-xs dark:bg-black">
+				<p>
+					<strong>Legend:</strong>
+				</p>
+				<p class="p-1 text-red-500 outline outline-1">
+					<span><strong>Red:</strong> Deleted &#40;-&#41;</span>
+				</p>
+				<p class="p-1 text-orange-500 outline-dashed outline-1 dark:text-orange-300">
+					<span><strong>Orange:</strong> &#40;~&#41;</span>
+				</p>
+				<p class="p-1 text-green-500 outline outline-1">
+					<span><strong>Green:</strong> Added &#40;+&#41;</span>
+				</p>
+				<p>
+					When available, hover over the question mark <span
+						class="mx-1 rounded-full bg-blue-500 bg-opacity-50 px-2 py-1 font-bold outline outline-1 outline-white"
+						>?</span
+					> to read what fields were modified.
+				</p>
+			</div>
 		</header>
 
 		<main class="editor-shell prose max-w-[unset] grow dark:prose-invert">
