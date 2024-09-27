@@ -19,7 +19,9 @@
 	$: editor = composer?.getEditor();
 
 	const insertImage = () => {
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
 			altText: '',
@@ -30,7 +32,9 @@
 	};
 
 	const insertVideo = () => {
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		editor.dispatchCommand(INSERT_VIDEOEMBED_COMMAND, {
 			platform: 'youtube',
@@ -55,7 +59,9 @@
 
 	/** @param {Event} e */
 	const insertElementType = (e) => {
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		/** @type {HTMLSelectElement} */
 		const target = /** @type {any} */ (e.target);

@@ -25,35 +25,47 @@
 		}
 
 		editor.update(() => {
-			selectedImageNode.setWidthAndHeight(currentWidth, currentHeight);
+			selectedImageNode.setWidthAndHeight({ width: currentWidth, height: currentHeight });
 		});
 	};
 
 	const image = () => {
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
+
+		const { width: selectedImageNodeWidth, height: selectedImageNodeHeight } =
+			selectedImageNode.getWidthAndHeight();
 
 		modal.set({
 			component: EditImageModal,
 			src: selectedImageNode.getSrc(),
 			altText: selectedImageNode.getAltText(),
-			width: selectedImageNode.__width,
-			height: selectedImageNode.__height,
+			width: selectedImageNodeWidth,
+			height: selectedImageNodeHeight,
 			/** @param {import('../../plugins/Image/Image').ImagePayload} data */
 			onSubmit: (data) => {
 				editor.update(() => {
 					/** @type {import('../../plugins/Image/Image').ImageNode} */
 					const node = /** @type {any} */ (getNodeByKey(selectedImageNode.getKey()));
 
-					if (data.height && data.width && data.height >= 28 && data.width >= 28) {
-						node.setWidthAndHeight(data.width, data.height);
+					const { width, height, altText, src } = data;
+
+					if (
+						typeof width === 'number' &&
+						typeof height === 'number' &&
+						height >= 28 &&
+						width >= 28
+					) {
+						node.setWidthAndHeight({ width, height });
 					}
 
-					if (data.altText.length) {
-						node.setAltText(data.altText);
+					if (altText.length) {
+						node.setAltText(altText);
 					}
 
-					if (data.src) {
-						node.setSrc(data.src);
+					if (src) {
+						node.setSrc(src);
 					}
 				});
 			},
@@ -70,9 +82,10 @@
 			const editor = composer.getEditor();
 
 			editor.registerNodeTransform(ImageNode, (node) => {
+				const { width, height } = node.getWidthAndHeight();
 				if (node.getKey() === selectedImageNode.getKey()) {
-					currentWidth = node.__width;
-					currentHeight = node.__height;
+					currentWidth = width;
+					currentHeight = height;
 					selectedImageNode = node;
 				}
 			});
@@ -106,5 +119,7 @@
 </label>
 
 {#if currentWidth === 'inherit' && currentHeight === 'inherit'}
-	<div class="self-end" title="Width and height have been set to inherit the original size."><small>inherit</small></div>
+	<div class="self-end" title="Width and height have been set to inherit the original size.">
+		<small>inherit</small>
+	</div>
 {/if}

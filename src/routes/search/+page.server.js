@@ -82,11 +82,11 @@ export const load = async ({ url }) => {
 	results.push(...metadataUserName);
 
 	for (let index = 0; index < contentUserName.length; index++) {
-		const { name, hash, createdAt, id } = contentUserName[index];
+		const { name, hash, createdTimestamp, id } = contentUserName[index];
 
 		results.push({
 			type: 'content',
-			lastUpdated: createdAt,
+			lastUpdated: createdTimestamp,
 			rawTitle: name,
 			title: getCacheURL(hash, name).toString(),
 			id,

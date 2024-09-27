@@ -38,6 +38,11 @@ export class DecoratorBlockNode extends DecoratorNode<DecoratorType> {
 		this.__format = format || '';
 	}
 
+	setFormat(format: ElementFormatType): void {
+		const self = this.getWritable();
+		self.__format = format;
+	}
+
 	exportJSON(): SerializedDecoratorBlockNode {
 		return {
 			format: this.__format || '',
@@ -50,21 +55,16 @@ export class DecoratorBlockNode extends DecoratorNode<DecoratorType> {
 		return false;
 	}
 
-	createDOM(_: EditorConfig): HTMLElement {
-		return document.createElement('div');
-	}
-
 	updateDOM(): false {
 		return false;
 	}
 
-	setFormat(format: ElementFormatType): void {
-		const self = this.getWritable();
-		self.__format = format;
-	}
-
 	isInline(): false {
 		return false;
+	}
+
+	createDOM(_: EditorConfig): HTMLElement {
+		return document.createElement('div');
 	}
 }
 

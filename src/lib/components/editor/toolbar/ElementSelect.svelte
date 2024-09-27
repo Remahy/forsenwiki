@@ -59,7 +59,9 @@
 	$: canEdit = editor?.isEditable();
 
 	const formatParagraph = () => {
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		editor.update(() => {
 			const selection = getSelection();
@@ -73,7 +75,9 @@
 	 * @param {import("@lexical/rich-text").HeadingTagType} headingSize
 	 */
 	const formatHeading = (headingSize) => {
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		if (currentElementType !== headingSize) {
 			editor.update(() => {
@@ -84,7 +88,9 @@
 	};
 
 	const formatBulletList = () => {
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		if (currentElementType !== 'bullet') {
 			editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
@@ -94,7 +100,9 @@
 	};
 
 	const formatNumberedList = () => {
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		if (currentElementType !== 'number') {
 			editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
@@ -104,7 +112,9 @@
 	};
 
 	const formatQuote = () => {
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		if (currentElementType !== 'quote') {
 			editor.update(() => {
@@ -147,7 +157,9 @@
 
 	/** @param {Event} e */
 	const elementType = (e) => {
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		/** @type {HTMLSelectElement} */
 		const target = /** @type {any} */ (e.target);
@@ -172,7 +184,9 @@
 	};
 
 	const updateToolbar = () => {
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		editor.update(() => {
 			const selection = getSelection();

@@ -24,10 +24,14 @@ import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations
 import { _getYPostByTitle } from '../../read/[title]/+server';
 
 export async function POST({ request, locals, params }) {
-	if (locals.isBlocked) return ForbiddenError();
+	if (locals.isBlocked) {
+		return ForbiddenError();
+	}
 
 	const session = await locals.auth();
-	if (!session?.user?.id || !session?.user?.name) return ForbiddenError();
+	if (!session?.user?.id || !session?.user?.name) {
+		return ForbiddenError();
+	}
 
 	const { content } = await request.json();
 
@@ -85,6 +89,11 @@ export async function POST({ request, locals, params }) {
 
 	const combinedFinalDiff = mergePostUpdates([initialDiff, finalDiff]);
 
+	const { byteLength } = combinedFinalDiff;
+
+	// Total size of the YDoc with the new update.
+	const { byteLength: totalByteLength } = mergePostUpdates([currentUpdate, combinedFinalDiff]);
+
 	const systemRelations = await readSystemYPostRelations(post.id);
 
 	const transformedSystemRelations = systemRelations.map((sysRelation) => ({
@@ -101,9 +110,9 @@ export async function POST({ request, locals, params }) {
 	const contentBase64 = uint8ArrayToBase64(combinedFinalDiff);
 
 	const body = { post, outRelations, transformedSystemRelations, content: contentBase64 };
-	const user = { name: session.user.name, id: session.user.id };
+	const metadata = { user: { name: session.user.name, id: session.user.id }, byteLength, totalByteLength };
 
-	const updatedArticle = await updateArticleYPost(body, user);
+	const updatedArticle = await updateArticleYPost(body, metadata);
 
 	await upsertHTML(post.id, await toHTML(editor));
 

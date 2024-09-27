@@ -6,7 +6,27 @@ import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { toHTML } from '$lib/lexicalHTML.server';
 import { readYPostByTitle, readYPostUpdatesByTitle } from '$lib/db/article/read';
 import { yPostUpdatesToBase64 } from '$lib/yjs/utils';
-import { upsertHTML } from '$lib/db/article/html.js';
+import { upsertHTML } from '$lib/db/article/html';
+
+/**
+ * TODO: Move elsewhere.
+ * @param {string} update
+ */
+export const _updateToHTML = async (update) => {
+	try {
+		const { editor } = getYjsAndEditor(
+			articleConfig(null, false, null),
+			base64ToUint8Array(update)
+		);
+
+		const html = await toHTML(editor);
+
+		return html;
+	} catch (err) {
+		console.error(err);
+		throw 500;
+	}
+};
 
 /**
  * @param {string} title
@@ -15,7 +35,9 @@ import { upsertHTML } from '$lib/db/article/html.js';
 export const _getYPostByTitle = async (title) => {
 	const post = await readYPostUpdatesByTitle(title);
 
-	if (!post) throw 404;
+	if (!post) {
+		throw 404;
+	}
 
 	const base64String = yPostUpdatesToBase64(post.postUpdates);
 
@@ -26,26 +48,37 @@ export const _getYPostByTitle = async (title) => {
 	return { ..._post, update: base64String };
 };
 
-/** @param {string} title @param {{ html?: boolean, update?: boolean }} returnProps */
-export const _getYPost = async (title, returnProps = { html: true, update: true }) => {
-	const { html: returnHTML = true, update: returnUpdate = true } = returnProps;
+/**
+ * @param {string} title
+ */
+export const _getYPostHTML = async (title) => {
+	try {
+		const yPost = await readYPostByTitle(title);
 
-	if (!returnUpdate && returnHTML) {
-		try {
-			const yPost = await readYPostByTitle(title);
-
-			if (yPost?.html?.content) {
-				return { post: { ...yPost, html: undefined }, html: yPost.html.content };
-			}
-		} catch (err) {
-			if (typeof err === 'number') {
-				return error(err);
-			}
-
-			throw err;
+		if (yPost?.html?.content) {
+			return { post: { ...yPost, html: undefined }, html: yPost.html.content };
 		}
+	} catch (err) {
+		if (typeof err === 'number') {
+			return error(err);
+		}
+
+		throw err;
 	}
 
+	const { post, update } = await _getYPostUpdate(title);
+
+	const html = await _updateToHTML(update);
+
+	Promise.resolve(upsertHTML(post.id, html));
+
+	return { post, html };
+};
+
+/**
+ * @param {string} title
+ */
+export const _getYPostUpdate = async (title) => {
 	let yPost;
 	let update;
 	try {
@@ -60,34 +93,17 @@ export const _getYPost = async (title, returnProps = { html: true, update: true 
 		throw err;
 	}
 
-	/** @type {LexicalEditor} */
-	let editor;
-	/** @type {string} */
-	let html;
-	try {
-		let e = getYjsAndEditor(articleConfig(null, false, null), base64ToUint8Array(update));
-		editor = e.editor;
-
-		html = await toHTML(editor);
-	} catch (err) {
-		console.error(err);
-		throw 500;
-	}
-
-	Promise.resolve(upsertHTML(yPost.id, html));
-
 	return {
 		post: yPost,
-		update: returnUpdate ? update : undefined,
-		html: returnHTML ? html : undefined,
+		update,
 	};
 };
 
 export async function GET({ params }) {
-	let res;
-
 	try {
-		res = await _getYPost(params.title, { update: false });
+		const res = await _getYPostHTML(params.title);
+
+		return json(res);
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);
@@ -95,6 +111,4 @@ export async function GET({ params }) {
 
 		throw err;
 	}
-
-	return json(res);
 }

@@ -22,7 +22,9 @@ let cache = { latestArticles: [], latestUpdates: [], latestUsers: [] };
 let lastCacheUpdate = Date.now() - 1_800_000;
 
 const getLatest = async () => {
-	if (Date.now() - lastCacheUpdate < 1_800_000) return cache;
+	if (Date.now() - lastCacheUpdate < 1_800_000) {
+		return cache;
+	}
 
 	const yPosts = prisma.yPost.findMany({
 		select: {

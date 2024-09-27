@@ -18,7 +18,7 @@ export class ALinkNode extends LinkNode {
 	 * @param {string} url
 	 * @param {LinkAttributes} attrs
 	 * @param {boolean} internal
-	 * @param {string | undefined} key
+	 * @param {string} [key]
 	 */
 	constructor(url, attrs, internal = false, key) {
 		super(url, { ...attrs, target: internal ? attrs?.target : '_blank' }, key);
@@ -45,7 +45,7 @@ export class ALinkNode extends LinkNode {
 	/** @param {any} serializedNode */
 	static importJSON(serializedNode) {
 		/** @type {ALinkNode} */
-		const node = /** @type {any} */ (new LinkNode(serializedNode.url, { ...serializedNode }));
+		const node = /** @type {any} */ (new ALinkNode(serializedNode.url, { ...serializedNode }));
 
 		node.setIsInternal(serializedNode.isInternal);
 		node.__type = ALinkNode.getType();
@@ -53,14 +53,18 @@ export class ALinkNode extends LinkNode {
 		return node;
 	}
 
-	/** @param {boolean} bool */
-	setIsInternal(bool) {
-		this.__isInternal = bool;
-	}
+	// Getters
 
 	/** @returns {boolean} */
 	getIsInternal() {
 		return this.__isInternal;
+	}
+
+	// Setters
+
+	/** @param {boolean} bool */
+	setIsInternal(bool) {
+		this.__isInternal = bool;
 	}
 
 	exportJSON() {
@@ -76,9 +80,9 @@ export class ALinkNode extends LinkNode {
  * @param {string} url
  * @param {LinkAttributes} attrs
  * @param {boolean} internal
- * @param {string | undefined} key
+ * @param {string} [key]
  */
-export function $createALinkNode(url, attrs, internal, key = undefined) {
+export function $createALinkNode(url, attrs, internal, key) {
 	return $applyNodeReplacement(new ALinkNode(url, attrs, internal, key));
 }
 

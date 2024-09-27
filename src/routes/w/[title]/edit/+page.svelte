@@ -1,6 +1,6 @@
 <script>
 	import { getContext, onMount } from 'svelte';
-	import { FileUpIcon } from 'lucide-svelte';
+	import { FileIcon, FileUpIcon, HistoryIcon } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import Box from '$lib/components/Box.svelte';
@@ -12,11 +12,12 @@
 	import Container from '$lib/components/Container.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
 	import { updateArticle } from '$lib/api/articles';
+	import LinkButton from '$lib/components/LinkButton.svelte';
 
-	let id = $page.data.post.id;
-	let update = $page.data.update;
-	let title = $page.data.post.title;
-	let rawTitle = $page.data.post.rawTitle;
+	const {
+		post: { id, title, rawTitle },
+		update,
+	} = $page.data;
 
 	/** @type {Error | null} */
 	let error = null;
@@ -42,12 +43,19 @@
 	let isUploading = false;
 
 	const submit = async () => {
-		if (!yjsDocMap) return;
-		if (!canEdit) return;
+		if (!yjsDocMap) {
+			return;
+		}
+
+		if (!canEdit) {
+			return;
+		}
 
 		const editor = composer?.getEditor();
 
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		editor.update(async () => {
 			isUploading = true;
@@ -104,11 +112,23 @@
 </svelte:head>
 
 <Container>
-	<Box class="p-4">
-		<p>
-			Editing the <strong>"{rawTitle}"</strong> article.
-			<strong>Your article drafts are automatically saved locally.</strong>
-		</p>
+	<Box class="flex gap-2 p-4">
+		<div class="flex grow items-center overflow-hidden">
+			<p>
+				Editing the <strong>"{rawTitle}"</strong> article.
+				<strong>Your article drafts are automatically saved locally.</strong>
+			</p>
+		</div>
+
+		<div class="flex shrink-0 items-start gap-2">
+			<LinkButton href="/w/{title}/history" class="flex items-center gap-2 text-sm">
+				<HistoryIcon size="16" /><span class="hidden md:inline">History</span>
+			</LinkButton>
+
+			<LinkButton href="/w/{title}" class="flex items-center gap-2 text-sm">
+				<FileIcon size="16" /><span class="hidden md:inline">View article</span>
+			</LinkButton>
+		</div>
 	</Box>
 
 	<Editor {update} {id} />

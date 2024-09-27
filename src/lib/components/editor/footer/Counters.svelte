@@ -14,17 +14,17 @@
 	// let linkCount = 0;
 	// let memeCount = 0;
 
-	/** @param {string | null | undefined} text */
+	/** @param {string | null} [text] */
 	const countForsen = (text) => {
 		return text?.toLowerCase().match(/forsen/g)?.length || 0;
 	};
 
-	/** @param {string | null | undefined} text */
+	/** @param {string | null} [text] */
 	const countCharacters = (text) => {
 		return text?.split('').length || 0;
 	};
 
-	/** @param {string | null | undefined} text */
+	/** @param {string | null} [text] */
 	const countWords = (text) => {
 		return text?.match(/\b\S+\b/g)?.length || 0;
 	};

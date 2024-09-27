@@ -7,10 +7,14 @@ import { rmContentByFilename } from '$lib/fs/content';
 
 export async function POST({ request, locals, params }) {
 	const { isModerator } = locals;
-	if (!isModerator) return ForbiddenError();
+	if (!isModerator) {
+		return ForbiddenError();
+	}
 
 	const session = await locals.auth();
-	if (!session?.user?.id || !session?.user?.name) return ForbiddenError();
+	if (!session?.user?.id || !session?.user?.name) {
+		return ForbiddenError();
+	}
 
 	const { id } = params;
 
@@ -25,7 +29,9 @@ export async function POST({ request, locals, params }) {
 
 export async function DELETE({ locals, params }) {
 	const session = await locals.auth();
-	if (!session?.user?.id || !session?.user?.name) return ForbiddenError();
+	if (!session?.user?.id || !session?.user?.name) {
+		return ForbiddenError();
+	}
 
 	const { id } = params;
 
@@ -40,7 +46,9 @@ export async function DELETE({ locals, params }) {
 
 	const isAllowed = isModerator || isAuthor;
 
-	if (!isAllowed) return ForbiddenError();
+	if (!isAllowed) {
+		return ForbiddenError();
+	}
 
 	let deleteRes;
 	try {

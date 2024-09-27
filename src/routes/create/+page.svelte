@@ -39,12 +39,19 @@
 	};
 
 	const submit = async () => {
-		if (!yjsDocMap) return;
-		if (!canEdit) return;
+		if (!yjsDocMap) {
+			return;
+		}
+
+		if (!canEdit) {
+			return;
+		}
 
 		const editor = composer?.getEditor();
 
-		if (!editor) return;
+		if (!editor) {
+			return;
+		}
 
 		editor.update(async () => {
 			isUploading = true;

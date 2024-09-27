@@ -223,6 +223,21 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	__width: 'inherit' | number;
 	__height: 'inherit' | number;
 
+	constructor(
+		platform: SupportedPlatforms,
+		src: string,
+		width: number | 'inherit',
+		height: number | 'inherit',
+		format?: ElementFormatType,
+		key?: NodeKey
+	) {
+		super(format, key);
+		this.__platform = platform;
+		this.__src = src;
+		this.__width = width;
+		this.__height = height;
+	}
+
 	static getType(): string {
 		return 'videoembed';
 	}
@@ -244,49 +259,6 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		return node;
 	}
 
-	exportJSON(): SerializedVideoEmbedNode {
-		return {
-			...super.exportJSON(),
-			type: VideoEmbedNode.getType(),
-			platform: this.__platform,
-			src: this.__src,
-			width: this.__width,
-			height: this.__height,
-			version: 1,
-		};
-	}
-
-	constructor(
-		platform: SupportedPlatforms,
-		src: string,
-		width: number | 'inherit',
-		height: number | 'inherit',
-		format?: ElementFormatType,
-		key?: NodeKey
-	) {
-		super(format, key);
-		this.__platform = platform;
-		this.__src = src;
-		this.__width = width;
-		this.__height = height;
-	}
-
-	exportDOM(): DOMExportOutput {
-		if (this.__platform === 'youtube') {
-			return generateYouTubeIframe(this, DOMAIN);
-		}
-
-		if (this.__platform) {
-			return generateTwitchIframe(this, DOMAIN);
-		}
-
-		const element = document.createElement('a');
-		element.href = sanitizeUrl(this.__src);
-		element.textContent = `${VIDEO_CONSTANTS.PLATFORMS[this.__platform]} link`;
-
-		return { element };
-	}
-
 	static importDOM(): DOMConversionMap | null {
 		return {
 			iframe: (domNode: HTMLElement) => {
@@ -305,20 +277,10 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		};
 	}
 
-	createDOM(config: EditorConfig): HTMLElement {
-		const div = super.createDOM(config);
+	// Getters
 
-		const { theme } = config;
-		const className = theme.image;
-		if (className !== undefined) {
-			div.className = className;
-		}
-
-		return div;
-	}
-
-	updateDOM(): false {
-		return false;
+	getWidthAndHeight() {
+		return { width: this.__width, height: this.__height };
 	}
 
 	getSrc(): string {
@@ -336,7 +298,15 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		return this.__src;
 	}
 
-	setWidthAndHeight(width: 'inherit' | number, height: 'inherit' | number): void {
+	// Setters
+
+	setWidthAndHeight({
+		width,
+		height,
+	}: {
+		width: 'inherit' | number;
+		height: 'inherit' | number;
+	}): void {
 		const writable = this.getWritable();
 		writable.__width = width;
 		writable.__height = height;
@@ -354,8 +324,54 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		}
 	}
 
+	exportJSON(): SerializedVideoEmbedNode {
+		return {
+			...super.exportJSON(),
+			type: VideoEmbedNode.getType(),
+			platform: this.__platform,
+			src: this.__src,
+			width: this.__width,
+			height: this.__height,
+			version: 1,
+		};
+	}
+
+	// View
+
+	exportDOM(): DOMExportOutput {
+		if (this.__platform === 'youtube') {
+			return generateYouTubeIframe(this, DOMAIN);
+		}
+
+		if (this.__platform) {
+			return generateTwitchIframe(this, DOMAIN);
+		}
+
+		const element = document.createElement('a');
+		element.href = sanitizeUrl(this.__src);
+		element.textContent = `${VIDEO_CONSTANTS.PLATFORMS[this.__platform]} link`;
+
+		return { element };
+	}
+
+	createDOM(config: EditorConfig): HTMLElement {
+		const div = super.createDOM(config);
+
+		const { theme } = config;
+		const className = theme.image;
+		if (className !== undefined) {
+			div.className = className;
+		}
+
+		return div;
+	}
+
+	updateDOM(): false {
+		return false;
+	}
+
 	decorate(editor: LexicalEditor, config: EditorConfig) {
-		const embedBlockTheme = config.theme.embedBlock || {};
+		// const embedBlockTheme = config.theme.embedBlock || {};
 		// const className = {
 		// 	base: embedBlockTheme.base || '',
 		// 	focus: embedBlockTheme.focus || '',

@@ -111,7 +111,7 @@
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Created at</strong></td>
-							<td class="p-4">{new Date(result.createdAt)}</td>
+							<td class="p-4">{new Date(result.createdTimestamp)}</td>
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Hash</strong></td>

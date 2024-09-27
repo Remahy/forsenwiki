@@ -29,6 +29,69 @@ export async function readYPostUpdatesByTitle(title) {
 				select: {
 					content: true,
 				},
+				orderBy: {
+					createdTimestamp: 'asc',
+				},
+			},
+		},
+	});
+}
+
+/**
+ * @param {string} title
+ */
+export async function readYPostUpdatesWithIdByTitle(title) {
+	return prisma.yPost.findUnique({
+		where: {
+			title,
+		},
+		include: {
+			postUpdates: {
+				select: {
+					id: true,
+					createdTimestamp: true,
+					content: true,
+					metadata: {
+						select: {
+							byteLength: true,
+						},
+					},
+				},
+				orderBy: {
+					createdTimestamp: 'asc',
+				},
+			},
+		},
+	});
+}
+
+/**
+ * @param {string} title
+ */
+export async function readYPostUpdatesIdsByTitle(title) {
+	return prisma.yPost.findUnique({
+		where: {
+			title,
+		},
+		include: {
+			postUpdates: {
+				select: {
+					id: true,
+					createdTimestamp: true,
+					metadata: {
+						select: {
+							user: {
+								select: {
+									name: true,
+								},
+							},
+							byteLength: true,
+						},
+					},
+				},
+				orderBy: {
+					createdTimestamp: 'desc',
+				},
 			},
 		},
 	});
@@ -83,6 +146,9 @@ const includeToPostYPostUpdate = {
 							userId: true,
 						},
 					},
+				},
+				orderBy: {
+					createdTimestamp: 'asc',
 				},
 			},
 		},

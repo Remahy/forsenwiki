@@ -3,10 +3,12 @@ import { Y_POST_TYPES } from '../../../../types';
 
 /**
  * @param {{ title: {raw: string, sanitized: string}, data: { content: string }, ids: string[] }} arg1
- * @param {{ name: string, id: string }} user
+ * @param {{ user: { name: string, id: string }, byteLength: number }} metadata
  */
-export const createArticle = async ({ title, data, ids }, user) => {
+export const createArticle = async ({ title, data, ids }, metadata) => {
 	const outRelations = ids.map((id) => ({ isSystem: false, toPostId: id }));
+
+	const { user, byteLength } = metadata;
 
 	const { post, postUpdate } = await prisma.$transaction(async (tx) => {
 		// Create yPost
@@ -26,6 +28,8 @@ export const createArticle = async ({ title, data, ids }, user) => {
 						skipDuplicates: true,
 					},
 				},
+				// Update's byteLength is the current total byteLength on creation.
+				totalByteLength: metadata.byteLength,
 			},
 			select: {
 				id: true,
@@ -36,6 +40,7 @@ export const createArticle = async ({ title, data, ids }, user) => {
 			// @ts-ignore
 			_metadata: {
 				user,
+				byteLength,
 			},
 		});
 
@@ -54,6 +59,7 @@ export const createArticle = async ({ title, data, ids }, user) => {
 								id: user.id,
 							},
 						},
+						byteLength,
 					},
 				},
 			},

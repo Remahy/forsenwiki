@@ -95,6 +95,8 @@ model YPost {
 
   html Html?
 
+  totalByteLength BigInt?
+
   lastUpdated      DateTime @default(now())
   createdTimestamp DateTime @default(now())
 }
@@ -130,6 +132,8 @@ model YPostUpdateMetadata {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
+  byteLength BigInt?
+
   postUpdate YPostUpdate?
 }
 
@@ -149,7 +153,7 @@ model Content {
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
 
-  createdAt DateTime @default(now())
+  createdTimestamp DateTime @default(now())
 }
 
 enum Permissions {

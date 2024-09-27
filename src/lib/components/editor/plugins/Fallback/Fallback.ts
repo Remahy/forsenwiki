@@ -12,17 +12,17 @@ import FallbackComponent from './FallbackComponent.svelte';
 export class FallbackNode extends DecoratorBlockNode {
 	__data: string;
 
+	constructor({ data, format, key }: { format?: ElementFormatType; key?: NodeKey; data: string }) {
+		super(format, key);
+		this.__data = data;
+	}
+
 	static getType(): string {
 		return 'fallback';
 	}
 
 	static clone(node: any): FallbackNode {
 		return new FallbackNode({ data: node.__data, format: node.__format, key: node.__key });
-	}
-
-	constructor({ data, format, key }: { format?: ElementFormatType; key?: NodeKey; data: string }) {
-		super(format, key);
-		this.__data = data;
 	}
 
 	exportDOM(): DOMExportOutput {
@@ -40,7 +40,7 @@ export class FallbackNode extends DecoratorBlockNode {
 		const data = JSON.parse(this.__data);
 
 		italic.style.color = '#000';
-		italic.textContent = `Invalid node of type: "${data.type}"`;
+		italic.textContent = `Invalid node of type: "${data?.type}"`;
 
 		strong.appendChild(italic);
 		p.appendChild(strong);
@@ -50,7 +50,7 @@ export class FallbackNode extends DecoratorBlockNode {
 	}
 
 	static importJSON(serializedNode: any): FallbackNode {
-		const node = $createFallbackNode(serializedNode);
+		const node = new FallbackNode(serializedNode);
 		node.setFormat(serializedNode.format);
 		return node;
 	}

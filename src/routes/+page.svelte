@@ -43,7 +43,9 @@
 				}
 
 				const newLength = values.unshift(input);
-				if (newLength > 5) values.pop();
+				if (newLength > 5) {
+					values.pop();
+				}
 
 				latestArticles.set(values);
 			}
@@ -61,7 +63,9 @@
 
 				const newLength = values.unshift(input);
 
-				if (newLength > 5) values.pop();
+				if (newLength > 5) {
+					values.pop();
+				}
 
 				latestUpdates.set(values);
 			}
@@ -78,7 +82,9 @@
 
 				const newLength = values.unshift(input);
 
-				if (newLength > 5) values.pop();
+				if (newLength > 5) {
+					values.pop();
+				}
 
 				latestUsers.set(values);
 			}

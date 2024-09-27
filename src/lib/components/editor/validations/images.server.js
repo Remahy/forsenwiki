@@ -71,11 +71,12 @@ export const adjustAndUploadImages = (editor, title, author) => {
 					const image = images[index];
 
 					const src = image.getSrc();
+					const { width, height } = image.getWidthAndHeight();
 
 					// TODO: Revisit image sizes.
 					// const height = image.__height;
 					// const width = image.__width;
-					// image.setWidthAndHeight(typeof width === 'number' ? Math.min(width, 500) : 500, typeof height === 'number' ? Math.min(height, 500) : 500);
+					// image.setWidthAndHeight({ width: typeof width === 'number' ? Math.min(width, 500) : 500, height: typeof height === 'number' ? Math.min(height, 500) : 500 });
 
 					if (src.startsWith('data:') && calculateOriginalFileSizeInMiB(src) > MAX_IMAGE_SIZE_MIB) {
 						image.setSrc(IMAGE_OFF);
@@ -89,7 +90,7 @@ export const adjustAndUploadImages = (editor, title, author) => {
 						uploadImage(src, newTitle, hash, author);
 
 						// Assume the image will be successfully uploaded to our server.
-						const url = getCacheURL(hash, title, { width: image.__width, height: image.__height });
+						const url = getCacheURL(hash, title, { width, height });
 
 						// Set image src to cache.
 						image.setSrc(url.toString());
@@ -101,11 +102,11 @@ export const adjustAndUploadImages = (editor, title, author) => {
 
 						// Resize image if user has changed it.
 						if (
-							url.searchParams.get('w') !== String(image.__width) ||
-							url.searchParams.get('h') !== String(image.__height)
+							url.searchParams.get('w') !== width.toString() ||
+							url.searchParams.get('h') !== height.toString()
 						) {
-							url.searchParams.set('w', String(image.__width));
-							url.searchParams.set('h', String(image.__height));
+							url.searchParams.set('w', width.toString());
+							url.searchParams.set('h', height.toString());
 
 							// Set image src to cache.
 							image.setSrc(url.toString());

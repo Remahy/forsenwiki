@@ -53,6 +53,21 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 	__width: 'inherit' | number;
 	__height: 'inherit' | number;
 
+	constructor(
+		src: string,
+		altText: string,
+		width?: 'inherit' | number,
+		height?: 'inherit' | number,
+		key?: NodeKey
+	) {
+		super(key);
+
+		this.__src = src;
+		this.__altText = altText;
+		this.__width = width || 'inherit';
+		this.__height = height || 'inherit';
+	}
+
 	static getType(): string {
 		return 'image';
 	}
@@ -73,24 +88,6 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 		return node;
 	}
 
-	exportDOM(editor: LexicalEditor): DOMExportOutput {
-		const theme = editor._config.theme;
-		const element = document.createElement('img');
-		element.setAttribute('src', this.__src);
-		element.setAttribute('alt', this.__altText);
-		element.setAttribute('width', this.__width.toString());
-		element.setAttribute('height', this.__height.toString());
-
-		// element.style.width = this.__width.toString()+'px';
-		// element.style.height = this.__height.toString()+'px';
-
-		if (theme.image) {
-			element.setAttribute('class', theme.image);
-		}
-
-		return { element };
-	}
-
 	static importDOM(): DOMConversionMap | null {
 		return {
 			img: (node: Node) => ({
@@ -99,33 +96,30 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 			}),
 		};
 	}
+	
+	// Getters
 
-	constructor(
-		src: string,
-		altText: string,
-		width?: 'inherit' | number,
-		height?: 'inherit' | number,
-		key?: NodeKey
-	) {
-		super(key);
-		this.__src = src;
-		this.__altText = altText;
-		this.__width = width || 'inherit';
-		this.__height = height || 'inherit';
+	getWidthAndHeight() {
+		return { width: this.__width, height: this.__height };
 	}
 
-	exportJSON(): SerializedImageNode {
-		return {
-			src: this.getSrc(),
-			altText: this.getAltText(),
-			width: this.__width,
-			height: this.__height,
-			type: ImageNode.getType(),
-			version: 1,
-		};
+	getSrc(): string {
+		return this.__src;
 	}
 
-	setWidthAndHeight(width: 'inherit' | number, height: 'inherit' | number): void {
+	getAltText(): string {
+		return this.__altText;
+	}
+
+	// Setters
+
+	setWidthAndHeight({
+		width,
+		height,
+	}: {
+		width: 'inherit' | number;
+		height: 'inherit' | number;
+	}): void {
 		const writable = this.getWritable();
 		writable.__width = width;
 		writable.__height = height;
@@ -141,7 +135,41 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 		writable.__altText = altText;
 	}
 
+	exportJSON(): SerializedImageNode {
+		const { width, height } = this.getWidthAndHeight();
+
+		return {
+			src: this.getSrc(),
+			altText: this.getAltText(),
+			width,
+			height,
+			type: ImageNode.getType(),
+			version: 1,
+		};
+	}
+
 	// View
+
+	exportDOM(editor: LexicalEditor): DOMExportOutput {
+		const theme = editor._config.theme;
+		const element = document.createElement('img');
+
+		const { width, height } = this.getWidthAndHeight();
+
+		element.setAttribute('src', this.__src);
+		element.setAttribute('alt', this.__altText);
+		element.setAttribute('width', width.toString());
+		element.setAttribute('height', height.toString());
+
+		// element.style.width = this.__width.toString()+'px';
+		// element.style.height = this.__height.toString()+'px';
+
+		if (theme.image) {
+			element.setAttribute('class', theme.image);
+		}
+
+		return { element };
+	}
 
 	createDOM(config: EditorConfig): HTMLElement {
 		const span = document.createElement('span');
@@ -155,14 +183,6 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 
 	updateDOM(): false {
 		return false;
-	}
-
-	getSrc(): string {
-		return this.__src;
-	}
-
-	getAltText(): string {
-		return this.__altText;
 	}
 
 	decorate(editor: LexicalEditor, _config: EditorConfig): DecoratorImageType {

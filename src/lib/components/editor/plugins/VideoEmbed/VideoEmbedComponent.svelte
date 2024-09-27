@@ -132,7 +132,7 @@
 		editor.update(() => {
 			const node = getNodeByKey(nodeKey);
 			if (isVideoEmbedNode(node)) {
-				node.setWidthAndHeight(nextWidth, nextHeight);
+				node.setWidthAndHeight({ width: nextWidth, height: nextHeight });
 			}
 		});
 	};

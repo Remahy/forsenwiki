@@ -5,7 +5,9 @@
 	let audioElement;
 
 	const playP = () => {
-		if (!audioElement.paused) return;
+		if (!audioElement.paused) {
+			return;
+		}
 
 		audioElement.play();
 	};

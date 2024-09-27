@@ -7,7 +7,9 @@
 	}
 
 	modal.subscribe((modal) => {
-		if (!browser || !modal) return;
+		if (!browser || !modal) {
+			return;
+		}
 
 		if (modal.isOpen) {
 			document.body.classList.add('overflow-hidden');

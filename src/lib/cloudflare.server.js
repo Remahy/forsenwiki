@@ -12,8 +12,9 @@ const url = `https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/pu
  * @param {string} title
  */
 export const invalidateArticleCache = async (title) => {
-	if (!CLOUDFLARE_API_TOKEN || !CLOUDFLARE_ZONE_ID) return;
-	if (!title) return;
+	if (!title || !CLOUDFLARE_API_TOKEN || !CLOUDFLARE_ZONE_ID) {
+		return;
+	}
 
 	const body = {
 		files: [

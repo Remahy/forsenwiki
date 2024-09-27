@@ -82,7 +82,9 @@
 		if (target) {
 			const value = target.value;
 
-			if (currentLinkType === 'external') handleExternalLink(value);
+			if (currentLinkType === 'external') {
+				handleExternalLink(value);
+			}
 		}
 	};
 

@@ -20,7 +20,9 @@ export function getSelectedElements() {
 
 	const nodes = selection.getNodes();
 
-	if (nodes.length === 0) return [];
+	if (nodes.length === 0) {
+		return [];
+	}
 
 	/**
 	 * @type {Map<string, ElementNode>}
@@ -33,7 +35,11 @@ export function getSelectedElements() {
 			node,
 			(parentNode) => $isElementNode(parentNode) && !parentNode.isInline()
 		);
-		if (!parent) continue;
+
+		if (!parent) {
+			continue;
+		}
+
 		elements.set(parent.getKey(), /** @type {ElementNode} */ (parent));
 	}
 
