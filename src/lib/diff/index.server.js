@@ -139,7 +139,6 @@ function diffSemanticsFlat(list) {
 /**
  * @param {import('lexical').SerializedEditor} toUpdate
  * @param {import('lexical').SerializedEditor} fromUpdate
- * @returns
  */
 export function getDiffJSON(toUpdate, fromUpdate) {
 	const diff = JSONDiffer.diff(toUpdate, fromUpdate, { full: true, raw: true });
