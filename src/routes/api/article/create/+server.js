@@ -2,7 +2,6 @@ import { json, error } from '@sveltejs/kit';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { ForbiddenError } from '$lib/errors/Forbidden';
-import { articleConfig } from '$lib/components/editor/config/article';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { validateArticle } from '$lib/components/editor/validations';
 import { InvalidArticle } from '$lib/errors/InvalidArticle';
@@ -27,6 +26,8 @@ export async function POST({ request, locals }) {
 	}
 
 	const { title: rawTitle, content } = await request.json();
+
+	const { articleConfig } = await import('$lib/components/editor/config/article');
 
 	let editor;
 	let title;

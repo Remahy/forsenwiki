@@ -10,7 +10,6 @@ import {
 } from '$lib/yjs/utils';
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { articleConfig } from '$lib/components/editor/config/article';
 import { validateArticle } from '$lib/components/editor/validations';
 import { InvalidArticle } from '$lib/errors/InvalidArticle';
 import { getArticleURLIds } from '$lib/components/editor/utils/getEntities';
@@ -45,6 +44,8 @@ export async function POST({ request, locals, params }) {
 
 		throw err;
 	}
+
+	const { articleConfig } = await import('$lib/components/editor/config/article');
 
 	// Current
 	const currentUpdate = base64ToUint8Array(post.update);

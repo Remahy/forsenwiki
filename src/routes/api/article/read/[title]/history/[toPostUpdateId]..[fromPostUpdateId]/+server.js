@@ -3,10 +3,8 @@ import { createHeadlessEditor } from '@lexical/headless';
 
 import { mergePostUpdates, postUpdatesToUint8Arr } from '$lib/yjs/utils';
 import { readYPostUpdatesWithIdByTitle } from '$lib/db/article/read';
-import { articleConfig } from '$lib/components/editor/config/article';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
-import { diffConfig } from '$lib/components/editor/config/diff';
 import { toHTML } from '$lib/lexical/toHTML.server';
 import { getDiffJSON } from '$lib/diff/index.server';
 
@@ -41,6 +39,10 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 	if (toPostUpdateIdIndex === fromPostUpdateIdIndex) {
 		throw 400;
 	}
+	
+	const { articleConfig } = await import('$lib/components/editor/config/article');
+	const { diffConfig } = await import('$lib/components/editor/config/diff');
+
 
 	const { createdTimestamp: toDate } = res.postUpdates[toPostUpdateIdIndex];
 	const { createdTimestamp: fromDate } = res.postUpdates[fromPostUpdateIdIndex];
