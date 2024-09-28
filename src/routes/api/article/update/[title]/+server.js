@@ -18,9 +18,10 @@ import { updateArticleYPost } from '$lib/db/article/update';
 import { adjustAndUploadImages } from '$lib/components/editor/validations/images.server';
 import { invalidateArticleCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/article/html';
-import { toHTML } from '$lib/lexical/toHTML.server';
+import { articleConfig } from '$lib/components/editor/config/article';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
+import toHTML from '../../../../../worker/toHTML/index.server';
 
 export async function POST({ request, locals, params }) {
 	if (locals.isBlocked) {
@@ -44,8 +45,6 @@ export async function POST({ request, locals, params }) {
 
 		throw err;
 	}
-
-	const { articleConfig } = await import('$lib/components/editor/config/article');
 
 	// Current
 	const currentUpdate = base64ToUint8Array(post.update);
@@ -115,7 +114,7 @@ export async function POST({ request, locals, params }) {
 
 	const updatedArticle = await updateArticleYPost(body, metadata);
 
-	await upsertHTML(post.id, await toHTML(editor));
+	await upsertHTML(post.id, await toHTML({ config: 'article', content: JSON.stringify(editor.getEditorState().toJSON()) }));
 
 	await invalidateArticleCache(post.title);
 

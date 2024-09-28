@@ -19,7 +19,9 @@ FROM node:20 AS run
 ENV NODE_ENV=production
 
 WORKDIR /app
+COPY --from=build /app/.svelte-kit ./svelte-kit
 COPY --from=build /app/build ./build
+RUN cp -a ./svelte-kit/output/server/chunks/. ./build/server/chunks/
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/prisma ./prisma

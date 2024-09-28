@@ -2,8 +2,11 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import path from 'path';
 
+// vite needs to work on proper support for Node.js worker_threads...
+import workerPlugin from './workerPlugin';
+
 export default defineConfig({
-	plugins: [sveltekit()],
+	plugins: [workerPlugin(), sveltekit()],
 	server: {
 		proxy: {
 			'/usercontent': {
