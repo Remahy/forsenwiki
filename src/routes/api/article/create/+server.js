@@ -13,7 +13,7 @@ import { readYPostByTitle } from '$lib/db/article/read';
 import { encodeYDocToUpdateV2 } from '$lib/yjs/utils';
 import { adjustAndUploadImages } from '$lib/components/editor/validations/images.server';
 import { upsertHTML } from '$lib/db/article/html';
-import { toHTML } from '$lib/lexicalHTML.server';
+import { toHTML } from '$lib/lexical/toHTML.server';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 
 export async function POST({ request, locals }) {

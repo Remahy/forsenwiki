@@ -19,7 +19,7 @@ import { updateArticleYPost } from '$lib/db/article/update';
 import { adjustAndUploadImages } from '$lib/components/editor/validations/images.server';
 import { invalidateArticleCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/article/html';
-import { toHTML } from '$lib/lexicalHTML.server';
+import { toHTML } from '$lib/lexical/toHTML.server';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 

@@ -1,7 +1,7 @@
 import { $nodesOfType } from 'lexical';
 
-import { ParagraphNode } from '$lib/lexical';
-import { ALinkNode } from '$lib/lexicalCustom';
+import { ParagraphNode } from '$lib/lexical/index';
+import { ALinkNode } from '$lib/lexical/custom';
 
 import { getOnlyInternalLinks } from '../utils/getEntities';
 

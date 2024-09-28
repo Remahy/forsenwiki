@@ -6,10 +6,10 @@
 		$getSelection as getSelection,
 		$isNodeSelection as isNodeSelection,
 	} from 'lexical';
-	import { $isVideoEmbedNode as isVideoEmbedNode } from '$lib/lexicalCustom';
+	import { $isVideoEmbedNode as isVideoEmbedNode } from '$lib/lexical/custom';
 	import EditVideo from './EditVideo.svelte';
 
-	/** @type {import('$lib/lexicalCustom').VideoEmbedNode | null} */
+	/** @type {import('$lib/lexical/custom').VideoEmbedNode | null} */
 	let selectedVideoEmbedNode = null;
 
 	/** @type {ComposerWritable} */

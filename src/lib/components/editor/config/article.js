@@ -1,7 +1,12 @@
-import { LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical';
-import { ALinkNode, ImageNode, VideoEmbedNode } from '$lib/lexicalCustom';
+import { LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical/index';
+import {
+	ALinkNode,
+	DeprecatedVideoEmbedNode,
+	FallbackNode,
+	ImageNode,
+	VideoEmbedNode,
+} from '$lib/lexical/custom';
 import { $createALinkNode } from '../plugins/ALink/ALink';
-import { DeprecatedVideoEmbedNode } from '../plugins/Deprecated/DeprecatedVideoEmbedNode';
 
 export const articleTheme = {
 	root: 'editor-shell',
@@ -15,7 +20,7 @@ export const articleTheme = {
 		h3: 'break-words',
 		h4: 'break-words',
 		h5: 'break-words',
-	}
+	},
 };
 
 /**
@@ -61,6 +66,7 @@ export const articleConfig = (theme, editable, editorState, onError = onErrorDef
 		VideoEmbedNode,
 
 		// Old nodes / Migration nodes
+		FallbackNode,
 		DeprecatedVideoEmbedNode,
 	],
 	/** @param {Error} error */

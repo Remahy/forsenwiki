@@ -16,7 +16,7 @@
 	import { ctrlKey } from '$lib/environment/environment';
 	import { getSelectedNode } from '$lib/components/editor/utils/getSelection';
 	import { modal } from '$lib/stores/modal';
-	import { $isALinkNode as isALinkNode } from '$lib/lexicalCustom';
+	import { $isALinkNode as isALinkNode } from '$lib/lexical/custom';
 	import EditLinkButtonModal from './EditLinkButtonModal.svelte';
 
 	$: hasLink = false;

@@ -1,6 +1,6 @@
 import { $nodesOfType as nodesOfType, $createParagraphNode as createParagraphNode } from 'lexical';
 
-import { VideoEmbedNode } from '$lib/lexicalCustom';
+import { VideoEmbedNode } from '$lib/lexical/custom';
 
 /**
  * @param {LexicalEditor} editor

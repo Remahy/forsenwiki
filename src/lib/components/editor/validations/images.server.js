@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { $nodesOfType as nodesOfType } from 'lexical';
 
-import { ImageNode } from '$lib/lexicalCustom';
+import { ImageNode } from '$lib/lexical/custom';
 import { MAX_IMAGE_SIZE_MIB } from '$lib/constants/image';
 import { cacheServiceBaseURLWithStatic, getCacheURL } from '$lib/utils/getCacheURL';
 import { createContent } from '$lib/db/content/create';

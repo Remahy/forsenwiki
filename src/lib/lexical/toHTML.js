@@ -1,5 +1,5 @@
 import { $getRoot } from 'lexical';
-import { $generateHtmlFromNodes } from '@lexical/html';
+import { $generateHtmlFromNodes } from './index';
 
 /**
  * @param {LexicalEditor} editor

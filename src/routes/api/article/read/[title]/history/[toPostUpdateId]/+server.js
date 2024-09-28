@@ -3,7 +3,7 @@ import { readYPostUpdatesWithIdByTitle } from '$lib/db/article/read';
 import { yPostUpdatesToBase64 } from '$lib/yjs/utils';
 import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
 import { replacer } from '$lib/utils/json';
-import { _updateToHTML } from '../../+server';
+import { updateToHTML } from '$lib/lexical/updateToHTML';
 
 /**
  * @param {string} title
@@ -40,7 +40,7 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 
 	const [author, html] = await Promise.all([
 		readAuthorForYPostUpdate(id),
-		_updateToHTML(base64String),
+		updateToHTML(base64String),
 	]);
 
 	return {

@@ -1,4 +1,4 @@
-import { ALinkNode } from '$lib/lexicalCustom';
+import { ALinkNode } from '$lib/lexical/custom';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**

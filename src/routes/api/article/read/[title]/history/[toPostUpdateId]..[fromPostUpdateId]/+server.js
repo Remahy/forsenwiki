@@ -7,7 +7,7 @@ import { articleConfig } from '$lib/components/editor/config/article';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
 import { diffConfig } from '$lib/components/editor/config/diff';
-import { toHTML } from '$lib/lexicalHTML';
+import { toHTML } from '$lib/lexical/toHTML.server';
 import { getDiffJSON } from '$lib/diff/index.server';
 
 /**

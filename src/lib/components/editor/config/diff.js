@@ -1,4 +1,4 @@
-import { HeadingNode, LinkNode, ListItemNode, ListNode, QuoteNode } from '$lib/lexical';
+import { HeadingNode, LinkNode, ListItemNode, ListNode, QuoteNode } from '$lib/lexical/index';
 import {
 	ALinkNode,
 	DeprecatedVideoEmbedNode,
@@ -14,7 +14,7 @@ import {
 	FallbackNode,
 	ImageNode,
 	VideoEmbedNode,
-} from '$lib/lexicalCustom';
+} from '$lib/lexical/custom';
 import { $createALinkNode } from '../plugins/ALink/ALink';
 
 import { articleTheme } from './article';
@@ -36,7 +36,7 @@ const onErrorDefault = (error) => {
  */
 export const diffConfig = (theme, editable, editorState, onError = onErrorDefault) => ({
 	theme: theme || articleTheme,
-	namespace: 'editor',
+	namespace: 'diff-editor',
 	editable,
 	nodes: [
 		ALinkNode,
