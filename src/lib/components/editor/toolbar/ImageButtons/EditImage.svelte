@@ -4,10 +4,10 @@
 	import { RectangleHorizontalIcon, RectangleVerticalIcon } from 'lucide-svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { modal } from '$lib/stores/modal';
-	import { ImageNode } from '$lib/lexicalCustom';
+	import { ImageNode } from '$lib/lexical/custom';
 	import EditImageModal from './EditImageModal.svelte';
 
-	/** @type {import("$lib/lexicalCustom").ImageNode} */
+	/** @type {import("$lib/lexical/custom").ImageNode} */
 	export let selectedImageNode;
 
 	/** @type {ComposerWritable} */

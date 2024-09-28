@@ -10,7 +10,6 @@ import {
 } from '$lib/yjs/utils';
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { articleConfig } from '$lib/components/editor/config/article';
 import { validateArticle } from '$lib/components/editor/validations';
 import { InvalidArticle } from '$lib/errors/InvalidArticle';
 import { getArticleURLIds } from '$lib/components/editor/utils/getEntities';
@@ -19,9 +18,10 @@ import { updateArticleYPost } from '$lib/db/article/update';
 import { adjustAndUploadImages } from '$lib/components/editor/validations/images.server';
 import { invalidateArticleCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/article/html';
-import { toHTML } from '$lib/lexicalHTML.server';
+import { articleConfig } from '$lib/components/editor/config/article';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
+import toHTML from '../../../../../worker/toHTML/index.server';
 
 export async function POST({ request, locals, params }) {
 	if (locals.isBlocked) {
@@ -114,7 +114,7 @@ export async function POST({ request, locals, params }) {
 
 	const updatedArticle = await updateArticleYPost(body, metadata);
 
-	await upsertHTML(post.id, await toHTML(editor));
+	await upsertHTML(post.id, await toHTML({ config: 'article', content: JSON.stringify(editor.getEditorState().toJSON()) }));
 
 	await invalidateArticleCache(post.title);
 

@@ -3,12 +3,12 @@ import { createHeadlessEditor } from '@lexical/headless';
 
 import { mergePostUpdates, postUpdatesToUint8Arr } from '$lib/yjs/utils';
 import { readYPostUpdatesWithIdByTitle } from '$lib/db/article/read';
-import { articleConfig } from '$lib/components/editor/config/article';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
-import { diffConfig } from '$lib/components/editor/config/diff';
-import { toHTML } from '$lib/lexicalHTML';
 import { getDiffJSON } from '$lib/diff/index.server';
+import { articleConfig } from '$lib/components/editor/config/article';
+import { diffConfig } from '$lib/components/editor/config/diff';
+import toHTML from '../../../../../../../worker/toHTML/index.server';
 
 /**
  * @param {string} title
@@ -72,7 +72,7 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 
 	const editorJSON = editor.toJSON();
 
-	const diffHTML = await toHTML(editor);
+	const diffHTML = await toHTML({ config: 'diff', content: JSON.stringify(diffJSON.editorState) });
 
 	return {
 		toPostUpdateId,

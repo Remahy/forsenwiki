@@ -6,10 +6,10 @@
 		$getSelection as getSelection,
 		$isNodeSelection as isNodeSelection
 	} from 'lexical';
-	import { $isImageNode as isImageNode } from '$lib/lexicalCustom';
+	import { $isImageNode as isImageNode } from '$lib/lexical/custom';
 	import EditImage from './EditImage.svelte';
 
-	/** @type {import('$lib/lexicalCustom').ImageNode | null} */
+	/** @type {import('$lib/lexical/custom').ImageNode | null} */
 	let selectedImageNode = null;
 
 	/** @type {ComposerWritable} */

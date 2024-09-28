@@ -1,12 +1,12 @@
 <script>
 	import { getContext, onMount } from 'svelte';
 	import { FileQuestionIcon, LinkIcon, YoutubeIcon } from 'lucide-svelte';
-	import { VideoEmbedNode } from '$lib/lexicalCustom';
+	import { VideoEmbedNode } from '$lib/lexical/custom';
 	import Select from '$lib/components/Select.svelte';
 	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
 	import { VIDEO_CONSTANTS } from '$lib/constants/video';
 
-	/** @type {import("$lib/lexicalCustom").VideoEmbedNode} */
+	/** @type {import("$lib/lexical/custom").VideoEmbedNode} */
 	export let selectedVideoEmbedNode;
 
 	/** @type {ComposerWritable} */

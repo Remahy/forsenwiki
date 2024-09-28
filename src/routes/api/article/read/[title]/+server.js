@@ -1,32 +1,8 @@
 import { json, error } from '@sveltejs/kit';
-import { base64ToUint8Array } from 'uint8array-extras';
-
-import { articleConfig } from '$lib/components/editor/config/article';
-import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { toHTML } from '$lib/lexicalHTML.server';
 import { readYPostByTitle, readYPostUpdatesByTitle } from '$lib/db/article/read';
 import { yPostUpdatesToBase64 } from '$lib/yjs/utils';
 import { upsertHTML } from '$lib/db/article/html';
-
-/**
- * TODO: Move elsewhere.
- * @param {string} update
- */
-export const _updateToHTML = async (update) => {
-	try {
-		const { editor } = getYjsAndEditor(
-			articleConfig(null, false, null),
-			base64ToUint8Array(update)
-		);
-
-		const html = await toHTML(editor);
-
-		return html;
-	} catch (err) {
-		console.error(err);
-		throw 500;
-	}
-};
+import { updateToHTML } from '$lib/lexical/updateToHTML';
 
 /**
  * @param {string} title
@@ -68,7 +44,7 @@ export const _getYPostHTML = async (title) => {
 
 	const { post, update } = await _getYPostUpdate(title);
 
-	const html = await _updateToHTML(update);
+	const html = await updateToHTML(update);
 
 	Promise.resolve(upsertHTML(post.id, html));
 

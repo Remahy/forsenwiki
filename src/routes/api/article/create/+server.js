@@ -2,7 +2,6 @@ import { json, error } from '@sveltejs/kit';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { ForbiddenError } from '$lib/errors/Forbidden';
-import { articleConfig } from '$lib/components/editor/config/article';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { validateArticle } from '$lib/components/editor/validations';
 import { InvalidArticle } from '$lib/errors/InvalidArticle';
@@ -13,8 +12,9 @@ import { readYPostByTitle } from '$lib/db/article/read';
 import { encodeYDocToUpdateV2 } from '$lib/yjs/utils';
 import { adjustAndUploadImages } from '$lib/components/editor/validations/images.server';
 import { upsertHTML } from '$lib/db/article/html';
-import { toHTML } from '$lib/lexicalHTML.server';
+import { articleConfig } from '$lib/components/editor/config/article.js';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
+import toHTML from '../../../../worker/toHTML/index.server.js';
 
 export async function POST({ request, locals }) {
 	if (locals.isBlocked) {
@@ -32,9 +32,9 @@ export async function POST({ request, locals }) {
 	let title;
 	let doc;
 	try {
-		const yjs = getYjsAndEditor(articleConfig(null, false, null), base64ToUint8Array(content));
-		editor = yjs.editor;
-		doc = yjs.doc;
+		const data = getYjsAndEditor(articleConfig(null, false, null), base64ToUint8Array(content));
+		editor = data.editor;
+		doc = data.doc;
 
 		// Does not modify the editor.
 		await validateArticle(editor);
@@ -76,7 +76,7 @@ export async function POST({ request, locals }) {
 
 	const createdArticle = await createArticle(body, metadata);
 
-	await upsertHTML(createdArticle.id, await toHTML(editor));
+	await upsertHTML(createdArticle.id, await toHTML({ config: 'article', update: backendContent }));
 
 	return json({
 		...createdArticle,
