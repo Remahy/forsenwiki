@@ -1,9 +1,10 @@
 <script>
+	import { EditIcon, FileIcon } from 'lucide-svelte';
+
 	import Box from '$lib/components/Box.svelte';
 	import Container from '$lib/components/Container.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
-	import { EditIcon, FileIcon } from 'lucide-svelte';
 
 	export let data;
 

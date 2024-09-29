@@ -4,6 +4,8 @@
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import Container from '$lib/components/Container.svelte';
 
+	import '$lib/components/editor/plugins/Image/Image.css';
+
 	export let data;
 
 	const {
