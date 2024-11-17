@@ -1,6 +1,6 @@
 {
 	"name": "forsenwiki",
-	"version": "1.0.0-beta.3",
+	"version": "1.0.0-beta.4",
 	"scripts": {
 		"dev": "vite dev & npm run dev:usercontent",
 		"dev:usercontent": "npx sirv-cli usercontent -p=5175",

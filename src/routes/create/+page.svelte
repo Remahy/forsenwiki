@@ -3,6 +3,7 @@
 	import { FileUpIcon } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { resetIndexDb } from '$lib/yjs/resetIndexedDb';
 	import { createArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -93,6 +94,23 @@
 		});
 	};
 
+	const reset = async () => {
+		isUploading = true;
+
+		try {
+			await resetIndexDb('new');
+			isUploading = false;
+			window.location.reload();
+		} catch (err) {
+			if (err instanceof Error) {
+				error = err;
+				return;
+			}
+
+			error = new Error('Unknown error occurred while trying to delete draft cache.');
+		}
+	};
+
 	onMount(() => {
 		c.subscribe((composer) => {
 			if (composer === null) {
@@ -134,7 +152,9 @@
 		{/if}
 	</label>
 
-	<Editor update={null} id={'new'} {initialUpdate} />
+	<div class="flex min-h-96">
+		<Editor update={null} id={'new'} {initialUpdate} />
+	</div>
 
 	{#if error}
 		<Box class="flex items-center !bg-red-200 p-2 dark:text-black">
@@ -161,4 +181,18 @@
 			<FileUpIcon class="inline lg:hidden" />
 		</Button>
 	</Box>
+
+	<Button
+		disabled={!canEdit || isUploading || error}
+		class="flex-col !bg-red-900 !bg-opacity-50 hover:!bg-red-900 hover:!bg-opacity-100"
+		title="Reset"
+		on:click={reset}
+	>
+		{#if isUploading}
+			<Spinner />
+		{/if}
+
+		<span>Reset this draft cache</span>
+		<div><small>(Will only delete this new draft)</small></div>
+	</Button>
 </Container>
