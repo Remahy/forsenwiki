@@ -30,7 +30,7 @@
 		<div
 			class="mt-2 flex-1 grow overflow-hidden rounded bg-black bg-opacity-25 p-4 text-right lg:mt-0"
 		>
-			<p>forsen.wiki 1.0.0-beta.2</p>
+			<p>forsen.wiki 1.0.0-beta.3</p>
 
 			<div class="text-purple-800" aria-hidden="true">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</div>
 

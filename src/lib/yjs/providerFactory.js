@@ -76,9 +76,10 @@ function providerFactory(update, initialUpdate, id = 'new', yjsDocMap) {
 
 			// Incoming update
 			const uint8ArrayContent = base64ToUint8Array(update);
+			const convertedUpdate = Y.convertUpdateFormatV2ToV1(uint8ArrayContent);
 
 			// Diff the updates
-			const diff = Y.diffUpdate(uint8ArrayContent, stateVector);
+			const diff = Y.diffUpdate(convertedUpdate, stateVector);
 
 			Y.applyUpdate(doc, diff);
 		}
@@ -90,9 +91,10 @@ function providerFactory(update, initialUpdate, id = 'new', yjsDocMap) {
 
 			// Incoming update
 			const uint8ArrayContent = base64ToUint8Array(initialUpdate);
+			const convertedUpdate = Y.convertUpdateFormatV2ToV1(uint8ArrayContent);
 
 			// Diff the updates
-			const diff = Y.diffUpdate(uint8ArrayContent, stateVector);
+			const diff = Y.diffUpdate(convertedUpdate, stateVector);
 
 			Y.applyUpdate(doc, diff);
 		}
