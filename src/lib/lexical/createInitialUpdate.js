@@ -14,7 +14,7 @@ export const createInitialUpdate = () => {
 
 	editor.update(
 		() => {
-			const text = createTextNode('');
+			const text = createTextNode('forsen');
 			const p = createParagraphNode();
 
 			p.append(text);
@@ -26,5 +26,5 @@ export const createInitialUpdate = () => {
 		{ discrete: true }
 	);
 
-	return Y.encodeStateAsUpdate(doc);
+	return Y.encodeStateAsUpdateV2(doc);
 };
