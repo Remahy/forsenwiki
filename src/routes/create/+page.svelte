@@ -1,6 +1,7 @@
 <script>
 	import { getContext, onMount } from 'svelte';
 	import { FileUpIcon } from 'lucide-svelte';
+	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { createArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
@@ -11,6 +12,8 @@
 	import Editor from '$lib/components/editor/editor.svelte';
 	import Container from '$lib/components/Container.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
+
+	const { initialUpdate } = $page.data;
 
 	/** @type {Error | null} */
 	let error = null;
@@ -131,7 +134,7 @@
 		{/if}
 	</label>
 
-	<Editor update={null} id={'new'} />
+	<Editor update={null} id={'new'} {initialUpdate} />
 
 	{#if error}
 		<Box class="flex items-center !bg-red-200 p-2 dark:text-black">

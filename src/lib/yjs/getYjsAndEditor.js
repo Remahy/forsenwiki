@@ -8,7 +8,7 @@ import { Y } from './index.mjs';
 
 /**
  * @param {any} config
- * @param {Uint8Array} update
+ * @param {Uint8Array?} update
  * @returns {{editor: LexicalEditor, doc: Y.Doc}}
  */
 export function getYjsAndEditor(config, update) {
@@ -42,8 +42,10 @@ export function getYjsAndEditor(config, update) {
 	};
 	copyBinding.root.getSharedType().observeDeep(onYjsTreeChanges);
 
-	// copy the original document to the copy to trigger the observer which updates the editor
-	Y.applyUpdateV2(copyTarget, update);
+	if (update) {
+		// copy the original document to the copy to trigger the observer which updates the editor
+		Y.applyUpdateV2(copyTarget, update);
+	}
 
 	editor.update(() => {}, { discrete: true });
 
