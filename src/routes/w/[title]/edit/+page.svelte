@@ -3,6 +3,8 @@
 	import { FileIcon, FileUpIcon, HistoryIcon } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { resetIndexDb } from '$lib/yjs/resetIndexedDb';
+	import { updateArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import Editor from '$lib/components/editor/editor.svelte';
@@ -11,7 +13,6 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Container from '$lib/components/Container.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
-	import { updateArticle } from '$lib/api/articles';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 
 	const {
@@ -89,6 +90,25 @@
 		});
 	};
 
+	const reset = async () => {
+		isUploading = true;
+
+		try {
+			await resetIndexDb(id);
+			isUploading = false;
+			window.location.reload();
+		} catch (err) {
+			if (err instanceof Error) {
+				error = err;
+				return;
+			}
+
+			error = new Error(
+				"Unknown error occurred while trying to delete this article's draft cache."
+			);
+		}
+	};
+
 	onMount(() => {
 		c.subscribe((composer) => {
 			if (composer === null) {
@@ -131,7 +151,9 @@
 		</div>
 	</Box>
 
-	<Editor {update} {id} />
+	<div class="flex min-h-96">
+		<Editor {update} {id} />
+	</div>
 
 	{#if error}
 		<Box class="flex items-center !bg-red-200 p-2 dark:text-black">
@@ -169,4 +191,17 @@
 			<FileUpIcon class="inline lg:hidden" />
 		</Button>
 	</Box>
+
+	<Button
+		disabled={!canEdit || isUploading || error}
+		class="flex-col !bg-red-900 !bg-opacity-50 hover:!bg-red-900 hover:!bg-opacity-100"
+		title="Reset"
+		on:click={reset}
+	>
+		{#if isUploading}
+			<Spinner />
+		{/if}
+
+		<span>Reset {title} draft cache</span>
+	</Button>
 </Container>
