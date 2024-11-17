@@ -20,6 +20,7 @@
 
 	export let id;
 	export let update;
+	export let initialUpdate = null;
 
 	/** @type {any} */
 	const initialConfig = articleConfig(null, true, null);
@@ -28,7 +29,7 @@
 	let composer = null;
 	$: getContext('COMPOSER').set(composer);
 
-	const providerFactory = instantiateProvider(update);
+	const providerFactory = instantiateProvider(update, initialUpdate);
 
 	// This reloads pages when we leave editor.
 	onMount(() => {

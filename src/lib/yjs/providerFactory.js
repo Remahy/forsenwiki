@@ -17,11 +17,12 @@ let provider;
 
 /**
  * @param {string} update
+ * @param {string?} initialUpdate
  * @param {string} id
  * @param {Map<string, Y.Doc>} yjsDocMap
  * @returns {import('@lexical/yjs').Provider}
  */
-function providerFactory(update, id = 'new', yjsDocMap) {
+function providerFactory(update, initialUpdate, id = 'new', yjsDocMap) {
 	if (provider) {
 		return provider;
 	}
@@ -60,6 +61,12 @@ function providerFactory(update, id = 'new', yjsDocMap) {
 	});
 
 	persistence.once('synced', () => {
+		let useInitialUpdate = false;
+
+		if (doc.get('root', Y.XmlText).length === 0) {
+			useInitialUpdate = true;
+		}
+
 		if (update) {
 			// https://github.com/yjs/yjs/blob/52b906898fee761a6223eeef6a33adc2a4041b80/README.md#example-syncing-clients-without-loading-the-ydoc
 
@@ -69,10 +76,23 @@ function providerFactory(update, id = 'new', yjsDocMap) {
 
 			// Incoming update
 			const uint8ArrayContent = base64ToUint8Array(update);
-			const convertedUpdate = Y.convertUpdateFormatV2ToV1(uint8ArrayContent);
 
 			// Diff the updates
-			const diff = Y.diffUpdate(convertedUpdate, stateVector);
+			const diff = Y.diffUpdate(uint8ArrayContent, stateVector);
+
+			Y.applyUpdate(doc, diff);
+		}
+
+		if (!update && useInitialUpdate && initialUpdate) {
+			const currentStateUpdate = Y.encodeStateAsUpdate(doc);
+
+			const stateVector = Y.encodeStateVectorFromUpdate(currentStateUpdate);
+
+			// Incoming update
+			const uint8ArrayContent = base64ToUint8Array(initialUpdate);
+
+			// Diff the updates
+			const diff = Y.diffUpdate(uint8ArrayContent, stateVector);
 
 			Y.applyUpdate(doc, diff);
 		}
@@ -92,11 +112,12 @@ function providerFactory(update, id = 'new', yjsDocMap) {
 
 /**
  * @param {string} update
+ * @param {string?} initialUpdate
  */
-export function instantiateProvider(update) {
+export function instantiateProvider(update, initialUpdate) {
 	/**
 	 * @param {string} id
 	 * @param {any} yjsDocMap
 	 */
-	return (id, yjsDocMap) => providerFactory(update, id, yjsDocMap);
+	return (id, yjsDocMap) => providerFactory(update, initialUpdate, id, yjsDocMap);
 }

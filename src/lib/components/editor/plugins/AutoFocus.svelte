@@ -1,4 +1,5 @@
 <script>
+	import { $setSelection as setSelection, $getRoot as getRoot } from 'lexical';
 	import { getContext, onMount } from 'svelte';
 
 	/** @type {ComposerWritable} */
@@ -17,8 +18,13 @@
 
 			if (el) {
 				setTimeout(() => {
-					editor.getRootElement()?.focus();
-				}, 0);
+					editor.update(() => {
+						const selection = getRoot().getLastChild()?.selectEnd();
+						if (selection) {
+							setSelection(selection);
+						}
+					});
+				}, 100);
 			}
 		});
 	});
