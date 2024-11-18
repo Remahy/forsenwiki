@@ -12,9 +12,9 @@ import { readYPostByTitle } from '$lib/db/article/read';
 import { encodeYDocToUpdateV2 } from '$lib/yjs/utils';
 import { adjustAndUploadImages } from '$lib/components/editor/validations/images.server';
 import { upsertHTML } from '$lib/db/article/html';
-import { articleConfig } from '$lib/components/editor/config/article.js';
+import { articleConfig } from '$lib/components/editor/config/article';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
-import toHTML from '../../../../worker/toHTML/index.server.js';
+import toHTML from '$lib/worker/toHTML';
 
 export async function POST({ request, locals }) {
 	if (locals.isBlocked) {

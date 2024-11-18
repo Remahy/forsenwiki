@@ -1,14 +1,13 @@
-import { uint8ArrayToBase64 } from 'uint8array-extras';
 import { error } from '@sveltejs/kit';
-import { createInitialUpdate } from '$lib/lexical/createInitialUpdate';
+import initialUpdate from '$lib/worker/initialUpdate';
 
 export async function load() {
 	try {
-		const initialUpdate = createInitialUpdate();
+		const initUpdate = await initialUpdate();
 
-		if (initialUpdate) {
+		if (initUpdate) {
 			return {
-				initialUpdate: uint8ArrayToBase64(initialUpdate),
+				initialUpdate: initUpdate,
 			};
 		}
 
