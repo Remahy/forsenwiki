@@ -1,9 +1,13 @@
-<script context="module" lang="ts">
-	export type InsertVideoEmbedPayload = Readonly<VideoEmbedPayload>;
-	export const INSERT_VIDEOEMBED_COMMAND: LexicalCommand<InsertVideoEmbedPayload> = createCommand();
+<script context="module">
+	/**
+	 * @typedef {Readonly<import('./VideoEmbed').VideoEmbedPayload>} InsertVideoEmbedPayload
+	 */
+
+	/** @type {import('lexical').LexicalCommand<InsertVideoEmbedPayload>} */
+	export const INSERT_VIDEOEMBED_COMMAND = createCommand();
 </script>
 
-<script lang="ts">
+<script>
 	import { onMount } from 'svelte';
 	import { getEditor } from 'svelte-lexical';
 	import {
@@ -12,7 +16,6 @@
 		$createParagraphNode as createParagraphNode,
 		COMMAND_PRIORITY_EDITOR,
 		$getNodeByKey as getNodeByKey,
-		type LexicalCommand,
 		$getSelection as getSelection,
 		RootNode,
 	} from 'lexical';
@@ -21,12 +24,13 @@
 	import {
 		$createVideoEmbedNode as createVideoEmbedNode,
 		VideoEmbedNode,
-		type VideoEmbedPayload,
 	} from './VideoEmbed';
 
-	const editor: LexicalEditor = getEditor();
+	/** @type {import('lexical').LexicalEditor} */
+	const editor = getEditor();
 
-	function wrapperInsertVideoEmbed(payload: VideoEmbedPayload) {
+	/** @param {import('./VideoEmbed').VideoEmbedPayload} payload */
+	function wrapperInsertVideoEmbed(payload) {
 		editor.update(() => {
 			const node = createVideoEmbedNode(payload);
 
@@ -37,7 +41,7 @@
 
 			insertNodes([node]);
 
-			const parent = node.getParent() as RootNode;
+			const parent = /** @type {RootNode} */ (node.getParent());
 
 			if (!parent) {
 				node.remove();
@@ -57,7 +61,8 @@
 					for (const [key, mutation] of mutatedNodes) {
 						if (mutation === 'destroyed') continue;
 
-						const node: VideoEmbedNode | null = getNodeByKey(key);
+						/** @type {VideoEmbedNode | null} */
+						const node = getNodeByKey(key);
 						if (!node) {
 							console.warn(
 								'Could not find mutated VideoEmbedNode node by key',
@@ -82,7 +87,7 @@
 					}
 				});
 			}),
-			editor.registerCommand<any>(
+			editor.registerCommand(
 				INSERT_VIDEOEMBED_COMMAND,
 				(payload) => {
 					wrapperInsertVideoEmbed(payload);

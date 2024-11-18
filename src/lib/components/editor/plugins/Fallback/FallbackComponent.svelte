@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 	import { onMount } from 'svelte';
 	import {
 		$getSelection as getSelection,
@@ -10,29 +10,33 @@
 		KEY_BACKSPACE_COMMAND,
 		KEY_ENTER_COMMAND,
 		KEY_ESCAPE_COMMAND,
-		type LexicalEditor,
-		type BaseSelection,
-		type NodeKey,
 	} from 'lexical';
 	import { mergeRegister } from '@lexical/utils';
 	import { clearSelection, createNodeSelectionStore } from '../../utils/getSelection';
-	import { $isFallbackNode as isFallbackNode, type FallbackNode } from './Fallback';
+	import { $isFallbackNode as isFallbackNode } from './Fallback';
 
-	export let node: FallbackNode;
-	export let nodeKey: NodeKey;
-	export let data: any;
-	export let editor: LexicalEditor;
+	/** @type {import('./Fallback').FallbackNode} */
+	export let node;
+	/** @type {import('lexical').NodeKey} */
+	export let nodeKey;
+	export let data;
+	/** @type {LexicalEditor} */
+	export let editor;
 
-	let selection: BaseSelection | null = null;
-	let embedRef: HTMLDivElement | null;
+	/** @type {BaseSelection | null} */
+	let selection = null;
+	/** @type {HTMLDivElement | null} */
+	let embedRef;
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
 	let isResizing = false;
 
 	$: isFocused = $isSelected || isResizing;
 
-	const onDelete = (payload: KeyboardEvent) => {
+	/** @param {KeyboardEvent} payload */
+	const onDelete = (payload) => {
 		if ($isSelected && isNodeSelection(getSelection())) {
-			const event: KeyboardEvent = payload;
+			/** @type {KeyboardEvent} */
+			const event = payload;
 			event.preventDefault();
 			const node = getNodeByKey(nodeKey);
 			if (isFallbackNode(node)) {
@@ -61,7 +65,8 @@
 		return false;
 	};
 
-	const onClick = (payload: MouseEvent) => {
+	/** @param {MouseEvent} payload */
+	const onClick = (payload) => {
 		const event = payload;
 
 		// if (isResizing) {
@@ -88,7 +93,7 @@
 					selection = editorState.read(() => getSelection());
 				}
 			}),
-			editor.registerCommand<MouseEvent>(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW),
+			editor.registerCommand(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),

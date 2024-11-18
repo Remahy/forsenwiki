@@ -1,17 +1,14 @@
-<script context="module" lang="ts">
+<script context="module">
 	const imageCache = new Set();
 
-	export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> = createCommand(
-		'RIGHT_CLICK_IMAGE_COMMAND'
-	);
+	/** @type {import('lexical').LexicalCommand<MouseEvent>} */
+	export const RIGHT_CLICK_IMAGE_COMMAND = createCommand('RIGHT_CLICK_IMAGE_COMMAND');
 </script>
 
-<script lang="ts">
+<script>
 	import {
 		$getSelection as getSelection,
 		$isNodeSelection as isNodeSelection,
-		type LexicalEditor,
-		type LexicalCommand,
 		$getNodeByKey as getNodeByKey,
 		$isRangeSelection as isRangeSelection,
 		createCommand,
@@ -22,7 +19,6 @@
 		KEY_BACKSPACE_COMMAND,
 		KEY_ESCAPE_COMMAND,
 		KEY_ENTER_COMMAND,
-		type BaseSelection,
 	} from 'lexical';
 	import { onMount } from 'svelte';
 	import { mergeRegister } from '@lexical/utils';
@@ -39,21 +35,31 @@
 		$isImageNode as isImageNode,
 	} from './Image';
 
-	export let node: ImageNode;
-	export let src: string;
-	export let altText: string;
-	export let nodeKey: string;
-	export let width: 'inherit' | number;
-	export let height: 'inherit' | number;
-	export let resizable: boolean;
-	export let editor: LexicalEditor;
+	/** @type {ImageNode} */
+	export let node;
+	/** @type {string} */
+	export let src;
+	/** @type {string} */
+	export let altText;
+	/** @type {string} */
+	export let nodeKey;
+	/** @type {'inherit' | number} */
+	export let width;
+	/** @type {'inherit' | number} */
+	export let height;
+	/** @type {boolean} */
+	export let resizable;
+	/** @type {import('lexical').LexicalEditor} */
+	export let editor;
 
 	$: heightCss = height === 'inherit' ? 'inherit' : height + 'px';
 	$: widthCss = width === 'inherit' ? 'inherit' : width + 'px';
 
-	let selection: BaseSelection | null = null;
+	/** @type {BaseSelection | null} */
+	let selection = null;
 
-	let imageRef: HTMLElement | HTMLImageElement | null;
+	/** @type {HTMLElement | HTMLImageElement | null} */
+	let imageRef;
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
 	let isResizing = false;
 
@@ -73,9 +79,11 @@
 		}
 	});
 
-	const onDelete = (payload: KeyboardEvent) => {
+	/** @param {KeyboardEvent} payload */
+	const onDelete = (payload) => {
 		if ($isSelected && isNodeSelection(getSelection())) {
-			const event: KeyboardEvent = payload;
+			/** @type {KeyboardEvent} */
+			const event = payload;
 			event.preventDefault();
 			const node = getNodeByKey(nodeKey);
 			if (isImageNode(node)) {
@@ -104,7 +112,8 @@
 		return false;
 	};
 
-	const onClick = (payload: MouseEvent) => {
+	/** @param {MouseEvent} payload */
+	const onClick = (payload) => {
 		const event = payload;
 
 		if (isResizing) {
@@ -124,16 +133,20 @@
 		return false;
 	};
 
-	const onRightClick = (event: MouseEvent): void => {
+	/**
+	 * @param {MouseEvent} event
+	 * @returns {void}
+	 */
+	const onRightClick = (event) => {
 		editor.getEditorState().read(() => {
 			const latestSelection = getSelection();
-			const domElement = event.target as HTMLElement;
+			const domElement = /** @type {HTMLElement} */ (event.target);
 			if (
 				domElement.tagName === 'IMG' &&
 				isRangeSelection(latestSelection) &&
 				latestSelection.getNodes().length === 1
 			) {
-				editor.dispatchCommand(RIGHT_CLICK_IMAGE_COMMAND, event as MouseEvent);
+				editor.dispatchCommand(RIGHT_CLICK_IMAGE_COMMAND, event);
 			}
 		});
 	};
@@ -147,8 +160,8 @@
 					selection = editorState.read(() => getSelection());
 				}
 			}),
-			editor.registerCommand<MouseEvent>(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW),
-			editor.registerCommand<MouseEvent>(RIGHT_CLICK_IMAGE_COMMAND, onClick, COMMAND_PRIORITY_LOW),
+			editor.registerCommand(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW),
+			editor.registerCommand(RIGHT_CLICK_IMAGE_COMMAND, onClick, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(
 				DRAGSTART_COMMAND,
 				(event) => {
@@ -177,7 +190,11 @@
 		};
 	});
 
-	const onResizeEnd = (nextWidth: 'inherit' | number, nextHeight: 'inherit' | number) => {
+	/**
+	 * @param {'inherit' | number} nextWidth
+	 * @param {'inherit' | number} nextHeight
+	 */
+	const onResizeEnd = (nextWidth, nextHeight) => {
 		// Delay hiding the resize bars for click case
 		setTimeout(() => {
 			isResizing = false;
