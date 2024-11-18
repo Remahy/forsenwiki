@@ -157,6 +157,7 @@ function generateTwitchIframe(node: VideoEmbedNode, parentUrl: string) {
 	element.setAttribute('allowfullscreen', 'true');
 	element.setAttribute('title', title);
 	element.setAttribute('loading', 'lazy');
+	element.setAttribute('style', 'max-width:100%;height:auto;aspect-ratio:16/9;');
 
 	if (!url) {
 		element.setAttribute('class', 'bg-violet-500 bg-opacity-50');
