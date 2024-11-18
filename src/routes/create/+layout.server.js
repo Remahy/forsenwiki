@@ -1,7 +1,8 @@
 import { error } from '@sveltejs/kit';
-import initialUpdate from '$lib/worker/initialUpdate';
 
 export async function load() {
+	const { default: initialUpdate } = await import('$lib/worker/initialUpdate');
+
 	try {
 		const initUpdate = await initialUpdate();
 
