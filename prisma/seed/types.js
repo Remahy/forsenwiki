@@ -87,6 +87,7 @@ async function yMain() {
 try {
 	await yMain();
 	await prisma.$disconnect();
+	process.exit(0);
 } catch (error) {
 	await prisma.$disconnect();
 	console.error(error);

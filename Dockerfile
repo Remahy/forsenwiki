@@ -14,7 +14,7 @@ RUN npm run prisma:generate
 RUN npm run build
 RUN npm prune --production
 
-FROM node:20 AS run
+FROM node:22 AS run
 
 ENV NODE_ENV=production
 
