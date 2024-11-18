@@ -9,7 +9,6 @@
 
 <script>
 	import { onMount } from 'svelte';
-	import { getEditor } from 'svelte-lexical';
 	import {
 		$insertNodes as insertNodes,
 		createCommand,
@@ -19,6 +18,7 @@
 		$getSelection as getSelection,
 		RootNode,
 	} from 'lexical';
+	import { getEditor } from 'svelte-lexical';
 	import { mergeRegister } from '@lexical/utils';
 
 	import {

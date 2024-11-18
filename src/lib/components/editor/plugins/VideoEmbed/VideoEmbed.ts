@@ -18,13 +18,13 @@ import {
 	type NodeKey,
 	type Spread,
 } from 'lexical';
-import { sanitizeUrl } from 'svelte-lexical';
 
 import { DOMAIN } from '$lib/environment/environment';
+import { VIDEO_CONSTANTS } from '$lib/constants/video';
 
 import VideoEmbedComponent from './VideoEmbedComponent.svelte';
 import { DecoratorBlockNode, type SerializedDecoratorBlockNode } from './DecoratorBlockNode';
-import { VIDEO_CONSTANTS } from '$lib/constants/video';
+import { sanitizeUrl } from '../../utils/sanitizeUrl';
 
 export type SupportedPlatforms = 'twitch' | 'youtube';
 

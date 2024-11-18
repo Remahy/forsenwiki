@@ -24,9 +24,9 @@
 			<li>sveltekit</li>
 			<li>authjs</li>
 			<li>prisma</li>
-			<li>@facebook/lexical (svelte-lexical)</li>
+			<li>@facebook/lexical & svelte-lexical</li>
 			<li>yjs</li>
-			<li>some kind of god of war diff lib (tbd)</li>
+			<li>json-diff & diff</li>
 		</ul>
 
 		<p>
