@@ -3,7 +3,7 @@
 	import { FileIcon, FileUpIcon, HistoryIcon } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import { resetIndexDb } from '$lib/yjs/resetIndexedDb';
+	import { resetIndexedDb } from '$lib/yjs/resetIndexedDb';
 	import { updateArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';
@@ -94,7 +94,7 @@
 		isUploading = true;
 
 		try {
-			await resetIndexDb(id);
+			await resetIndexedDb(id);
 			isUploading = false;
 			window.location.reload();
 		} catch (err) {

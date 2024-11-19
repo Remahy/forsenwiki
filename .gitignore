@@ -11,3 +11,5 @@ node_modules
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 /usercontent
+/src/lib/worker/initialUpdate/worker.js
+/src/lib/worker/toHTML/worker.js

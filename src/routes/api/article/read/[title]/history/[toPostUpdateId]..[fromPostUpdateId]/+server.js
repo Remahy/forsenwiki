@@ -8,7 +8,7 @@ import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
 import { getDiffJSON } from '$lib/diff/index.server';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { diffConfig } from '$lib/components/editor/config/diff';
-import toHTML from '../../../../../../../worker/toHTML/index.server';
+import toHTML from '$lib/worker/toHTML';
 
 /**
  * @param {string} title

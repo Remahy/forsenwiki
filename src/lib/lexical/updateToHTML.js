@@ -1,4 +1,4 @@
-import toHTML from '../../worker/toHTML/index.server';
+import toHTML from "$lib/worker/toHTML";
 
 /**
  * @param {string} update

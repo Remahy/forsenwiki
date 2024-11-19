@@ -9,7 +9,7 @@ import { $getRoot } from 'lexical';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { createHeadlessEditor } from '@lexical/headless';
 
-export const toHTMLWorker = async () => {
+const toHTMLWorker = async () => {
 	/**
 	 * @type {{ config: string, content: string, update: string }}
 	 */
@@ -31,7 +31,6 @@ export const toHTMLWorker = async () => {
 			cfg = articleConfig;
 			break;
 	}
-
 
 	let editor;
 	if (update) {

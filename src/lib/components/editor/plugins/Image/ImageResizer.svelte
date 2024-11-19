@@ -1,15 +1,24 @@
-<script lang="ts">
-	import type { LexicalEditor } from 'lexical';
+<script>
 	import { calculateZoomLevel } from '@lexical/utils';
 
-	export let onResizeStart: () => void;
-	export let onResizeEnd: (width: 'inherit' | number, height: 'inherit' | number) => void;
-	export let imageRef: HTMLElement | null;
-	export let editor: LexicalEditor;
+	/** @type {() => void} */
+	export let onResizeStart;
+	/** @type {(width: 'inherit' | number, height: 'inherit' | number) => void} */
+	export let onResizeEnd;
+	/** @type {HTMLElement | null} */
+	export let imageRef;
+	/** @type {import('lexical').LexicalEditor} */
+	export let editor;
 
-	let controlWrapperRef: HTMLDivElement;
+	/** @type {HTMLDivElement} */
+	let controlWrapperRef;
 
-	function clamp(value: number, min: number, max: number) {
+	/**
+	 * @param {number} value
+	 * @param {number} min
+	 * @param {number} max
+	 */
+	function clamp(value, min, max) {
 		return Math.min(Math.max(value, min), max);
 	}
 
@@ -25,17 +34,20 @@
 		value: 'default',
 	};
 
-	const positioningRef: {
-		currentHeight: 'inherit' | number;
-		currentWidth: 'inherit' | number;
-		direction: number;
-		isResizing: boolean;
-		ratio: number;
-		startHeight: number;
-		startWidth: number;
-		startX: number;
-		startY: number;
-	} = {
+	/**
+	 * @type {{
+			currentHeight: 'inherit' | number;
+			currentWidth: 'inherit' | number;
+			direction: number;
+			isResizing: boolean;
+			ratio: number;
+			startHeight: number;
+			startWidth: number;
+			startX: number;
+			startY: number;
+		}}
+	 */
+	const positioningRef = {
 		currentHeight: 0,
 		currentWidth: 0,
 		direction: 0,
@@ -57,7 +69,8 @@
 	const minWidth = 28;
 	const minHeight = 28;
 
-	const setStartCursor = (direction: number) => {
+	/** @param {number} direction */
+	const setStartCursor = (direction) => {
 		const ew = direction === Direction.east || direction === Direction.west;
 		const ns = direction === Direction.north || direction === Direction.south;
 		const nwse =
@@ -87,7 +100,11 @@
 		}
 	};
 
-	const handlePointerDown = (event: PointerEvent, direction: number) => {
+	/**
+	 * @param {PointerEvent} event
+	 * @param {number} direction
+	 */
+	const handlePointerDown = (event, direction) => {
 		if (!editor.isEditable()) {
 			return;
 		}
@@ -122,7 +139,8 @@
 		}
 	};
 
-	const handlePointerMove = (event: PointerEvent) => {
+	/** @param {PointerEvent} event */
+	const handlePointerMove = (event) => {
 		const image = imageRef;
 		const positioning = positioningRef;
 

@@ -4,9 +4,9 @@
 	import { modal } from '$lib/stores/modal';
 	import Button from '$lib/components/Button.svelte';
 	import Select from '$lib/components/Select.svelte';
-	import { sanitizeUrl } from 'svelte-lexical';
 	import isUrl from 'is-url';
 	import { onMount } from 'svelte';
+	import { sanitizeUrl } from '../../utils/sanitizeUrl';
 
 	/** @typedef {import('@lexical/link').LinkAttributes} LinkAttributes */
 

@@ -18,13 +18,13 @@ import {
 	type NodeKey,
 	type Spread,
 } from 'lexical';
-import { sanitizeUrl } from 'svelte-lexical';
 
 import { DOMAIN } from '$lib/environment/environment';
+import { VIDEO_CONSTANTS } from '$lib/constants/video';
 
 import VideoEmbedComponent from './VideoEmbedComponent.svelte';
 import { DecoratorBlockNode, type SerializedDecoratorBlockNode } from './DecoratorBlockNode';
-import { VIDEO_CONSTANTS } from '$lib/constants/video';
+import { sanitizeUrl } from '../../utils/sanitizeUrl';
 
 export type SupportedPlatforms = 'twitch' | 'youtube';
 
@@ -114,11 +114,11 @@ export const getURLAndTitle = (
 	};
 };
 
-function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
+function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl: string) {
+	const element = document.createElement('iframe');
+
 	const { url, title } = getURLAndTitle(node.__platform, node.__src, parentUrl);
 
-	const element = document.createElement('iframe');
-	element.setAttribute('data-lexical-youtube', node.__src);
 	element.setAttribute('width', node.__width.toString() || 'inherit');
 	element.setAttribute('height', node.__height.toString() || 'inherit');
 	element.setAttribute('src', url);
@@ -132,6 +132,15 @@ function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
 	element.setAttribute('loading', 'lazy');
 	element.setAttribute('style', 'max-width:100%;height:auto;aspect-ratio:16/9;');
 
+	return element;
+}
+
+function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
+	const { url } = getURLAndTitle(node.__platform, node.__src, parentUrl);
+
+	const element = createBoilerplateVideoIframeAttributes(node, parentUrl);
+	element.setAttribute('data-lexical-youtube', node.__src);
+
 	if (!url) {
 		element.setAttribute('class', 'bg-violet-500 bg-opacity-50');
 		element.srcdoc = `<p style="color:#fff;"><strong>No valid URL is provided for this YouTube embed.</strong></p>`;
@@ -141,22 +150,10 @@ function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
 }
 
 function generateTwitchIframe(node: VideoEmbedNode, parentUrl: string) {
-	const { url, title } = getURLAndTitle(node.__platform, node.__src, parentUrl);
+	const { url } = getURLAndTitle(node.__platform, node.__src, parentUrl);
 
-	const element = document.createElement('iframe');
+	const element = createBoilerplateVideoIframeAttributes(node, parentUrl);
 	element.setAttribute('data-lexical-twitch', node.__src);
-
-	element.setAttribute('width', node.__width.toString() || 'inherit');
-	element.setAttribute('height', node.__height.toString() || 'inherit');
-	element.setAttribute('src', url);
-	element.setAttribute('frameborder', '0');
-	element.setAttribute(
-		'allow',
-		'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-	);
-	element.setAttribute('allowfullscreen', 'true');
-	element.setAttribute('title', title);
-	element.setAttribute('loading', 'lazy');
 
 	if (!url) {
 		element.setAttribute('class', 'bg-violet-500 bg-opacity-50');

@@ -21,7 +21,7 @@ import { upsertHTML } from '$lib/db/article/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
-import toHTML from '../../../../../worker/toHTML/index.server';
+import toHTML from '$lib/worker/toHTML';
 
 export async function POST({ request, locals, params }) {
 	if (locals.isBlocked) {

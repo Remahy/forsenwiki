@@ -1,12 +1,17 @@
-<script context="module" lang="ts">
-	export const INSERT_IMAGE_COMMAND: LexicalCommand<InsertImagePayload> = createCommand();
-	export type InsertImagePayload = Readonly<ImagePayload>;
+<script context="module">
+	/**
+	 * @typedef {Readonly<import('./Image').ImagePayload>} InsertImagePayload
+	 */
 
-	const getDOMSelection = (targetWindow: Window | null): Selection | null =>
+	/** @type {import('lexical').LexicalCommand<InsertImagePayload>} */
+	export const INSERT_IMAGE_COMMAND = createCommand();
+
+	/** @type {(targetWindow: Window | null) => Selection | null} */
+	const getDOMSelection = (targetWindow) =>
 		CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
 </script>
 
-<script lang="ts">
+<script>
 	import './Image.css';
 
 	import {
@@ -25,8 +30,6 @@
 		DRAGOVER_COMMAND,
 		DRAGSTART_COMMAND,
 		DROP_COMMAND,
-		type LexicalCommand,
-		type LexicalEditor,
 	} from 'lexical';
 	import { $wrapNodeInElement as wrapNodeInElement, mergeRegister } from '@lexical/utils';
 	import { onMount } from 'svelte';
@@ -41,14 +44,19 @@
 		$isImageNode as isImageNode,
 		ImageNode,
 		TRANSPARENT_IMAGE,
-		type ImagePayload,
 	} from './Image';
 
-	const editor: LexicalEditor = getEditor();
+	/** @type {import('lexical').LexicalEditor} */
+	const editor = getEditor();
 
-	let img: HTMLImageElement;
+	/** @type {HTMLImageElement} */
+	let img;
 
-	function onDragStart(event: DragEvent): boolean {
+	/**
+	 * @param {DragEvent} event
+	 * @returns {boolean}
+	 */
+	function onDragStart(event) {
 		const node = getImageNodeInSelection();
 		if (!node) {
 			return false;
@@ -79,7 +87,11 @@
 		return true;
 	}
 
-	function onDragover(event: DragEvent): boolean {
+	/**
+	 * @param {DragEvent} event
+	 * @returns {boolean}
+	 */
+	function onDragover(event) {
 		const node = getImageNodeInSelection();
 		if (!node) {
 			return false;
@@ -90,7 +102,12 @@
 		return true;
 	}
 
-	function onDrop(event: DragEvent, editor: LexicalEditor): boolean {
+	/**
+	 * @param {DragEvent} event
+	 * @param {import('lexical').LexicalEditor} editor
+	 * @returns {boolean}
+	 */
+	function onDrop(event, editor) {
 		const node = getImageNodeInSelection();
 		if (!node) {
 			return false;
@@ -113,7 +130,8 @@
 		return true;
 	}
 
-	function getImageNodeInSelection(): ImageNode | null {
+	/** @returns {import('./Image').ImageNode | null} */
+	function getImageNodeInSelection() {
 		const selection = getSelection();
 		if (!isNodeSelection(selection)) {
 			return null;
@@ -123,7 +141,11 @@
 		return isImageNode(node) ? node : null;
 	}
 
-	function getDragImageData(event: DragEvent): null | InsertImagePayload {
+	/**
+	 * @param {DragEvent} event
+	 * @returns {InsertImagePayload | null}
+	 */
+	function getDragImageData(event) {
 		const dragData = event.dataTransfer?.getData('application/x-lexical-drag');
 		if (!dragData) {
 			return null;
@@ -136,7 +158,11 @@
 		return data;
 	}
 
-	function canDropImage(event: DragEvent): boolean {
+	/**
+	 * @param {DragEvent} event
+	 * @returns {boolean}
+	 */
+	function canDropImage(event) {
 		const target = event.target;
 		return !!(
 			target &&
@@ -147,15 +173,19 @@
 		);
 	}
 
-	function getDragSelection(event: DragEvent): Range | null | undefined {
+	/**
+	 * @param {DragEvent} event
+	 * @returns {Range | null | undefined}
+	 */
+	function getDragSelection(event) {
 		let range;
-		const target = event.target as null | Element | Document;
+		const target = /** @type {null | Element | Document} */ (event.target);
 		const targetWindow =
 			target == null
 				? null
 				: target.nodeType === 9
-					? (target as Document).defaultView
-					: (target as Element).ownerDocument.defaultView;
+					? /** @type {Document} */ (target).defaultView
+					: /** @type {Element} */ (target).ownerDocument.defaultView;
 		const domSelection = getDOMSelection(targetWindow);
 		if (document.caretRangeFromPoint) {
 			range = document.caretRangeFromPoint(event.clientX, event.clientY);
@@ -169,14 +199,19 @@
 		return range;
 	}
 
-	function getBase64Image(img: { src: string }, node: ImageNode) {
+	/**
+	 * @param {{ src: string }} img
+	 * @param {import('./Image').ImageNode} node
+	 */
+	function getBase64Image(img, node) {
 		return async () => {
 			try {
 				// Fetch the image as a Blob
 				const response = await fetch(img.src);
 				const blob = await response.blob();
 
-				const base64 = await new Promise<string>((resolve, reject) => {
+				/** @type {string} */
+				const base64 = await new Promise((resolve, reject) => {
 					try {
 						const reader = new FileReader();
 						reader.onloadend = () => {
@@ -209,7 +244,8 @@
 		};
 	}
 
-	function wrapperInsertImage(payload: ImagePayload) {
+	/** @param {import('./Image').ImagePayload} payload */
+	function wrapperInsertImage(payload) {
 		const placeholderNode = createImageNode(payload);
 
 		const { width: placeholderNodeWidth, height: placeholderNodeHeight } =
@@ -221,7 +257,8 @@
 			altText: placeholderNode.getAltText(),
 			width: placeholderNodeWidth,
 			height: placeholderNodeHeight,
-			onSubmit: (data: ImagePayload) => {
+			/** @param {import('./Image').ImagePayload} data */
+			onSubmit: (data) => {
 				editor.update(() => {
 					const node = createImageNode(payload);
 
@@ -264,13 +301,14 @@
 
 		return mergeRegister(
 			editor.registerMutationListener(ImageNode, (mutatedNodes) => {
-				const promises: any[] = [];
+				/** @type {any[]} */
+				const promises = [];
 
 				editor.update(async () => {
 					for (const [key, mutation] of mutatedNodes) {
 						if (mutation === 'destroyed') continue;
-
-						const node: ImageNode | null = getNodeByKey(key);
+						/** @type {ImageNode | null} */
+						const node = getNodeByKey(key);
 						if (!node) {
 							console.warn('Could not find mutated image node by key', key, 'that was', mutation);
 							continue;
@@ -287,7 +325,7 @@
 						}
 
 						// Download image, turn it into base64.
-						const element = editor.getElementByKey(key) as HTMLImageElement | null;
+						const element = /** @type {HTMLImageElement | null} */ (editor.getElementByKey(key));
 
 						if (!element) {
 							console.warn(
@@ -307,7 +345,7 @@
 					Promise.all(promises.map((fn) => fn()));
 				}
 			}),
-			editor.registerCommand<InsertImagePayload>(
+			editor.registerCommand(
 				INSERT_IMAGE_COMMAND,
 				(payload) => {
 					wrapperInsertImage(payload);
@@ -316,21 +354,21 @@
 				},
 				COMMAND_PRIORITY_EDITOR
 			),
-			editor.registerCommand<DragEvent>(
+			editor.registerCommand(
 				DRAGSTART_COMMAND,
 				(event) => {
 					return onDragStart(event);
 				},
 				COMMAND_PRIORITY_HIGH
 			),
-			editor.registerCommand<DragEvent>(
+			editor.registerCommand(
 				DRAGOVER_COMMAND,
 				(event) => {
 					return onDragover(event);
 				},
 				COMMAND_PRIORITY_LOW
 			),
-			editor.registerCommand<DragEvent>(
+			editor.registerCommand(
 				DROP_COMMAND,
 				(event) => {
 					return onDrop(event, editor);

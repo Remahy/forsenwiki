@@ -1,10 +1,9 @@
-<script context="module" lang="ts">
-	export const RIGHT_CLICK_VIDEOEMBED_COMMAND: LexicalCommand<MouseEvent> = createCommand(
-		'RIGHT_CLICK_VIDEOEMBED_COMMAND'
-	);
+<script context="module">
+	/** @type {import('lexical').LexicalCommand<MouseEvent>} */
+	export const RIGHT_CLICK_VIDEOEMBED_COMMAND = createCommand('RIGHT_CLICK_VIDEOEMBED_COMMAND');
 </script>
 
-<script lang="ts">
+<script>
 	import '../Image/Image.css';
 
 	import { onMount } from 'svelte';
@@ -20,10 +19,6 @@
 		KEY_BACKSPACE_COMMAND,
 		KEY_ENTER_COMMAND,
 		KEY_ESCAPE_COMMAND,
-		type LexicalEditor,
-		type LexicalCommand,
-		type BaseSelection,
-		type NodeKey,
 	} from 'lexical';
 	import { mergeRegister } from '@lexical/utils';
 
@@ -37,20 +32,29 @@
 		getURLAndTitle,
 		$isVideoEmbedNode as isVideoEmbedNode,
 		VideoEmbedNode,
-		type SupportedPlatforms,
 	} from './VideoEmbed';
 
-	export let node: VideoEmbedNode;
-	export let src: string;
-	export let platform: SupportedPlatforms;
-	export let nodeKey: NodeKey;
-	export let height: number | 'inherit';
-	export let width: number | 'inherit';
-	export let resizable: boolean;
-	export let editor: LexicalEditor;
+	/** @type {VideoEmbedNode} */
+	export let node;
+	/** @type {string} */
+	export let src;
+	/** @type {import('./VideoEmbed').SupportedPlatforms} */
+	export let platform;
+	/** @type {import('lexical').NodeKey} */
+	export let nodeKey;
+	/** @type {'inherit' | number} */
+	export let height;
+	/** @type {'inherit' | number} */
+	export let width;
+	/** @type {boolean} */
+	export let resizable;
+	/** @type {import('lexical').LexicalEditor} */
+	export let editor;
 
-	let selection: BaseSelection | null = null;
-	let embedRef: HTMLDivElement | null;
+	/** @type {BaseSelection | null} */
+	let selection = null;
+	/** @type {HTMLDivElement | null} */
+	let embedRef;
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
 	let isResizing = false;
 
@@ -59,23 +63,29 @@
 	$: url = parsedSrc.url;
 	$: title = parsedSrc.title;
 
-	const onRightClick = (event: MouseEvent): void => {
+	/**
+	 * @param {MouseEvent} event
+	 * @returns {void}
+	 */
+	const onRightClick = (event) => {
 		editor.getEditorState().read(() => {
 			const latestSelection = getSelection();
-			const domElement = event.target as HTMLElement;
+			const domElement = /** @type {HTMLElement} */ (event.target);
 			if (
 				domElement.tagName === 'VIDEO' &&
 				isRangeSelection(latestSelection) &&
 				latestSelection.getNodes().length === 1
 			) {
-				editor.dispatchCommand(RIGHT_CLICK_VIDEOEMBED_COMMAND, event as MouseEvent);
+				editor.dispatchCommand(RIGHT_CLICK_VIDEOEMBED_COMMAND, event);
 			}
 		});
 	};
 
-	const onDelete = (payload: KeyboardEvent) => {
+	/** @param {KeyboardEvent} payload */
+	const onDelete = (payload) => {
 		if ($isSelected && isNodeSelection(getSelection())) {
-			const event: KeyboardEvent = payload;
+			/** @type {KeyboardEvent} */
+			const event = payload;
 			event.preventDefault();
 			const node = getNodeByKey(nodeKey);
 			if (isVideoEmbedNode(node)) {
@@ -104,7 +114,8 @@
 		return false;
 	};
 
-	const onClick = (payload: MouseEvent) => {
+	/** @param {MouseEvent} payload */
+	const onClick = (payload) => {
 		const event = payload;
 
 		// if (isResizing) {
@@ -123,7 +134,11 @@
 		return false;
 	};
 
-	const onResizeEnd = (nextWidth: 'inherit' | number, nextHeight: 'inherit' | number) => {
+	/**
+	 * @param {'inherit' | number} nextWidth
+	 * @param {'inherit' | number} nextHeight
+	 */
+	const onResizeEnd = (nextWidth, nextHeight) => {
 		// Delay hiding the resize bars for click case
 		setTimeout(() => {
 			isResizing = false;
@@ -150,12 +165,8 @@
 					selection = editorState.read(() => getSelection());
 				}
 			}),
-			editor.registerCommand<MouseEvent>(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW),
-			editor.registerCommand<MouseEvent>(
-				RIGHT_CLICK_VIDEOEMBED_COMMAND,
-				onClick,
-				COMMAND_PRIORITY_LOW
-			),
+			editor.registerCommand(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW),
+			editor.registerCommand(RIGHT_CLICK_VIDEOEMBED_COMMAND, onClick, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
