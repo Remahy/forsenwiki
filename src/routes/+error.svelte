@@ -13,14 +13,14 @@
 </svelte:head>
 
 <div class="container mx-auto flex grow p-4 lg:p-0 lg:py-12">
-	<Box class="flex grow gap-2 !bg-red-200 p-12 dark:!bg-red-950 dark:!bg-opacity-50">
+	<Box class="flex grow gap-2 !bg-red-100 p-12 dark:!bg-red-900 dark:!bg-opacity-10">
 		<div class="prose prose-2xl max-w-[unset] grow dark:prose-invert">
 			<h2>{$page.status}</h2>
 			<p>{$page.error?.message}</p>
 		</div>
 
 		<div class="self-center">
-			<pre class="h-fit overflow-hidden rounded-full bg-slate-950 text-white">{lul}</pre>
+			<pre class="h-fit overflow-hidden rounded-full bg-slate-950 text-slate-400">{lul}</pre>
 		</div>
 	</Box>
 </div>

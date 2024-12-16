@@ -34,7 +34,7 @@
 	// 	: true;
 </script>
 
-<header class="bg-stone-100 dark:bg-violet-950 dark:bg-opacity-30">
+<header class="bg-stone-100 dark:bg-slate-950 dark:bg-opacity-35 border-solid border-b border-slate-300 dark:border-slate-800">
 	<nav class="container mx-auto flex items-center gap-4 p-4">
 		<a href="/" class="hover:text-stone-500">
 			<div class="flex items-end gap-2">
@@ -56,7 +56,7 @@
 			<div class="flex items-center justify-end overflow-hidden">
 				{#if $page.data.session?.user}
 					<div
-						class="flex max-w-20 gap-2 overflow-hidden bg-stone-300 p-2 lg:max-w-40 dark:bg-violet-950"
+						class="flex max-w-20 gap-2 overflow-hidden bg-slate-300 p-2 lg:max-w-40 dark:bg-violet-950"
 					>
 						{#if cachedImage}
 							<img

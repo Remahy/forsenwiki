@@ -17,7 +17,7 @@
 	<input
 		type="text"
 		name="query"
-		class="w-full rounded-l border-0 bg-violet-200 placeholder:text-inherit hover:bg-violet-300 dark:bg-violet-950 dark:bg-opacity-30 dark:placeholder:text-neutral-500 dark:hover:bg-violet-950 dark:hover:bg-opacity-50"
+		class="w-full rounded-l border-0 bg-slate-200 placeholder:text-slate-500 hover:bg-violet-200 dark:bg-slate-900 outline outline-1 outline-slate-300 dark:outline-slate-800 dark:bg-opacity-30 dark:placeholder:text-slate-700 dark:hover:bg-slate-800 dark:hover:bg-opacity-50"
 		placeholder="Search..."
 		bind:value={query}
 	/>

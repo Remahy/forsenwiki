@@ -12,7 +12,7 @@
 
 <a {href}>
 	<Box
-		class="border-2 border-violet-400 p-4 hover:bg-violet-300 dark:border-violet-950 dark:hover:bg-violet-950 dark:hover:bg-opacity-60 {className}"
+		class="border-2 border-violet-400 p-4 hover:bg-violet-300 dark:border-slate-950 dark:hover:bg-violet-950 dark:hover:bg-opacity-60 {className}"
 	>
 		<slot />
 	</Box>
