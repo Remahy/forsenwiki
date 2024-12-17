@@ -13,11 +13,10 @@
 		<h1>DMCA</h1>
 		<p>
 			For the purposes of this document, the term 'DMCA' is used as a general reference to copyright
-			infringement procedures. forsen.wiki adheres to international copyright law and the
-			regulations of the World Intellectual Property Organization (WIPO)." We take IP & right
-			ownership very seriously, no Kappa. However, as forsen.wiki has no legal entity in the USA, we
-			adhere to international Copyright law & WIPO. Regardless, please use the following "DMCA"
-			template when emailing us about alleged infringement and requesting a takedown notice.
+			infringement procedures. As forsen.wiki has no legal entity in the USA, forsen.wiki adheres to
+			international copyright law and the regulations of the World Intellectual Property
+			Organization (WIPO)." We take IP & right ownership very seriously. Please use the following
+			"DMCA" template when emailing us about alleged infringement and requesting a takedown notice.
 		</p>
 
 		<hr />
@@ -70,7 +69,7 @@
 
 		<hr />
 
-		<p><strong>Email:</strong> dmca(<AtSignIcon class="inline" />)forsen.wiki</p>
+		<p><strong>Email:</strong> dmca<AtSignIcon class="inline" />forsen.wiki</p>
 
 		<hr />
 
@@ -82,7 +81,7 @@
 		<p>
 			<strong
 				>If personal information has been posted that you would like removed, please email <span
-					class="underline">privacy(<AtSignIcon class="inline" />)forsen.wiki</span
+					class="underline">privacy<AtSignIcon class="inline" />forsen.wiki</span
 				></strong
 			>
 		</p>

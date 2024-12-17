@@ -32,8 +32,8 @@
 		</p>
 		<h2>Information Collection And Use</h2>
 		<p>
-			We collect several different types of information for legitimate purposes on an ongoing basis to provide and improve
-			our Service to you.
+			We collect several different types of information for legitimate purposes on an ongoing basis
+			to provide and improve our Service to you.
 		</p>
 		<h3>Types of Data Collected</h3>
 		<h4>Personal Data</h4>
@@ -235,7 +235,7 @@
 			If you make a request, we have one month to respond to you. If you would like help on how to
 			exercise any of these rights, please contact us at our email:
 		</p>
-		<p>Write to us: gdpr(<AtSignIcon style="display: inline;" />)forsen.wiki</p>
+		<p>Write to us: gdpr<AtSignIcon class="inline" />forsen.wiki</p>
 		<h2>Links To Other websites</h2>
 		<p>
 			Our Service may contain links to other websites that are not operated by us. If you click on a
@@ -270,7 +270,7 @@
 		<h2>Contact Us</h2>
 		<p>If you have any questions about this Privacy Policy, please contact admin:</p>
 		<ul>
-			<li>By email: privacy(<AtSignIcon style="display: inline;" />)forsen.wiki</li>
+			<li>By email: privacy<AtSignIcon class="inline" />forsen.wiki</li>
 		</ul>
 	</section>
 </Container>
