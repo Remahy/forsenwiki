@@ -101,10 +101,8 @@
 	});
 </script>
 
-<div
-	class="pointer-events-auto relative rounded border bg-white p-0 shadow dark:border-violet-900 dark:bg-neutral-950"
->
-	<header class="flex items-center justify-between border-b p-6 dark:border-violet-900">
+<div class="modal-color pointer-events-auto relative p-0">
+	<header class="forsen-wiki-theme-border flex items-center justify-between border-b p-6">
 		<h1 class="text-xl font-semibold lg:text-2xl">Edit link</h1>
 		<Button
 			class="ml-auto inline-flex items-center rounded-lg"
@@ -114,7 +112,7 @@
 		</Button>
 	</header>
 
-	<main class="flex flex-col gap-16 border-b p-6 dark:border-violet-900">
+	<main class="forsen-wiki-theme-border flex flex-col gap-16 border-b p-6">
 		<label class="flex flex-col gap-2" for="select">
 			<strong>Type of link</strong>
 			<Select
@@ -133,7 +131,7 @@
 		<label class="flex flex-col gap-2">
 			<strong>{currentLinkType === 'internal' ? 'Search article' : 'URL'}</strong>
 			<input
-				class="w-full rounded bg-transparent p-2 dark:border-violet-900"
+				class="input-color w-full rounded p-2"
 				bind:value={url}
 				on:input={handleInputChange}
 				bind:this={inputElement}

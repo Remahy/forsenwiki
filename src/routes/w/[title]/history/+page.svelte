@@ -5,6 +5,7 @@
 	import Container from '$lib/components/Container.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
+	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 
 	export let data;
 
@@ -25,9 +26,7 @@
 </svelte:head>
 
 <Container>
-	<div
-		class="rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 dark:from-violet-800/30 dark:to-violet-950/30"
-	>
+	<SuggestionBox>
 		<div class="flex w-full gap-2">
 			<div class="flex grow items-center overflow-hidden">
 				<p>
@@ -47,7 +46,7 @@
 		</div>
 
 		<p><strong>Current total length:</strong> {totalByteLength} bytes.</p>
-	</div>
+	</SuggestionBox>
 
 	<Box class="p-4">
 		<div class="flex">

@@ -58,7 +58,7 @@
 {#if selectedVideoEmbedNode}
 	<div class="flex items-center gap-2">
 		<div
-			class="flex select-none flex-col items-center justify-center font-mono text-xs leading-none text-gray-400"
+			class="flex select-none flex-col items-center justify-center font-mono text-xs leading-none"
 		>
 			<span>V</span>
 			<span>I</span>

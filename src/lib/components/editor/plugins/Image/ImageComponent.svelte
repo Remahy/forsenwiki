@@ -217,14 +217,18 @@
 	{#await promise}
 		<figure
 			style="height:{heightCss};px;width:{widthCss};"
-			class="m-0 flex animate-pulse items-center justify-center p-0 dark:bg-violet-200 dark:bg-opacity-50"
+			class="element-placeholder-color m-0 flex animate-pulse items-center justify-center p-0"
 			class:focused={isFocused}
 			class:draggable={isFocused && isNodeSelection(selection)}
 			title="Loading image..."
 			bind:this={imageRef}
 			draggable="false"
 		>
-			<img class="m-0 animate-spin rounded-full" src={LUCIDE_ICON_LOADER} alt={altText} />
+			<img
+				class="pointer-events-none m-0 animate-spin rounded-full"
+				src={LUCIDE_ICON_LOADER}
+				alt={altText}
+			/>
 		</figure>
 	{:then _}
 		<img

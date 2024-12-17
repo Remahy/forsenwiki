@@ -95,7 +95,7 @@
 											bind:value={name}
 											type="text"
 											name="query"
-											class="w-full border-0 bg-violet-200 py-4 placeholder:text-inherit hover:bg-violet-300 dark:bg-violet-950 dark:bg-opacity-30 dark:placeholder:text-neutral-500 dark:hover:bg-violet-950 dark:hover:bg-opacity-50"
+											class="input-color w-full py-4 placeholder:text-inherit"
 											placeholder={result.name}
 										/>
 										<Button class="px-4" on:click={updateName} disabled={isUpdating}>Save</Button>

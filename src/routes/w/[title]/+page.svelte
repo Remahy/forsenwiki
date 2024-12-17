@@ -7,6 +7,7 @@
 
 	import Container from '$lib/components/Container.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
+	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 
 	export let data;
 
@@ -27,27 +28,27 @@
 
 <Container>
 	<article class="relative flex grow flex-col gap-8">
-		<header
-			class="rounded bg-gradient-to-br from-violet-200 to-violet-300 p-4 dark:from-violet-800/30 dark:to-violet-950/30"
-		>
-			<div class="flex w-full gap-2">
-				<div class="flex grow items-center overflow-hidden">
-					<p>
-						forsen.wiki is currently <strong>work in progress</strong>.
-					</p>
-				</div>
+		<SuggestionBox>
+			<header>
+				<div class="flex w-full gap-2">
+					<div class="flex grow items-center overflow-hidden">
+						<p>
+							forsen.wiki is currently <strong>work in progress</strong>.
+						</p>
+					</div>
 
-				<div class="flex shrink-0 items-start gap-2">
-					<LinkButton href="/w/{title}/history" class="flex items-center gap-2 text-sm">
-						<HistoryIcon size="16" /><span class="hidden md:inline">History</span>
-					</LinkButton>
+					<div class="flex shrink-0 items-start gap-2">
+						<LinkButton href="/w/{title}/history" class="flex items-center gap-2 text-sm">
+							<HistoryIcon size="16" /><span class="hidden md:inline">History</span>
+						</LinkButton>
 
-					<LinkButton href="/w/{title}/edit" reload class="flex items-center gap-2 text-sm">
-						<EditIcon size="16" /><span class="hidden md:inline">Edit article</span>
-					</LinkButton>
+						<LinkButton href="/w/{title}/edit" reload class="flex items-center gap-2 text-sm">
+							<EditIcon size="16" /><span class="hidden md:inline">Edit article</span>
+						</LinkButton>
+					</div>
 				</div>
-			</div>
-		</header>
+			</header>
+		</SuggestionBox>
 
 		<main class="editor-shell prose max-w-[unset] grow dark:prose-invert">
 			<h1>{rawTitle}</h1>
@@ -55,7 +56,7 @@
 			{@html html}
 		</main>
 
-		<footer class="rounded bg-violet-200 p-4 dark:bg-violet-950 dark:bg-opacity-30">
+		<footer class="article-footer-color p-4">
 			<p>
 				<span title={createdTimestamp.toString()}>
 					<strong>Created:</strong>

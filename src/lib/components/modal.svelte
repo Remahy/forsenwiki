@@ -23,7 +23,7 @@
 	<div class="fixed inset-0 z-50 flex items-center overflow-y-auto">
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<div class="fixed inset-0 bg-black bg-opacity-50 duration-300" on:click|self={closeModal} />
+		<div class="modal-bg-transparent fixed inset-0 duration-300" on:click|self={closeModal} />
 		<div
 			role="dialog"
 			aria-modal="true"

@@ -12,7 +12,7 @@
 	import { Link2Icon, SettingsIcon } from 'lucide-svelte';
 	import { getContext, onMount } from 'svelte';
 
-	import Button from '$lib/components/Button.svelte';
+	import EditorButton from '../EditorButton.svelte';
 	import { ctrlKey } from '$lib/environment/environment';
 	import { getSelectedNode } from '$lib/components/editor/utils/getSelection';
 	import { modal } from '$lib/stores/modal';
@@ -174,19 +174,16 @@
 	});
 </script>
 
-<Button
+<EditorButton
 	title="Insert link ({ctrlKey}K)"
 	on:click={link}
 	disabled={!canEdit}
 	isActive={hasLink}
-	class="max-h-8 min-h-8 min-w-8 max-w-8 lg:max-h-[unset] lg:min-h-[unset]"
 >
 	{#if hasLink}
-		<div class="relative -m-2 flex items-center p-2">
-			<Link2Icon />
-			<SettingsIcon size={'16'} class="absolute right-0 top-0" />
-		</div>
+		<Link2Icon />
+		<SettingsIcon size={'16'} class="absolute right-0 top-0" />
 	{:else}
 		<Link2Icon />
 	{/if}
-</Button>
+</EditorButton>

@@ -14,6 +14,7 @@
 	import Container from '$lib/components/Container.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
 	import LinkButton from '$lib/components/LinkButton.svelte';
+	import ResetCacheButton from '$lib/components/editor/footer/ResetCacheButton.svelte';
 
 	const {
 		post: { id, title, rawTitle },
@@ -156,13 +157,13 @@
 	</div>
 
 	{#if error}
-		<Box class="flex items-center !bg-red-200 p-2 dark:text-black">
+		<Box class="flex items-center !bg-red-300 p-2 dark:text-black">
 			<p>{error.message}</p>
 		</Box>
 	{/if}
 
 	{#if warnings.length}
-		<Box class="flex items-center !bg-yellow-200 p-2 dark:text-black">
+		<Box class="flex items-center !bg-yellow-300 p-2 dark:text-black">
 			{#each warnings as warning}
 				<p>{warning.message}</p>
 			{/each}
@@ -192,16 +193,11 @@
 		</Button>
 	</Box>
 
-	<Button
-		disabled={!canEdit || isUploading || error}
-		class="flex-col !bg-red-900 !bg-opacity-50 hover:!bg-red-900 hover:!bg-opacity-100"
-		title="Reset"
-		on:click={reset}
+	<ResetCacheButton
+		disabled={!canEdit || isUploading || !!error}
+		isLoading={isUploading}
+		onClickReset={reset}
 	>
-		{#if isUploading}
-			<Spinner />
-		{/if}
-
-		<span>Reset {title} draft cache</span>
-	</Button>
+		<span>Reset &quot;{title}&quot; draft cache</span>
+	</ResetCacheButton>
 </Container>

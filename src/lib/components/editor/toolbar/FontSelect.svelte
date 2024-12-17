@@ -114,7 +114,7 @@
 		on:change={font}
 		bind:value={currentFont}
 		on:click={() => fontElement.dispatchEvent(new Event('change'))}
-		class="-ml-10 px-10"
+		class="!-ml-10 !px-10"
 	>
 		<option value="mixed" hidden>Mixed</option>
 		<option value="" class="font-sans text-lg">Default font</option>

@@ -52,7 +52,7 @@
 	});
 </script>
 
-<div class="flex grow items-center uppercase leading-none text-violet-400">
+<div class="flex grow items-center uppercase leading-none">
 	<button class="flex items-center p-1" on:click={() => (disableCount = !disableCount)}>
 		{#if !disableCount}
 			<XIcon size="16" />
