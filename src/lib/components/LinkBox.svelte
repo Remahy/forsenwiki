@@ -11,9 +11,7 @@
 </script>
 
 <a {href}>
-	<Box
-		class="border-2 border-violet-400 p-4 hover:bg-violet-300 dark:border-slate-950 dark:hover:bg-violet-950 dark:hover:bg-opacity-60 {className}"
-	>
+	<Box class="link-box {className}">
 		<slot />
 	</Box>
 </a>

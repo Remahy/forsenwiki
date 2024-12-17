@@ -34,7 +34,7 @@
 	// 	: true;
 </script>
 
-<header class="bg-stone-100 dark:bg-slate-950 dark:bg-opacity-35 border-solid border-b border-slate-300 dark:border-slate-800">
+<header class="header">
 	<nav class="container mx-auto flex items-center gap-4 p-4">
 		<a href="/" class="hover:text-stone-500">
 			<div class="flex items-end gap-2">
@@ -55,9 +55,7 @@
 		<div class="mt-auto flex items-end overflow-hidden">
 			<div class="flex items-center justify-end overflow-hidden">
 				{#if $page.data.session?.user}
-					<div
-						class="flex max-w-20 gap-2 overflow-hidden bg-slate-300 p-2 lg:max-w-40 dark:bg-violet-950"
-					>
+					<div class="violet flex max-w-20 gap-2 overflow-hidden p-2 lg:max-w-40">
 						{#if cachedImage}
 							<img
 								src={cachedImage.toString()}
@@ -71,7 +69,11 @@
 						>
 					</div>
 
-					<Button on:click={signOutWrapper} class="rounded-l-none p-1 text-sm" disabled={isLoading}>
+					<Button
+						on:click={signOutWrapper}
+						class="!rounded-l-none p-1 text-sm"
+						disabled={isLoading}
+					>
 						<div class="hidden lg:block">
 							{#if isLoading}
 								<Spinner size="16" />

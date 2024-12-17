@@ -10,6 +10,6 @@
 	export { className as class };
 </script>
 
-<a href={href} data-sveltekit-reload={reload} class="rounded bg-violet-600 py-2 px-4 font-medium text-white hover:bg-violet-800 {className}" {...$$restProps}>
+<a {href} data-sveltekit-reload={reload} class="link-button {className}" {...$$restProps}>
 	<slot />
 </a>

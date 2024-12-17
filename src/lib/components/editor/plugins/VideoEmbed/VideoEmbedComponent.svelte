@@ -185,7 +185,7 @@
 
 <div
 	bind:this={embedRef}
-	class="overflow-hidden bg-violet-500 bg-opacity-50"
+	class="element-placeholder-color overflow-hidden text-black"
 	class:focused={isFocused}
 	class:draggable={isFocused && isNodeSelection(selection)}
 	draggable="false"

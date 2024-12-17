@@ -33,9 +33,7 @@
 
 <Container>
 	<article class="relative flex grow flex-col gap-8">
-		<header
-			class="rounded bg-gradient-to-br from-yellow-200 to-yellow-300 p-4 dark:from-yellow-800/30 dark:to-yellow-950/30"
-		>
+		<header class="bg-heading-message p-4">
 			<div class="flex w-full gap-2">
 				<div class="flex grow items-center overflow-hidden">
 					<p>

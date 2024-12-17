@@ -12,7 +12,6 @@
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 
-
 	/**
 	 * @typedef {import('./+page.server').LatestArticle} LatestArticle
 	 * @typedef {import('./+page.server').LatestUpdate} LatestUpdate
@@ -102,7 +101,7 @@
 	/>
 </svelte:head>
 
-<section class="container mx-auto flex grow flex-col p-4 lg:py-12 text-slate-600 dark:text-slate-400">
+<section class="container mx-auto flex grow flex-col p-4 lg:py-12">
 	<SuggestionBox>
 		<p class="m-0 text-center leading-10">
 			<strong>ForsenWiki</strong>
@@ -116,7 +115,7 @@
 	<div class="block grow gap-4 lg:flex">
 		<div class="mb-4 flex grow flex-col lg:mb-0">
 			<Box class="mb-4 grow p-4">
-				<div class="mb-2 border-b-2 border-slate-300 dark:border-slate-800 pb-2 uppercase">
+				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">Recent updates</h2>
 				</div>
 				{#each $latestUpdates as update}
@@ -135,7 +134,7 @@
 			</Box>
 
 			<Box class="grow p-4">
-				<div class="mb-2 border-b-2 border-slate-300 dark:border-slate-800 pb-2 uppercase">
+				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">New articles</h2>
 				</div>
 				{#each $latestArticles as article}
@@ -154,7 +153,7 @@
 
 		<div class="block flex-col gap-4 lg:flex lg:min-w-96">
 			<Box class="mb-4 flex flex-col gap-2 p-4 lg:mb-0">
-				<div class="mb-2 border-b-2 border-slate-300 dark:border-slate-800 pb-2 uppercase">
+				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">Navigation</h2>
 				</div>
 
@@ -170,7 +169,7 @@
 			</Box>
 
 			<Box class="p-4">
-				<div class="mb-2 border-b-2 border-slate-300 dark:border-slate-800 pb-2 uppercase">
+				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">New users</h2>
 				</div>
 

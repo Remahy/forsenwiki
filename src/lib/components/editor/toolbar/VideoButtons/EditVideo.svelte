@@ -89,7 +89,7 @@
 		bind:ref={platformElement}
 		on:change={platform}
 		bind:value={currentPlatform}
-		class="-ml-10 h-full px-10"
+		class="!-ml-10 h-full !px-10"
 	>
 		<option value="unknown" hidden>Unknown</option>
 
@@ -104,9 +104,10 @@
 	<LinkIcon />
 
 	<input
-		class="-ml-10 h-full w-auto bg-transparent py-1 pl-10 pr-0 text-sm lg:h-full dark:border-violet-900"
+		class="input-color -ml-10 h-full w-auto py-1 pl-10 pr-0 text-sm lg:h-full"
 		bind:value={currentURL}
 		on:change={url}
+		placeholder="https://..."
 		type="url"
 	/>
 </label>

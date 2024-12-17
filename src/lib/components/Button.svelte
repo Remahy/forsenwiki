@@ -1,5 +1,4 @@
 <script>
-	export let isActive = false;
 	/** @type {string | undefined} */
 	let className = '';
 
@@ -9,9 +8,7 @@
 <button
 	on:click
 	{...$$restProps}
-	class="flex min-h-10 min-w-10 items-center justify-center gap-2 rounded bg-violet-600 py-2 px-4 font-medium text-white hover:bg-violet-800 disabled:opacity-25 dark:border-0 {isActive
-		? 'border border-violet-950 !bg-violet-950'
-		: 'border border-opacity-0'} {className}"
+	class="button flex min-h-10 min-w-10 items-center justify-center gap-2 {className}"
 >
 	<slot />
 </button>

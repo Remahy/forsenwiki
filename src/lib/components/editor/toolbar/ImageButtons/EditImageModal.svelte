@@ -127,10 +127,8 @@
 	};
 </script>
 
-<div
-	class="pointer-events-auto relative rounded border bg-white p-0 shadow dark:border-violet-900 dark:bg-neutral-950"
->
-	<header class="flex items-center justify-between border-b p-6 dark:border-violet-900">
+<div class="modal-color pointer-events-auto relative p-0">
+	<header class="forsen-wiki-theme-border flex items-center justify-between border-b p-6">
 		<h1 class="text-xl font-semibold lg:text-2xl">Edit image</h1>
 		<Button
 			class="ml-auto inline-flex items-center rounded-lg"
@@ -140,7 +138,7 @@
 		</Button>
 	</header>
 
-	<main class="flex flex-col gap-16 overflow-hidden border-b p-6 dark:border-violet-900">
+	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
 		<label class="flex flex-col gap-2" for="select">
 			<strong>Image source</strong>
 			<Select
@@ -166,7 +164,7 @@
 			<input
 				type="file"
 				accept="image/*"
-				class="rounded border p-2 dark:border-violet-900"
+				class="forsen-wiki-theme-border rounded border p-2"
 				bind:value={src}
 				on:input={handleInputChange}
 				bind:this={inputElement}
@@ -187,38 +185,26 @@
 		{#if src.length}
 			<label class="flex flex-col gap-2">
 				<strong>Alt text</strong>
-				<input class="rounded bg-transparent p-2 dark:border-violet-900" bind:value={altText} />
+				<input class="input-color rounded p-2" bind:value={altText} />
 			</label>
 			<div class="flex gap-16">
 				<label class="inline-flex grow flex-col gap-2">
 					<span>
 						<strong>Width</strong>
 						{#if originalImageWidth}
-							<small class="text-gray-700 dark:text-[unset]"
-								>Original: <span>{originalImageWidth}</span></small
-							>
+							<small>Original: <span>{originalImageWidth}</span></small>
 						{/if}
 					</span>
-					<input
-						type="number"
-						class="w-full rounded bg-transparent p-2 dark:border-violet-900"
-						bind:value={width}
-					/>
+					<input type="number" class="input-color w-full rounded p-2" bind:value={width} />
 				</label>
 				<label class="inline-flex grow flex-col gap-2">
 					<span>
 						<strong>Height</strong>
 						{#if originalImageHeight}
-							<small class="text-gray-700 dark:text-[unset]"
-								>Original: <span>{originalImageHeight}</span></small
-							>
+							<small>Original: <span>{originalImageHeight}</span></small>
 						{/if}
 					</span>
-					<input
-						type="number"
-						class="w-full rounded bg-transparent p-2 dark:border-violet-900"
-						bind:value={height}
-					/>
+					<input type="number" class="input-color w-full rounded p-2" bind:value={height} />
 				</label>
 			</div>
 		{/if}

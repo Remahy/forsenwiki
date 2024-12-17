@@ -135,6 +135,11 @@ function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl:
 	return element;
 }
 
+const setFallbackElement = (element: HTMLIFrameElement, platform: string) => {
+	element.setAttribute('class', 'element-placeholder-color');
+	element.srcdoc = `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform} embed.</strong></p>`;
+};
+
 function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
 	const { url } = getURLAndTitle(node.__platform, node.__src, parentUrl);
 
@@ -142,8 +147,7 @@ function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
 	element.setAttribute('data-lexical-youtube', node.__src);
 
 	if (!url) {
-		element.setAttribute('class', 'bg-violet-500 bg-opacity-50');
-		element.srcdoc = `<p style="color:#fff;"><strong>No valid URL is provided for this YouTube embed.</strong></p>`;
+		setFallbackElement(element, node.__platform);
 	}
 
 	return { element };
@@ -156,8 +160,7 @@ function generateTwitchIframe(node: VideoEmbedNode, parentUrl: string) {
 	element.setAttribute('data-lexical-twitch', node.__src);
 
 	if (!url) {
-		element.setAttribute('class', 'bg-violet-500 bg-opacity-50');
-		element.srcdoc = `<p style="color:#fff;"><strong>No valid URL is provided for this Twitch embed.</strong></p>`;
+		setFallbackElement(element, node.__platform);
 	}
 
 	return { element };

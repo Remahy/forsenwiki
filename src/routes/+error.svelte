@@ -12,8 +12,8 @@
 	<meta name="description" content="Errors for ants." />
 </svelte:head>
 
-<div class="container mx-auto flex grow p-4 lg:p-0 lg:py-12">
-	<Box class="flex grow gap-2 !bg-red-100 p-12 dark:!bg-red-900 dark:!bg-opacity-10">
+<div class="container mx-auto flex grow flex-col gap-4 p-4 lg:py-12">
+	<Box class="bg-error-color flex grow flex-wrap gap-2 overflow-hidden p-12">
 		<div class="prose prose-2xl max-w-[unset] grow dark:prose-invert">
 			<h2>{$page.status}</h2>
 			<p>{$page.error?.message}</p>

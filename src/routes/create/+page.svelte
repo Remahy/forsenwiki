@@ -13,6 +13,7 @@
 	import Editor from '$lib/components/editor/editor.svelte';
 	import Container from '$lib/components/Container.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
+	import ResetCacheButton from '$lib/components/editor/footer/ResetCacheButton.svelte';
 
 	const { initialUpdate } = $page.data;
 
@@ -144,11 +145,11 @@
 		<input
 			on:input={unsetError}
 			required
-			class="w-full rounded p-2 {titleError && '!bg-red-200'} dark:border-violet-700 dark:bg-black"
+			class="w-full rounded p-2 {titleError && '!bg-red-200'} input-color"
 			bind:value={title}
 		/>
 		{#if titleError}
-			<strong class="text-red-500">{titleError.message}</strong>
+			<strong class="text-red-600 dark:text-red-500">{titleError.message}</strong>
 		{/if}
 	</label>
 
@@ -164,12 +165,9 @@
 
 	<Box class="flex items-center gap-4 p-2">
 		<small class="grow">
-			Make sure you read the <Link
-				href="/terms"
-				class="hover:!text-indigo-700"
-				target="forsenwiki-tos">Terms & Conditions</Link
-			>. Anyone can edit this article once it's submitted. Don't complain if your article get
-			modified or deleted. <Clown />
+			Make sure you read the <Link href="/terms" target="forsenwiki-tos">Terms & Conditions</Link>.
+			Anyone can edit this article once it's submitted. Don't complain if your article get modified
+			or deleted. <Clown />
 		</small>
 
 		<Button disabled={!canEdit || isUploading || error} on:click={submit} title="Submit">
@@ -182,17 +180,12 @@
 		</Button>
 	</Box>
 
-	<Button
-		disabled={!canEdit || isUploading || error}
-		class="flex-col !bg-red-900 !bg-opacity-50 hover:!bg-red-900 hover:!bg-opacity-100"
-		title="Reset"
-		on:click={reset}
+	<ResetCacheButton
+		disabled={!canEdit || isUploading || !!error}
+		isLoading={isUploading}
+		onClickReset={reset}
 	>
-		{#if isUploading}
-			<Spinner />
-		{/if}
-
 		<span>Reset this draft cache</span>
 		<div><small>(Will only delete this new draft)</small></div>
-	</Button>
+	</ResetCacheButton>
 </Container>

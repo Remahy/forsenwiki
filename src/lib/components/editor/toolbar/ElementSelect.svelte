@@ -290,7 +290,7 @@
 		bind:ref={elementTypeElement}
 		on:change={elementType}
 		bind:value={currentElementType}
-		class="-ml-10 px-10"
+		class="!-ml-10 !px-10"
 	>
 		<option value="mixed" hidden>Mixed</option>
 		<option value="unknown" hidden>Unknown</option>

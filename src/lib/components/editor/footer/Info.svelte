@@ -65,7 +65,7 @@
 	});
 </script>
 
-<div class="flex items-center uppercase leading-none text-violet-400">
+<div class="flex items-center uppercase leading-none">
 	<div class="flex items-center gap-1">
 		{#if keys}
 			<small><strong>Key:</strong> {keys}</small>

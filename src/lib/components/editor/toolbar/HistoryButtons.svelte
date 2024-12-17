@@ -10,7 +10,7 @@
 	import { getContext, onMount } from 'svelte';
 
 	import { ctrlKey } from '$lib/environment/environment';
-	import Button from '$lib/components/Button.svelte';
+	import EditorButton from './EditorButton.svelte';
 
 	let canUndo = false;
 	let canRedo = false;
@@ -66,20 +66,10 @@
 	});
 </script>
 
-<Button
-	title="Undo ({ctrlKey}Z)"
-	on:click={undo}
-	disabled={!canUndo || !canEdit}
-	class="max-h-8 min-h-8 min-w-8 max-w-8 lg:max-h-[unset] lg:min-h-[unset]"
->
+<EditorButton title="Undo ({ctrlKey}Z)" on:click={undo} disabled={!canUndo || !canEdit}>
 	<Undo2Icon size="16" />
-</Button>
+</EditorButton>
 
-<Button
-	title="Undo ({ctrlKey}Y)"
-	on:click={redo}
-	disabled={!canRedo || !canEdit}
-	class="max-h-8 min-h-8 min-w-8 max-w-8 lg:max-h-[unset] lg:min-h-[unset]"
->
+<EditorButton title="Undo ({ctrlKey}Y)" on:click={redo} disabled={!canRedo || !canEdit}>
 	<Redo2Icon size="16" />
-</Button>
+</EditorButton>

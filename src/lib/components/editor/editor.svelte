@@ -40,7 +40,7 @@
 </script>
 
 <Composer {initialConfig} bind:this={composer}>
-	<div class="editor-shell flex grow flex-col">
+	<div class="editor-shell flex grow flex-col overflow-hidden">
 		<RichTextPlugin />
 
 		<ListPlugin />
@@ -55,25 +55,21 @@
 
 		<CollaborationPlugin {id} {providerFactory} shouldBootstrap={false} />
 
-		<div
-			class="sticky top-0 z-40 hidden w-full border p-2 lg:block dark:border-violet-950 dark:bg-black"
-		>
+		<div class="editor-border sticky top-0 z-40 hidden w-full p-2 lg:block">
 			<Toolbar />
 		</div>
 
-		<article class="flex grow flex-col border dark:border-violet-950 dark:bg-black">
+		<article class="editor-border flex grow flex-col">
 			<div class="prose relative flex max-w-[unset] grow overflow-auto p-2 dark:prose-invert">
 				<ContentEditable className="grow m-0 p-0 border-0 outline-0" />
 			</div>
 		</article>
 
-		<div
-			class="sticky bottom-0 z-40 block w-full border p-2 lg:hidden dark:border-violet-950 dark:bg-black"
-		>
+		<div class="editor-border sticky bottom-0 z-40 block w-full p-2 lg:hidden">
 			<Toolbar />
 		</div>
 
-		<div class="hidden w-full border border-t-0 p-2 lg:block dark:border-violet-950 dark:bg-black">
+		<div class="editor-border hidden w-full border-t-0 p-2 lg:block">
 			<Footer />
 		</div>
 	</div>

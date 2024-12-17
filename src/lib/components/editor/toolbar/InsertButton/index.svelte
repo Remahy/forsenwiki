@@ -91,7 +91,7 @@
 		bind:value={currentInsertElementType}
 		bind:ref={insertElementTypeElement}
 		on:change={insertElementType}
-		class="-ml-10 px-10"
+		class="!-ml-10 !px-10"
 	>
 		<option value="">Insert</option>
 

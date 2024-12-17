@@ -99,7 +99,7 @@
 	<RectangleHorizontalIcon />
 
 	<input
-		class="-ml-10 h-full w-28 bg-transparent p-0 pl-10 text-sm dark:border-violet-900"
+		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
 		bind:value={currentWidth}
 		on:change={onChange}
 		type="number"
@@ -111,7 +111,7 @@
 	<RectangleVerticalIcon />
 
 	<input
-		class="-ml-10 h-full w-28 bg-transparent p-0 pl-10 text-sm dark:border-violet-900"
+		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
 		bind:value={currentHeight}
 		on:change={onChange}
 		type="number"
