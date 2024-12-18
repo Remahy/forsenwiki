@@ -13,3 +13,4 @@ vite.config.ts.timestamp-*
 /usercontent
 /src/lib/worker/initialUpdate/worker.js
 /src/lib/worker/toHTML/worker.js
+/src/lib/worker/youtubeClipURL/worker.js

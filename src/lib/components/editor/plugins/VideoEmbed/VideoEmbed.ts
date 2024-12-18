@@ -44,6 +44,25 @@ export const getURLAndTitle = (
 
 	if (platform === 'youtube') {
 		const url = new URL('', src);
+
+		if (url.pathname.startsWith('/embed/')) {
+			const fullVideoSlug = url.pathname.split('/').pop();
+			const clipSlug = url.searchParams.get('clip');
+			const clipTId = url.searchParams.get('clipt');
+
+			const youtubeEmbedURL = new URL(`embed/${fullVideoSlug}`, 'https://www.youtube.com/');
+
+			if (clipSlug && clipTId) {
+				youtubeEmbedURL.searchParams.set('clip', clipSlug);
+				youtubeEmbedURL.searchParams.set('clipt', clipTId);
+			}
+
+			return {
+				url: youtubeEmbedURL.toString(),
+				title: 'YouTube clip',
+			};
+		}
+
 		const v = url.searchParams.get('v');
 		const youtuBE = url.hostname === 'youtu.be' ? url.pathname : null;
 		const vPathname = url.pathname.startsWith('/v/')
