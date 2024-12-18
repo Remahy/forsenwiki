@@ -2,6 +2,9 @@ import 'linkedom-global';
 
 import { workerData, parentPort } from 'node:worker_threads';
 
+const headers = new Headers();
+headers.set('User-Agent', 'facebookexternalhit/1.1');
+
 const youtubeClipURLWorker = async () => {
 	/**
 	 * @type {{ url: string }}
@@ -16,7 +19,7 @@ const youtubeClipURLWorker = async () => {
 		return;
 	}
 
-	const text = await (await fetch(url)).text();
+	const text = await (await fetch(url, { headers })).text();
 
 	const html = new DOMParser().parseFromString(text, 'text/html');
 
