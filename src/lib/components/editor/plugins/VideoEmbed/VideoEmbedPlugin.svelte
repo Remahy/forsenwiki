@@ -21,13 +21,41 @@
 	import { getEditor } from 'svelte-lexical';
 	import { mergeRegister } from '@lexical/utils';
 
-	import {
-		$createVideoEmbedNode as createVideoEmbedNode,
-		VideoEmbedNode,
-	} from './VideoEmbed';
+	import { getYouTubeClipURL } from '$lib/api/utils';
+	import { $createVideoEmbedNode as createVideoEmbedNode, VideoEmbedNode } from './VideoEmbed';
 
 	/** @type {import('lexical').LexicalEditor} */
 	const editor = getEditor();
+
+	/**
+	 * @param {LexicalEditor} editor
+	 * @param {VideoEmbedNode} node
+	 */
+	async function fixYouTubeClipURL(editor, node) {
+		const url = node.getSrc();
+
+		let res;
+
+		try {
+			const req = await getYouTubeClipURL(url);
+
+			if (req.status === 200) {
+				res = await req.json();
+			}
+		} catch {
+			// noop
+		}
+
+		if (res === url) {
+			return;
+		}
+
+		if (typeof res === 'string') {
+			editor.update(() => {
+				node.setSrc(res);
+			});
+		}
+	}
 
 	/** @param {import('./VideoEmbed').VideoEmbedPayload} payload */
 	function wrapperInsertVideoEmbed(payload) {
@@ -59,7 +87,9 @@
 			editor.registerMutationListener(VideoEmbedNode, (mutatedNodes) => {
 				editor.update(() => {
 					for (const [key, mutation] of mutatedNodes) {
-						if (mutation === 'destroyed') continue;
+						if (mutation === 'destroyed') {
+							continue;
+						}
 
 						/** @type {VideoEmbedNode | null} */
 						const node = getNodeByKey(key);
@@ -83,6 +113,10 @@
 						if (!nextNode) {
 							const p = createParagraphNode();
 							node.insertAfter(p, false);
+						}
+
+						if (node.getPlatform() === 'youtube' && node.getSrc().includes('youtube.com/clip/')) {
+							fixYouTubeClipURL(editor, node);
 						}
 					}
 				});

@@ -1,13 +1,15 @@
 import 'linkedom-global';
-import { base64ToUint8Array } from 'uint8array-extras';
+
 import { workerData, parentPort } from 'node:worker_threads';
+
+import { $getRoot } from 'lexical';
+import { $generateHtmlFromNodes } from '@lexical/html';
+import { createHeadlessEditor } from '@lexical/headless';
+import { base64ToUint8Array } from 'uint8array-extras';
 
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { diffConfig } from '$lib/components/editor/config/diff';
-import { $getRoot } from 'lexical';
-import { $generateHtmlFromNodes } from '@lexical/html';
-import { createHeadlessEditor } from '@lexical/headless';
 
 const toHTMLWorker = async () => {
 	/**
