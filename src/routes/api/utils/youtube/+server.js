@@ -1,14 +1,18 @@
 import { error, json } from '@sveltejs/kit';
 
-import youtubeClipURL from '$lib/worker/youtubeClipURL';
-
 export async function POST({ request }) {
 	const { clip } = await request.json();
 
 	if (clip) {
-		const res = await youtubeClipURL({ url: clip });
+		try {
+			const { default: youtubeClipURL } = await import('$lib/worker/youtubeClipURL');
 
-		return json(res);
+			const res = await youtubeClipURL({ url: clip });
+
+			return json(res);
+		} catch {
+			return error(500);
+		}
 	}
 
 	return error(400);
