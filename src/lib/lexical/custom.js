@@ -14,6 +14,8 @@ export { DiffTextNode } from '../components/editor/plugins/Diff/Text';
 export { DiffImageNode } from '../components/editor/plugins/Diff/Image';
 export { DiffVideoEmbedNode } from '../components/editor/plugins/Diff/VideoEmbed';
 export { DiffALinkNode } from '../components/editor/plugins/Diff/ALink';
+export { DiffLineBreakNode } from '../components/editor/plugins/Diff/LineBreak';
+export { DiffTabNode } from '../components/editor/plugins/Diff/Tab';
 
 export { DeprecatedVideoEmbedNode } from '../components/editor/plugins/Deprecated/DeprecatedVideoEmbedNode';
 export { FallbackNode } from '../components/editor/plugins/Fallback/Fallback';
