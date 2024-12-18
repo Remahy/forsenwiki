@@ -11,6 +11,8 @@ import {
 	DiffTextNode,
 	DiffVideoEmbedNode,
 	DiffALinkNode,
+	DiffLineBreakNode,
+	DiffTabNode,
 	FallbackNode,
 	ImageNode,
 	VideoEmbedNode,
@@ -71,6 +73,8 @@ export const diffConfig = (theme, editable, editorState, onError = onErrorDefaul
 		DiffImageNode,
 		DiffVideoEmbedNode,
 		DiffALinkNode,
+		DiffLineBreakNode,
+		DiffTabNode,
 
 		// Old nodes / Migration nodes
 		FallbackNode,

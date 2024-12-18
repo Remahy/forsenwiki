@@ -9,12 +9,9 @@ export type ___ChangeTextNode = { ___type: JSONDiffType } & Record<
 	}
 >;
 
-export type ___Change = { ___type: JSONDiffType } & Record<
-	string,
-	___ChangeObject
->;
+export type ___Change = { ___type: JSONDiffType } & Record<string, ___ChangeObject>;
 
-export type ___ChangeObject = 	{
-		__old?: any;
-		__new?: any;
-	}
+export type ___ChangeObject = {
+	__old?: any;
+	__new?: any;
+};
