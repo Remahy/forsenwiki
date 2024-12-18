@@ -1,13 +1,22 @@
+import { Worker } from 'node:worker_threads';
+
+import { dev } from '$app/environment';
+
 // @ts-ignore
-import worker from './worker?nodeWorker';
+import workerPath from './worker?modulePath';
 
 /**
  * @param {{ url: string }} workerData
  * @returns {Promise<string>}
  */
-export default function youtubeClipURL(workerData) {
+export default async function youtubeClipURL(workerData) {
+	if (dev) {
+		const { youtubeClipURLWorker } = await import('./worker');
+		return youtubeClipURLWorker(workerData);
+	}
+
 	return new Promise((resolve, reject) => {
-		const w = worker({ workerData });
+		const w = new Worker(workerPath, { workerData });
 
 		w.on('message', resolve);
 		w.on('error', reject);
