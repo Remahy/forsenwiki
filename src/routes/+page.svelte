@@ -1,5 +1,5 @@
 <script>
-	import { NewspaperIcon, SearchIcon, SquarePenIcon } from 'lucide-svelte';
+	import { Dice4Icon, NewspaperIcon, SearchIcon, SquarePenIcon } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
@@ -165,6 +165,9 @@
 				</LinkButton>
 				<LinkButton href="/search" class="flex gap-2 whitespace-nowrap">
 					<SearchIcon /> <span>Search</span>
+				</LinkButton>
+				<LinkButton href="/random" class="flex gap-2 whitespace-nowrap">
+					<Dice4Icon /> <span>Random</span>
 				</LinkButton>
 			</Box>
 
