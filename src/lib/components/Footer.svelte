@@ -1,6 +1,8 @@
 <script>
 	import License from '$lib/components/License.svelte';
 	import Link from '$lib/components/Link.svelte';
+
+	import version from '/version?raw';
 </script>
 
 <footer class="footer">
@@ -28,7 +30,7 @@
 		</div>
 
 		<div class="bg-dark mt-2 flex-1 grow overflow-hidden rounded p-4 text-right lg:mt-0">
-			<p>forsen.wiki 1.0.0-beta.5</p>
+			<p>forsen.wiki - {version}</p>
 
 			<div class="decoration-text-color" aria-hidden="true">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</div>
 
