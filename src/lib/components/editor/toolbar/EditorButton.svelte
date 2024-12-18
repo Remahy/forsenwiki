@@ -1,5 +1,6 @@
 <script>
 	import Button from '$lib/components/Button.svelte';
+
 	/** @type {boolean | undefined} */
 	export let isActive = undefined;
 
@@ -13,6 +14,7 @@
 </script>
 
 <Button
+	on:click
 	{...$$restProps}
 	class="!max-h-8 !min-h-8 !min-w-8 !max-w-8 lg:!max-h-[unset] lg:!min-h-[unset] {fullClassName}"
 >
