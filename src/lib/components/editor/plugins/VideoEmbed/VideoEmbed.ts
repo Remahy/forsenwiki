@@ -86,6 +86,25 @@ export const getURLAndTitle = (
 			}
 		}
 
+		const isClipUrl2 =
+			(url.hostname === 'www.twitch.tv' || url.hostname === 'twitch.tv') &&
+			url.pathname.includes('/clip/');
+
+		if (isClipUrl2) {
+			const clipSlug = url.pathname.split('/').pop();
+
+			if (clipSlug) {
+				const clipsTwitchURL = new URL('embed', 'https://clips.twitch.tv/');
+				clipsTwitchURL.searchParams.set('clip', clipSlug);
+				clipsTwitchURL.searchParams.set('parent', parent);
+
+				return {
+					url: clipsTwitchURL.toString(),
+					title: 'Twitch clip',
+				};
+			}
+		}
+
 		const isTwitchUrl = url.hostname === 'www.twitch.tv' || url.hostname === 'twitch.tv';
 		const videoID = url.pathname.startsWith('/videos/')
 			? url.pathname.split('/').pop()?.split('?').shift()
