@@ -11,6 +11,7 @@
 	import Link from '$lib/components/Link.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
+	import Container from '$lib/components/Container.svelte';
 
 	/**
 	 * @typedef {import('./+page.server').LatestArticle} LatestArticle
@@ -101,7 +102,7 @@
 	/>
 </svelte:head>
 
-<section class="container mx-auto flex grow flex-col p-4 lg:py-12">
+<Container>
 	<SuggestionBox>
 		<p class="m-0 text-center leading-10">
 			<strong>ForsenWiki</strong>
@@ -186,4 +187,4 @@
 			</Box>
 		</div>
 	</div>
-</section>
+</Container>

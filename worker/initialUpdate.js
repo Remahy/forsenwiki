@@ -1,4 +1,4 @@
-import { parentPort } from 'node:worker_threads';
+import { workerData, parentPort } from 'node:worker_threads';
 
 import { uint8ArrayToBase64 } from 'uint8array-extras';
 import { $createTextNode, $getRoot, $createParagraphNode } from 'lexical';
@@ -7,7 +7,7 @@ import { Y } from '$lib/yjs/index.mjs';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { articleConfig } from '$lib/components/editor/config/article';
 
-const initialUpdateWorker = () => {
+export const initialUpdateWorker = () => {
 	let emptyUpdate;
 	{
 		const yDoc = new Y.Doc();
@@ -31,11 +31,17 @@ const initialUpdateWorker = () => {
 		{ discrete: true }
 	);
 
-	parentPort?.postMessage(uint8ArrayToBase64(Y.encodeStateAsUpdateV2(doc)));
+	const base64 = uint8ArrayToBase64(Y.encodeStateAsUpdateV2(doc));
+
+	parentPort?.postMessage(base64);
+
+	return base64;
 };
 
-try {
-	initialUpdateWorker();
-} catch (error) {
-	console.error('initialUpdateWorker error', error);
+if (workerData) {
+	try {
+		initialUpdateWorker();
+	} catch (error) {
+		console.error('initialUpdateWorker error', error);
+	}
 }

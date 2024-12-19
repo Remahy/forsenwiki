@@ -1,5 +1,6 @@
 export { $isImageNode, ImageNode } from '../components/editor/plugins/Image/Image';
-export { $isALinkNode, ALinkNode } from '../components/editor/plugins/ALink/ALink';
+export { $isALinkNode, ALinkNode } from '../components/editor/plugins/ALink/ALinkNode';
+export { AHeadingNode } from '../components/editor/plugins/AHeading/AHeadingNode';
 export {
 	$isVideoEmbedNode,
 	VideoEmbedNode,

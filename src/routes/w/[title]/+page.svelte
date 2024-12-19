@@ -8,6 +8,8 @@
 	import Container from '$lib/components/Container.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
+	import Box from '$lib/components/Box.svelte';
+	import ToC from '$lib/components/ToC.svelte';
 
 	export let data;
 
@@ -27,12 +29,12 @@
 </svelte:head>
 
 <Container>
-	<article class="relative flex grow flex-col gap-8">
+	<article class="relative flex grow flex-col gap-4">
 		<SuggestionBox>
 			<header>
 				<div class="flex w-full gap-2">
 					<div class="flex grow items-center overflow-hidden">
-						<p>
+						<p class="m-0 text-center leading-10">
 							forsen.wiki is currently <strong>work in progress</strong>.
 						</p>
 					</div>
@@ -50,11 +52,19 @@
 			</header>
 		</SuggestionBox>
 
-		<main class="editor-shell prose max-w-[unset] grow dark:prose-invert">
-			<h1>{rawTitle}</h1>
+		<div class="block grow gap-4 lg:flex">
+			<Box class="mb-4 flex grow flex-col p-4 lg:mb-0">
+				<main class="editor-shell prose max-w-[unset] grow dark:prose-invert">
+					<div class="forsen-wiki-theme-border border-b-2 pb-2 mb-2">
+						<strong class="text-4xl">{rawTitle}</strong>
+					</div>
 
-			{@html html}
-		</main>
+					{@html html}
+				</main>
+			</Box>
+
+			<ToC />
+		</div>
 
 		<footer class="article-footer-color p-4">
 			<p>

@@ -1,12 +1,21 @@
+import { Worker } from 'node:worker_threads';
+
+import { dev } from '$app/environment';
+
 // @ts-ignore
-import worker from './worker?nodeWorker';
+import workerPath from './worker?modulePath';
 
 /**
  * @returns {Promise<string>}
  */
-export default function initialUpdate() {
+export default async function initialUpdate() {
+	if (dev) {
+		const { initialUpdateWorker } = await import('./worker');
+		return initialUpdateWorker();
+	}
+
 	return new Promise((resolve, reject) => {
-		const w = worker();
+		const w = new Worker(workerPath, { workerData: {} });
 
 		w.on('message', resolve);
 		w.on('error', reject);

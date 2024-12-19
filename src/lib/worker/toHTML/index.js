@@ -1,13 +1,22 @@
+import { Worker } from 'node:worker_threads';
+
+import { dev } from '$app/environment';
+
 // @ts-ignore
-import worker from './worker?nodeWorker';
+import workerPath from './worker?modulePath';
 
 /**
  * @param {{ config: 'article' | 'diff', update?: string, content?: string }} workerData
  * @returns {Promise<string>}
  */
-export default function toHTML(workerData) {
+export default async function toHTML(workerData) {
+	if (dev) {
+		const { toHTMLWorker } = await import('./worker');
+		return toHTMLWorker(workerData);
+	}
+
 	return new Promise((resolve, reject) => {
-		const w = worker({ workerData });
+		const w = new Worker(workerPath, { workerData });
 
 		w.on('message', resolve);
 		w.on('error', reject);

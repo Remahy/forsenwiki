@@ -5,18 +5,18 @@ import { workerData, parentPort } from 'node:worker_threads';
 const headers = new Headers();
 headers.set('User-Agent', 'facebookexternalhit/1.1');
 
-const youtubeClipURLWorker = async () => {
+export const youtubeClipURLWorker = async (data) => {
 	/**
 	 * @type {{ url: string }}
 	 */
-	const { url } = workerData;
+	const { url } = data || workerData || {};
 
 	const parsedURL = new URL('', url);
 
 	if (parsedURL.hostname !== 'www.youtube.com' && parsedURL.hostname !== 'youtube.com') {
 		parentPort?.postMessage(url);
 
-		return;
+		return url;
 	}
 
 	const text = await (await fetch(url, { headers })).text();
@@ -32,10 +32,14 @@ const youtubeClipURLWorker = async () => {
 	}
 
 	parentPort?.postMessage(metaVideoURLTag?.content || url);
+
+	return metaVideoURLTag?.content || url;
 };
 
-try {
-	youtubeClipURLWorker();
-} catch (error) {
-	console.error('toHTMLWorker error', error);
+if (workerData) {
+	try {
+		youtubeClipURLWorker();
+	} catch (error) {
+		console.error('toHTMLWorker error', error);
+	}
 }

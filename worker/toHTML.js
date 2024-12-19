@@ -11,11 +11,12 @@ import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { diffConfig } from '$lib/components/editor/config/diff';
 
-const toHTMLWorker = async () => {
+export const toHTMLWorker = async (data) => {
 	/**
 	 * @type {{ config: string, content: string, update: string }}
 	 */
-	const { config, content, update } = workerData;
+	const { config, content, update } = data || workerData || {};
+
 	if (!config) {
 		throw new Error('No config string provided.');
 	}
@@ -34,6 +35,9 @@ const toHTMLWorker = async () => {
 			break;
 	}
 
+	/**
+	 * @type {import('lexical').LexicalEditor}
+	 */
 	let editor;
 	if (update) {
 		const eY = getYjsAndEditor(cfg(null, false, null), base64ToUint8Array(update));
@@ -44,19 +48,24 @@ const toHTMLWorker = async () => {
 		editor.setEditorState(editor.parseEditorState(content));
 	}
 
-	editor.update(() => {
+	return editor.read(() => {
 		const textInEditor = $getRoot().getTextContent().trim();
 
 		if (textInEditor.length > 0) {
-			parentPort?.postMessage($generateHtmlFromNodes(editor, null));
+			const htmlString = $generateHtmlFromNodes(editor, null);
+			parentPort?.postMessage(htmlString);
+			return htmlString;
 		} else {
 			parentPort?.postMessage('');
+			return '';
 		}
 	});
 };
 
-try {
-	toHTMLWorker();
-} catch (error) {
-	console.error('toHTMLWorker error', error);
+if (workerData) {
+	try {
+		toHTMLWorker();
+	} catch (error) {
+		console.error('toHTMLWorker error', error);
+	}
 }
