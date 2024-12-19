@@ -39,10 +39,10 @@ export class AHeadingNode extends HeadingNode {
 		const text = this.getTextContent().slice(0, 32);
 
 		if (dom.element instanceof HTMLElement) {
-			dom.element.id = `${text
+			dom.element.id = text
 				.replace(/[^\w]+/g, ' ')
 				.trim()
-				.replace(/ /g, '-')}-${this.__key}`;
+				.replace(/ /g, '-');
 		}
 
 		return dom;
