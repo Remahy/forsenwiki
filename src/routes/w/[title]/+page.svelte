@@ -52,10 +52,10 @@
 			</header>
 		</SuggestionBox>
 
-		<div class="block grow gap-4 lg:flex">
-			<Box class="mb-4 flex grow flex-col p-4 lg:mb-0">
+		<div class="flex grow flex-col gap-4 lg:flex-row">
+			<Box class="flex grow flex-col p-4 lg:mb-0">
 				<main class="editor-shell prose max-w-[unset] grow dark:prose-invert">
-					<div class="forsen-wiki-theme-border border-b-2 pb-2 mb-2">
+					<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 						<strong class="text-4xl">{rawTitle}</strong>
 					</div>
 

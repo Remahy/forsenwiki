@@ -152,7 +152,7 @@
 			</Box>
 		</div>
 
-		<div class="block flex-col gap-4 lg:flex lg:min-w-96">
+		<div class="block flex-col gap-4 lg:flex lg:min-w-96 lg:w-96">
 			<Box class="mb-4 flex flex-col gap-2 p-4 lg:mb-0">
 				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">Navigation</h2>
@@ -172,14 +172,14 @@
 				</LinkButton>
 			</Box>
 
-			<Box class="p-4">
+			<Box class="overflow-hidden p-4">
 				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">New users</h2>
 				</div>
 
 				{#each $latestUsers as user}
 					<div class="p-2 pl-0">
-						<span>
+						<span title={user.name}>
 							<strong>{user.name}</strong>
 						</span>
 					</div>

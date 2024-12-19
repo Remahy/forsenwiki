@@ -75,15 +75,15 @@
 </script>
 
 <Container class="overflow-hidden">
-	<div class="items-stretch gap-8 xl:flex">
+	<div class="items-start gap-8 xl:flex">
 		<div class="mb-4 xl:mb-0 xl:w-fit">
 			<Box class="xl:min-h-96 xl:min-w-96 xl:max-w-3xl">
 				<img {src} alt={result.name} class="w-fit max-w-full" />
 			</Box>
 		</div>
 
-		<div class="flex grow flex-col gap-4 overflow-hidden box">
-			<Box class="flex flex-col gap-2 overflow-y-auto">
+		<Box class="w-full overflow-hidden">
+			<div class="flex flex-col gap-2 overflow-y-auto">
 				<table class="table-auto">
 					<tbody>
 						<tr>
@@ -127,8 +127,8 @@
 						</tr>
 					</tbody>
 				</table>
-			</Box>
-		</div>
+			</div>
+		</Box>
 	</div>
 
 	{#if $page.data.isModerator || result.author.name === $page.data.session?.user?.name}

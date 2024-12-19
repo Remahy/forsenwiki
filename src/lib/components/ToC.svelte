@@ -11,14 +11,12 @@
 		const article = doc.querySelector('main.editor-shell');
 
 		if (!article) {
-			toc = 'No article loaded.';
 			return;
 		}
 
 		const headings = article?.querySelectorAll('h1, h2, h3, h4, h5');
 
 		if (!headings) {
-			toc = 'If this article had headings, they would be displayed here.';
 			return;
 		}
 
@@ -26,6 +24,10 @@
 
 		// TODO: Rewrite it to use ordered list with nesting.
 		const ul = doc.createElement('ul');
+
+		if (!headings.length) {
+			return;
+		}
 
 		for (let index = 0; index < headings.length; index++) {
 			const element = headings[index];
@@ -55,6 +57,7 @@
 		tocWrapper.appendChild(ul);
 
 		toc = tocWrapper.outerHTML;
+
 		return {
 			destroy() {},
 		};
@@ -66,15 +69,16 @@
 	$: toc = '';
 </script>
 
-<div use:greet class:hidden={!toc}>
+<div use:greet class="hidden lg:block lg:w-96 lg:min-w-96">
 	{#if toc}
-		<Box class="top-4 hidden flex-col p-4 lg:sticky lg:flex lg:min-w-96">
+		<Box class="top-4 hidden flex-col overflow-hidden break-all p-4 lg:sticky lg:flex">
 			<div class="box-heading-wrapper mb-2">
 				<h2 class="text-2xl">Table of Contents</h2>
 			</div>
+
 			{@html toc}
 		</Box>
 	{:else}
-		<Spinner />
+		<img src="/favicon.png" alt="The face of Twitch" class="opacity-[.04]" />
 	{/if}
 </div>
