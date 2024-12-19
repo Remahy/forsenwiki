@@ -1,12 +1,14 @@
 import { LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical/index';
 import {
 	ALinkNode,
+	AHeadingNode,
 	DeprecatedVideoEmbedNode,
 	FallbackNode,
 	ImageNode,
 	VideoEmbedNode,
 } from '$lib/lexical/custom';
 import { $createALinkNode } from '../plugins/ALink/ALink';
+import { $createAHeadingNode } from '../plugins/AHeading/AHeadingNode';
 
 export const articleTheme = {
 	root: 'editor-shell',
@@ -60,7 +62,19 @@ export const articleConfig = (theme, editable, editorState, onError = onErrorDef
 		},
 		ListNode,
 		ListItemNode,
-		HeadingNode,
+		AHeadingNode,
+		{
+			replace: HeadingNode,
+			/**
+			 * @param {HeadingNode} node
+			 */
+			with: (node) => {
+				return $createAHeadingNode(
+					node.__tag,
+				);
+			},
+			withKlass: AHeadingNode,
+		},
 		QuoteNode,
 		ImageNode,
 		VideoEmbedNode,
