@@ -33,21 +33,7 @@ const prisma = /** @type {any} */ (
 					delete args._metadata;
 					return query(args);
 				},
-				async update({ query, args }) {
-					// @ts-ignore
-					const { post, user } = args._metadata;
-
-					_emit('article:update', {
-						title: post.title,
-						rawTitle: post.rawTitle,
-						lastUpdated: args.data.lastUpdated?.toString(),
-						author: user.name,
-					});
-
-					// @ts-ignore
-					delete args._metadata;
-					return query(args);
-				},
+				// See "src/routes/api/article/update/[title]/+server.js" for "article:update".
 			},
 		},
 	})

@@ -121,7 +121,7 @@
 				</div>
 				{#each $latestUpdates as update}
 					<div class="p-2 pl-0">
-						<Link href="/w/{update.title}">
+						<Link href="/w/{update.title}/history/{update.id}">
 							<span>
 								<strong>{update.rawTitle}</strong> - {formatRelative(
 									update.lastUpdated,

@@ -2,7 +2,7 @@ import prisma from '$lib/prisma';
 
 /**
  * @typedef {{ rawTitle: string, title: string, createdTimestamp: string, author: string | null }} LatestArticle
- * @typedef {{ rawTitle: string, title: string, lastUpdated: string, author: string | null }} LatestUpdate
+ * @typedef {{ id: string, rawTitle: string, title: string, lastUpdated: string, author: string | null }} LatestUpdate
  * @typedef {{ name: string | null }} LatestUser
  */
 
@@ -57,6 +57,7 @@ const getLatest = async () => {
 
 	const yPostUpdates = prisma.yPostUpdate.findMany({
 		select: {
+			id: true,
 			createdTimestamp: true,
 			post: {
 				select: {
@@ -97,6 +98,7 @@ const getLatest = async () => {
 
 	const latestUpdates = rawLatestUpdates.map((update) => ({
 		...update.post,
+		id: update.id,
 		author: update.metadata.user.name,
 		// Not a typo, technically an update's "createdTimestamp" *is* a yPost's lastUpdated.
 		lastUpdated: update.createdTimestamp.toString(),

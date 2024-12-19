@@ -13,9 +13,8 @@ import { postYRelationDeleteByFromPostId } from './delete';
 /**
  * @param {Prisma.PrismaClient | Prisma.Prisma.TransactionClient} tx
  * @param {UpdateYPost} arg2
- * @param {{ name: string }} user
  */
-const updateYPost = async (tx, { post, outRelations, systemRelations, metadata }, user) => {
+const updateYPost = async (tx, { post, outRelations, systemRelations, metadata }) => {
 	await postYRelationDeleteByFromPostId(tx, post.id);
 
 	await tx.yPost.update({
@@ -38,12 +37,7 @@ const updateYPost = async (tx, { post, outRelations, systemRelations, metadata }
 			},
 			totalByteLength: metadata.totalByteLength,
 			lastUpdated: new Date(),
-		},
-		// @ts-ignore
-		_metadata: {
-			post,
-			user,
-		},
+		}
 	});
 };
 
@@ -51,7 +45,7 @@ const updateYPost = async (tx, { post, outRelations, systemRelations, metadata }
  * Create YPostUpdateMetadata, & YPostUpdate
  * @param {Prisma.PrismaClient | Prisma.Prisma.TransactionClient} tx
  * @param {Pick<Prisma.YPostUpdate, 'content' | 'postId'>} data
- * @param {{ user: { name: string, id: string }, byteLength: number }} metadata
+ * @param {{ user: { id: string }, byteLength: number }} metadata
  */
 const createYPostUpdate = async (tx, data, metadata) => {
 	const { user, byteLength } = metadata;
@@ -76,12 +70,10 @@ const createYPostUpdate = async (tx, data, metadata) => {
 
 /**
  * @param {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], transformedSystemRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], content: string }} data
- * @param {{ user: { name: string, id: string }, byteLength: number, totalByteLength: number }} metadata
+ * @param {{ user: { id: string }, byteLength: number, totalByteLength: number }} metadata
  */
 export const updateArticleYPost = async (data, metadata) => {
 	const { post, outRelations, transformedSystemRelations, content } = data;
-
-	const { user } = metadata;
 
 	return prisma.$transaction(async (tx) => {
 		await updateYPost(
@@ -91,8 +83,7 @@ export const updateArticleYPost = async (data, metadata) => {
 				outRelations,
 				systemRelations: transformedSystemRelations,
 				metadata,
-			},
-			user
+			}
 		);
 
 		/**
