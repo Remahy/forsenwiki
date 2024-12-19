@@ -16,8 +16,10 @@ import {
 	FallbackNode,
 	ImageNode,
 	VideoEmbedNode,
+	AHeadingNode,
 } from '$lib/lexical/custom';
 import { $createALinkNode } from '../plugins/ALink/ALinkNode';
+import { $createAHeadingNode } from '../plugins/AHeading/AHeadingNode';
 
 import { articleTheme } from './article';
 
@@ -59,7 +61,19 @@ export const diffConfig = (theme, editable, editorState, onError = onErrorDefaul
 		QuoteNode,
 		ListNode,
 		ListItemNode,
-		HeadingNode,
+		AHeadingNode,
+		{
+			replace: HeadingNode,
+			/**
+			 * @param {HeadingNode} node
+			 */
+			with: (node) => {
+				return $createAHeadingNode(
+					node.__tag,
+				);
+			},
+			withKlass: AHeadingNode,
+		},
 		ImageNode,
 		VideoEmbedNode,
 

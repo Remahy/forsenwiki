@@ -22,6 +22,7 @@ import { articleConfig } from '$lib/components/editor/config/article';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import toHTML from '$lib/worker/toHTML';
+import { _emit } from '../../../../adonis/frontpage/+server';
 
 export async function POST({ request, locals, params }) {
 	if (locals.isBlocked) {
@@ -110,13 +111,28 @@ export async function POST({ request, locals, params }) {
 	const contentBase64 = uint8ArrayToBase64(combinedFinalDiff);
 
 	const body = { post, outRelations, transformedSystemRelations, content: contentBase64 };
-	const metadata = { user: { name: session.user.name, id: session.user.id }, byteLength, totalByteLength };
+	const metadata = {
+		user: { id: session.user.id },
+		byteLength,
+		totalByteLength,
+	};
 
 	const updatedArticle = await updateArticleYPost(body, metadata);
 
-	await upsertHTML(post.id, await toHTML({ config: 'article', content: JSON.stringify(editor.getEditorState().toJSON()) }));
+	await upsertHTML(
+		post.id,
+		await toHTML({ config: 'article', content: JSON.stringify(editor.getEditorState().toJSON()) })
+	);
 
 	await invalidateArticleCache(post.title);
+
+	_emit('article:update', {
+		title: post.title,
+		rawTitle: post.rawTitle,
+		id: updatedArticle?.id,
+		lastUpdated: updatedArticle?.createdTimestamp.toString(),
+		author: session.user.name,
+	});
 
 	return json({ ...updatedArticle, title: post.title });
 }
