@@ -82,7 +82,7 @@
 			</Box>
 		</div>
 
-		<div class="flex grow flex-col gap-4 overflow-hidden">
+		<div class="flex grow flex-col gap-4 overflow-hidden box">
 			<Box class="flex flex-col gap-2 overflow-y-auto">
 				<table class="table-auto">
 					<tbody>
