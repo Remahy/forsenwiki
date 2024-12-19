@@ -7,7 +7,7 @@ import {
 	ImageNode,
 	VideoEmbedNode,
 } from '$lib/lexical/custom';
-import { $createALinkNode } from '../plugins/ALink/ALink';
+import { $createALinkNode } from '../plugins/ALink/ALinkNode';
 import { $createAHeadingNode } from '../plugins/AHeading/AHeadingNode';
 
 export const articleTheme = {
