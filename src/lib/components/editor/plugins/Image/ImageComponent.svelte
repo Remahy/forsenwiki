@@ -19,6 +19,9 @@
 		KEY_BACKSPACE_COMMAND,
 		KEY_ESCAPE_COMMAND,
 		KEY_ENTER_COMMAND,
+		DELETE_CHARACTER_COMMAND,
+		$isParagraphNode as isParagraphNode,
+		$isElementNode as isElementNode,
 	} from 'lexical';
 	import { onMount } from 'svelte';
 	import { mergeRegister } from '@lexical/utils';
@@ -79,6 +82,104 @@
 		}
 	});
 
+	/**
+	 * Bug fix to prevent character deletion from accidentally removing image.
+	 * @param {RangeSelection} selection
+	 * @param {LexicalNode} currentNode
+	 */
+	const onDeleteCharacterDecorationBug = (selection, currentNode) => {
+		const currentNodeParent = currentNode.getParent();
+
+		if (!currentNodeParent) {
+			return false;
+		}
+
+		/**
+		 * @type {ElementNode | null}
+		 */
+		const prevSibling = currentNodeParent.getPreviousSibling();
+
+		if (!prevSibling || !isElementNode(prevSibling)) {
+			return false;
+		}
+
+		const prevNode = prevSibling.getLastChild();
+
+		if (!isImageNode(prevNode)) {
+			return false;
+		}
+
+		if (currentNodeParent === prevSibling) {
+			return false;
+		}
+
+		if (!isParagraphNode(currentNodeParent) || !isParagraphNode(prevSibling)) {
+			return false;
+		}
+
+		const start = currentNodeParent.getFirstChild();
+
+		if (currentNode !== start || selection.anchor.offset !== 0) {
+			return false;
+		}
+
+		const children = currentNodeParent.getChildren();
+
+		editor.update(() => {
+			prevSibling.append(...children);
+
+			currentNodeParent.remove();
+		});
+
+		return true;
+	};
+
+	/**
+	 * @param {LexicalNode} currentNode
+	 */
+	const onDeleteCharacterNextToImage = (currentNode) => {
+		if (currentNode !== node) {
+			return false;
+		}
+
+		if (isImageNode(currentNode) && !$isSelected) {
+			imageRef?.click();
+			return true;
+		}
+	};
+
+	/**
+	 * @param {boolean} payload
+	 */
+	const onDeleteCharacter = (payload) => {
+		if (payload) {
+			const selection = /** @type {RangeSelection | undefined} */ (getSelection()?.clone());
+
+			if (!selection?.isCollapsed()) {
+				return false;
+			}
+
+			const currentNode = selection.getNodes()[0];
+
+			if (onDeleteCharacterDecorationBug(selection, currentNode)) {
+				return true;
+			}
+
+			if (onDeleteCharacterNextToImage(currentNode)) {
+				return true;
+			}
+
+			const prevSibling = currentNode.getPreviousSibling();
+
+			if (prevSibling && isImageNode(prevSibling) && node === prevSibling) {
+				imageRef?.click();
+				return true;
+			}
+		}
+
+		return false;
+	};
+
 	/** @param {KeyboardEvent} payload */
 	const onDelete = (payload) => {
 		if ($isSelected && isNodeSelection(getSelection())) {
@@ -107,8 +208,18 @@
 
 	const onEscape = () => {
 		clearSelection(editor);
-		$isSelected = false;
-		editor.update(() => node.selectNext());
+
+		if ($isSelected) {
+			$isSelected = false;
+
+			const cleanNodeRef = getNodeByKey(nodeKey);
+
+			if (cleanNodeRef) {
+				editor.update(() => cleanNodeRef.selectEnd());
+				return true;
+			}
+		}
+
 		return false;
 	};
 
@@ -122,11 +233,12 @@
 		if (event.target === imageRef) {
 			if (event.shiftKey) {
 				$isSelected = !$isSelected;
-				editor.update(() => node.selectNext());
+				editor.update(() => node.selectEnd());
 			} else {
 				clearSelection(editor);
 				$isSelected = true;
 			}
+
 			return true;
 		}
 
@@ -177,6 +289,7 @@
 			),
 			editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
+			editor.registerCommand(DELETE_CHARACTER_COMMAND, onDeleteCharacter, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_ESCAPE_COMMAND, onEscape, COMMAND_PRIORITY_LOW)
 		);
