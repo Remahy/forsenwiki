@@ -1,20 +1,20 @@
 import {
-	$getSelection,
-	$isRangeSelection,
-	$isNodeSelection,
-	$isElementNode,
-	$createNodeSelection,
-	$getNodeByKey,
-	$setSelection,
+	$getSelection as getSelection,
+	$isRangeSelection as isRangeSelection,
+	$isNodeSelection as isNodeSelection,
+	$isElementNode as isElementNode,
+	$createNodeSelection as createNodeSelection,
+	$getNodeByKey as getNodeByKey,
+	$setSelection as setSelection,
 } from 'lexical';
-import { $findMatchingParent } from '@lexical/utils';
+import { $findMatchingParent as findMatchingParent } from '@lexical/utils';
 import { $isAtNodeEnd as isAtNodeEnd } from '@lexical/selection';
 import { writable } from 'svelte/store';
 
 export function getSelectedElements() {
-	const selection = $getSelection();
+	const selection = getSelection();
 
-	if (!$isRangeSelection(selection) && !$isNodeSelection(selection)) {
+	if (!isRangeSelection(selection) && !isNodeSelection(selection)) {
 		return [];
 	}
 
@@ -31,9 +31,9 @@ export function getSelectedElements() {
 
 	for (let index = 0; index < nodes.length; index++) {
 		const node = nodes[index];
-		const parent = $findMatchingParent(
+		const parent = findMatchingParent(
 			node,
-			(parentNode) => $isElementNode(parentNode) && !parentNode.isInline()
+			(parentNode) => isElementNode(parentNode) && !parentNode.isInline()
 		);
 
 		if (!parent) {
@@ -73,7 +73,8 @@ export function getSelectedNode(selection) {
  */
 export function isNodeSelected(editor, key) {
 	return editor.getEditorState().read(() => {
-		const node = $getNodeByKey(key);
+		const node = getNodeByKey(key);
+
 		if (node === null) {
 			return false;
 		}
@@ -86,8 +87,9 @@ export function isNodeSelected(editor, key) {
  */
 export function clearSelection(editor) {
 	editor.update(() => {
-		const selection = $getSelection();
-		if ($isNodeSelection(selection)) {
+		const selection = getSelection();
+
+		if (isNodeSelection(selection)) {
 			selection.clear();
 		}
 	});
@@ -108,12 +110,14 @@ export function createNodeSelectionStore(editor, nodeKey) {
 		/** @param {boolean} selected */
 		set: (selected) => {
 			editor.update(() => {
-				let selection = $getSelection();
-				if (!$isNodeSelection(selection)) {
-					selection = $createNodeSelection();
-					$setSelection(selection);
+				let selection = getSelection();
+
+				if (!isNodeSelection(selection)) {
+					selection = createNodeSelection();
+					setSelection(selection);
 				}
-				if ($isNodeSelection(selection)) {
+
+				if (isNodeSelection(selection)) {
 					if (selected) {
 						selection.add(nodeKey);
 					} else {
