@@ -81,7 +81,7 @@ export class FallbackNode extends DecoratorBlockNode {
 
 	decorate(editor: LexicalEditor) {
 		return {
-			componentClass: FallbackComponent,
+			component: FallbackComponent,
 			props: {
 				node: this,
 				nodeKey: this.__key,

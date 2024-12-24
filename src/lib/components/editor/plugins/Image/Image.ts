@@ -11,7 +11,7 @@ import type {
 } from 'lexical';
 
 import { $applyNodeReplacement, DecoratorNode } from 'lexical';
-import { SvelteComponent, type ComponentProps } from 'svelte';
+import type { ComponentProps, Component } from 'svelte';
 import ImageComponent from './ImageComponent.svelte';
 
 export interface ImagePayload {
@@ -43,8 +43,8 @@ export type SerializedImageNode = Spread<
 >;
 
 type DecoratorImageType = {
-	componentClass: typeof SvelteComponent<any>;
-	props: ComponentProps<ImageComponent> & { node: ImageNode };
+	component: Component<any>;
+	props: ComponentProps<typeof ImageComponent> & { node: ImageNode };
 };
 
 export class ImageNode extends DecoratorNode<DecoratorImageType> {
@@ -187,7 +187,7 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 
 	decorate(editor: LexicalEditor, _config: EditorConfig): DecoratorImageType {
 		return {
-			componentClass: ImageComponent,
+			component: ImageComponent,
 			props: {
 				node: this,
 				src: this.__src,

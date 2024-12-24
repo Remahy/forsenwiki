@@ -21,12 +21,25 @@
 		signOut({ redirect: true });
 	};
 
-	/** @type {URL | undefined} */
-	let cachedImage = $state();
+	function CachedImage () {
+		const image = new URL('', 'https://wsrv.nl');
+
+		return {
+			/**
+			 * @param {string} url
+			 */
+			setImg: (url) => {
+				image.searchParams.set('url', url);
+			},
+			image,
+		}
+	}
+
+	/** @type {ReturnType<CachedImage> | undefined} */
+	let cachedImage = $state(CachedImage());
 
 	if ($page.data.session?.user?.image) {
-		cachedImage = new URL('', 'https://wsrv.nl/');
-		cachedImage.searchParams.set('url', $page.data.session?.user?.image);
+		cachedImage.setImg($page.data.session?.user?.image);
 	}
 
 	// const hasSeenPrivacyUpdateNotice = globalThis?.localStorage
@@ -58,7 +71,7 @@
 					<div class="violet flex max-w-20 gap-2 overflow-hidden p-2 lg:max-w-40">
 						{#if cachedImage}
 							<img
-								src={cachedImage.toString()}
+								src={cachedImage.image.toString()}
 								class="-my-2 -ml-2 hidden h-10 w-auto lg:block"
 								alt="Twitch avatar"
 							/>

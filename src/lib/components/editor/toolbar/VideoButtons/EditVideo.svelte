@@ -27,7 +27,7 @@
 	let currentURL = $state(selectedVideoEmbedNode.__src);
 
 	/**
-	 * @type {{[x: string]: typeof import('svelte').SvelteComponent<any>}}
+	 * @type {{[x: string]: import('svelte').Component<any>}}
 	 */
 	const platformIcons = {
 		youtube: YoutubeIcon,

@@ -34,7 +34,7 @@
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);
 	/** @type {HTMLDivElement | null} */
-	let embedRef = $state();
+	let embedRef = $state(null);
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
 	let isResizing = false;
 

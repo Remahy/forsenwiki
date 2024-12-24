@@ -16,7 +16,7 @@ import type {
 } from 'lexical';
 
 import { DecoratorNode } from 'lexical';
-import { SvelteComponent, type ComponentProps } from 'svelte';
+import type { Component, ComponentProps } from 'svelte';
 
 export type SerializedDecoratorBlockNode = Spread<
 	{
@@ -26,7 +26,7 @@ export type SerializedDecoratorBlockNode = Spread<
 >;
 
 type DecoratorType = {
-	componentClass: typeof SvelteComponent<any>;
+	component: Component<any>;
 	props: ComponentProps<any>;
 };
 
