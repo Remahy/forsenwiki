@@ -18,16 +18,16 @@
 	const { FONTFAMILIES } = TEXT_CONSTANTS;
 	const validValues = Object.values(FONTFAMILIES);
 
-	/** @type {HTMLSelectElement} */
-	let fontElement;
+	/** @type {HTMLSelectElement | null} */
+	let fontElement = $state(null);
 
-	let currentFont = '';
+	let currentFont = $state('');
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: editor = composer?.getEditor?.();
-	$: canEdit = editor?.isEditable();
+	let composer = $derived($c);
+	let editor = $derived(composer?.getEditor?.());
+	let canEdit = $derived(editor?.isEditable());
 
 	/** @param {Event} e */
 	const font = (e) => {
@@ -113,7 +113,7 @@
 		bind:ref={fontElement}
 		on:change={font}
 		bind:value={currentFont}
-		on:click={() => fontElement.dispatchEvent(new Event('change'))}
+		on:click={() => fontElement?.dispatchEvent(new Event('change'))}
 		class="!-ml-10 !px-10"
 	>
 		<option value="mixed" hidden>Mixed</option>

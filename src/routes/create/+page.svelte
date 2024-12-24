@@ -18,26 +18,26 @@
 	const { initialUpdate } = $page.data;
 
 	/** @type {Error | null} */
-	let error = null;
+	let error = $state(null);
 
-	let title = '';
+	let title = $state('');
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: editor = composer?.getEditor?.();
-	$: canEdit = editor?.isEditable();
+	let composer = $derived($c);
+	let editor = $derived(composer?.getEditor?.());
+	let canEdit = $derived(editor?.isEditable());
 
-	$: titleError = title.length === 0 ? new Error('No title set!') : null;
+	let titleError = $derived(title.length === 0 ? new Error('No title set!') : null);
 
 	const y = getContext('YDOC');
-	$: yjsDocMap = $y;
+	let yjsDocMap = $derived($y);
 
 	/** @type {Writable<YDOCPERSISTENCE>} */
 	const p = getContext('YDOCPERSISTENCE');
-	$: persistence = $p;
+	let persistence = $derived($p);
 
-	let isUploading = false;
+	let isUploading = $state(false);
 
 	const unsetError = () => {
 		error = null;
@@ -143,7 +143,7 @@
 	<label>
 		<strong>Title <small>(Must be unique)</small></strong>
 		<input
-			on:input={unsetError}
+			oninput={unsetError}
 			required
 			class="w-full rounded p-2 {titleError && '!bg-red-200'} input-color"
 			bind:value={title}

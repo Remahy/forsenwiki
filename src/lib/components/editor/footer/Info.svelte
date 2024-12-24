@@ -15,12 +15,12 @@
 	/**
 	 * @type {string | null}
 	 */
-	let keys = '';
+	let keys = $state('');
 
 	/**
 	 * @type {string | null}
 	 */
-	let types = '';
+	let types = $state('');
 
 	const update = () => {
 		/**

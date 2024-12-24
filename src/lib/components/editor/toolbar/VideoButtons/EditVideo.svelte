@@ -6,20 +6,25 @@
 	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
 	import { VIDEO_CONSTANTS } from '$lib/constants/video';
 
-	/** @type {import("$lib/lexical/custom").VideoEmbedNode} */
-	export let selectedVideoEmbedNode;
+	/**
+	 * @typedef {Object} Props
+	 * @property {import("$lib/lexical/custom").VideoEmbedNode} selectedVideoEmbedNode
+	 */
+
+	/** @type {Props} */
+	let { selectedVideoEmbedNode = $bindable() } = $props();
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: editor = composer?.getEditor?.();
-	$: canEdit = editor?.isEditable();
+	let composer = $derived($c);
+	let editor = $derived(composer?.getEditor?.());
+	let canEdit = $derived(editor?.isEditable());
 
-	/** @type {HTMLSelectElement} */
-	let platformElement;
+	/** @type {HTMLSelectElement | null} */
+	let platformElement = $state(null);
 
-	let currentPlatform = selectedVideoEmbedNode.__platform;
-	let currentURL = selectedVideoEmbedNode.__src;
+	let currentPlatform = $state(selectedVideoEmbedNode.__platform);
+	let currentURL = $state(selectedVideoEmbedNode.__src);
 
 	/**
 	 * @type {{[x: string]: typeof import('svelte').SvelteComponent<any>}}
@@ -78,10 +83,12 @@
 			});
 		});
 	});
+
+	const SvelteComponent = $derived(platformIcons[currentPlatform] || platformIcons.default);
 </script>
 
 <div class="flex h-full items-center gap-2 pl-2">
-	<svelte:component this={platformIcons[currentPlatform] || platformIcons.default} />
+	<SvelteComponent />
 
 	<Select
 		title="Platform"
@@ -106,7 +113,7 @@
 	<input
 		class="input-color -ml-10 h-full w-auto py-1 pl-10 pr-0 text-sm lg:h-full"
 		bind:value={currentURL}
-		on:change={url}
+		onchange={url}
 		placeholder="https://..."
 		type="url"
 	/>

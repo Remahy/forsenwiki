@@ -1,15 +1,26 @@
 <script>
-	export let ref;
+	import { createBubbler } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 
 	/**
-	 * @type {any}
+	 * @typedef {Object} Props
+	 * @property {any} ref
+	 * @property {any} value
+	 * @property {string} [class]
+	 * @property {import('svelte').Snippet} [children]
 	 */
-	export let value;
 
-	let className = '';
-	export { className as class };
+	/** @type {Props & { [key: string]: any }} */
+	let {
+		ref = $bindable(),
+		value = $bindable(),
+		class: className = '',
+		children,
+		...rest
+	} = $props();
 </script>
 
-<select on:change on:click bind:value bind:this={ref} {...$$restProps} class="select {className}">
-	<slot />
+<select onchange={bubble('change')} onclick={bubble('click')} bind:value bind:this={ref} {...rest} class="select {className}">
+	{@render children?.()}
 </select>

@@ -6,37 +6,40 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { MAX_IMAGE_SIZE_MIB } from '$lib/constants/image';
 
-	/** @type {string} */
-	export let src = '';
+	/**
+	 * @typedef {Object} Props
+	 * @property {string} [src]
+	 * @property {string} [altText]
+	 * @property {number} [width]
+	 * @property {number} [height]
+	 * @property {(data:import('../../plugins/Image/Image').ImagePayload) => void} onSubmit
+	 */
 
-	/** @type {string} */
-	export let altText = '';
+	/** @type {Props} */
+	let {
+		src = $bindable(''),
+		altText = $bindable(''),
+		width = $bindable(24),
+		height = $bindable(24),
+		onSubmit
+	} = $props();
 
-	/** @type {number} */
-	export let width = 24;
+	/** @type {HTMLSelectElement | null} */
+	let selectLinkTypeElement = $state(null);
 
-	/** @type {number} */
-	export let height = 24;
+	/** @type {HTMLInputElement | null} */
+	let inputElement = $state(null);
 
-	/** @type {(data:import('../../plugins/Image/Image').ImagePayload) => void} data */
-	export let onSubmit;
+	let currentLinkType = $state('new');
 
-	/** @type {HTMLSelectElement} */
-	let selectLinkTypeElement;
+	let isLoading = $state(false);
 
-	/** @type {HTMLInputElement} */
-	let inputElement;
+	let isValidImage = $state(false);
 
-	let currentLinkType = 'new';
+	let error = $state('');
 
-	let isLoading = false;
-
-	let isValidImage = false;
-
-	let error = '';
-
-	let originalImageHeight = 0;
-	let originalImageWidth = 0;
+	let originalImageHeight = $state(0);
+	let originalImageWidth = $state(0);
 
 	/** @param {HTMLInputElement} target */
 	const handleNewImage = (target) => {
@@ -51,7 +54,11 @@
 				if (size > MAX_IMAGE_SIZE_MIB) {
 					isValidImage = false;
 					error = `File size too large: Max is 5 MiB. Uploaded file size: ~${size.toFixed(2)} MiB`;
-					inputElement.value = '';
+
+					if (inputElement) {
+						inputElement.value = '';
+					}
+
 					src = '';
 					reject(null);
 					return;
@@ -80,7 +87,11 @@
 
 				img.onerror = () => {
 					isValidImage = false;
-					inputElement.value = '';
+
+					if (inputElement) {
+						inputElement.value = '';
+					}
+
 					src = '';
 					error = 'Image is invalid.';
 					reject(null);
@@ -146,7 +157,7 @@
 				class="grow !p-2 text-base"
 				bind:ref={selectLinkTypeElement}
 				bind:value={currentLinkType}
-				on:click={() => selectLinkTypeElement.dispatchEvent(new Event('change'))}
+				on:click={() => selectLinkTypeElement?.dispatchEvent(new Event('change'))}
 			>
 				<option value="new" selected class="text-lg">New</option>
 				<option value="internal" hidden class="text-lg">Existing</option>
@@ -166,9 +177,9 @@
 				accept="image/*"
 				class="forsen-wiki-theme-border rounded border p-2"
 				bind:value={src}
-				on:input={handleInputChange}
+				oninput={handleInputChange}
 				bind:this={inputElement}
-				on:click={() => inputElement.dispatchEvent(new Event('change'))}
+				onclick={() => inputElement?.dispatchEvent(new Event('change'))}
 			/>
 
 			{#if isLoading}

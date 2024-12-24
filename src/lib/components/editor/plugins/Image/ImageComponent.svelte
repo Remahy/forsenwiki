@@ -1,4 +1,4 @@
-<script context="module">
+<script module>
 	const imageCache = new Set();
 
 	/** @type {import('lexical').LexicalCommand<MouseEvent>} */
@@ -38,36 +38,43 @@
 		$isImageNode as isImageNode,
 	} from './Image';
 
-	/** @type {ImageNode} */
-	export let node;
-	/** @type {string} */
-	export let src;
-	/** @type {string} */
-	export let altText;
-	/** @type {string} */
-	export let nodeKey;
-	/** @type {'inherit' | number} */
-	export let width;
-	/** @type {'inherit' | number} */
-	export let height;
-	/** @type {boolean} */
-	export let resizable;
-	/** @type {import('lexical').LexicalEditor} */
-	export let editor;
+	/**
+	 * @typedef {Object} Props
+	 * @property {ImageNode} node
+	 * @property {string} src
+	 * @property {string} altText
+	 * @property {string} nodeKey
+	 * @property {'inherit' | number} width
+	 * @property {'inherit' | number} height
+	 * @property {boolean} resizable
+	 * @property {import('lexical').LexicalEditor} editor
+	 */
 
-	$: heightCss = height === 'inherit' ? 'inherit' : height + 'px';
-	$: widthCss = width === 'inherit' ? 'inherit' : width + 'px';
+	/** @type {Props} */
+	let {
+		node,
+		src,
+		altText,
+		nodeKey,
+		width,
+		height,
+		resizable,
+		editor
+	} = $props();
+
+	let heightCss = $derived(height === 'inherit' ? 'inherit' : height + 'px');
+	let widthCss = $derived(width === 'inherit' ? 'inherit' : width + 'px');
 
 	/** @type {BaseSelection | null} */
-	let selection = null;
+	let selection = $state(null);
 
 	/** @type {HTMLElement | HTMLImageElement | null} */
-	let imageRef;
+	let imageRef = $state();
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
-	let isResizing = false;
+	let isResizing = $state(false);
 
-	$: draggable = $isSelected && isNodeSelection(selection) && !isResizing;
-	$: isFocused = $isSelected || isResizing;
+	let draggable = $derived($isSelected && isNodeSelection(selection) && !isResizing);
+	let isFocused = $derived($isSelected || isResizing);
 
 	let promise = new Promise((resolve) => {
 		if (imageCache.has(src)) {

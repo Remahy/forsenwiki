@@ -1,4 +1,4 @@
-<script context="module">
+<script module>
 	/**
 	 * @typedef {Readonly<import('./VideoEmbed').VideoEmbedPayload>} InsertVideoEmbedPayload
 	 */
@@ -23,6 +23,14 @@
 
 	import { getYouTubeClipURL } from '$lib/api/utils';
 	import { $createVideoEmbedNode as createVideoEmbedNode, VideoEmbedNode } from './VideoEmbed';
+
+	/**
+	 * @typedef {Object} Props
+	 * @property {import('svelte').Snippet} [children]
+	 */
+
+	/** @type {Props} */
+	let { children } = $props();
 
 	/** @type {import('lexical').LexicalEditor} */
 	const editor = getEditor();
@@ -133,4 +141,4 @@
 	});
 </script>
 
-<slot />
+{@render children?.()}

@@ -3,7 +3,7 @@
 	import Button from './Button.svelte';
 	import { page } from '$app/stores';
 
-	let query = $page.url.pathname === '/search' ? $page.url.searchParams.get('query') : '';
+	let query = $state($page.url.pathname === '/search' ? $page.url.searchParams.get('query') : '');
 
 	page.subscribe(({ url }) => {
 		if (url.pathname === '/search') {

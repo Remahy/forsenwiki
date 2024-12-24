@@ -7,17 +7,22 @@
 	import { ImageNode } from '$lib/lexical/custom';
 	import EditImageModal from './EditImageModal.svelte';
 
-	/** @type {import("$lib/lexical/custom").ImageNode} */
-	export let selectedImageNode;
+	/**
+	 * @typedef {Object} Props
+	 * @property {import("$lib/lexical/custom").ImageNode} selectedImageNode
+	 */
+
+	/** @type {Props} */
+	let { selectedImageNode = $bindable() } = $props();
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: editor = composer?.getEditor?.();
-	$: canEdit = editor?.isEditable();
+	let composer = $derived($c);
+	let editor = $derived(composer?.getEditor?.());
+	let canEdit = $derived(editor?.isEditable());
 
-	let currentWidth = selectedImageNode.__width;
-	let currentHeight = selectedImageNode.__height;
+	let currentWidth = $state(selectedImageNode.__width);
+	let currentHeight = $state(selectedImageNode.__height);
 
 	const onChange = () => {
 		if (!editor) {
@@ -101,7 +106,7 @@
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
 		bind:value={currentWidth}
-		on:change={onChange}
+		onchange={onChange}
 		type="number"
 	/>
 </label>
@@ -113,7 +118,7 @@
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
 		bind:value={currentHeight}
-		on:change={onChange}
+		onchange={onChange}
 		type="number"
 	/>
 </label>

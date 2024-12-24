@@ -10,7 +10,7 @@
 	import EditImage from './EditImage.svelte';
 
 	/** @type {import('$lib/lexical/custom').ImageNode | null} */
-	let selectedImageNode = null;
+	let selectedImageNode = $state(null);
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');

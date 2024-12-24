@@ -6,11 +6,11 @@
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
 
-	let disableCount = true;
+	let disableCount = $state(true);
 
-	let wordsCount = 0;
-	let characterCount = 0;
-	let forsenCount = 0;
+	let wordsCount = $state(0);
+	let characterCount = $state(0);
+	let forsenCount = $state(0);
 	// let linkCount = 0;
 	// let memeCount = 0;
 
@@ -53,7 +53,7 @@
 </script>
 
 <div class="flex grow items-center uppercase leading-none">
-	<button class="flex items-center p-1" on:click={() => (disableCount = !disableCount)}>
+	<button class="flex items-center p-1" onclick={() => (disableCount = !disableCount)}>
 		{#if !disableCount}
 			<XIcon size="16" />
 		{:else}

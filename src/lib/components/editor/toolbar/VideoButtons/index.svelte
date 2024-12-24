@@ -10,7 +10,7 @@
 	import EditVideo from './EditVideo.svelte';
 
 	/** @type {import('$lib/lexical/custom').VideoEmbedNode | null} */
-	let selectedVideoEmbedNode = null;
+	let selectedVideoEmbedNode = $state(null);
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');

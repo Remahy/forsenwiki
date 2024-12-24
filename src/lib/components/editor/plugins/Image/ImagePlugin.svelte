@@ -1,4 +1,4 @@
-<script context="module">
+<script module>
 	/**
 	 * @typedef {Readonly<import('./Image').ImagePayload>} InsertImagePayload
 	 */
@@ -45,6 +45,13 @@
 		ImageNode,
 		TRANSPARENT_IMAGE,
 	} from './Image';
+	/**
+	 * @typedef {Object} Props
+	 * @property {import('svelte').Snippet} [children]
+	 */
+
+	/** @type {Props} */
+	let { children } = $props();
 
 	/** @type {import('lexical').LexicalEditor} */
 	const editor = getEditor();
@@ -380,4 +387,4 @@
 </script>
 
 <!--for ImageComponent history plugin -->
-<slot />
+{@render children?.()}

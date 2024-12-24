@@ -8,7 +8,7 @@
 	import Container from '$lib/components/Container.svelte';
 	import LinkBox from '$lib/components/LinkBox.svelte';
 
-	let data = $page.data.results;
+	let data = $state($page.data.results);
 
 	// @ts-ignore - These detail props are callbacks.
 	function infiniteHandler({ detail: { complete, error, loaded } }) {

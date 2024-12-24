@@ -47,16 +47,16 @@
 
 	const validValues = Object.keys(TYPES);
 
-	/** @type {HTMLSelectElement} */
-	let elementTypeElement;
+	/** @type {HTMLSelectElement | null} */
+	let elementTypeElement = $state(null);
 
-	let currentElementType = '';
+	let currentElementType = $state('');
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: editor = composer?.getEditor?.();
-	$: canEdit = editor?.isEditable();
+	let composer = $derived($c);
+	let editor = $derived(composer?.getEditor?.());
+	let canEdit = $derived(editor?.isEditable());
 
 	const formatParagraph = () => {
 		if (!editor) {
@@ -279,10 +279,12 @@
 			);
 		});
 	});
+
+	const SvelteComponent = $derived(blockTypeIcons[currentElementType] || blockTypeIcons.default);
 </script>
 
 <div class="flex items-center gap-2 pl-2">
-	<svelte:component this={blockTypeIcons[currentElementType] || blockTypeIcons.default} />
+	<SvelteComponent />
 
 	<Select
 		title="Element type"

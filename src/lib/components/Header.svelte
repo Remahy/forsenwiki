@@ -9,7 +9,7 @@
 	// import Box from './Box.svelte';
 	// import Link from './Link.svelte';
 
-	let isLoading = false;
+	let isLoading = $state(false);
 
 	const signInWrapper = () => {
 		isLoading = true;
@@ -22,7 +22,7 @@
 	};
 
 	/** @type {URL | undefined} */
-	let cachedImage;
+	let cachedImage = $state();
 
 	if ($page.data.session?.user?.image) {
 		cachedImage = new URL('', 'https://wsrv.nl/');

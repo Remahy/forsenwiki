@@ -1,15 +1,22 @@
 <script>
-	/** @type {string} */
-	export let href;
+	/**
+	 * @typedef {Object} Props
+	 * @property {string} href
+	 * @property {boolean} [reload]
+	 * @property {string} [class]
+	 * @property {import('svelte').Snippet} [children]
+	 */
 
-	export let reload = false;
-
-	/** @type {string} */
-	let className = '';
-
-	export { className as class };
+	/** @type {Props & { [key: string]: any }} */
+	let {
+		href,
+		reload = false,
+		class: className = '',
+		children,
+		...rest
+	} = $props();
 </script>
 
-<a {href} data-sveltekit-reload={reload} class="link-button {className}" {...$$restProps}>
-	<slot />
+<a {href} data-sveltekit-reload={reload} class="link-button {className}" {...rest}>
+	{@render children?.()}
 </a>

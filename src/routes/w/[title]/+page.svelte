@@ -11,7 +11,7 @@
 	import Box from '$lib/components/Box.svelte';
 	import ToC from '$lib/components/ToC.svelte';
 
-	export let data;
+	let { data } = $props();
 
 	const {
 		post: { rawTitle, title, createdTimestamp, lastUpdated },

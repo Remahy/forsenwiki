@@ -1,17 +1,24 @@
 <script>
 	import { calculateZoomLevel } from '@lexical/utils';
 
-	/** @type {() => void} */
-	export let onResizeStart;
-	/** @type {(width: 'inherit' | number, height: 'inherit' | number) => void} */
-	export let onResizeEnd;
-	/** @type {HTMLElement | null} */
-	export let imageRef;
-	/** @type {import('lexical').LexicalEditor} */
-	export let editor;
+	/**
+	 * @typedef {Object} Props
+	 * @property {() => void} onResizeStart
+	 * @property {(width: 'inherit' | number, height: 'inherit' | number) => void} onResizeEnd
+	 * @property {HTMLElement | null} imageRef
+	 * @property {import('lexical').LexicalEditor} editor
+	 */
 
-	/** @type {HTMLDivElement} */
-	let controlWrapperRef;
+	/** @type {Props} */
+	let {
+		onResizeStart,
+		onResizeEnd,
+		imageRef,
+		editor
+	} = $props();
+
+	/** @type {HTMLDivElement | null} */
+	let controlWrapperRef = $state(null);
 
 	/**
 	 * @param {number} value
@@ -211,50 +218,50 @@
 <div bind:this={controlWrapperRef}>
 	<div
 		class="image-resizer image-resizer-n"
-		on:pointerdown={(event) => {
+		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.north);
 		}}
-	/>
+	></div>
 	<div
 		class="image-resizer image-resizer-ne"
-		on:pointerdown={(event) => {
+		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.north | Direction.east);
 		}}
-	/>
+	></div>
 	<div
 		class="image-resizer image-resizer-e"
-		on:pointerdown={(event) => {
+		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.east);
 		}}
-	/>
+	></div>
 	<div
 		class="image-resizer image-resizer-se"
-		on:pointerdown={(event) => {
+		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.south | Direction.east);
 		}}
-	/>
+	></div>
 	<div
 		class="image-resizer image-resizer-s"
-		on:pointerdown={(event) => {
+		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.south);
 		}}
-	/>
+	></div>
 	<div
 		class="image-resizer image-resizer-sw"
-		on:pointerdown={(event) => {
+		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.south | Direction.west);
 		}}
-	/>
+	></div>
 	<div
 		class="image-resizer image-resizer-w"
-		on:pointerdown={(event) => {
+		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.west);
 		}}
-	/>
+	></div>
 	<div
 		class="image-resizer image-resizer-nw"
-		on:pointerdown={(event) => {
+		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.north | Direction.west);
 		}}
-	/>
+	></div>
 </div>

@@ -12,14 +12,16 @@
 	import { ctrlKey } from '$lib/environment/environment';
 	import EditLinkButton from './EditLinkButton.svelte';
 
-	$: isBold = false;
-	$: isItalic = false;
+	let isBold = $state(false);
+	
+	let isItalic = $state(false);
+	
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: editor = composer?.getEditor?.();
-	$: canEdit = editor?.isEditable();
+	let composer = $derived($c);
+	let editor = $derived(composer?.getEditor?.());
+	let canEdit = $derived(editor?.isEditable());
 
 	const updateToolbar = () => {
 		/**

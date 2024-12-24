@@ -1,14 +1,21 @@
 <script>
-	/** @type {string | undefined} */
-	let className = '';
+	import { createBubbler } from 'svelte/legacy';
 
-	export { className as class };
+	const bubble = createBubbler();
+	/**
+	 * @typedef {Object} Props
+	 * @property {string} [class]
+	 * @property {import('svelte').Snippet} [children]
+	 */
+
+	/** @type {Props & { [key: string]: any }} */
+	let { class: className = '', children, ...rest } = $props();
 </script>
 
 <button
-	on:click
-	{...$$restProps}
+	onclick={bubble('click')}
+	{...rest}
 	class="button flex min-h-10 min-w-10 items-center justify-center gap-2 {className}"
 >
-	<slot />
+	{@render children?.()}
 </button>

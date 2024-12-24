@@ -19,16 +19,20 @@
 	import { $isALinkNode as isALinkNode } from '$lib/lexical/custom';
 	import EditLinkButtonModal from './EditLinkButtonModal.svelte';
 
-	$: hasLink = false;
-	$: url = '';
-	$: attrs = {};
-	$: isInternal = false;
+	let hasLink = $state(false);
+	
+	let url = $state('');
+	
+	let attrs = $state({});
+	
+	let isInternal = $state(false);
+	
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: editor = composer?.getEditor?.();
-	$: canEdit = editor?.isEditable();
+	let composer = $derived($c);
+	let editor = $derived(composer?.getEditor?.());
+	let canEdit = $derived(editor?.isEditable());
 
 	const link = () => {
 		if (!editor) {

@@ -10,34 +10,37 @@
 
 	/** @typedef {import('@lexical/link').LinkAttributes} LinkAttributes */
 
-	/** @type {boolean} */
-	export let hasLink = false;
+	/**
+	 * @typedef {Object} Props
+	 * @property {boolean} [hasLink]
+	 * @property {(url: string, attrs: LinkAttributes) => void} [onSubmit]
+	 * @property {() => void} [deleteLink]
+	 * @property {string} [url]
+	 * @property {LinkAttributes} [attrs]
+	 * @property {boolean} [isInternal]
+	 */
 
-	/** @type {(url: string, attrs: LinkAttributes) => void} */
-	export let onSubmit = () => {};
+	/** @type {Props} */
+	let {
+		hasLink = false,
+		onSubmit = () => {},
+		deleteLink = () => {},
+		url = $bindable(''),
+		attrs = {},
+		isInternal = false
+	} = $props();
 
-	/** @type {() => void} */
-	export let deleteLink = () => {};
+	/** @type {HTMLSelectElement | null} */
+	let selectLinkTypeElement = $state(null);
 
-	/** @type {string} */
-	export let url = '';
+	/** @type {HTMLInputElement | null} */
+	let inputElement = $state(null);
 
-	/** @type {LinkAttributes} */
-	export let attrs = {};
+	let currentLinkType = $state(isInternal ? 'internal' : 'external');
 
-	export let isInternal = false;
+	let isValidLink = $state(false);
 
-	/** @type {HTMLSelectElement} */
-	let selectLinkTypeElement;
-
-	/** @type {HTMLInputElement} */
-	let inputElement;
-
-	let currentLinkType = isInternal ? 'internal' : 'external';
-
-	let isValidLink = false;
-
-	let error = '';
+	let error = $state('');
 
 	/** @param {Event} e */
 	const linkType = (e) => {
@@ -121,7 +124,7 @@
 				bind:ref={selectLinkTypeElement}
 				on:change={linkType}
 				bind:value={currentLinkType}
-				on:click={() => selectLinkTypeElement.dispatchEvent(new Event('change'))}
+				on:click={() => selectLinkTypeElement?.dispatchEvent(new Event('change'))}
 			>
 				<option value="external" selected class="text-lg">External</option>
 				<option value="internal" hidden class="text-lg">Internal</option>
@@ -133,9 +136,9 @@
 			<input
 				class="input-color w-full rounded p-2"
 				bind:value={url}
-				on:input={handleInputChange}
+				oninput={handleInputChange}
 				bind:this={inputElement}
-				on:click={() => inputElement.dispatchEvent(new Event('change'))}
+				onclick={() => inputElement?.dispatchEvent(new Event('change'))}
 			/>
 
 			{#if error}

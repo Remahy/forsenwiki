@@ -2,9 +2,21 @@
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 
-	export let disabled = false;
-	export let onClickReset = () => {};
-	export let isLoading = false;
+	/**
+	 * @typedef {Object} Props
+	 * @property {boolean} [disabled]
+	 * @property {any} [onClickReset]
+	 * @property {boolean} [isLoading]
+	 * @property {import('svelte').Snippet} [children]
+	 */
+
+	/** @type {Props} */
+	let {
+		disabled = false,
+		onClickReset = () => {},
+		isLoading = false,
+		children
+	} = $props();
 </script>
 
 <Button
@@ -17,5 +29,5 @@
 		<Spinner />
 	{/if}
 
-	<slot />
+	{@render children?.()}
 </Button>

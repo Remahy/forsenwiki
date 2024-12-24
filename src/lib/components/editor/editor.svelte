@@ -1,4 +1,6 @@
 <script>
+	import { run } from 'svelte/legacy';
+
 	import { getContext, onMount } from 'svelte';
 	import isUrl from 'is-url';
 	import {
@@ -18,16 +20,25 @@
 	import AutoFocus from './plugins/AutoFocus.svelte';
 	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 
-	export let id;
-	export let update;
-	export let initialUpdate = null;
+	/**
+	 * @typedef {Object} Props
+	 * @property {any} id
+	 * @property {any} update
+	 * @property {any} [initialUpdate]
+	 */
+
+	/** @type {Props} */
+	let { id, update, initialUpdate = null } = $props();
 
 	/** @type {any} */
 	const initialConfig = articleConfig(null, true, null);
 
 	/** @type {Composer | null} */
-	let composer = null;
-	$: getContext('COMPOSER').set(composer);
+	let composer = $state(null);
+
+	run(() => {
+		getContext('COMPOSER').set(composer);
+	});
 
 	const providerFactory = instantiateProvider(update, initialUpdate);
 

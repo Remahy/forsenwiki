@@ -1,1 +1,1 @@
-<div class="violet min-h-[1em] w-[1px] self-stretch" />
+<div class="violet min-h-[1em] w-[1px] self-stretch"></div>

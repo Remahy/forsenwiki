@@ -1,9 +1,19 @@
 <script>
-	export let width = '112';
-	export let height = '112';
+	/**
+	 * @typedef {Object} Props
+	 * @property {string} [width]
+	 * @property {string} [height]
+	 * @property {string} [color1]
+	 * @property {string} [color2]
+	 */
 
-	export let color1 = 'rgb(84 49 46)';
-	export let color2 = 'rgb(166 118 115)';
+	/** @type {Props} */
+	let {
+		width = '112',
+		height = '112',
+		color1 = 'rgb(84 49 46)',
+		color2 = 'rgb(166 118 115)'
+	} = $props();
 </script>
 
 <svg xmlns="http://www.w3.org/2000/svg" {width} {height} viewBox="0 0 1120 1120">

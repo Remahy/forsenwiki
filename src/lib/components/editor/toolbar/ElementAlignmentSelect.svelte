@@ -26,16 +26,16 @@
 
 	const validValues = Object.keys(ALIGNMENT);
 
-	/** @type {HTMLSelectElement} */
-	let alignmentElement;
+	/** @type {HTMLSelectElement | null} */
+	let alignmentElement = $state(null);
 
-	let currentAlignment = '';
+	let currentAlignment = $state('');
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: editor = composer?.getEditor?.();
-	$: canEdit = editor?.isEditable();
+	let composer = $derived($c);
+	let editor = $derived(composer?.getEditor?.());
+	let canEdit = $derived(editor?.isEditable());
 
 	/** @param {Event} e */
 	const alignment = (e) => {
@@ -99,11 +99,13 @@
 			);
 		});
 	});
+
+	const SvelteComponent = $derived(alignmentIcons[currentAlignment] || alignmentIcons.default);
 </script>
 
 <div class="flex items-center gap-2 pl-2">
 	<div class="">
-		<svelte:component this={alignmentIcons[currentAlignment] || alignmentIcons.default} />
+		<SvelteComponent />
 	</div>
 
 	<Select
@@ -112,7 +114,7 @@
 		bind:ref={alignmentElement}
 		on:change={alignment}
 		bind:value={currentAlignment}
-		on:click={() => alignmentElement.dispatchEvent(new Event('change'))}
+		on:click={() => alignmentElement?.dispatchEvent(new Event('change'))}
 		class="!-ml-10 !px-10"
 	>
 		<option value="mixed" hidden>Mixed</option>

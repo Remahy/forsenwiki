@@ -8,6 +8,14 @@
 
 	import '../app.pcss';
 
+	/**
+	 * @typedef {Object} Props
+	 * @property {import('svelte').Snippet} [children]
+	 */
+
+	/** @type {Props} */
+	let { children } = $props();
+
 	/** @type {ComposerWritable} */
 	setContext('COMPOSER', writable(null));
 	setContext('YDOCPERSISTENCE', writable(null));
@@ -17,7 +25,7 @@
 <div class="app flex min-h-screen flex-col">
 	<Header />
 
-	<slot></slot>
+	{@render children?.()}
 
 	<Footer />
 </div>

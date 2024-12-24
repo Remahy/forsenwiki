@@ -22,27 +22,27 @@
 	} = $page.data;
 
 	/** @type {Error | null} */
-	let error = null;
+	let error = $state(null);
 
 	/** @type {{[x: string]: Error}} */
 	let rawWarnings = {};
 
-	$: warnings = Object.values(rawWarnings);
+	let warnings = $derived(Object.values(rawWarnings));
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: editor = composer?.getEditor?.();
-	$: canEdit = editor?.isEditable();
+	let composer = $derived($c);
+	let editor = $derived(composer?.getEditor?.());
+	let canEdit = $derived(editor?.isEditable());
 
 	const y = getContext('YDOC');
-	$: yjsDocMap = $y;
+	let yjsDocMap = $derived($y);
 
 	/** @type {Writable<YDOCPERSISTENCE>} */
 	const p = getContext('YDOCPERSISTENCE');
-	$: persistence = $p;
+	let persistence = $derived($p);
 
-	let isUploading = false;
+	let isUploading = $state(false);
 
 	const submit = async () => {
 		if (!yjsDocMap) {

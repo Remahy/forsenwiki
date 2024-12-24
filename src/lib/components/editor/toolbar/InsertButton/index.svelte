@@ -7,16 +7,16 @@
 	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
 	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 
-	/** @type {HTMLSelectElement} */
-	let insertElementTypeElement;
+	/** @type {HTMLSelectElement | null} */
+	let insertElementTypeElement = $state(null);
 
-	let currentInsertElementType = '';
+	let currentInsertElementType = $state('');
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: canEdit = composer?.getEditor().isEditable();
-	$: editor = composer?.getEditor();
+	let composer = $derived($c);
+	let canEdit = $derived(composer?.getEditor().isEditable());
+	let editor = $derived(composer?.getEditor());
 
 	const insertImage = () => {
 		if (!editor) {
@@ -71,14 +71,19 @@
 			const element = insertElementTypeOptions.find(({ value: v }) => v === value);
 
 			if (!element) {
-				insertElementTypeElement.value = '';
+				if (insertElementTypeElement) {
+					insertElementTypeElement.value = '';
+				}
+
 				return;
 			}
 
 			element.insertFunc();
 		}
 
-		insertElementTypeElement.value = '';
+		if (insertElementTypeElement) {
+			insertElementTypeElement.value = '';
+		}
 	};
 </script>
 

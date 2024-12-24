@@ -1,4 +1,4 @@
-<script context="module">
+<script module>
 	/** @type {import('lexical').LexicalCommand<MouseEvent>} */
 	export const RIGHT_CLICK_VIDEOEMBED_COMMAND = createCommand('RIGHT_CLICK_VIDEOEMBED_COMMAND');
 </script>
@@ -34,34 +34,41 @@
 		VideoEmbedNode,
 	} from './VideoEmbed';
 
-	/** @type {VideoEmbedNode} */
-	export let node;
-	/** @type {string} */
-	export let src;
-	/** @type {import('./VideoEmbed').SupportedPlatforms} */
-	export let platform;
-	/** @type {import('lexical').NodeKey} */
-	export let nodeKey;
-	/** @type {'inherit' | number} */
-	export let height;
-	/** @type {'inherit' | number} */
-	export let width;
-	/** @type {boolean} */
-	export let resizable;
-	/** @type {import('lexical').LexicalEditor} */
-	export let editor;
+	/**
+	 * @typedef {Object} Props
+	 * @property {VideoEmbedNode} node
+	 * @property {string} src
+	 * @property {import('./VideoEmbed').SupportedPlatforms} platform
+	 * @property {import('lexical').NodeKey} nodeKey
+	 * @property {'inherit' | number} height
+	 * @property {'inherit' | number} width
+	 * @property {boolean} resizable
+	 * @property {import('lexical').LexicalEditor} editor
+	 */
+
+	/** @type {Props} */
+	let {
+		node,
+		src,
+		platform,
+		nodeKey,
+		height,
+		width,
+		resizable,
+		editor
+	} = $props();
 
 	/** @type {BaseSelection | null} */
-	let selection = null;
+	let selection = $state(null);
 	/** @type {HTMLDivElement | null} */
-	let embedRef;
+	let embedRef = $state(null);
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
-	let isResizing = false;
+	let isResizing = $state(false);
 
-	$: isFocused = $isSelected || isResizing;
-	$: parsedSrc = getURLAndTitle(platform, src, DOMAIN);
-	$: url = parsedSrc.url;
-	$: title = parsedSrc.title;
+	let isFocused = $derived($isSelected || isResizing);
+	let parsedSrc = $derived(getURLAndTitle(platform, src, DOMAIN));
+	let url = $derived(parsedSrc.url);
+	let title = $derived(parsedSrc.title);
 
 	/**
 	 * @param {MouseEvent} event
@@ -202,7 +209,7 @@
 		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 		allowFullScreen={true}
 		{title}
-	/>
+	></iframe>
 </div>
 {#if resizable && isNodeSelection(selection) && isFocused}
 	<ImageResizer {editor} imageRef={embedRef} {onResizeStart} {onResizeEnd} />

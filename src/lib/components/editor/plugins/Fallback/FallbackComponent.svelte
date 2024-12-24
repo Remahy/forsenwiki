@@ -15,22 +15,30 @@
 	import { clearSelection, createNodeSelectionStore } from '../../utils/getSelection';
 	import { $isFallbackNode as isFallbackNode } from './Fallback';
 
-	/** @type {import('./Fallback').FallbackNode} */
-	export let node;
-	/** @type {import('lexical').NodeKey} */
-	export let nodeKey;
-	export let data;
-	/** @type {LexicalEditor} */
-	export let editor;
+	/**
+	 * @typedef {Object} Props
+	 * @property {import('./Fallback').FallbackNode} node
+	 * @property {import('lexical').NodeKey} nodeKey
+	 * @property {any} data
+	 * @property {LexicalEditor} editor
+	 */
+
+	/** @type {Props} */
+	let {
+		node,
+		nodeKey,
+		data,
+		editor
+	} = $props();
 
 	/** @type {BaseSelection | null} */
-	let selection = null;
+	let selection = $state(null);
 	/** @type {HTMLDivElement | null} */
-	let embedRef;
+	let embedRef = $state();
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
 	let isResizing = false;
 
-	$: isFocused = $isSelected || isResizing;
+	let isFocused = $derived($isSelected || isResizing);
 
 	/** @param {KeyboardEvent} payload */
 	const onDelete = (payload) => {
