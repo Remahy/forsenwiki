@@ -1,4 +1,5 @@
 <script>
+  // Based on umaranis' svelte-lexical
 	import {
 		$computeTableMap as computeTableMap,
 		$computeTableMapSkipCellCheck as computeTableMapSkipCellCheck,

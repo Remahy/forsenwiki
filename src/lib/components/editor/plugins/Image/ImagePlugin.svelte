@@ -12,6 +12,7 @@
 </script>
 
 <script>
+  // Based on umaranis' svelte-lexical
 	import './Image.css';
 
 	import {
