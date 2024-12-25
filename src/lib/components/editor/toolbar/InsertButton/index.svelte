@@ -1,6 +1,7 @@
 <script>
 	import { getContext } from 'svelte';
 	import { PlusIcon } from 'lucide-svelte';
+	import { INSERT_TABLE_COMMAND } from '@lexical/table';
 
 	import Select from '$lib/components/Select.svelte';
 	import { TRANSPARENT_IMAGE } from '../../plugins/Image/Image';
@@ -44,6 +45,19 @@
 		});
 	};
 
+	const insertTable = () => {
+		if (!editor) {
+			return;
+		}
+
+		editor.dispatchCommand(INSERT_TABLE_COMMAND, {
+			columns: '3',
+			rows: '3',
+			includeHeaders: false,
+		});
+	};
+
+
 	const insertElementTypeOptions = [
 		{
 			value: 'image',
@@ -54,6 +68,11 @@
 			value: 'video',
 			label: 'Video',
 			insertFunc: insertVideo,
+		},
+		{
+			value: 'table',
+			label: 'Table',
+			insertFunc: insertTable,
 		},
 	];
 
