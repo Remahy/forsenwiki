@@ -20,7 +20,7 @@
 
 	export let id;
 	export let update;
-	export let initialUpdate = null;
+	export let initialUpdate;
 
 	/** @type {any} */
 	const initialConfig = articleConfig(null, true, null);

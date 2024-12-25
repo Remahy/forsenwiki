@@ -15,6 +15,9 @@ export default defineConfig({
 			},
 		},
 	},
+	optimizeDeps: {
+		exclude: ['yjs'],
+	},
 	resolve: {
 		alias: {
 			yjs: path.resolve('./node_modules/yjs/dist/yjs.mjs'),

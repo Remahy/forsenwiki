@@ -17,12 +17,12 @@ let provider;
 
 /**
  * @param {string} update
- * @param {string?} initialUpdate
  * @param {string} id
  * @param {Map<string, Y.Doc>} yjsDocMap
+ * @param {string} [initialUpdate]
  * @returns {import('@lexical/yjs').Provider}
  */
-function providerFactory(update, initialUpdate, id = 'new', yjsDocMap) {
+function providerFactory(update, id = 'new', yjsDocMap, initialUpdate) {
 	if (provider) {
 		return provider;
 	}
@@ -114,12 +114,12 @@ function providerFactory(update, initialUpdate, id = 'new', yjsDocMap) {
 
 /**
  * @param {string} update
- * @param {string?} initialUpdate
+ * @param {string} [initialUpdate]
  */
 export function instantiateProvider(update, initialUpdate) {
 	/**
 	 * @param {string} id
 	 * @param {any} yjsDocMap
 	 */
-	return (id, yjsDocMap) => providerFactory(update, initialUpdate, id, yjsDocMap);
+	return (id, yjsDocMap) => providerFactory(update, id, yjsDocMap, initialUpdate);
 }
