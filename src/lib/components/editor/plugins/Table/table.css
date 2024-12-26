@@ -1,0 +1,38 @@
+.tableCell {
+	position: relative;
+}
+
+.tableCellSelected {
+	caret-color: transparent;
+}
+
+.tableCellSelected::after {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 0;
+	background-color: highlight;
+	mix-blend-mode: multiply;
+	content: '';
+	pointer-events: none;
+}
+
+@keyframes table-controls {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+.tableAddColumns {
+	position: absolute;
+	animation: table-controls 0.2s ease;
+}
+
+.tableAddRows {
+	position: absolute;
+	animation: table-controls 0.2s ease;
+}

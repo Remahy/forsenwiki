@@ -34,6 +34,9 @@ export const articleTheme = {
 		h4: 'break-words',
 		h5: 'break-words',
 	},
+	tableCell: 'tableCell',
+	tableCellResizer: 'tableCellResizer',
+	tableCellSelected: 'tableCellSelected',
 };
 
 /**
