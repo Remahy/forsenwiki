@@ -132,7 +132,7 @@
 		<h1 class="text-xl font-semibold lg:text-2xl">Edit image</h1>
 		<Button
 			class="ml-auto inline-flex items-center rounded-lg"
-			on:click={() => ($modal.isOpen = false)}
+			on:click={cancel}
 		>
 			<XIcon />
 		</Button>
