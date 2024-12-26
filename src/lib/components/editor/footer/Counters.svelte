@@ -21,7 +21,7 @@
 
 	/** @param {string | null} [text] */
 	const countCharacters = (text) => {
-		return text?.split('').length || 0;
+		return text?.replace(/[\W]+/g, '').length || 0;
 	};
 
 	/** @param {string | null} [text] */
@@ -40,11 +40,11 @@
 			editor.registerUpdateListener(({ editorState }) => {
 				editorState.read(() => {
 					if (!disableCount) {
-						const { textContent } = composer?.getEditor().getRootElement() || {};
+						const { innerText } = composer?.getEditor().getRootElement() || {};
 
-						wordsCount = countWords(textContent);
-						characterCount = countCharacters(textContent);
-						forsenCount = countForsen(textContent);
+						wordsCount = countWords(innerText);
+						characterCount = countCharacters(innerText);
+						forsenCount = countForsen(innerText);
 					}
 				});
 			});
