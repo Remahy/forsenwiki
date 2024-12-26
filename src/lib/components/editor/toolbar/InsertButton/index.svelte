@@ -2,8 +2,9 @@
 	import { getContext } from 'svelte';
 	import { PlusIcon } from 'lucide-svelte';
 	import { INSERT_TABLE_COMMAND } from '@lexical/table';
-
+	
 	import Select from '$lib/components/Select.svelte';
+
 	import { TRANSPARENT_IMAGE } from '../../plugins/Image/Image';
 	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
 	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';

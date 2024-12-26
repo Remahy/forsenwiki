@@ -1,5 +1,15 @@
 <script>
-  // Based on umaranis' svelte-lexical
+	// Based on umaranis' svelte-lexical
+	import './table.css';
+
+	import { onMount } from 'svelte';
+	import { getEditor } from 'svelte-lexical';
+	import {
+		$createParagraphNode as createParagraphNode,
+		$getNodeByKey as getNodeByKey,
+		$isTextNode as isTextNode,
+		COMMAND_PRIORITY_EDITOR,
+	} from 'lexical';
 	import {
 		$computeTableMap as computeTableMap,
 		$computeTableMapSkipCellCheck as computeTableMapSkipCellCheck,
@@ -20,14 +30,9 @@
 		$insertNodeToNearestRoot as insertNodeToNearestRoot,
 		mergeRegister,
 	} from '@lexical/utils';
-	import {
-		$createParagraphNode as createParagraphNode,
-		$getNodeByKey as getNodeByKey,
-		$isTextNode as isTextNode,
-		COMMAND_PRIORITY_EDITOR,
-	} from 'lexical';
-	import { onMount } from 'svelte';
-	import { getEditor } from 'svelte-lexical';
+
+	import { modal } from '$lib/stores/modal';
+	import InsertTableDialog from '../../toolbar/TableButtons/InsertTableDialog.svelte';
 
 	export let hasCellMerge = true;
 	export let hasCellBackgroundColor = true;
@@ -39,74 +44,11 @@
 	 *
 	 * @typedef {import("@lexical/table").HTMLTableElementWithWithTableSelectionState} HTMLTableElementWithWithTableSelectionState
 	 * @typedef {import("@lexical/table").TableObserver} TableObserver
+	 * @typedef {import("@lexical/table").InsertTableCommandPayloadHeaders} InsertTableCommandPayloadHeaders
 	 */
 
 	/** @type {LexicalEditor} */
 	const editor = getEditor();
-
-	onMount(() => {
-		if (!editor.hasNodes([TableNode, TableCellNode, TableRowNode])) {
-			throw new Error(
-				'TablePlugin: TableNode, TableCellNode or TableRowNode not registered on editor'
-			);
-		}
-		const unregisterTableInsertCmd = editor.registerCommand(
-			INSERT_TABLE_COMMAND,
-			({ columns, rows, includeHeaders }) => {
-				const tableNode = createTableNodeWithDimensions(
-					Number(rows),
-					Number(columns),
-					includeHeaders
-				);
-				insertNodeToNearestRoot(tableNode);
-
-				const firstDescendant = tableNode.getFirstDescendant();
-				if (isTextNode(firstDescendant)) {
-					firstDescendant.select();
-				}
-
-				return true;
-			},
-			COMMAND_PRIORITY_EDITOR
-		);
-		const unregisterMutationListener = editor.registerNodeTransform(TableNode, (node) => {
-			const [gridMap] = computeTableMapSkipCellCheck(node, null, null);
-			const maxRowLength = gridMap.reduce((curLength, row) => {
-				return Math.max(curLength, row.length);
-			}, 0);
-			const rowNodes = node.getChildren();
-			for (let i = 0; i < gridMap.length; ++i) {
-				const rowNode = /** @type {TableRowNode?} */ (rowNodes[i]);
-
-				if (!rowNode) {
-					continue;
-				}
-				const rowLength = gridMap[i].reduce((acc, cell) => (cell ? 1 + acc : acc), 0);
-				if (rowLength === maxRowLength) {
-					continue;
-				}
-				for (let j = rowLength; j < maxRowLength; ++j) {
-					// TODO: inherit header state from another header or body
-					const newCell = createTableCellNode(0);
-					newCell.append(createParagraphNode());
-					rowNode.append(newCell);
-				}
-			}
-		});
-
-		const unregisterUnmergeCellsNodeTransform = unmergeCellsNodeTransform();
-
-		const unregisterRemoveCellColorNodeTransform = removeCellColorNodeTransform();
-
-		const unregisterTableSelections = setupTableSelections();
-		return mergeRegister(
-			unregisterTableInsertCmd,
-			unregisterMutationListener,
-			unregisterTableSelections,
-			unregisterUnmergeCellsNodeTransform,
-			unregisterRemoveCellColorNodeTransform
-		);
-	});
 
 	function setupTableSelections() {
 		/** @type {Map<NodeKey, [TableObserver, HTMLTableElementWithWithTableSelectionState]>}*/
@@ -177,6 +119,7 @@
 				// intentionally empty
 			};
 		}
+
 		return editor.registerNodeTransform(TableCellNode, (node) => {
 			if (node.getColSpan() > 1 || node.getRowSpan() > 1) {
 				// When we have rowSpan we have to map the entire Table to understand where the new Cells
@@ -226,6 +169,7 @@
 			}
 		});
 	}
+
 	// Remove cell background color when feature is disabled
 	function removeCellColorNodeTransform() {
 		if (hasCellBackgroundColor) {
@@ -239,4 +183,94 @@
 			}
 		});
 	}
+
+	/** @param {{ columns: string, rows: string, includeHeaders?: InsertTableCommandPayloadHeaders }} payload */
+	function wrapperInsertTable(payload) {
+		modal.set({
+			component: InsertTableDialog,
+			columns: payload.columns,
+			rows: payload.rows,
+			includeHeaders: payload.includeHeaders,
+			/** @param {{ columns: string, rows: string, includeHeaders: InsertTableCommandPayloadHeaders }} data */
+			onSubmit: (data) => {
+				editor.update(() => {
+					const tableNode = createTableNodeWithDimensions(
+						Number(data.rows),
+						Number(data.columns),
+						data.includeHeaders
+					);
+
+					insertNodeToNearestRoot(tableNode);
+
+					const firstDescendant = tableNode.getFirstDescendant();
+
+					if (isTextNode(firstDescendant)) {
+						firstDescendant.select();
+					}
+				});
+			},
+			isOpen: true,
+		});
+	}
+
+	onMount(() => {
+		if (!editor.hasNodes([TableNode, TableCellNode, TableRowNode])) {
+			throw new Error(
+				'TablePlugin: TableNode, TableCellNode or TableRowNode not registered on editor'
+			);
+		}
+
+		const unregisterTableInsertCmd = editor.registerCommand(
+			INSERT_TABLE_COMMAND,
+			({ columns, rows, includeHeaders }) => {
+				wrapperInsertTable({ columns, rows, includeHeaders });
+
+				return true;
+			},
+			COMMAND_PRIORITY_EDITOR
+		);
+
+		const unregisterMutationListener = editor.registerNodeTransform(TableNode, (node) => {
+			const [gridMap] = computeTableMapSkipCellCheck(node, null, null);
+			const maxRowLength = gridMap.reduce((curLength, row) => {
+				return Math.max(curLength, row.length);
+			}, 0);
+			const rowNodes = node.getChildren();
+
+			for (let i = 0; i < gridMap.length; ++i) {
+				const rowNode = /** @type {TableRowNode?} */ (rowNodes[i]);
+
+				if (!rowNode) {
+					continue;
+				}
+
+				const rowLength = gridMap[i].reduce((acc, cell) => (cell ? 1 + acc : acc), 0);
+
+				if (rowLength === maxRowLength) {
+					continue;
+				}
+
+				for (let j = rowLength; j < maxRowLength; ++j) {
+					// TODO: inherit header state from another header or body
+					const newCell = createTableCellNode(0);
+					newCell.append(createParagraphNode());
+					rowNode.append(newCell);
+				}
+			}
+		});
+
+		const unregisterUnmergeCellsNodeTransform = unmergeCellsNodeTransform();
+
+		const unregisterRemoveCellColorNodeTransform = removeCellColorNodeTransform();
+
+		const unregisterTableSelections = setupTableSelections();
+
+		return mergeRegister(
+			unregisterTableInsertCmd,
+			unregisterMutationListener,
+			unregisterTableSelections,
+			unregisterUnmergeCellsNodeTransform,
+			unregisterRemoveCellColorNodeTransform
+		);
+	});
 </script>

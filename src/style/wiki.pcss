@@ -109,10 +109,13 @@ html.forsen-wiki-theme {
 
 	.prose {
 		table {
-			@apply table-fixed forsen-wiki-theme-border m-0;
+			@apply table-fixed forsen-wiki-theme-border m-0 select-text;
+		}
+		th {
+			@apply bg-slate-950/25 dark:bg-white/25 border forsen-wiki-theme-border;
 		}
 		td {
-			@apply dark:bg-slate-950 border forsen-wiki-theme-border;
+			@apply bg-black/5 dark:bg-white/5 border forsen-wiki-theme-border;
 		}
 	}
 }
