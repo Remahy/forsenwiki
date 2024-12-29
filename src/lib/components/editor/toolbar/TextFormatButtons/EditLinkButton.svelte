@@ -89,36 +89,31 @@
 	};
 
 	const updateToolbar = () => {
-		/**
-		 * @type { BaseSelection & { hasFormat?: (format: string) => boolean } | null }
-		 */
 		const selection = getSelection();
 
-		if (!selection?.hasFormat) {
+		if (!isRangeSelection(selection)) {
 			return;
 		}
 
-		if (isRangeSelection(selection)) {
-			/** @type {LexicalNode} */
-			const node = getSelectedNode(selection);
-			const parent = node.getParent();
+		/** @type {LexicalNode} */
+		const node = getSelectedNode(selection);
+		const parent = node.getParent();
 
-			if (isALinkNode(node)) {
-				hasLink = true;
-				url = node.__url;
-				attrs = { ...node };
-				isInternal = node.__isInternal;
-			} else if (isALinkNode(parent)) {
-				hasLink = true;
-				url = parent.__url;
-				attrs = { ...parent };
-				isInternal = parent.__isInternal;
-			} else {
-				hasLink = false;
-				url = '';
-				attrs = {};
-				isInternal = false;
-			}
+		if (isALinkNode(node)) {
+			hasLink = true;
+			url = node.__url;
+			attrs = { ...node };
+			isInternal = node.__isInternal;
+		} else if (isALinkNode(parent)) {
+			hasLink = true;
+			url = parent.__url;
+			attrs = { ...parent };
+			isInternal = parent.__isInternal;
+		} else {
+			hasLink = false;
+			url = '';
+			attrs = {};
+			isInternal = false;
 		}
 	};
 

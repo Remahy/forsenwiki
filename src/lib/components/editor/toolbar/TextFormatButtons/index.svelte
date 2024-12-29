@@ -1,5 +1,6 @@
 <script>
 	import {
+		$isRangeSelection as isRangeSelection,
 		COMMAND_PRIORITY_CRITICAL,
 		FORMAT_TEXT_COMMAND,
 		SELECTION_CHANGE_COMMAND,
@@ -22,12 +23,9 @@
 	$: canEdit = editor?.isEditable();
 
 	const updateToolbar = () => {
-		/**
-		 * @type { BaseSelection & { hasFormat?: (format: string) => boolean } | null }
-		 */
 		const selection = getSelection();
 
-		if (!selection?.hasFormat) {
+		if (!isRangeSelection(selection)) {
 			return;
 		}
 

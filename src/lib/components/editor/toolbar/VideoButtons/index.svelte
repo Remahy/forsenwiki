@@ -16,9 +16,6 @@
 	const c = getContext('COMPOSER');
 
 	const updateToolbar = () => {
-		/**
-		 * @type { BaseSelection & { hasFormat?: (format: string) => boolean } | null }
-		 */
 		const selection = getSelection();
 
 		if (isNodeSelection(selection)) {
