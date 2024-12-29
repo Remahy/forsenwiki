@@ -8,7 +8,7 @@
 	import { $isTableNode as isTableNode } from '@lexical/table';
 
 	import Divider from '$lib/components/Divider.svelte';
-	import InsertRowColumnButton from './InsertRowColumnButton.svelte';
+	import InsertRowColumnButtons from './InsertRowColumnButtons.svelte';
 
 	/** @type {import("@lexical/table").TableNode | null} */
 	let selectedTable = null;
@@ -74,6 +74,6 @@
 			<span>L</span>
 		</div>
 
-		<InsertRowColumnButton {selectedTable} />
+		<InsertRowColumnButtons {selectedTable} />
 	</div>
 {/if}
