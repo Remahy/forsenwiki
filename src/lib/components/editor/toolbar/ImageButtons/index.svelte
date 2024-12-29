@@ -6,7 +6,9 @@
 		$getSelection as getSelection,
 		$isNodeSelection as isNodeSelection,
 	} from 'lexical';
+
 	import { $isImageNode as isImageNode } from '$lib/lexical/custom';
+	import Divider from '$lib/components/Divider.svelte';
 	import EditImage from './EditImage.svelte';
 
 	/** @type {import('$lib/lexical/custom').ImageNode | null} */
@@ -53,6 +55,8 @@
 </script>
 
 {#if selectedImageNode}
+	<Divider />
+
 	<div class="flex items-center gap-2">
 		<div
 			class="flex select-none flex-col items-center justify-center font-mono text-xs leading-none"

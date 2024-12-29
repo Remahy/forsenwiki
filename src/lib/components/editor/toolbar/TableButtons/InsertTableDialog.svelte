@@ -5,16 +5,11 @@
 	import Button from '$lib/components/Button.svelte';
 	import { modal } from '$lib/stores/modal';
 
-	/** @type {string} */
 	export let rows = '3';
-
-	/** @type {string} */
 	export let columns = '3';
-
-	/** @type {boolean} */
 	export let includeHeaders = true;
-
-	export let onSubmit;
+	/** @type {(data: import('../../plugins/Table/Table').TablePayload) => void} */
+	export let onSubmit = () => {};
 
 	let isDisabled = true;
 

@@ -18,8 +18,8 @@
 	/** @type {number} */
 	export let height = 24;
 
-	/** @type {(data:import('../../plugins/Image/Image').ImagePayload) => void} data */
-	export let onSubmit;
+	/** @type {(data:import('../../plugins/Image/Image').ImagePayload) => void} */
+	export let onSubmit = () => {};
 
 	/** @type {HTMLSelectElement} */
 	let selectLinkTypeElement;
