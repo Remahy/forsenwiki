@@ -18,7 +18,6 @@
 	import AutoFocus from './plugins/AutoFocus.svelte';
 	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 	import TablePlugin from './plugins/Table/TablePlugin.svelte';
-	import TableHoverActionPlugin from './plugins/Table/TableHoverActionPlugin.svelte';
 
 	export let id;
 	export let update;
@@ -32,9 +31,6 @@
 	$: getContext('COMPOSER').set(composer);
 
 	const providerFactory = instantiateProvider(update, initialUpdate);
-
-	/** @type {HTMLDivElement} */
-	let editorDiv;
 
 	// This reloads pages when we leave editor.
 	onMount(() => {
@@ -67,8 +63,7 @@
 		</div>
 
 		<article class="editor-border flex grow flex-col">
-			<div class="prose relative flex max-w-[unset] grow overflow-auto p-2 dark:prose-invert" bind:this={editorDiv}>
-				<TableHoverActionPlugin anchorElem={editorDiv} />
+			<div class="prose relative flex max-w-[unset] grow overflow-auto p-2 dark:prose-invert">
 				<ContentEditable className="grow m-0 p-0 border-0 outline-0" />
 			</div>
 		</article>
