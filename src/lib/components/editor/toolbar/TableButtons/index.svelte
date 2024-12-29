@@ -9,6 +9,7 @@
 
 	import Divider from '$lib/components/Divider.svelte';
 	import InsertRowColumnButtons from './InsertRowColumnButtons.svelte';
+	import RemoveRowColumnButtons from './RemoveRowColumnButtons.svelte';
 
 	/** @type {import("@lexical/table").TableNode | null} */
 	let selectedTable = null;
@@ -75,5 +76,6 @@
 		</div>
 
 		<InsertRowColumnButtons {selectedTable} />
+		<RemoveRowColumnButtons {selectedTable} />
 	</div>
 {/if}
