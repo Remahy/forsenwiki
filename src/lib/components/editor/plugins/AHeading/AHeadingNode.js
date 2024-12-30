@@ -21,10 +21,14 @@ export class AHeadingNode extends HeadingNode {
 		return new AHeadingNode(node.__tag, node.__key);
 	}
 
-	/** @param {any} serializedNode */
+	/** @param {import('@lexical/rich-text').SerializedHeadingNode} serializedNode */
 	static importJSON(serializedNode) {
 		/** @type {AHeadingNode} */
 		const node = /** @type {any} */ (new AHeadingNode(serializedNode.tag));
+
+		node.setDirection(serializedNode.direction);
+		node.setFormat(serializedNode.format);
+		node.setIndent(serializedNode.indent);
 
 		node.__type = AHeadingNode.getType();
 

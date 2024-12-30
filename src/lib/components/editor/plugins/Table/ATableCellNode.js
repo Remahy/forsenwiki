@@ -8,8 +8,8 @@ import { TableCellNode } from '$lib/lexical/index';
 
 export class ATableCellNode extends TableCellNode {
 	/**
-	 * @param {TableCellHeaderStates} headerState
-	 * @param {number} colSpan
+	 * @param {TableCellHeaderStates} [headerState]
+	 * @param {number} [colSpan]
 	 * @param {number} [width]
 	 * @param {NodeKey} [key]
 	 */
@@ -28,12 +28,16 @@ export class ATableCellNode extends TableCellNode {
 		return new ATableCellNode(node.__headerState, node.__colSpan, node.__width, node.__key);
 	}
 
-	/** @param {any} serializedNode */
+	/** @param {import('@lexical/table').SerializedTableCellNode} serializedNode */
 	static importJSON(serializedNode) {
 		/** @type {ATableCellNode} */
 		const node = /** @type {any} */ (
 			new ATableCellNode(serializedNode.headerState, serializedNode.colSpan, serializedNode.width)
 		);
+
+		node.setDirection(serializedNode.direction);
+		node.setFormat(serializedNode.format);
+		node.setIndent(serializedNode.indent);
 
 		node.__type = ATableCellNode.getType();
 

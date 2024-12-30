@@ -39,7 +39,7 @@ export class DiffVideoEmbedNode extends VideoEmbedNode {
 	}
 
 	/**
-	 * @param {any} serializedNode
+	 * @param {import('../VideoEmbed/VideoEmbed').SerializedVideoEmbedNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
 		const VideoEmbed = VideoEmbedNode.importJSON(serializedNode);

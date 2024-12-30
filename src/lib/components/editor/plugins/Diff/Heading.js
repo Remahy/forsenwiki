@@ -39,7 +39,7 @@ export class DiffHeadingNode extends HeadingNode {
 	}
 
 	/**
-	 * @param {any} serializedNode
+	 * @param {import('@lexical/rich-text').SerializedHeadingNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
 		const heading = HeadingNode.importJSON(serializedNode);
