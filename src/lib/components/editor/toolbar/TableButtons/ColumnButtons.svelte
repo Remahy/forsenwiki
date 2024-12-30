@@ -1,15 +1,32 @@
 <script>
-	import { PlusIcon, MinusIcon, ArrowLeftIcon, ArrowRightIcon } from 'lucide-svelte';
-	import { getEditor } from 'svelte-lexical';
+	// Based on umaranis' svelte-lexical
+
+	import { onMount } from 'svelte';
+	import { PlusIcon, MinusIcon, ArrowLeftIcon, ArrowRightIcon, Columns3Icon } from 'lucide-svelte';
+	import {
+		$isRangeSelection as isRangeSelection,
+		$getSelection as getSelection,
+		COMMAND_PRIORITY_CRITICAL,
+		SELECTION_CHANGE_COMMAND,
+	} from 'lexical';
 	import {
 		$insertTableColumn__EXPERIMENTAL as insertTableColumn__EXPERIMENTAL,
 		$deleteTableColumn__EXPERIMENTAL as deleteTableColumn__EXPERIMENTAL,
+		$getTableNodeFromLexicalNodeOrThrow as getTableNodeFromLexicalNodeOrThrow,
+		$getTableColumnIndexFromTableCellNode as getTableColumnIndexFromTableCellNode,
+		$isTableRowNode as isTableRowNode,
+		$isTableCellNode as isTableCellNode,
+		TableCellHeaderStates,
 	} from '@lexical/table';
+	import { getEditor } from 'svelte-lexical';
 
 	import Button from '$lib/components/Button.svelte';
+	import EditorButton from '../EditorButton.svelte';
 
 	/** @type {import("@lexical/table").TableNode | null} */
 	export let selectedTable = null;
+
+	$: isColumnHeader = false;
 
 	const editor = getEditor();
 
@@ -33,6 +50,97 @@
 			deleteTableColumn__EXPERIMENTAL();
 		});
 	};
+
+	const toggleTableColumnIsHeader = () => {
+		editor.update(() => {
+			const selection = getSelection();
+
+			if (!selection) {
+				return;
+			}
+
+			const [node] = selection.getNodes();
+
+			const tableCellNode = node.getParents().find((n) => isTableCellNode(n));
+
+			if (!tableCellNode) {
+				return;
+			}
+
+			const tableNode = getTableNodeFromLexicalNodeOrThrow(tableCellNode);
+
+			const tableColumnIndex = getTableColumnIndexFromTableCellNode(tableCellNode);
+
+			/** @type {import('@lexical/table').TableRowNode[]} */
+			const tableRows = tableNode.getChildren();
+			const maxRowsLength = Math.max(...tableRows.map((row) => row.getChildren().length));
+
+			if (tableColumnIndex >= maxRowsLength || tableColumnIndex < 0) {
+				throw new Error('Expected table cell to be inside of table row.');
+			}
+
+			for (let r = 0; r < tableRows.length; r++) {
+				const tableRow = tableRows[r];
+
+				if (!isTableRowNode(tableRow)) {
+					throw new Error('Expected table row');
+				}
+
+				const tableCells = tableRow.getChildren();
+				if (tableColumnIndex >= tableCells.length) {
+					// if cell is outside of bounds for the current row (for example various merge cell cases) we shouldn't highlight it
+					continue;
+				}
+
+				const tableCell = tableCells[tableColumnIndex];
+
+				if (!isTableCellNode(tableCell)) {
+					throw new Error('Expected table cell');
+				}
+
+				tableCell.toggleHeaderStyle(TableCellHeaderStates.COLUMN);
+			}
+		});
+	};
+
+	const updateToolbar = () => {
+		const selection = getSelection();
+
+		if (!isRangeSelection(selection)) {
+			return;
+		}
+
+		const [node] = selection.getNodes();
+
+		const closestCell = node.getParents().find((n) => isTableCellNode(n));
+
+		if (!closestCell) {
+			return;
+		}
+
+		const style = closestCell.getHeaderStyles()
+
+		if (style === TableCellHeaderStates.COLUMN) {
+			isColumnHeader = true;
+		} else {
+			isColumnHeader = false;
+		}
+	};
+
+	onMount(() => {
+		const cleanup = editor.registerCommand(
+			SELECTION_CHANGE_COMMAND,
+			() => {
+				updateToolbar();
+				return false;
+			},
+			COMMAND_PRIORITY_CRITICAL
+		);
+
+		return () => {
+			cleanup();
+		};
+	});
 </script>
 
 <div class="forsen-wiki-theme-outline flex items-center gap-2 outline-offset-8">
@@ -43,7 +151,7 @@
 	</div>
 
 	<div
-		class="forsen-wiki-theme-border flex items-center rounded border bg-violet-900 dark:bg-opacity-50 text-sm text-white"
+		class="forsen-wiki-theme-border flex rounded border bg-violet-900 text-sm text-white dark:bg-opacity-50"
 	>
 		<div class="flex items-center gap-2 p-2" title="Add column">
 			<PlusIcon size="16" />
@@ -69,4 +177,12 @@
 	<Button on:click={onClickRemoveColumn} class="!p-0" title="Remove column">
 		<MinusIcon size="20" />
 	</Button>
+
+	<EditorButton
+		on:click={toggleTableColumnIsHeader}
+		isActive={isColumnHeader}
+		title="Toggle header"
+	>
+		<Columns3Icon />
+	</EditorButton>
 </div>

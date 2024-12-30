@@ -49,6 +49,7 @@ export class ATableCellNode extends TableCellNode {
 			const element = /** @type {HTMLTableCellElement} */ (output.element);
 
 			element.style.removeProperty('border');
+			element.style.removeProperty('background-color');
 		}
 
 		return output;
