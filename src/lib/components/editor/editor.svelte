@@ -21,7 +21,8 @@
 
 	export let id;
 	export let update;
-	export let initialUpdate;
+	/** @type {string | undefined} */
+	export let initialUpdate = undefined;
 
 	/** @type {any} */
 	const initialConfig = articleConfig(null, true, null);

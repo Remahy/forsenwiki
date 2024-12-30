@@ -1,6 +1,8 @@
 <script>
-	import { getContext, onMount } from 'svelte';
+	import { onMount } from 'svelte';
+	import { getEditor } from 'svelte-lexical';
 	import { FileQuestionIcon, LinkIcon, YoutubeIcon } from 'lucide-svelte';
+
 	import { VideoEmbedNode } from '$lib/lexical/custom';
 	import Select from '$lib/components/Select.svelte';
 	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
@@ -9,11 +11,7 @@
 	/** @type {import("$lib/lexical/custom").VideoEmbedNode} */
 	export let selectedVideoEmbedNode;
 
-	/** @type {ComposerWritable} */
-	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: editor = composer?.getEditor?.();
-	$: canEdit = editor?.isEditable();
+	const editor = getEditor();
 
 	/** @type {HTMLSelectElement} */
 	let platformElement;
@@ -64,18 +62,10 @@
 	};
 
 	onMount(() => {
-		c.subscribe((composer) => {
-			if (composer === null) {
-				return;
+		return editor.registerNodeTransform(VideoEmbedNode, (node) => {
+			if (node.getKey() === selectedVideoEmbedNode.getKey()) {
+				selectedVideoEmbedNode = node;
 			}
-
-			const editor = composer.getEditor();
-
-			editor.registerNodeTransform(VideoEmbedNode, (node) => {
-				if (node.getKey() === selectedVideoEmbedNode.getKey()) {
-					selectedVideoEmbedNode = node;
-				}
-			});
 		});
 	});
 </script>
@@ -85,7 +75,6 @@
 
 	<Select
 		title="Platform"
-		disabled={!canEdit}
 		bind:ref={platformElement}
 		on:change={platform}
 		bind:value={currentPlatform}

@@ -55,7 +55,7 @@
 				node.setSrc(res);
 			});
 		}
-	}
+	};
 
 	/** @param {import('./VideoEmbed').VideoEmbedPayload} payload */
 	const wrapperInsertVideoEmbed = (payload) => {
@@ -76,7 +76,7 @@
 				return;
 			}
 		});
-	}
+	};
 
 	onMount(() => {
 		if (!editor.hasNodes([VideoEmbedNode])) {

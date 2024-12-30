@@ -1,5 +1,5 @@
 <script>
-	import { getContext, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import {
 		FileQuestionIcon,
 		Heading1Icon,
@@ -12,6 +12,15 @@
 		PilcrowIcon,
 		QuoteIcon,
 	} from 'lucide-svelte';
+	import { getEditor } from 'svelte-lexical';
+	import {
+		$getSelection as getSelection,
+		$isRangeSelection as isRangeSelection,
+		$createParagraphNode as createParagraphNode,
+		$isRootOrShadowRoot as isRootOrShadowRoot,
+		SELECTION_CHANGE_COMMAND,
+		COMMAND_PRIORITY_CRITICAL,
+	} from 'lexical';
 	import {
 		$createHeadingNode as createHeadingNode,
 		$createQuoteNode as createQuoteNode,
@@ -23,14 +32,6 @@
 		INSERT_ORDERED_LIST_COMMAND,
 		INSERT_UNORDERED_LIST_COMMAND,
 	} from '@lexical/list';
-	import {
-		$getSelection as getSelection,
-		$isRangeSelection as isRangeSelection,
-		$createParagraphNode as createParagraphNode,
-		$isRootOrShadowRoot as isRootOrShadowRoot,
-		SELECTION_CHANGE_COMMAND,
-		COMMAND_PRIORITY_CRITICAL,
-	} from 'lexical';
 	import {
 		$getNearestNodeOfType as getNearestNodeOfType,
 		$findMatchingParent as findMatchingParent,
@@ -52,11 +53,7 @@
 
 	let currentElementType = '';
 
-	/** @type {ComposerWritable} */
-	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: editor = composer?.getEditor?.();
-	$: canEdit = editor?.isEditable();
+	const editor = getEditor();
 
 	const formatParagraph = () => {
 		if (!editor) {
@@ -188,7 +185,7 @@
 			return;
 		}
 
-		editor.update(() => {
+		editor.read(() => {
 			const selection = getSelection();
 			if (isRangeSelection(selection)) {
 				const anchorNode = selection.anchor.getNode();
@@ -262,22 +259,14 @@
 	};
 
 	onMount(() => {
-		c.subscribe((composer) => {
-			if (composer === null) {
-				return;
-			}
-
-			const editor = composer.getEditor();
-
-			editor.registerCommand(
-				SELECTION_CHANGE_COMMAND,
-				() => {
-					updateToolbar();
-					return false;
-				},
-				COMMAND_PRIORITY_CRITICAL
-			);
-		});
+		return editor.registerCommand(
+			SELECTION_CHANGE_COMMAND,
+			() => {
+				updateToolbar();
+				return false;
+			},
+			COMMAND_PRIORITY_CRITICAL
+		);
 	});
 </script>
 
@@ -286,7 +275,6 @@
 
 	<Select
 		title="Element type"
-		disabled={!canEdit}
 		bind:ref={elementTypeElement}
 		on:change={elementType}
 		bind:value={currentElementType}

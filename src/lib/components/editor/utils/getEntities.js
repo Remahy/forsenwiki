@@ -11,7 +11,7 @@ export const getOnlyInternalLinks = (links) => links.filter((node) => node.getIs
  */
 export const getArticleURLIds = (editor) => {
 	return new Promise((resolve) => {
-		editor.update(() => {
+		editor.read(() => {
 			const links = $nodesOfType(ALinkNode);
 
 			const internalLinks = getOnlyInternalLinks(links);

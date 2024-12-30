@@ -1,7 +1,7 @@
 <script>
-	import { getContext } from 'svelte';
-	import { PlusIcon } from 'lucide-svelte';
+	import { getEditor } from 'svelte-lexical';
 	import { INSERT_TABLE_COMMAND } from '@lexical/table';
+	import { PlusIcon } from 'lucide-svelte';
 	
 	import Select from '$lib/components/Select.svelte';
 
@@ -14,11 +14,7 @@
 
 	let currentInsertElementType = '';
 
-	/** @type {ComposerWritable} */
-	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: canEdit = composer?.getEditor().isEditable();
-	$: editor = composer?.getEditor();
+	const editor = getEditor();
 
 	const insertImage = () => {
 		if (!editor) {
@@ -107,7 +103,6 @@
 
 	<Select
 		title="Insert new element"
-		disabled={!canEdit}
 		bind:value={currentInsertElementType}
 		bind:ref={insertElementTypeElement}
 		on:change={insertElementType}
