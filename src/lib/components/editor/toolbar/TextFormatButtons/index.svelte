@@ -1,4 +1,5 @@
 <script>
+	import { getContext, onMount } from 'svelte';
 	import {
 		$isRangeSelection as isRangeSelection,
 		COMMAND_PRIORITY_CRITICAL,
@@ -7,7 +8,6 @@
 		$getSelection as getSelection,
 	} from 'lexical';
 	import { BoldIcon, ItalicIcon } from 'lucide-svelte';
-	import { getContext, onMount } from 'svelte';
 
 	import EditorButton from '../EditorButton.svelte';
 	import { ctrlKey } from '$lib/environment/environment';

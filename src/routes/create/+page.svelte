@@ -157,7 +157,7 @@
 
 	{#if browser}
 		<div class="flex min-h-96">
-			<Editor update={null} id={'new'} {initialUpdate} />
+			<Editor update={null} id="new" {initialUpdate} />
 		</div>
 	{/if}
 

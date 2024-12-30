@@ -177,7 +177,7 @@
 >
 	{#if hasLink}
 		<Link2Icon />
-		<SettingsIcon size={'16'} class="absolute right-0 top-0" />
+		<SettingsIcon size="16" class="absolute right-0 top-0" />
 	{:else}
 		<Link2Icon />
 	{/if}
