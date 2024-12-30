@@ -18,8 +18,8 @@
 	/** @type {number} */
 	export let height = 24;
 
-	/** @type {(data:import('../../plugins/Image/Image').ImagePayload) => void} data */
-	export let onSubmit;
+	/** @type {(data:import('../../plugins/Image/Image').ImagePayload) => void} */
+	export let onSubmit = () => {};
 
 	/** @type {HTMLSelectElement} */
 	let selectLinkTypeElement;
@@ -132,7 +132,7 @@
 		<h1 class="text-xl font-semibold lg:text-2xl">Edit image</h1>
 		<Button
 			class="ml-auto inline-flex items-center rounded-lg"
-			on:click={() => ($modal.isOpen = false)}
+			on:click={cancel}
 		>
 			<XIcon />
 		</Button>

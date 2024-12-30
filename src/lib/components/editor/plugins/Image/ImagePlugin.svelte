@@ -12,6 +12,7 @@
 </script>
 
 <script>
+	// Based on umaranis' svelte-lexical
 	import './Image.css';
 
 	import {
@@ -303,8 +304,7 @@
 			editor.registerMutationListener(ImageNode, (mutatedNodes) => {
 				/** @type {any[]} */
 				const promises = [];
-
-				editor.update(async () => {
+				editor.read(async () => {
 					for (const [key, mutation] of mutatedNodes) {
 						if (mutation === 'destroyed') continue;
 						/** @type {ImageNode | null} */
@@ -339,11 +339,11 @@
 
 						promises.push(getBase64Image({ src }, node));
 					}
-				});
 
-				if (promises.length) {
-					Promise.all(promises.map((fn) => fn()));
-				}
+					if (promises.length) {
+						Promise.all(promises.map((fn) => fn()));
+					}
+				});
 			}),
 			editor.registerCommand(
 				INSERT_IMAGE_COMMAND,

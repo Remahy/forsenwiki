@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import {
 		CAN_UNDO_COMMAND,
 		UNDO_COMMAND,
@@ -6,8 +7,9 @@
 		REDO_COMMAND,
 		COMMAND_PRIORITY_LOW,
 	} from 'lexical';
+	import { getEditor } from 'svelte-lexical';
+	import { mergeRegister } from '@lexical/utils';
 	import { Redo2Icon, Undo2Icon } from 'lucide-svelte';
-	import { getContext, onMount } from 'svelte';
 
 	import { ctrlKey } from '$lib/environment/environment';
 	import EditorButton from './EditorButton.svelte';
@@ -15,11 +17,7 @@
 	let canUndo = false;
 	let canRedo = false;
 
-	/** @type {ComposerWritable} */
-	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: editor = composer?.getEditor?.();
-	$: canEdit = editor?.isEditable();
+	const editor = getEditor();
 
 	const undo = () => {
 		if (!editor) {
@@ -38,13 +36,7 @@
 	};
 
 	onMount(() => {
-		c.subscribe((composer) => {
-			if (!composer) {
-				return;
-			}
-
-			const editor = composer.getEditor();
-
+		return mergeRegister(
 			editor.registerCommand(
 				CAN_REDO_COMMAND,
 				(payload) => {
@@ -52,8 +44,7 @@
 					return false;
 				},
 				COMMAND_PRIORITY_LOW
-			);
-
+			),
 			editor.registerCommand(
 				CAN_UNDO_COMMAND,
 				(payload) => {
@@ -61,15 +52,15 @@
 					return false;
 				},
 				COMMAND_PRIORITY_LOW
-			);
-		});
+			)
+		);
 	});
 </script>
 
-<EditorButton title="Undo ({ctrlKey}Z)" on:click={undo} disabled={!canUndo || !canEdit}>
+<EditorButton title="Undo ({ctrlKey}Z)" on:click={undo} disabled={!canUndo}>
 	<Undo2Icon size="16" />
 </EditorButton>
 
-<EditorButton title="Undo ({ctrlKey}Y)" on:click={redo} disabled={!canRedo || !canEdit}>
+<EditorButton title="Undo ({ctrlKey}Y)" on:click={redo} disabled={!canRedo}>
 	<Redo2Icon size="16" />
 </EditorButton>

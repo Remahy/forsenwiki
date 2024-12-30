@@ -1,6 +1,7 @@
 <script>
-	import { getContext, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { $getNodeByKey as getNodeByKey } from 'lexical';
+	import { getEditor } from 'svelte-lexical';
 	import { RectangleHorizontalIcon, RectangleVerticalIcon } from 'lucide-svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { modal } from '$lib/stores/modal';
@@ -10,11 +11,7 @@
 	/** @type {import("$lib/lexical/custom").ImageNode} */
 	export let selectedImageNode;
 
-	/** @type {ComposerWritable} */
-	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: editor = composer?.getEditor?.();
-	$: canEdit = editor?.isEditable();
+	const editor = getEditor();
 
 	let currentWidth = selectedImageNode.__width;
 	let currentHeight = selectedImageNode.__height;
@@ -74,14 +71,8 @@
 	};
 
 	onMount(() => {
-		c.subscribe((composer) => {
-			if (composer === null) {
-				return;
-			}
 
-			const editor = composer.getEditor();
-
-			editor.registerNodeTransform(ImageNode, (node) => {
+			return editor.registerNodeTransform(ImageNode, (node) => {
 				const { width, height } = node.getWidthAndHeight();
 				if (node.getKey() === selectedImageNode.getKey()) {
 					currentWidth = width;
@@ -90,10 +81,9 @@
 				}
 			});
 		});
-	});
 </script>
 
-<Button on:click={image} disabled={!canEdit} class="text-xs">Change image</Button>
+<Button on:click={image} class="text-xs">Change image</Button>
 <label title="Width" class="flex h-full items-center gap-2 pl-2">
 	<span class="hidden">Width</span>
 	<RectangleHorizontalIcon />

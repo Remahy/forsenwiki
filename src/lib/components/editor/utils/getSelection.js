@@ -1,3 +1,4 @@
+import { writable } from 'svelte/store';
 import {
 	$getSelection as getSelection,
 	$isRangeSelection as isRangeSelection,
@@ -9,7 +10,6 @@ import {
 } from 'lexical';
 import { $findMatchingParent as findMatchingParent } from '@lexical/utils';
 import { $isAtNodeEnd as isAtNodeEnd } from '@lexical/selection';
-import { writable } from 'svelte/store';
 
 export function getSelectedElements() {
 	const selection = getSelection();

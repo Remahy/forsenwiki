@@ -1,8 +1,10 @@
 <script>
-	import { getContext } from 'svelte';
+	import { getEditor } from 'svelte-lexical';
+	import { INSERT_TABLE_COMMAND } from '@lexical/table';
 	import { PlusIcon } from 'lucide-svelte';
-
+	
 	import Select from '$lib/components/Select.svelte';
+
 	import { TRANSPARENT_IMAGE } from '../../plugins/Image/Image';
 	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
 	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';
@@ -12,11 +14,7 @@
 
 	let currentInsertElementType = '';
 
-	/** @type {ComposerWritable} */
-	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: canEdit = composer?.getEditor().isEditable();
-	$: editor = composer?.getEditor();
+	const editor = getEditor();
 
 	const insertImage = () => {
 		if (!editor) {
@@ -44,6 +42,19 @@
 		});
 	};
 
+	const insertTable = () => {
+		if (!editor) {
+			return;
+		}
+
+		editor.dispatchCommand(INSERT_TABLE_COMMAND, {
+			columns: '3',
+			rows: '3',
+			includeHeaders: false,
+		});
+	};
+
+
 	const insertElementTypeOptions = [
 		{
 			value: 'image',
@@ -54,6 +65,11 @@
 			value: 'video',
 			label: 'Video',
 			insertFunc: insertVideo,
+		},
+		{
+			value: 'table',
+			label: 'Table',
+			insertFunc: insertTable,
 		},
 	];
 
@@ -87,7 +103,6 @@
 
 	<Select
 		title="Insert new element"
-		disabled={!canEdit}
 		bind:value={currentInsertElementType}
 		bind:ref={insertElementTypeElement}
 		on:change={insertElementType}

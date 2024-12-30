@@ -39,7 +39,7 @@ export class DiffQuoteNode extends QuoteNode {
 	}
 
 	/**
-	 * @param {any} serializedNode
+	 * @param {import('@lexical/rich-text').SerializedQuoteNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
 		const quote = QuoteNode.importJSON(serializedNode);

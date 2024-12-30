@@ -23,9 +23,6 @@
 	let types = '';
 
 	const update = () => {
-		/**
-		 * @type { BaseSelection & { hasFormat?: (format: string) => boolean } | null }
-		 */
 		const selection = getSelection();
 
 		if (selection) {

@@ -1,5 +1,6 @@
 <script>
 	import Divider from '$lib/components/Divider.svelte';
+
 	import HistoryButtons from './HistoryButtons.svelte';
 	import TextFormatButtons from './TextFormatButtons/index.svelte';
 	import ElementAlignmentSelect from './ElementAlignmentSelect.svelte';
@@ -8,6 +9,7 @@
 	import InsertButton from './InsertButton/index.svelte';
 	import ImageButtons from './ImageButtons/index.svelte';
 	import VideoButtons from './VideoButtons/index.svelte';
+	import TableButtons from './TableButtons/index.svelte';
 </script>
 
 <div class="flex flex-wrap gap-2">
@@ -20,7 +22,8 @@
 	<ElementAlignmentSelect />
 	<Divider />
 	<InsertButton />
-	<Divider />
+
 	<ImageButtons />
 	<VideoButtons />
+	<TableButtons />
 </div>

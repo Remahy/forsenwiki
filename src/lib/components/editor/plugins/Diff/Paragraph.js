@@ -41,7 +41,7 @@ export class DiffParagraphNode extends ParagraphNode {
 	}
 
 	/**
-	 * @param {any} serializedNode
+	 * @param {import('lexical').SerializedParagraphNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
 		const paragraph = ParagraphNode.importJSON(serializedNode);

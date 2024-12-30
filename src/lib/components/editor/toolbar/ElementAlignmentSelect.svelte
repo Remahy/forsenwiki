@@ -1,10 +1,12 @@
 <script>
+	import { onMount } from 'svelte';
 	import {
 		COMMAND_PRIORITY_CRITICAL,
 		FORMAT_ELEMENT_COMMAND,
 		SELECTION_CHANGE_COMMAND,
 	} from 'lexical';
-	import { getContext, onMount } from 'svelte';
+	import { getEditor } from 'svelte-lexical';
+	import { mergeRegister } from '@lexical/utils';
 	import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from 'lucide-svelte';
 
 	import Select from '$lib/components/Select.svelte';
@@ -31,11 +33,7 @@
 
 	let currentAlignment = '';
 
-	/** @type {ComposerWritable} */
-	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: editor = composer?.getEditor?.();
-	$: canEdit = editor?.isEditable();
+	const editor = getEditor();
 
 	/** @param {Event} e */
 	const alignment = (e) => {
@@ -68,26 +66,21 @@
 			return;
 		}
 
-		editor.update(() => {
+		editor.read(() => {
 			const nodes = getSelectedElements();
 			const formats = [...new Set(nodes.map((node) => node.getFormatType()))];
+			console.log(nodes);
 			currentAlignment = formats.length > 1 ? 'mixed' : formats[0];
 		});
 	};
 
 	onMount(() => {
-		c.subscribe((composer) => {
-			if (composer === null) {
-				return;
-			}
-
-			const editor = composer.getEditor();
-
+		return mergeRegister(
 			editor.registerUpdateListener(({ editorState }) => {
 				editorState.read(() => {
 					updateToolbar();
 				});
-			});
+			}),
 
 			editor.registerCommand(
 				SELECTION_CHANGE_COMMAND,
@@ -96,19 +89,18 @@
 					return false;
 				},
 				COMMAND_PRIORITY_CRITICAL
-			);
-		});
+			)
+		);
 	});
 </script>
 
 <div class="flex items-center gap-2 pl-2">
-	<div class="">
+	<div>
 		<svelte:component this={alignmentIcons[currentAlignment] || alignmentIcons.default} />
 	</div>
 
 	<Select
 		title="Element alignment"
-		disabled={!canEdit}
 		bind:ref={alignmentElement}
 		on:change={alignment}
 		bind:value={currentAlignment}

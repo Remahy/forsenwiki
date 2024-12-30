@@ -6,7 +6,9 @@
 		$getSelection as getSelection,
 		$isNodeSelection as isNodeSelection,
 	} from 'lexical';
+
 	import { $isVideoEmbedNode as isVideoEmbedNode } from '$lib/lexical/custom';
+	import Divider from '$lib/components/Divider.svelte';
 	import EditVideo from './EditVideo.svelte';
 
 	/** @type {import('$lib/lexical/custom').VideoEmbedNode | null} */
@@ -16,9 +18,6 @@
 	const c = getContext('COMPOSER');
 
 	const updateToolbar = () => {
-		/**
-		 * @type { BaseSelection & { hasFormat?: (format: string) => boolean } | null }
-		 */
 		const selection = getSelection();
 
 		if (isNodeSelection(selection)) {
@@ -56,6 +55,8 @@
 </script>
 
 {#if selectedVideoEmbedNode}
+	<Divider />
+
 	<div class="flex items-center gap-2">
 		<div
 			class="flex select-none flex-col items-center justify-center font-mono text-xs leading-none"

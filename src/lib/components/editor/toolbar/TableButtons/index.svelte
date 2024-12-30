@@ -1,18 +1,18 @@
 <script>
 	import { getContext, onMount } from 'svelte';
 	import {
+		$getSelection as getSelection,
 		COMMAND_PRIORITY_CRITICAL,
 		SELECTION_CHANGE_COMMAND,
-		$getSelection as getSelection,
-		$isNodeSelection as isNodeSelection,
 	} from 'lexical';
+	import { $isTableNode as isTableNode } from '@lexical/table';
 
-	import { $isImageNode as isImageNode } from '$lib/lexical/custom';
 	import Divider from '$lib/components/Divider.svelte';
-	import EditImage from './EditImage.svelte';
+	import RowButtons from './RowButtons.svelte';
+	import ColumnButtons from './ColumnButtons.svelte';
 
-	/** @type {import('$lib/lexical/custom').ImageNode | null} */
-	let selectedImageNode = null;
+	/** @type {import("@lexical/table").TableNode | null} */
+	let selectedTable = null;
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
@@ -20,18 +20,27 @@
 	const updateToolbar = () => {
 		const selection = getSelection();
 
-		if (isNodeSelection(selection)) {
-			const [node] = selection.getNodes();
-			if (!isImageNode(node)) {
-				selectedImageNode = null;
-				return;
-			}
-
-			selectedImageNode = node;
+		if (!selection?.isCollapsed) {
+			selectedTable = null;
 			return;
 		}
 
-		selectedImageNode = null;
+		const [node] = selection.getNodes();
+
+		if (!node) {
+			selectedTable = null;
+			return;
+		}
+
+		const closestParentTable = node.getParents().find((node) => isTableNode(node));
+
+		if (!closestParentTable) {
+			selectedTable = null;
+			return;
+		}
+
+		selectedTable = closestParentTable;
+		return;
 	};
 
 	onMount(() => {
@@ -54,18 +63,19 @@
 	});
 </script>
 
-{#if selectedImageNode}
+{#if selectedTable}
 	<Divider />
 
 	<div class="flex items-center gap-2">
 		<div
 			class="flex select-none flex-col items-center justify-center font-mono text-xs leading-none"
 		>
-			<span>I</span>
-			<span>M</span>
-			<span>G</span>
+			<span>T</span>
+			<span>B</span>
+			<span>L</span>
 		</div>
 
-		<EditImage {selectedImageNode} />
+		<RowButtons {selectedTable} />
+		<ColumnButtons {selectedTable} />
 	</div>
 {/if}

@@ -3,6 +3,8 @@
 	import { FileIcon, FileUpIcon, HistoryIcon } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { browser } from '$app/environment';
+
 	import { resetIndexedDb } from '$lib/yjs/resetIndexedDb';
 	import { updateArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
@@ -152,9 +154,11 @@
 		</div>
 	</Box>
 
-	<div class="flex min-h-96">
-		<Editor {update} {id} />
-	</div>
+	{#if browser}
+		<div class="flex min-h-96">
+			<Editor {update} {id} />
+		</div>
+	{/if}
 
 	{#if error}
 		<Box class="flex items-center !bg-red-300 p-2 dark:text-black">

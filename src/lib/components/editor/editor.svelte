@@ -17,10 +17,12 @@
 	import ImagePlugin from './plugins/Image/ImagePlugin.svelte';
 	import AutoFocus from './plugins/AutoFocus.svelte';
 	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
+	import TablePlugin from './plugins/Table/TablePlugin.svelte';
 
 	export let id;
 	export let update;
-	export let initialUpdate = null;
+	/** @type {string | undefined} */
+	export let initialUpdate = undefined;
 
 	/** @type {any} */
 	const initialConfig = articleConfig(null, true, null);
@@ -52,6 +54,8 @@
 		<ImagePlugin />
 
 		<VideoEmbedPlugin />
+
+		<TablePlugin hasCellBackgroundColor={false} />
 
 		<CollaborationPlugin {id} {providerFactory} shouldBootstrap={false} />
 

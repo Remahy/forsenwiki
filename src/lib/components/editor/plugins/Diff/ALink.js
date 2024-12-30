@@ -49,7 +49,7 @@ export class DiffALinkNode extends ALinkNode {
 	}
 
 	/**
-	 * @param {any} serializedNode
+	 * @param {import('@lexical/link').SerializedLinkNode & { isInternal: boolean }} serializedNode
 	 */
 	static importJSON(serializedNode) {
 		const aLink = ALinkNode.importJSON(serializedNode);

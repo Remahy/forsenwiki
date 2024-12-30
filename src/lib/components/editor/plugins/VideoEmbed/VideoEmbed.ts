@@ -292,8 +292,16 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	}
 
 	static importJSON(serializedNode: SerializedVideoEmbedNode): VideoEmbedNode {
-		const node = $createVideoEmbedNode(serializedNode);
+		const node = new VideoEmbedNode(
+			serializedNode.platform,
+			serializedNode.src,
+			serializedNode.width,
+			serializedNode.height,
+			serializedNode.format
+		);
+
 		node.setFormat(serializedNode.format);
+
 		return node;
 	}
 

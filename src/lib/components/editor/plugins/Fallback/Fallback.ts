@@ -51,7 +51,9 @@ export class FallbackNode extends DecoratorBlockNode {
 
 	static importJSON(serializedNode: any): FallbackNode {
 		const node = new FallbackNode(serializedNode);
+
 		node.setFormat(serializedNode.format);
+
 		return node;
 	}
 

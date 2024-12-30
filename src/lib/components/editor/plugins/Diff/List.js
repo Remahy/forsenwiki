@@ -40,7 +40,7 @@ export class DiffListNode extends ListNode {
 	}
 
 	/**
-	 * @param {any} serializedNode
+	 * @param {import('@lexical/list').SerializedListNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
 		const list = ListNode.importJSON(serializedNode);

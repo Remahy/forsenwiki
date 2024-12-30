@@ -1,7 +1,17 @@
-import { LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical/index';
+import {
+	LinkNode,
+	ListNode,
+	ListItemNode,
+	HeadingNode,
+	QuoteNode,
+	TableNode,
+	TableCellNode,
+	TableRowNode,
+} from '$lib/lexical/index';
 import {
 	ALinkNode,
 	AHeadingNode,
+	ATableCellNode,
 	DeprecatedVideoEmbedNode,
 	FallbackNode,
 	ImageNode,
@@ -9,6 +19,7 @@ import {
 } from '$lib/lexical/custom';
 import { $createALinkNode } from '../plugins/ALink/ALinkNode';
 import { $createAHeadingNode } from '../plugins/AHeading/AHeadingNode';
+import { $createATableCellNode } from '../plugins/Table/ATableCellNode';
 
 export const articleTheme = {
 	root: 'editor-shell',
@@ -23,6 +34,9 @@ export const articleTheme = {
 		h4: 'break-words',
 		h5: 'break-words',
 	},
+	tableCell: 'tableCell',
+	tableCellResizer: 'tableCellResizer',
+	tableCellSelected: 'tableCellSelected',
 };
 
 /**
@@ -69,15 +83,27 @@ export const articleConfig = (theme, editable, editorState, onError = onErrorDef
 			 * @param {HeadingNode} node
 			 */
 			with: (node) => {
-				return $createAHeadingNode(
-					node.__tag,
-				);
+				return $createAHeadingNode(node.__tag);
 			},
 			withKlass: AHeadingNode,
 		},
 		QuoteNode,
 		ImageNode,
 		VideoEmbedNode,
+
+		TableNode,
+		ATableCellNode,
+		{
+			replace: TableCellNode,
+			/**
+			 * @param {TableCellNode} node
+			 */
+			with: (node) => {
+				return $createATableCellNode(node.__headerState, node.__colSpan, node.__width);
+			},
+			withKlass: ATableCellNode,
+		},
+		TableRowNode,
 
 		// Old nodes / Migration nodes
 		FallbackNode,
