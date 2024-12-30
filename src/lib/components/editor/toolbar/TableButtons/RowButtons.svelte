@@ -110,7 +110,7 @@
 
 		const style = closestCell.getHeaderStyles()
 
-		if (style === TableCellHeaderStates.ROW) {
+		if ([TableCellHeaderStates.ROW, TableCellHeaderStates.BOTH].includes(style)) {
 			isRowHeader = true;
 		} else {
 			isRowHeader = false;

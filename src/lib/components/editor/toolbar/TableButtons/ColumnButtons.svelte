@@ -120,7 +120,7 @@
 
 		const style = closestCell.getHeaderStyles()
 
-		if (style === TableCellHeaderStates.COLUMN) {
+		if ([TableCellHeaderStates.COLUMN, TableCellHeaderStates.BOTH].includes(style)) {
 			isColumnHeader = true;
 		} else {
 			isColumnHeader = false;
