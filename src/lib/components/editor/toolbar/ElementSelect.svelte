@@ -259,7 +259,7 @@
 	};
 
 	onMount(() => {
-		return editor.registerCommand(
+		const unregister = editor.registerCommand(
 			SELECTION_CHANGE_COMMAND,
 			() => {
 				updateToolbar();
@@ -267,6 +267,10 @@
 			},
 			COMMAND_PRIORITY_CRITICAL
 		);
+
+		return () => {
+			unregister();
+		};
 	});
 </script>
 

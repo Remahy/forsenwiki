@@ -25,8 +25,6 @@ export const articleTheme = {
 	root: 'editor-shell',
 	paragraph: 'm-0',
 	image: 'm-0 editor-image',
-	// TODO: The 'editor-image' is for resizing capabilities, just fix the css rules instead.
-	video: 'm-0 editor-image editor-video',
 	heading: {
 		h1: 'break-words',
 		h2: 'break-words',

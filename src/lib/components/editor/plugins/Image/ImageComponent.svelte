@@ -250,7 +250,7 @@
 	 * @returns {void}
 	 */
 	const onRightClick = (event) => {
-		editor.getEditorState().read(() => {
+		editor.read(() => {
 			const latestSelection = getSelection();
 			const domElement = /** @type {HTMLElement} */ (event.target);
 			if (

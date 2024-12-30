@@ -4,7 +4,9 @@
 </script>
 
 <script>
+	// Based on umaranis' svelte-lexical
 	import '../Image/Image.css';
+	import './Video.css';
 
 	import { onMount } from 'svelte';
 	import {
@@ -33,6 +35,7 @@
 		$isVideoEmbedNode as isVideoEmbedNode,
 		VideoEmbedNode,
 	} from './VideoEmbed';
+	import { decoratorFormatToFlexStyle } from './DecoratorBlockNode';
 
 	/** @type {VideoEmbedNode} */
 	export let node;
@@ -48,6 +51,8 @@
 	export let width;
 	/** @type {boolean} */
 	export let resizable;
+	/** @type {import('lexical').ElementFormatType} */
+	export let format;
 	/** @type {import('lexical').LexicalEditor} */
 	export let editor;
 
@@ -68,7 +73,7 @@
 	 * @returns {void}
 	 */
 	const onRightClick = (event) => {
-		editor.getEditorState().read(() => {
+		editor.read(() => {
 			const latestSelection = getSelection();
 			const domElement = /** @type {HTMLElement} */ (event.target);
 			if (
@@ -183,27 +188,31 @@
 	});
 </script>
 
-<div
-	bind:this={embedRef}
-	class="element-placeholder-color overflow-hidden text-black"
-	class:focused={isFocused}
-	class:draggable={isFocused && isNodeSelection(selection)}
-	draggable="false"
->
-	<iframe
-		class="pointer-events-none"
-		srcdoc={!url
-			? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform.toUpperCase()} embed.</strong></p>`
-			: undefined}
-		{width}
-		{height}
-		src={url}
-		frameBorder="0"
-		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-		allowFullScreen={true}
-		{title}
-	/>
+<div style={decoratorFormatToFlexStyle(format)}>
+	<div class="editor-image editor-video">
+		<div
+			bind:this={embedRef}
+			class="element-placeholder-color overflow-hidden text-black"
+			class:focused={isFocused}
+			class:draggable={isFocused && isNodeSelection(selection)}
+			draggable="false"
+		>
+			<iframe
+				class="pointer-events-none"
+				srcdoc={!url
+					? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform.toUpperCase()} embed.</strong></p>`
+					: undefined}
+				{width}
+				{height}
+				src={url}
+				frameBorder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+				allowFullScreen={true}
+				{title}
+			/>
+		</div>
+		{#if resizable && isNodeSelection(selection) && isFocused}
+			<ImageResizer {editor} imageRef={embedRef} {onResizeStart} {onResizeEnd} />
+		{/if}
+	</div>
 </div>
-{#if resizable && isNodeSelection(selection) && isFocused}
-	<ImageResizer {editor} imageRef={embedRef} {onResizeStart} {onResizeEnd} />
-{/if}

@@ -345,6 +345,7 @@
 					}
 				});
 			}),
+
 			editor.registerCommand(
 				INSERT_IMAGE_COMMAND,
 				(payload) => {
@@ -354,6 +355,7 @@
 				},
 				COMMAND_PRIORITY_EDITOR
 			),
+
 			editor.registerCommand(
 				DRAGSTART_COMMAND,
 				(event) => {
@@ -361,6 +363,7 @@
 				},
 				COMMAND_PRIORITY_HIGH
 			),
+
 			editor.registerCommand(
 				DRAGOVER_COMMAND,
 				(event) => {
@@ -368,6 +371,7 @@
 				},
 				COMMAND_PRIORITY_LOW
 			),
+
 			editor.registerCommand(
 				DROP_COMMAND,
 				(event) => {

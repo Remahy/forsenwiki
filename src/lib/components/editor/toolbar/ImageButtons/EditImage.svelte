@@ -71,16 +71,19 @@
 	};
 
 	onMount(() => {
-
-			return editor.registerNodeTransform(ImageNode, (node) => {
-				const { width, height } = node.getWidthAndHeight();
-				if (node.getKey() === selectedImageNode.getKey()) {
-					currentWidth = width;
-					currentHeight = height;
-					selectedImageNode = node;
-				}
-			});
+		const unregister = editor.registerNodeTransform(ImageNode, (node) => {
+			const { width, height } = node.getWidthAndHeight();
+			if (node.getKey() === selectedImageNode.getKey()) {
+				currentWidth = width;
+				currentHeight = height;
+				selectedImageNode = node;
+			}
 		});
+
+		return () => {
+			unregister();
+		};
+	});
 </script>
 
 <Button on:click={image} class="text-xs">Change image</Button>

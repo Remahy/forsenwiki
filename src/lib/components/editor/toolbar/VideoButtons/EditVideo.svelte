@@ -62,11 +62,15 @@
 	};
 
 	onMount(() => {
-		return editor.registerNodeTransform(VideoEmbedNode, (node) => {
+		const unregister = editor.registerNodeTransform(VideoEmbedNode, (node) => {
 			if (node.getKey() === selectedVideoEmbedNode.getKey()) {
 				selectedVideoEmbedNode = node;
 			}
 		});
+
+		return () => {
+			unregister()
+		}
 	});
 </script>
 

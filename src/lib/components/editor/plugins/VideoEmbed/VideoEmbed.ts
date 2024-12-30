@@ -23,7 +23,12 @@ import { DOMAIN } from '$lib/environment/environment';
 import { VIDEO_CONSTANTS } from '$lib/constants/video';
 
 import VideoEmbedComponent from './VideoEmbedComponent.svelte';
-import { DecoratorBlockNode, type SerializedDecoratorBlockNode } from './DecoratorBlockNode';
+import {
+	DecoratorBlockNode,
+	decoratorFormatToFlexStyle,
+	decoratorFormatToMarginStyle,
+	type SerializedDecoratorBlockNode,
+} from './DecoratorBlockNode';
 import { sanitizeUrl } from '../../utils/sanitizeUrl';
 
 export type SupportedPlatforms = 'twitch' | 'youtube';
@@ -168,7 +173,10 @@ function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl:
 	element.setAttribute('allowfullscreen', 'true');
 	element.setAttribute('title', title);
 	element.setAttribute('loading', 'lazy');
-	element.setAttribute('style', 'max-width:100%;height:auto;aspect-ratio:16/9;');
+	element.setAttribute(
+		'style',
+		`max-width:100%;height:auto;aspect-ratio:16/9;${decoratorFormatToMarginStyle(node.getFormatType())}`
+	);
 
 	return element;
 }
@@ -270,6 +278,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		key?: NodeKey
 	) {
 		super(format, key);
+
 		this.__platform = platform;
 		this.__src = src;
 		this.__width = width;
@@ -286,7 +295,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 			node.__src,
 			node.__width,
 			node.__height,
-			node.__format,
+			node.getFormatType(),
 			node.__key
 		);
 	}
@@ -333,7 +342,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		return this.__src;
 	}
 
-	getPlatform(): string {
+	getPlatform(): SupportedPlatforms {
 		return this.__platform;
 	}
 
@@ -389,7 +398,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 			return generateYouTubeIframe(this, DOMAIN);
 		}
 
-		if (this.__platform) {
+		if (this.__platform === 'twitch') {
 			return generateTwitchIframe(this, DOMAIN);
 		}
 
@@ -401,22 +410,14 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	}
 
 	createDOM(config: EditorConfig): HTMLElement {
-		const div = super.createDOM(config);
-
-		const { theme } = config;
-		const className = theme.image;
-		if (className !== undefined) {
-			div.className = className;
-		}
-
-		return div;
+		return super.createDOM(config);
 	}
 
 	updateDOM(): false {
 		return false;
 	}
 
-	decorate(editor: LexicalEditor, config: EditorConfig) {
+	decorate(editor: LexicalEditor, _config: EditorConfig) {
 		// const embedBlockTheme = config.theme.embedBlock || {};
 		// const className = {
 		// 	base: embedBlockTheme.base || '',
@@ -429,7 +430,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 				node: this,
 				platform: this.__platform,
 				src: this.__src,
-				format: this.__format,
+				format: this.getFormatType(),
 				nodeKey: this.__key,
 				width: this.__width,
 				height: this.__height,

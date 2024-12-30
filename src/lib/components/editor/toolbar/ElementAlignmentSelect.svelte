@@ -69,17 +69,14 @@
 		editor.read(() => {
 			const nodes = getSelectedElements();
 			const formats = [...new Set(nodes.map((node) => node.getFormatType()))];
-			console.log(nodes);
 			currentAlignment = formats.length > 1 ? 'mixed' : formats[0];
 		});
 	};
 
 	onMount(() => {
 		return mergeRegister(
-			editor.registerUpdateListener(({ editorState }) => {
-				editorState.read(() => {
-					updateToolbar();
-				});
+			editor.registerUpdateListener(() => {
+				updateToolbar();
 			}),
 
 			editor.registerCommand(
@@ -87,6 +84,20 @@
 				() => {
 					updateToolbar();
 					return false;
+				},
+				COMMAND_PRIORITY_CRITICAL
+			),
+
+			editor.registerCommand(
+				FORMAT_ELEMENT_COMMAND,
+				(format) => {
+					const nodes = getSelectedElements();
+					for (const node of nodes) {
+						if (node !== null) {
+							node.setFormat(format);
+						}
+					}
+					return true;
 				},
 				COMMAND_PRIORITY_CRITICAL
 			)

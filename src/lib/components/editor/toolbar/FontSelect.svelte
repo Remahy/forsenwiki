@@ -85,10 +85,8 @@
 
 	onMount(() => {
 		return mergeRegister(
-			editor.registerUpdateListener(({ editorState }) => {
-				editorState.read(() => {
-					updateToolbar();
-				});
+			editor.registerUpdateListener(() => {
+				updateToolbar();
 			}),
 
 			editor.registerCommand(
