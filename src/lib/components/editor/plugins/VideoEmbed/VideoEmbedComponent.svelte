@@ -6,7 +6,6 @@
 <script>
 	// Based on umaranis' svelte-lexical
 	import '../Image/Image.css';
-	import './Video.css';
 
 	import { onMount } from 'svelte';
 	import {
