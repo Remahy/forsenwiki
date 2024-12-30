@@ -2,7 +2,7 @@
 	import { modal } from '$lib/stores/modal';
 	import { browser } from '$app/environment';
 
-	function closeModal() {
+	const closeModal = () => {
 		$modal.isOpen = false;
 	}
 

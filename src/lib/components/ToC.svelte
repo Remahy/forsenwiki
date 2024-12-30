@@ -4,7 +4,7 @@
 	/**
 	 * @param {Node | null} _element
 	 */
-	function getParents(_element) {
+	const getParents = (_element) => {
 		let element = _element;
 
 		const els = [];

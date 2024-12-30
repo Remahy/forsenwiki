@@ -31,7 +31,7 @@
 	 * @param {LexicalEditor} editor
 	 * @param {VideoEmbedNode} node
 	 */
-	async function fixYouTubeClipURL(editor, node) {
+	const fixYouTubeClipURL = async (editor, node) => {
 		const url = node.getSrc();
 
 		let res;
@@ -58,7 +58,7 @@
 	}
 
 	/** @param {import('./VideoEmbed').VideoEmbedPayload} payload */
-	function wrapperInsertVideoEmbed(payload) {
+	const wrapperInsertVideoEmbed = (payload) => {
 		editor.update(() => {
 			const node = createVideoEmbedNode(payload);
 
