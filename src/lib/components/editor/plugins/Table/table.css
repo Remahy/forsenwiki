@@ -13,7 +13,7 @@
 	bottom: 0;
 	top: 0;
 	background-color: highlight;
-	mix-blend-mode: multiply;
+	mix-blend-mode: lighten;
 	content: '';
 	pointer-events: none;
 }

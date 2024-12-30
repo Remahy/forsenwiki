@@ -43,7 +43,7 @@
 	</div>
 
 	<div
-		class="forsen-wiki-theme-border flex items-center rounded border bg-violet-900 bg-opacity-50 text-sm text-white"
+		class="forsen-wiki-theme-border flex items-center rounded border bg-violet-900 dark:bg-opacity-50 text-sm text-white"
 	>
 		<div class="flex items-center gap-2 p-2" title="Add row">
 			<PlusIcon size="16" />
