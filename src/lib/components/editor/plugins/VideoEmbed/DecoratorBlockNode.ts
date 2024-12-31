@@ -110,7 +110,6 @@ export class DecoratorBlockNode extends DecoratorNode<DecoratorType> {
 
 	exportJSON(): SerializedDecoratorBlockNode {
 		return {
-			...super.exportJSON(),
 			direction: this.getDirection(),
 			format: this.getFormatType(),
 			type: 'decorator-block',
