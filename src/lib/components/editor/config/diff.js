@@ -2,7 +2,7 @@ import { HeadingNode, LinkNode, ListItemNode, ListNode, QuoteNode } from '$lib/l
 import {
 	ALinkNode,
 	DeprecatedVideoEmbedNode,
-	DiffHeadingNode,
+	DiffAHeadingNode,
 	DiffImageNode,
 	DiffListItemNode,
 	DiffListNode,
@@ -81,7 +81,7 @@ export const diffConfig = (theme, editable, editorState, onError = onErrorDefaul
 		DiffTextNode,
 		DiffParagraphNode,
 		DiffQuoteNode,
-		DiffHeadingNode,
+		DiffAHeadingNode,
 		DiffListNode,
 		DiffListItemNode,
 		DiffImageNode,
