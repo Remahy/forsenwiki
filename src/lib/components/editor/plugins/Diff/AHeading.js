@@ -70,7 +70,7 @@ export class DiffAHeadingNode extends HeadingNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffAHeadingNode.getType() };
 	}
 }
 

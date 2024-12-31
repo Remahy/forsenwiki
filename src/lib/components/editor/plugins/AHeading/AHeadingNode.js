@@ -55,7 +55,7 @@ export class AHeadingNode extends HeadingNode {
 	exportJSON() {
 		return {
 			...super.exportJSON(),
-			type: this.getType(),
+			type: AHeadingNode.getType(),
 		};
 	}
 }

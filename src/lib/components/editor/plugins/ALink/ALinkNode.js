@@ -78,7 +78,7 @@ export class ALinkNode extends LinkNode {
 		return {
 			...super.exportJSON(),
 			__isInternal: this.__isInternal,
-			type: this.getType(),
+			type: ALinkNode.getType(),
 		};
 	}
 }

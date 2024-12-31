@@ -74,7 +74,7 @@ export class DiffImageNode extends ImageNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffImageNode.getType() };
 	}
 
 	/**

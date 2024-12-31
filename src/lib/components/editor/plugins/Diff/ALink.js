@@ -80,7 +80,7 @@ export class DiffALinkNode extends ALinkNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffALinkNode.getType() };
 	}
 }
 

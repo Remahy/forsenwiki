@@ -72,7 +72,7 @@ export class DiffParagraphNode extends ParagraphNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffParagraphNode.getType() };
 	}
 }
 
