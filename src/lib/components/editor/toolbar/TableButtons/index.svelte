@@ -53,16 +53,12 @@
 {#if selectedTable}
 	<Divider />
 
-	<div class="flex items-center gap-2">
-		<div
-			class="flex select-none flex-col items-center justify-center font-mono text-xs leading-none"
-		>
-			<span>T</span>
-			<span>B</span>
-			<span>L</span>
-		</div>
-
-		<RowButtons {selectedTable} />
-		<ColumnButtons {selectedTable} />
+	<div class="flex select-none flex-col items-center justify-center font-mono text-xs leading-none">
+		<span>T</span>
+		<span>B</span>
+		<span>L</span>
 	</div>
+
+	<RowButtons {selectedTable} />
+	<ColumnButtons {selectedTable} />
 {/if}

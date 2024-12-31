@@ -44,15 +44,11 @@
 {#if selectedImageNode}
 	<Divider />
 
-	<div class="flex items-center gap-2">
-		<div
-			class="flex select-none flex-col items-center justify-center font-mono text-xs leading-none"
-		>
-			<span>I</span>
-			<span>M</span>
-			<span>G</span>
-		</div>
-
-		<EditImage {selectedImageNode} />
+	<div class="flex select-none flex-col items-center justify-center font-mono text-xs leading-none">
+		<span>I</span>
+		<span>M</span>
+		<span>G</span>
 	</div>
+
+	<EditImage {selectedImageNode} />
 {/if}
