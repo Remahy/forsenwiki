@@ -47,6 +47,14 @@ export async function POST({ request, locals, params }) {
 		throw err;
 	}
 
+	const isSystem =
+		post.outRelations.find(({ isSystem, toPostId }) => isSystem && toPostId === 'system') ||
+		post.id === 'system';
+
+	if (isSystem) {
+		return ForbiddenError('This is a system article that cannot be edited.');
+	}
+
 	// Current
 	const currentUpdate = base64ToUint8Array(post.update);
 	const stateVector = getStateVectorFromUpdate(currentUpdate);
