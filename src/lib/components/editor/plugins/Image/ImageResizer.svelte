@@ -1,5 +1,6 @@
 <script>
 	import { calculateZoomLevel } from '@lexical/utils';
+	import { MIN_IMAGE_HEIGHT, MIN_IMAGE_WIDTH } from '$lib/constants/image';
 
 	/** @type {() => void} */
 	export let onResizeStart;
@@ -59,15 +60,15 @@
 		startY: 0,
 	};
 
+	const minWidth = MIN_IMAGE_WIDTH;
+	const minHeight = MIN_IMAGE_HEIGHT;
+
 	const editorRootElement = editor.getRootElement();
 	// Find max width, accounting for editor padding.
 	const maxWidthContainer =
-		editorRootElement !== null ? editorRootElement.getBoundingClientRect().width - 20 : 28;
+		editorRootElement !== null ? editorRootElement.getBoundingClientRect().width - 20 : minWidth;
 	const maxHeightContainer =
-		editorRootElement !== null ? editorRootElement.getBoundingClientRect().height - 20 : 28;
-
-	const minWidth = 28;
-	const minHeight = 28;
+		editorRootElement !== null ? editorRootElement.getBoundingClientRect().height - 20 : minHeight;
 
 	/** @param {number} direction */
 	const setStartCursor = (direction) => {

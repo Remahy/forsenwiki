@@ -17,10 +17,50 @@ import type {
 
 import { DecoratorNode } from 'lexical';
 import { SvelteComponent, type ComponentProps } from 'svelte';
+import { getFormat, getFormatType, ELEMENT_FORMAT_TO_TYPE } from '../../utils/elementUtils';
+
+export const decoratorFormatToMarginStyle = (type: ElementFormatType) => {
+	switch (type) {
+		case 'left':
+			return 'margin-right:auto;';
+		case 'center':
+			return 'margin-right:auto;margin-left:auto;';
+		case 'right':
+			return 'margin-left:auto;';
+		case 'justify':
+			return '';
+		case 'start':
+			return 'margin-inline-start:auto;';
+		case 'end':
+			return 'margin-inline-end:auto;';
+		default:
+			return '';
+	}
+};
+
+export const decoratorFormatToFlexStyle = (type: ElementFormatType) => {
+	switch (type) {
+		case 'left':
+			return 'display:flex;justify-content:left;';
+		case 'center':
+			return 'display:flex;justify-content:center;';
+		case 'right':
+			return 'display:flex;justify-content:right;';
+		case 'justify':
+			return '';
+		case 'start':
+			return 'display:flex;justify-content:start;';
+		case 'end':
+			return 'display:flex;justify-content:end;';
+		default:
+			return '';
+	}
+};
 
 export type SerializedDecoratorBlockNode = Spread<
 	{
 		format: ElementFormatType;
+		direction: null | 'ltr' | 'rtl';
 	},
 	SerializedLexicalNode
 >;
@@ -31,21 +71,47 @@ type DecoratorType = {
 };
 
 export class DecoratorBlockNode extends DecoratorNode<DecoratorType> {
-	__format: ElementFormatType;
+	__format: keyof typeof ELEMENT_FORMAT_TO_TYPE = 0;
+	__dir: null | 'ltr' | 'rtl' = null;
 
 	constructor(format?: ElementFormatType, key?: NodeKey) {
 		super(key);
-		this.__format = format || '';
+
+		if (format) {
+			this.__format = getFormat(format);
+		}
 	}
 
-	setFormat(format: ElementFormatType): void {
+	setFormat(type: ElementFormatType): void {
 		const self = this.getWritable();
-		self.__format = format;
+		self.__format = getFormat(type);
+	}
+
+	setDirection(direction: null | 'ltr' | 'rtl') {
+		const self = this.getWritable();
+		self.__dir = direction;
+		return self;
+	}
+
+	getFormat() {
+		const self = this.getLatest();
+		return self.__format;
+	}
+
+	getFormatType() {
+		const format = this.getFormat();
+		return getFormatType(format);
+	}
+
+	getDirection() {
+		const self = this.getLatest();
+		return self.__dir;
 	}
 
 	exportJSON(): SerializedDecoratorBlockNode {
 		return {
-			format: this.__format || '',
+			direction: this.getDirection(),
+			format: this.getFormatType(),
 			type: 'decorator-block',
 			version: 1,
 		};
@@ -63,8 +129,10 @@ export class DecoratorBlockNode extends DecoratorNode<DecoratorType> {
 		return false;
 	}
 
+	// This DOM is for the editor.
 	createDOM(_: EditorConfig): HTMLElement {
-		return document.createElement('div');
+		const div = document.createElement('div');
+		return div;
 	}
 }
 

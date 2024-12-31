@@ -2,9 +2,7 @@
 	import { onMount } from 'svelte';
 	import {
 		$isNodeSelection as isNodeSelection,
-		COMMAND_PRIORITY_CRITICAL,
 		$getSelection as getSelection,
-		SELECTION_CHANGE_COMMAND,
 		$isRangeSelection as isRangeSelection,
 	} from 'lexical';
 	import { getEditor } from 'svelte-lexical';
@@ -30,10 +28,6 @@
 
 	/** @param {Event} e */
 	const font = (e) => {
-		if (!editor) {
-			return;
-		}
-
 		/** @type {HTMLSelectElement} */
 		const target = /** @type {any} */ (e.target);
 		if (target) {
@@ -85,20 +79,9 @@
 
 	onMount(() => {
 		return mergeRegister(
-			editor.registerUpdateListener(({ editorState }) => {
-				editorState.read(() => {
-					updateToolbar();
-				});
-			}),
-
-			editor.registerCommand(
-				SELECTION_CHANGE_COMMAND,
-				() => {
-					updateToolbar();
-					return false;
-				},
-				COMMAND_PRIORITY_CRITICAL
-			)
+			editor.registerUpdateListener(() => {
+				updateToolbar();
+			})
 		);
 	});
 </script>

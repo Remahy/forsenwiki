@@ -2,17 +2,17 @@ import crypto from 'crypto';
 import { $nodesOfType as nodesOfType } from 'lexical';
 
 import { ImageNode } from '$lib/lexical/custom';
-import { MAX_IMAGE_SIZE_MIB } from '$lib/constants/image';
+import { MAX_IMAGE_SIZE_MIB, MIN_IMAGE_HEIGHT, MIN_IMAGE_WIDTH } from '$lib/constants/image';
 import { cacheServiceBaseURLWithStatic, getCacheURL } from '$lib/utils/getCacheURL';
 import { createContent } from '$lib/db/content/create';
 import { writeContent } from '$lib/fs/content';
 import { IMAGE_OFF } from '../plugins/Image/Image';
 
 /**
+ * Scuffed,
  * @param {string} base64String
  */
 function calculateOriginalFileSizeInMiB(base64String) {
-	// Scuffed.
 	const paddingCharacters = (base64String.match(/=+$/) || [''])[0].length;
 
 	const base64Length = base64String.length - paddingCharacters;
@@ -71,17 +71,26 @@ export const adjustAndUploadImages = (editor, title, author) => {
 					const image = images[index];
 
 					const src = image.getSrc();
-					const { width, height } = image.getWidthAndHeight();
-
-					// TODO: Revisit image sizes.
-					// const height = image.__height;
-					// const width = image.__width;
-					// image.setWidthAndHeight({ width: typeof width === 'number' ? Math.min(width, 500) : 500, height: typeof height === 'number' ? Math.min(height, 500) : 500 });
 
 					if (src.startsWith('data:') && calculateOriginalFileSizeInMiB(src) > MAX_IMAGE_SIZE_MIB) {
 						image.setSrc(IMAGE_OFF);
 						return reject(`Image too large: {${image.getKey()}}`);
 					}
+
+					let { width, height } = image.getWidthAndHeight();
+
+					// TODO: Revisit image sizes.
+					width = typeof width === 'number' ? Math.max(MIN_IMAGE_WIDTH, width) : width;
+					height = typeof height === 'number' ? Math.max(MIN_IMAGE_HEIGHT, height) : height;
+
+					image.setWidthAndHeight({
+						width,
+						height,
+					});
+
+					// const height = image.__height;
+					// const width = image.__width;
+					// image.setWidthAndHeight({ width: typeof width === 'number' ? Math.min(width, 500) : 500, height: typeof height === 'number' ? Math.min(height, 500) : 500 });
 
 					if (src.startsWith('data:')) {
 						const hash = sha256FromBase64(src);

@@ -1,6 +1,6 @@
 {
 	"name": "forsenwiki",
-	"version": "1.0.0-beta.8",
+	"version": "1.0.0-beta.9",
 	"scripts": {
 		"start": "node -r dotenv/config build",
 		"dev": "vite dev & npm run dev:usercontent",

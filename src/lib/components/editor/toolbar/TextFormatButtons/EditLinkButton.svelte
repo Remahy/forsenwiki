@@ -1,11 +1,9 @@
 <script>
 	import { onMount } from 'svelte';
 	import {
-		COMMAND_PRIORITY_CRITICAL,
 		COMMAND_PRIORITY_HIGH,
 		COMMAND_PRIORITY_NORMAL,
 		KEY_MODIFIER_COMMAND,
-		SELECTION_CHANGE_COMMAND,
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,
 	} from 'lexical';
@@ -29,10 +27,6 @@
 	const editor = getEditor();
 
 	const link = () => {
-		if (!editor) {
-			return;
-		}
-
 		if (!hasLink) {
 			return editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://');
 		} else {
@@ -45,10 +39,6 @@
 	 * @param {{ target?: string | null, rel?: string | null, title?: string | null }} [definedAttrs]
 	 */
 	const wrapperToggleLink = (definedUrl, definedAttrs) => {
-		if (!editor) {
-			return;
-		}
-
 		modal.set({
 			component: EditLinkButtonModal,
 			hasLink,
@@ -87,44 +77,41 @@
 	};
 
 	const updateToolbar = () => {
-		const selection = getSelection();
+		editor.read(() => {
+			const selection = getSelection();
 
-		if (!isRangeSelection(selection)) {
-			return;
-		}
+			if (!isRangeSelection(selection)) {
+				return;
+			}
 
-		/** @type {LexicalNode} */
-		const node = getSelectedNode(selection);
-		const parent = node.getParent();
+			/** @type {LexicalNode} */
+			const node = getSelectedNode(selection);
+			const parent = node.getParent();
 
-		if (isALinkNode(node)) {
-			hasLink = true;
-			url = node.__url;
-			attrs = { ...node };
-			isInternal = node.__isInternal;
-		} else if (isALinkNode(parent)) {
-			hasLink = true;
-			url = parent.__url;
-			attrs = { ...parent };
-			isInternal = parent.__isInternal;
-		} else {
-			hasLink = false;
-			url = '';
-			attrs = {};
-			isInternal = false;
-		}
+			if (isALinkNode(node)) {
+				hasLink = true;
+				url = node.__url;
+				attrs = { ...node };
+				isInternal = node.__isInternal;
+			} else if (isALinkNode(parent)) {
+				hasLink = true;
+				url = parent.__url;
+				attrs = { ...parent };
+				isInternal = parent.__isInternal;
+			} else {
+				hasLink = false;
+				url = '';
+				attrs = {};
+				isInternal = false;
+			}
+		});
 	};
 
 	onMount(() => {
 		return mergeRegister(
-			editor.registerCommand(
-				SELECTION_CHANGE_COMMAND,
-				() => {
-					updateToolbar();
-					return false;
-				},
-				COMMAND_PRIORITY_CRITICAL
-			),
+			editor.registerUpdateListener(() => {
+				updateToolbar();
+			}),
 
 			editor.registerCommand(
 				KEY_MODIFIER_COMMAND,
@@ -161,11 +148,7 @@
 	});
 </script>
 
-<EditorButton
-	title="Insert link ({ctrlKey}K)"
-	on:click={link}
-	isActive={hasLink}
->
+<EditorButton title="Insert link ({ctrlKey}K)" on:click={link} isActive={hasLink}>
 	{#if hasLink}
 		<Link2Icon />
 		<SettingsIcon size="16" class="absolute right-0 top-0" />

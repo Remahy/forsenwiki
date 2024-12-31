@@ -8,6 +8,8 @@
 </script>
 
 <script>
+	// Based on umaranis' svelte-lexical
+
 	import { onMount } from 'svelte';
 	import {
 		$insertNodes as insertNodes,

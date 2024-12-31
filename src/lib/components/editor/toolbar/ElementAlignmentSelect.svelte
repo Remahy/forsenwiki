@@ -1,10 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import {
-		COMMAND_PRIORITY_CRITICAL,
-		FORMAT_ELEMENT_COMMAND,
-		SELECTION_CHANGE_COMMAND,
-	} from 'lexical';
+	import { COMMAND_PRIORITY_CRITICAL, FORMAT_ELEMENT_COMMAND } from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 	import { mergeRegister } from '@lexical/utils';
 	import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from 'lucide-svelte';
@@ -37,10 +33,6 @@
 
 	/** @param {Event} e */
 	const alignment = (e) => {
-		if (!editor) {
-			return;
-		}
-
 		/** @type {HTMLSelectElement} */
 		const target = /** @type {any} */ (e.target);
 		if (target) {
@@ -62,31 +54,29 @@
 	};
 
 	const updateToolbar = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.read(() => {
 			const nodes = getSelectedElements();
 			const formats = [...new Set(nodes.map((node) => node.getFormatType()))];
-			console.log(nodes);
 			currentAlignment = formats.length > 1 ? 'mixed' : formats[0];
 		});
 	};
 
 	onMount(() => {
 		return mergeRegister(
-			editor.registerUpdateListener(({ editorState }) => {
-				editorState.read(() => {
-					updateToolbar();
-				});
+			editor.registerUpdateListener(() => {
+				updateToolbar();
 			}),
 
 			editor.registerCommand(
-				SELECTION_CHANGE_COMMAND,
-				() => {
-					updateToolbar();
-					return false;
+				FORMAT_ELEMENT_COMMAND,
+				(format) => {
+					const nodes = getSelectedElements();
+					for (const node of nodes) {
+						if (node !== null) {
+							node.setFormat(format);
+						}
+					}
+					return true;
 				},
 				COMMAND_PRIORITY_CRITICAL
 			)

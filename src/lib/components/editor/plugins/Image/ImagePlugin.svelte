@@ -39,6 +39,7 @@
 	import { CAN_USE_DOM } from '$lib/environment/utils';
 	import { cacheServiceBaseURLWithStatic } from '$lib/utils/getCacheURL';
 	import { modal } from '$lib/stores/modal';
+	import { MIN_IMAGE_HEIGHT, MIN_IMAGE_WIDTH } from '$lib/constants/image';
 	import EditImageModal from '../../toolbar/ImageButtons/EditImageModal.svelte';
 	import {
 		$createImageNode as createImageNode,
@@ -268,8 +269,8 @@
 					if (
 						typeof width === 'number' &&
 						typeof height === 'number' &&
-						width >= 28 &&
-						height >= 28
+						width >= MIN_IMAGE_WIDTH &&
+						height >= MIN_IMAGE_HEIGHT
 					) {
 						node.setWidthAndHeight({ width, height });
 					}
@@ -345,6 +346,7 @@
 					}
 				});
 			}),
+
 			editor.registerCommand(
 				INSERT_IMAGE_COMMAND,
 				(payload) => {
@@ -354,6 +356,7 @@
 				},
 				COMMAND_PRIORITY_EDITOR
 			),
+
 			editor.registerCommand(
 				DRAGSTART_COMMAND,
 				(event) => {
@@ -361,6 +364,7 @@
 				},
 				COMMAND_PRIORITY_HIGH
 			),
+
 			editor.registerCommand(
 				DRAGOVER_COMMAND,
 				(event) => {
@@ -368,6 +372,7 @@
 				},
 				COMMAND_PRIORITY_LOW
 			),
+
 			editor.registerCommand(
 				DROP_COMMAND,
 				(event) => {

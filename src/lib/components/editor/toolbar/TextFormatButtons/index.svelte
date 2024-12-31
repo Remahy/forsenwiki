@@ -2,12 +2,11 @@
 	import { onMount } from 'svelte';
 	import {
 		$isRangeSelection as isRangeSelection,
-		COMMAND_PRIORITY_CRITICAL,
 		FORMAT_TEXT_COMMAND,
-		SELECTION_CHANGE_COMMAND,
 		$getSelection as getSelection,
 	} from 'lexical';
 	import { getEditor } from 'svelte-lexical';
+	import { mergeRegister } from '@lexical/utils';
 	import { BoldIcon, ItalicIcon } from 'lucide-svelte';
 
 	import { ctrlKey } from '$lib/environment/environment';
@@ -20,39 +19,31 @@
 	const editor = getEditor();
 
 	const updateToolbar = () => {
-		const selection = getSelection();
+		editor.read(() => {
+			const selection = getSelection();
 
-		if (!isRangeSelection(selection)) {
-			return;
-		}
+			if (!isRangeSelection(selection)) {
+				return;
+			}
 
-		isBold = selection.hasFormat('bold');
-		isItalic = selection.hasFormat('italic');
+			isBold = selection.hasFormat('bold');
+			isItalic = selection.hasFormat('italic');
+		});
 	};
 
 	const bold = () => {
-		if (!editor) {
-			return;
-		}
 		editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
 	};
 
 	const italic = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
 	};
 
 	onMount(() => {
-		return editor.registerCommand(
-			SELECTION_CHANGE_COMMAND,
-			() => {
+		return mergeRegister(
+			editor.registerUpdateListener(() => {
 				updateToolbar();
-				return false;
-			},
-			COMMAND_PRIORITY_CRITICAL
+			})
 		);
 	});
 </script>

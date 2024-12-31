@@ -18,8 +18,6 @@
 		$isRangeSelection as isRangeSelection,
 		$createParagraphNode as createParagraphNode,
 		$isRootOrShadowRoot as isRootOrShadowRoot,
-		SELECTION_CHANGE_COMMAND,
-		COMMAND_PRIORITY_CRITICAL,
 	} from 'lexical';
 	import {
 		$createHeadingNode as createHeadingNode,
@@ -35,6 +33,7 @@
 	import {
 		$getNearestNodeOfType as getNearestNodeOfType,
 		$findMatchingParent as findMatchingParent,
+		mergeRegister,
 	} from '@lexical/utils';
 	import { $setBlocksType as setBlocksType } from '@lexical/selection';
 
@@ -56,10 +55,6 @@
 	const editor = getEditor();
 
 	const formatParagraph = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.update(() => {
 			const selection = getSelection();
 			if (isRangeSelection(selection)) {
@@ -72,10 +67,6 @@
 	 * @param {import("@lexical/rich-text").HeadingTagType} headingSize
 	 */
 	const formatHeading = (headingSize) => {
-		if (!editor) {
-			return;
-		}
-
 		if (currentElementType !== headingSize) {
 			editor.update(() => {
 				const selection = getSelection();
@@ -85,10 +76,6 @@
 	};
 
 	const formatBulletList = () => {
-		if (!editor) {
-			return;
-		}
-
 		if (currentElementType !== 'bullet') {
 			editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
 		} else {
@@ -97,10 +84,6 @@
 	};
 
 	const formatNumberedList = () => {
-		if (!editor) {
-			return;
-		}
-
 		if (currentElementType !== 'number') {
 			editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
 		} else {
@@ -109,10 +92,6 @@
 	};
 
 	const formatQuote = () => {
-		if (!editor) {
-			return;
-		}
-
 		if (currentElementType !== 'quote') {
 			editor.update(() => {
 				const selection = getSelection();
@@ -154,10 +133,6 @@
 
 	/** @param {Event} e */
 	const elementType = (e) => {
-		if (!editor) {
-			return;
-		}
-
 		/** @type {HTMLSelectElement} */
 		const target = /** @type {any} */ (e.target);
 		if (target) {
@@ -181,10 +156,6 @@
 	};
 
 	const updateToolbar = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.read(() => {
 			const selection = getSelection();
 			if (isRangeSelection(selection)) {
@@ -259,13 +230,10 @@
 	};
 
 	onMount(() => {
-		return editor.registerCommand(
-			SELECTION_CHANGE_COMMAND,
-			() => {
+		return mergeRegister(
+			editor.registerUpdateListener(() => {
 				updateToolbar();
-				return false;
-			},
-			COMMAND_PRIORITY_CRITICAL
+			})
 		);
 	});
 </script>

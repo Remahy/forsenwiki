@@ -12,7 +12,7 @@
 	import TableButtons from './TableButtons/index.svelte';
 </script>
 
-<div class="flex flex-wrap gap-2">
+<div class="flex flex-wrap items-stretch gap-2">
 	<HistoryButtons />
 	<Divider />
 	<ElementSelect />
