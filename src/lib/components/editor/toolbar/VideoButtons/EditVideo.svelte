@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { getEditor } from 'svelte-lexical';
-	import { FileQuestionIcon, LinkIcon, YoutubeIcon } from 'lucide-svelte';
+	import { FileQuestionIcon, LinkIcon, RectangleHorizontalIcon, RectangleVerticalIcon, YoutubeIcon } from 'lucide-svelte';
 
 	import { VideoEmbedNode } from '$lib/lexical/custom';
 	import Select from '$lib/components/Select.svelte';
@@ -19,6 +19,9 @@
 	let currentPlatform = selectedVideoEmbedNode.__platform;
 	let currentURL = selectedVideoEmbedNode.__src;
 
+	let currentWidth = selectedVideoEmbedNode.__width;
+	let currentHeight = selectedVideoEmbedNode.__height;
+
 	/**
 	 * @type {{[x: string]: typeof import('svelte').SvelteComponent<any>}}
 	 */
@@ -30,6 +33,16 @@
 
 	const { PLATFORMS } = VIDEO_CONSTANTS;
 	const platformOptions = Object.entries(PLATFORMS);
+
+	const onChange = () => {
+		if (!editor) {
+			return;
+		}
+
+		editor.update(() => {
+			selectedVideoEmbedNode.setWidthAndHeight({ width: currentWidth, height: currentHeight });
+		});
+	};
 
 	/**
 	 * @param {Event} e
@@ -74,7 +87,7 @@
 	});
 </script>
 
-<div class="flex h-full items-center gap-2 pl-2">
+<div class="flex min-h-[42px] items-center gap-2 pl-2">
 	<svelte:component this={platformIcons[currentPlatform] || platformIcons.default} />
 
 	<Select
@@ -92,7 +105,7 @@
 	</Select>
 </div>
 
-<label title="URL" class="flex h-full items-center gap-2 pl-2">
+<label title="URL" class="flex min-h-[42px] items-center gap-2 pl-2">
 	<span class="hidden">URL</span>
 	<LinkIcon />
 
@@ -104,3 +117,33 @@
 		type="url"
 	/>
 </label>
+
+<label title="Width" class="flex min-h-[42px] items-center gap-2 pl-2">
+	<span class="hidden">Width</span>
+	<RectangleHorizontalIcon />
+
+	<input
+		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
+		bind:value={currentWidth}
+		on:change={onChange}
+		type="number"
+	/>
+</label>
+
+<label title="Height" class="flex min-h-[42px] items-center gap-2 pl-2">
+	<span class="hidden">Height</span>
+	<RectangleVerticalIcon />
+
+	<input
+		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
+		bind:value={currentHeight}
+		on:change={onChange}
+		type="number"
+	/>
+</label>
+
+{#if currentWidth === 'inherit' && currentHeight === 'inherit'}
+	<div class="self-end" title="Width and height have been set to inherit the original size.">
+		<small>inherit</small>
+	</div>
+{/if}
