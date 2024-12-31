@@ -22,6 +22,7 @@
 		DELETE_CHARACTER_COMMAND,
 		$isParagraphNode as isParagraphNode,
 		$isElementNode as isElementNode,
+		$isTextNode as isTextNode,
 	} from 'lexical';
 	import { onMount } from 'svelte';
 	import { mergeRegister } from '@lexical/utils';
@@ -152,26 +153,37 @@
 	 * @param {boolean} payload
 	 */
 	const onDeleteCharacter = (payload) => {
-		if (payload) {
-			const selection = /** @type {RangeSelection | undefined} */ (getSelection()?.clone());
+		if (!payload) {
+			return false;
+		}
 
-			if (!selection?.isCollapsed()) {
-				return false;
-			}
+		const selection = /** @type {RangeSelection | undefined} */ (getSelection()?.clone());
 
-			const currentNode = selection.getNodes()[0];
+		if (!selection?.isCollapsed()) {
+			return false;
+		}
 
-			if (onDeleteCharacterDecorationBug(selection, currentNode)) {
-				return true;
-			}
+		const currentNode = selection.getNodes()[0];
 
-			if (onDeleteCharacterNextToImage(currentNode)) {
-				return true;
-			}
+		if (onDeleteCharacterDecorationBug(selection, currentNode)) {
+			return true;
+		}
 
-			const prevSibling = currentNode.getPreviousSibling();
+		if (onDeleteCharacterNextToImage(currentNode)) {
+			return true;
+		}
 
-			if (prevSibling && isImageNode(prevSibling) && node === prevSibling) {
+		const prevSibling = currentNode.getPreviousSibling();
+
+		if (prevSibling && isImageNode(prevSibling) && node === prevSibling && !isTextNode(currentNode)) {
+			imageRef?.click();
+			return true;
+		}
+
+		if (prevSibling && isElementNode(prevSibling)) {
+			const prevSiblingLastChild = prevSibling.getLastChild();
+
+			if (prevSibling && isImageNode(prevSiblingLastChild) && node === prevSiblingLastChild) {
 				imageRef?.click();
 				return true;
 			}
