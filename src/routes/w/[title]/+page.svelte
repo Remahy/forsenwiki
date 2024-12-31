@@ -1,5 +1,5 @@
 <script>
-	import { Dice4Icon, EditIcon, HistoryIcon } from 'lucide-svelte';
+	import { EditIcon, HistoryIcon } from 'lucide-svelte';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
 
@@ -10,7 +10,7 @@
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 	import Box from '$lib/components/Box.svelte';
 	import ToC from '$lib/components/ToC.svelte';
-	import Spinner from '$lib/components/Spinner.svelte';
+	import RandomButton from '$lib/components/RandomButton.svelte';
 
 	export let data;
 
@@ -23,8 +23,6 @@
 	const isSystem =
 		outRelations.find(({ isSystem, toPostId }) => isSystem && toPostId === 'system') ||
 		id === 'system';
-
-	$: randomIsSpinning = false;
 </script>
 
 <svelte:head>
@@ -38,12 +36,7 @@
 
 <Container>
 	<article class="relative flex grow flex-col gap-4">
-		<LinkButton href="/random" reload class="flex gap-2 whitespace-nowrap{randomIsSpinning ? ' opacity-50 pointer-events-none' : ''}" on:click={() => randomIsSpinning = true}>
-			<Dice4Icon /> <span>Random</span>
-			{#if randomIsSpinning}
-				<Spinner />
-			{/if}
-		</LinkButton>
+		<RandomButton />
 
 		{#if html}
 			<SuggestionBox>

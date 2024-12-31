@@ -1,5 +1,5 @@
 <script>
-	import { Dice4Icon, Trash2Icon } from 'lucide-svelte';
+	import { Trash2Icon } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
@@ -8,8 +8,7 @@
 	import Box from '$lib/components/Box.svelte';
 	import Container from '$lib/components/Container.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import LinkButton from '$lib/components/LinkButton.svelte';
-	import Spinner from '$lib/components/Spinner.svelte';
+	import RandomButton from '$lib/components/RandomButton.svelte';
 
 	const result = $page.data.result;
 	const src = getCacheURL(result.hash, result.name).toString();
@@ -75,22 +74,10 @@
 			error = await res.json();
 		}
 	};
-
-	$: randomIsSpinning = false;
 </script>
 
 <Container class="overflow-hidden">
-	<LinkButton
-		href="/random"
-		reload
-		class="flex gap-2 whitespace-nowrap{randomIsSpinning ? ' opacity-50 pointer-events-none' : ''}"
-		on:click={() => (randomIsSpinning = true)}
-	>
-		<Dice4Icon /> <span>Random</span>
-		{#if randomIsSpinning}
-			<Spinner />
-		{/if}
-	</LinkButton>
+	<RandomButton />
 
 	<div class="items-start gap-8 xl:flex">
 		<div class="mb-4 xl:mb-0 xl:w-fit">
