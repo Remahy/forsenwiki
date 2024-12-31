@@ -14,57 +14,76 @@
 	export let data;
 
 	const {
-		post: { rawTitle, title, createdTimestamp, lastUpdated },
+		post: { rawTitle, title, createdTimestamp, lastUpdated, outRelations, id },
 		authors,
 		html,
 	} = data;
+
+	const isSystem =
+		outRelations.find(({ isSystem, toPostId }) => isSystem && toPostId === 'system') ||
+		id === 'system';
 </script>
 
 <svelte:head>
-	<title>{rawTitle} - Community Forsen Wiki</title>
+	<title>{rawTitle || title} - Community Forsen Wiki</title>
 	<meta
 		name="description"
-		content="Read about &quot;{rawTitle}&quot; on forsen.wiki - All things forsen, and more."
+		content="Read about &quot;{rawTitle ||
+			title}&quot; on forsen.wiki - All things forsen, and more."
 	/>
 </svelte:head>
 
 <Container>
 	<article class="relative flex grow flex-col gap-4">
-		<SuggestionBox>
-			<header>
-				<div class="flex w-full gap-2">
-					<div class="flex grow items-center overflow-hidden">
-						<p class="m-0 text-center leading-10">
-							forsen.wiki is currently <strong>work in progress</strong>.
-						</p>
+		{#if html}
+			<SuggestionBox>
+				<header>
+					<div class="flex w-full gap-2">
+						<div class="flex grow items-center overflow-hidden">
+							<p class="m-0 text-center leading-10">
+								forsen.wiki is currently <strong>work in progress</strong>.
+							</p>
+						</div>
+
+						<div class="flex shrink-0 items-start gap-2">
+							<LinkButton href="/w/{title}/history" class="flex items-center gap-2 text-sm">
+								<HistoryIcon size="16" /><span class="hidden md:inline">History</span>
+							</LinkButton>
+
+							<LinkButton href="/w/{title}/edit" reload class="flex items-center gap-2 text-sm">
+								<EditIcon size="16" /><span class="hidden md:inline">Edit article</span>
+							</LinkButton>
+						</div>
 					</div>
+				</header>
+			</SuggestionBox>
 
-					<div class="flex shrink-0 items-start gap-2">
-						<LinkButton href="/w/{title}/history" class="flex items-center gap-2 text-sm">
-							<HistoryIcon size="16" /><span class="hidden md:inline">History</span>
-						</LinkButton>
+			<div class="flex grow flex-col gap-4 lg:flex-row">
+				<Box class="flex grow flex-col p-4 lg:mb-0">
+					<main class="editor-shell prose max-w-[unset] grow dark:prose-invert">
+						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
+							<strong class="text-4xl">{rawTitle}</strong>
+						</div>
 
-						<LinkButton href="/w/{title}/edit" reload class="flex items-center gap-2 text-sm">
-							<EditIcon size="16" /><span class="hidden md:inline">Edit article</span>
-						</LinkButton>
-					</div>
-				</div>
-			</header>
-		</SuggestionBox>
+						{@html html}
+					</main>
+				</Box>
 
-		<div class="flex grow flex-col gap-4 lg:flex-row">
-			<Box class="flex grow flex-col p-4 lg:mb-0">
-				<main class="editor-shell prose max-w-[unset] grow dark:prose-invert">
-					<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
-						<strong class="text-4xl">{rawTitle}</strong>
-					</div>
-
-					{@html html}
-				</main>
+				<ToC />
+			</div>
+		{:else if isSystem}
+			<Box class="flex grow flex-col items-center justify-center gap-2 overflow-hidden p-12">
+				<h2 class="text-2xl">
+					This is {id === 'system' ? 'the' : 'a'} <strong>SYSTEM</strong> article with no content.
+				</h2>
+				<p><small>System articles are used for creating backend relations.</small></p>
 			</Box>
-
-			<ToC />
-		</div>
+		{:else}
+			<div class="prose max-w-[unset] dark:prose-invert">
+				<p>This article does not have any HTML available.</p>
+				<pre>{JSON.stringify(data, null, 2)}</pre>
+			</div>
+		{/if}
 
 		<footer class="article-footer-color p-4">
 			<p>

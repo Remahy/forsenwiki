@@ -44,6 +44,10 @@ export const _getYPostHTML = async (title) => {
 
 	const { post, update } = await _getYPostUpdate(title);
 
+	if (!update) {
+		return { post, html: null };
+	}
+
 	const html = await updateToHTML(update);
 
 	Promise.resolve(upsertHTML(post.id, html));
