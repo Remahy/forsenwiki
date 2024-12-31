@@ -33,10 +33,6 @@
 
 	/** @param {Event} e */
 	const alignment = (e) => {
-		if (!editor) {
-			return;
-		}
-
 		/** @type {HTMLSelectElement} */
 		const target = /** @type {any} */ (e.target);
 		if (target) {

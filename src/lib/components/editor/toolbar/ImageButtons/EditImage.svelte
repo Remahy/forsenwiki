@@ -17,56 +17,50 @@
 	let currentHeight = selectedImageNode.__height;
 
 	const onChange = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.update(() => {
 			selectedImageNode.setWidthAndHeight({ width: currentWidth, height: currentHeight });
 		});
 	};
 
 	const image = () => {
-		if (!editor) {
-			return;
-		}
+		editor.read(() => {
+			const { width: selectedImageNodeWidth, height: selectedImageNodeHeight } =
+				selectedImageNode.getWidthAndHeight();
 
-		const { width: selectedImageNodeWidth, height: selectedImageNodeHeight } =
-			selectedImageNode.getWidthAndHeight();
+			modal.set({
+				component: EditImageModal,
+				src: selectedImageNode.getSrc(),
+				altText: selectedImageNode.getAltText(),
+				width: selectedImageNodeWidth,
+				height: selectedImageNodeHeight,
+				/** @param {import('../../plugins/Image/Image').ImagePayload} data */
+				onSubmit: (data) => {
+					editor.update(() => {
+						/** @type {import('../../plugins/Image/Image').ImageNode} */
+						const node = /** @type {any} */ (getNodeByKey(selectedImageNode.getKey()));
 
-		modal.set({
-			component: EditImageModal,
-			src: selectedImageNode.getSrc(),
-			altText: selectedImageNode.getAltText(),
-			width: selectedImageNodeWidth,
-			height: selectedImageNodeHeight,
-			/** @param {import('../../plugins/Image/Image').ImagePayload} data */
-			onSubmit: (data) => {
-				editor.update(() => {
-					/** @type {import('../../plugins/Image/Image').ImageNode} */
-					const node = /** @type {any} */ (getNodeByKey(selectedImageNode.getKey()));
+						const { width, height, altText, src } = data;
 
-					const { width, height, altText, src } = data;
+						if (
+							typeof width === 'number' &&
+							typeof height === 'number' &&
+							height >= 28 &&
+							width >= 28
+						) {
+							node.setWidthAndHeight({ width, height });
+						}
 
-					if (
-						typeof width === 'number' &&
-						typeof height === 'number' &&
-						height >= 28 &&
-						width >= 28
-					) {
-						node.setWidthAndHeight({ width, height });
-					}
+						if (altText.length) {
+							node.setAltText(altText);
+						}
 
-					if (altText.length) {
-						node.setAltText(altText);
-					}
-
-					if (src) {
-						node.setSrc(src);
-					}
-				});
-			},
-			isOpen: true,
+						if (src) {
+							node.setSrc(src);
+						}
+					});
+				},
+				isOpen: true,
+			});
 		});
 	};
 

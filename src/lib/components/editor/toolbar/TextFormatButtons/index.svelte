@@ -32,17 +32,10 @@
 	};
 
 	const bold = () => {
-		if (!editor) {
-			return;
-		}
 		editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
 	};
 
 	const italic = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
 	};
 

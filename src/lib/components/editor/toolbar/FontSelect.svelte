@@ -28,10 +28,6 @@
 
 	/** @param {Event} e */
 	const font = (e) => {
-		if (!editor) {
-			return;
-		}
-
 		/** @type {HTMLSelectElement} */
 		const target = /** @type {any} */ (e.target);
 		if (target) {

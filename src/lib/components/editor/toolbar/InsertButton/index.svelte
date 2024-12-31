@@ -17,10 +17,6 @@
 	const editor = getEditor();
 
 	const insertImage = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
 			altText: '',
 			src: TRANSPARENT_IMAGE,
@@ -30,10 +26,6 @@
 	};
 
 	const insertVideo = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.dispatchCommand(INSERT_VIDEOEMBED_COMMAND, {
 			platform: 'youtube',
 			src: '',
@@ -43,10 +35,6 @@
 	};
 
 	const insertTable = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.dispatchCommand(INSERT_TABLE_COMMAND, {
 			columns: '3',
 			rows: '3',
@@ -75,10 +63,6 @@
 
 	/** @param {Event} e */
 	const insertElementType = (e) => {
-		if (!editor) {
-			return;
-		}
-
 		/** @type {HTMLSelectElement} */
 		const target = /** @type {any} */ (e.target);
 		if (target) {

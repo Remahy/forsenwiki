@@ -20,18 +20,10 @@
 	const editor = getEditor();
 
 	const undo = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.dispatchCommand(UNDO_COMMAND, undefined);
 	};
 
 	const redo = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.dispatchCommand(REDO_COMMAND, undefined);
 	};
 

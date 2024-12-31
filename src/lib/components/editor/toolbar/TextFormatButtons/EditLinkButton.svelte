@@ -27,10 +27,6 @@
 	const editor = getEditor();
 
 	const link = () => {
-		if (!editor) {
-			return;
-		}
-
 		if (!hasLink) {
 			return editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://');
 		} else {
@@ -43,10 +39,6 @@
 	 * @param {{ target?: string | null, rel?: string | null, title?: string | null }} [definedAttrs]
 	 */
 	const wrapperToggleLink = (definedUrl, definedAttrs) => {
-		if (!editor) {
-			return;
-		}
-
 		modal.set({
 			component: EditLinkButtonModal,
 			hasLink,

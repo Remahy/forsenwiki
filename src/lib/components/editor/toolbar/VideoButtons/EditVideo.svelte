@@ -35,10 +35,6 @@
 	const platformOptions = Object.entries(PLATFORMS);
 
 	const onChange = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.update(() => {
 			selectedVideoEmbedNode.setWidthAndHeight({ width: currentWidth, height: currentHeight });
 		});
@@ -50,10 +46,6 @@
 	const platform = (e) => {
 		const { value } = /** @type {HTMLSelectElement} */ (e.currentTarget);
 
-		if (!editor) {
-			return;
-		}
-
 		editor.update(() => {
 			selectedVideoEmbedNode.setPlatform(value);
 		});
@@ -64,10 +56,6 @@
 	 */
 	const url = (e) => {
 		const { value } = /** @type {HTMLInputElement} */ (e.target);
-
-		if (!editor) {
-			return;
-		}
 
 		editor.update(() => {
 			selectedVideoEmbedNode.setSrc(value);
