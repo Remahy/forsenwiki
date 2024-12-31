@@ -15,7 +15,7 @@
 	let from = 0;
 
 	$: link =
-		postUpdates.length > 2 ? `history/${postUpdates[to].id}..${postUpdates[from].id}` : null;
+		postUpdates.length > 1 ? `history/${postUpdates[to].id}..${postUpdates[from].id}` : null;
 </script>
 
 <svelte:head>
