@@ -6,6 +6,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import { modal } from '$lib/stores/modal';
 	import { ImageNode } from '$lib/lexical/custom';
+	import { MIN_IMAGE_HEIGHT, MIN_IMAGE_WIDTH } from '$lib/constants/image';
 	import EditImageModal from './EditImageModal.svelte';
 
 	/** @type {import("$lib/lexical/custom").ImageNode} */
@@ -44,8 +45,8 @@
 						if (
 							typeof width === 'number' &&
 							typeof height === 'number' &&
-							height >= 28 &&
-							width >= 28
+							height >= MIN_IMAGE_HEIGHT &&
+							width >= MIN_IMAGE_WIDTH
 						) {
 							node.setWidthAndHeight({ width, height });
 						}
@@ -89,6 +90,7 @@
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
 		bind:value={currentWidth}
 		on:change={onChange}
+		min="{MIN_IMAGE_WIDTH}"
 		type="number"
 	/>
 </label>
@@ -101,6 +103,7 @@
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
 		bind:value={currentHeight}
 		on:change={onChange}
+		min="{MIN_IMAGE_HEIGHT}"
 		type="number"
 	/>
 </label>

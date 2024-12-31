@@ -12,6 +12,9 @@ import type {
 
 import { $applyNodeReplacement, DecoratorNode } from 'lexical';
 import { SvelteComponent, type ComponentProps } from 'svelte';
+
+import { MIN_IMAGE_HEIGHT, MIN_IMAGE_WIDTH } from '$lib/constants/image';
+
 import ImageComponent from './ImageComponent.svelte';
 
 export interface ImagePayload {
@@ -121,8 +124,8 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 		height: 'inherit' | number;
 	}): void {
 		const writable = this.getWritable();
-		writable.__width = width;
-		writable.__height = height;
+		writable.__width = typeof width === 'number' ? Math.max(MIN_IMAGE_WIDTH, Math.round(width)) : 'inherit';
+		writable.__height = typeof height === 'number' ? Math.max(MIN_IMAGE_HEIGHT, Math.round(height)) : 'inherit';
 	}
 
 	setSrc(src: string): void {
