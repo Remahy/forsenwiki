@@ -1,4 +1,13 @@
-import { HeadingNode, LinkNode, ListItemNode, ListNode, QuoteNode } from '$lib/lexical/index';
+import {
+	LinkNode,
+	ListNode,
+	ListItemNode,
+	HeadingNode,
+	QuoteNode,
+	TableNode,
+	TableCellNode,
+	TableRowNode,
+} from '$lib/lexical/index';
 import {
 	ALinkNode,
 	DeprecatedVideoEmbedNode,
@@ -13,13 +22,18 @@ import {
 	DiffALinkNode,
 	DiffLineBreakNode,
 	DiffTabNode,
+	DiffTableNode,
 	FallbackNode,
 	ImageNode,
 	VideoEmbedNode,
 	AHeadingNode,
+	ATableCellNode,
+	DiffTableRowNode,
+	DiffATableCellNode,
 } from '$lib/lexical/custom';
 import { $createALinkNode } from '../plugins/ALink/ALinkNode';
 import { $createAHeadingNode } from '../plugins/AHeading/AHeadingNode';
+import { $createATableCellNode } from '../plugins/Table/ATableCellNode';
 
 import { articleTheme } from './article';
 
@@ -68,14 +82,26 @@ export const diffConfig = (theme, editable, editorState, onError = onErrorDefaul
 			 * @param {HeadingNode} node
 			 */
 			with: (node) => {
-				return $createAHeadingNode(
-					node.__tag,
-				);
+				return $createAHeadingNode(node.__tag);
 			},
 			withKlass: AHeadingNode,
 		},
 		ImageNode,
 		VideoEmbedNode,
+
+		TableNode,
+		ATableCellNode,
+		{
+			replace: TableCellNode,
+			/**
+			 * @param {TableCellNode} node
+			 */
+			with: (node) => {
+				return $createATableCellNode(node.__headerState, node.__colSpan, node.__width);
+			},
+			withKlass: ATableCellNode,
+		},
+		TableRowNode,
 
 		// Diff nodes.
 		DiffTextNode,
@@ -89,6 +115,9 @@ export const diffConfig = (theme, editable, editorState, onError = onErrorDefaul
 		DiffALinkNode,
 		DiffLineBreakNode,
 		DiffTabNode,
+		DiffTableNode,
+		DiffTableRowNode,
+		DiffATableCellNode,
 
 		// Old nodes / Migration nodes
 		FallbackNode,
