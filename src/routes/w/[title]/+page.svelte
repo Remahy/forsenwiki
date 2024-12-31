@@ -14,12 +14,14 @@
 	export let data;
 
 	const {
-		post: { rawTitle, title, createdTimestamp, lastUpdated, outRelations },
+		post: { rawTitle, title, createdTimestamp, lastUpdated, outRelations, id },
 		authors,
 		html,
 	} = data;
 
-	const isSystem = outRelations.find(({ isSystem, toPostId }) => isSystem && toPostId === 'system');
+	const isSystem =
+		outRelations.find(({ isSystem, toPostId }) => isSystem && toPostId === 'system') ||
+		id === 'system';
 </script>
 
 <svelte:head>
@@ -70,8 +72,10 @@
 				<ToC />
 			</div>
 		{:else if isSystem}
-			<Box class="flex flex-col items-center justify-center grow gap-2 overflow-hidden p-12">
-				<h2 class="text-2xl">This is a <strong>SYSTEM</strong> article with no content.</h2>
+			<Box class="flex grow flex-col items-center justify-center gap-2 overflow-hidden p-12">
+				<h2 class="text-2xl">
+					This is {id === 'system' ? 'the' : 'a'} <strong>SYSTEM</strong> article with no content.
+				</h2>
 				<p><small>System articles are used for creating backend relations.</small></p>
 			</Box>
 		{:else}
