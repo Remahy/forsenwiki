@@ -71,7 +71,7 @@ export class DiffListNode extends ListNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffListNode.getType() };
 	}
 }
 

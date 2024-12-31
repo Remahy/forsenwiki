@@ -62,7 +62,7 @@ export class ATableCellNode extends TableCellNode {
 	exportJSON() {
 		return {
 			...super.exportJSON(),
-			type: this.getType(),
+			type: ATableCellNode.getType(),
 		};
 	}
 }

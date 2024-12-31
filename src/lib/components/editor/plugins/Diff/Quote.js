@@ -70,7 +70,7 @@ export class DiffQuoteNode extends QuoteNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffQuoteNode.getType() };
 	}
 }
 

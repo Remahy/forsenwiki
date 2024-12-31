@@ -7,7 +7,7 @@ import { addInformationHover, applyCSSColorDiff } from './utils';
  * @typedef {import("lexical").EditorConfig} EditorConfig
  */
 
-export class DiffHeadingNode extends HeadingNode {
+export class DiffAHeadingNode extends HeadingNode {
 	/** @type {import('./Types').___Change} */
 	___change;
 
@@ -28,14 +28,14 @@ export class DiffHeadingNode extends HeadingNode {
 	}
 
 	/**
-	 * @param {DiffHeadingNode} node
+	 * @param {DiffAHeadingNode} node
 	 */
 	static clone(node) {
-		return new DiffHeadingNode(node, node.__key);
+		return new DiffAHeadingNode(node, node.__key);
 	}
 
 	static getType() {
-		return 'diff-heading';
+		return 'diff-a-heading';
 	}
 
 	/**
@@ -47,7 +47,7 @@ export class DiffHeadingNode extends HeadingNode {
 		// @ts-ignore
 		heading.___change = serializedNode.___change;
 
-		const node = new DiffHeadingNode(heading);
+		const node = new DiffAHeadingNode(heading);
 		return node;
 	}
 
@@ -70,13 +70,13 @@ export class DiffHeadingNode extends HeadingNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffAHeadingNode.getType() };
 	}
 }
 
 // /**
 //  * @param {HeadingNode} node
 //  */
-// export function $createDiffHeadingNode(node) {
-// 	return new DiffHeadingNode(node);
+// export function $createDiffAHeadingNode(node) {
+// 	return new DiffAHeadingNode(node);
 // }

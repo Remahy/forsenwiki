@@ -98,7 +98,7 @@ export class DiffTextNode extends TextNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffTextNode.getType() };
 	}
 }
 

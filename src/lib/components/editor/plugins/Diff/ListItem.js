@@ -84,7 +84,7 @@ export class DiffListItemNode extends ListItemNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffListItemNode.getType() };
 	}
 }
 

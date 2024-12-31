@@ -42,6 +42,6 @@ export class DiffLineBreakNode extends LineBreakNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffLineBreakNode.getType() };
 	}
 }

@@ -1,11 +1,25 @@
 import JSONDiffer from 'json-diff';
 import { diffChars as CharDiffer } from 'diff';
 
+/** @param {string} type */
+const getReplacedType = (type) => {
+	switch (type) {
+		case 'heading':
+			return 'a-heading';
+		case 'link':
+			return 'a-link';
+		case 'tablecell':
+			return 'a-tablecell';
+		default:
+			return type;
+	}
+};
+
 /**
  * Used to clean up object properties with changed values.
  * @param {Record<string, string | number | { __old: string, __new: string }>} obj
  */
-function cleanPropertyDiffChanges(obj) {
+const cleanPropertyDiffChanges = (obj) => {
 	const entries = Object.entries(obj);
 
 	for (let index = 0; index < entries.length; index++) {
@@ -99,7 +113,7 @@ function cleanPropertyDiffChanges(obj) {
 	}
 
 	return obj;
-}
+};
 
 const jsonDiffArrayCharacters = [' ', '~', '+', '-'];
 
@@ -107,7 +121,7 @@ const jsonDiffArrayCharacters = [' ', '~', '+', '-'];
  * Used to clean end-result array.
  * @param {any[]} list
  */
-function diffSemanticsFlat(list) {
+const diffSemanticsFlat = (list) => {
 	return list
 		.map((item) => {
 			return { ...item };
@@ -130,18 +144,20 @@ function diffSemanticsFlat(list) {
 				obj.children = diffSemanticsFlat(obj.children);
 			}
 
-			obj.type = `diff-${obj.type}`;
+			// Fix "non-replaced" nodes.
+			const realType = getReplacedType(obj.type);
+			obj.type = `diff-${realType}`;
 
 			return obj;
 		});
-}
+};
 
 /**
  * @param {import('lexical').SerializedEditor} toUpdate
  * @param {import('lexical').SerializedEditor} fromUpdate
  */
-export function getDiffJSON(toUpdate, fromUpdate) {
-	const diff = JSONDiffer.diff(toUpdate, fromUpdate, { full: true, raw: true });
+export const getDiffJSON = (toUpdate, fromUpdate) => {
+	const diff = JSONDiffer.diff(structuredClone(toUpdate), structuredClone(fromUpdate), { full: true, raw: true });
 
 	return {
 		...diff,
@@ -153,4 +169,4 @@ export function getDiffJSON(toUpdate, fromUpdate) {
 			},
 		},
 	};
-}
+};

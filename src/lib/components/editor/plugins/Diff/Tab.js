@@ -49,6 +49,6 @@ export class DiffTabNode extends TabNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffTabNode.getType() };
 	}
 }

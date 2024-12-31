@@ -7,7 +7,7 @@ export {
 	VideoEmbedNode,
 } from '../components/editor/plugins/VideoEmbed/VideoEmbed';
 
-export { DiffHeadingNode } from '../components/editor/plugins/Diff/Heading';
+export { DiffAHeadingNode } from '../components/editor/plugins/Diff/AHeading';
 export { DiffListNode } from '../components/editor/plugins/Diff/List';
 export { DiffListItemNode } from '../components/editor/plugins/Diff/ListItem';
 export { DiffParagraphNode } from '../components/editor/plugins/Diff/Paragraph';
