@@ -18,8 +18,6 @@
 		$isRangeSelection as isRangeSelection,
 		$createParagraphNode as createParagraphNode,
 		$isRootOrShadowRoot as isRootOrShadowRoot,
-		SELECTION_CHANGE_COMMAND,
-		COMMAND_PRIORITY_CRITICAL,
 	} from 'lexical';
 	import {
 		$createHeadingNode as createHeadingNode,
@@ -35,6 +33,7 @@
 	import {
 		$getNearestNodeOfType as getNearestNodeOfType,
 		$findMatchingParent as findMatchingParent,
+		mergeRegister,
 	} from '@lexical/utils';
 	import { $setBlocksType as setBlocksType } from '@lexical/selection';
 
@@ -181,10 +180,6 @@
 	};
 
 	const updateToolbar = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.read(() => {
 			const selection = getSelection();
 			if (isRangeSelection(selection)) {
@@ -259,18 +254,11 @@
 	};
 
 	onMount(() => {
-		const unregister = editor.registerCommand(
-			SELECTION_CHANGE_COMMAND,
-			() => {
+		return mergeRegister(
+			editor.registerUpdateListener(() => {
 				updateToolbar();
-				return false;
-			},
-			COMMAND_PRIORITY_CRITICAL
+			})
 		);
-
-		return () => {
-			unregister();
-		};
 	});
 </script>
 

@@ -3,12 +3,9 @@
 
 	import { onMount } from 'svelte';
 	import { PlusIcon, MinusIcon, ArrowLeftIcon, ArrowRightIcon, Columns3Icon } from 'lucide-svelte';
-	import {
-		$isRangeSelection as isRangeSelection,
-		$getSelection as getSelection,
-		COMMAND_PRIORITY_CRITICAL,
-		SELECTION_CHANGE_COMMAND,
-	} from 'lexical';
+	import { $isRangeSelection as isRangeSelection, $getSelection as getSelection } from 'lexical';
+	import { getEditor } from 'svelte-lexical';
+	import { mergeRegister } from '@lexical/utils';
 	import {
 		$insertTableColumn__EXPERIMENTAL as insertTableColumn__EXPERIMENTAL,
 		$deleteTableColumn__EXPERIMENTAL as deleteTableColumn__EXPERIMENTAL,
@@ -18,7 +15,6 @@
 		$isTableCellNode as isTableCellNode,
 		TableCellHeaderStates,
 	} from '@lexical/table';
-	import { getEditor } from 'svelte-lexical';
 
 	import Button from '$lib/components/Button.svelte';
 	import EditorButton from '../EditorButton.svelte';
@@ -104,42 +100,37 @@
 	};
 
 	const updateToolbar = () => {
-		const selection = getSelection();
+		editor.read(() => {
+			const selection = getSelection();
 
-		if (!isRangeSelection(selection)) {
-			return;
-		}
+			if (!isRangeSelection(selection)) {
+				return;
+			}
 
-		const [node] = selection.getNodes();
+			const [node] = selection.getNodes();
 
-		const closestCell = node.getParents().find((n) => isTableCellNode(n));
+			const closestCell = node.getParents().find((n) => isTableCellNode(n));
 
-		if (!closestCell) {
-			return;
-		}
+			if (!closestCell) {
+				return;
+			}
 
-		const style = closestCell.getHeaderStyles()
+			const style = closestCell.getHeaderStyles();
 
-		if ([TableCellHeaderStates.COLUMN, TableCellHeaderStates.BOTH].includes(style)) {
-			isColumnHeader = true;
-		} else {
-			isColumnHeader = false;
-		}
+			if ([TableCellHeaderStates.COLUMN, TableCellHeaderStates.BOTH].includes(style)) {
+				isColumnHeader = true;
+			} else {
+				isColumnHeader = false;
+			}
+		});
 	};
 
 	onMount(() => {
-		const cleanup = editor.registerCommand(
-			SELECTION_CHANGE_COMMAND,
-			() => {
+		return mergeRegister(
+			editor.registerUpdateListener(() => {
 				updateToolbar();
-				return false;
-			},
-			COMMAND_PRIORITY_CRITICAL
+			})
 		);
-
-		return () => {
-			cleanup();
-		};
 	});
 </script>
 

@@ -2,9 +2,7 @@
 	import { onMount } from 'svelte';
 	import {
 		$isNodeSelection as isNodeSelection,
-		COMMAND_PRIORITY_CRITICAL,
 		$getSelection as getSelection,
-		SELECTION_CHANGE_COMMAND,
 		$isRangeSelection as isRangeSelection,
 	} from 'lexical';
 	import { getEditor } from 'svelte-lexical';
@@ -87,16 +85,7 @@
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
 				updateToolbar();
-			}),
-
-			editor.registerCommand(
-				SELECTION_CHANGE_COMMAND,
-				() => {
-					updateToolbar();
-					return false;
-				},
-				COMMAND_PRIORITY_CRITICAL
-			)
+			})
 		);
 	});
 </script>

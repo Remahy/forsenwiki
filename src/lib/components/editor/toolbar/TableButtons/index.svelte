@@ -1,10 +1,8 @@
 <script>
-	import { getContext, onMount } from 'svelte';
-	import {
-		$getSelection as getSelection,
-		COMMAND_PRIORITY_CRITICAL,
-		SELECTION_CHANGE_COMMAND,
-	} from 'lexical';
+	import { onMount } from 'svelte';
+	import { $getSelection as getSelection } from 'lexical';
+	import { getEditor } from 'svelte-lexical';
+	import { mergeRegister } from '@lexical/utils';
 	import { $isTableNode as isTableNode } from '@lexical/table';
 
 	import Divider from '$lib/components/Divider.svelte';
@@ -14,52 +12,41 @@
 	/** @type {import("@lexical/table").TableNode | null} */
 	let selectedTable = null;
 
-	/** @type {ComposerWritable} */
-	const c = getContext('COMPOSER');
+	const editor = getEditor();
 
 	const updateToolbar = () => {
-		const selection = getSelection();
+		editor.read(() => {
+			const selection = getSelection();
 
-		if (!selection?.isCollapsed) {
-			selectedTable = null;
-			return;
-		}
-
-		const [node] = selection.getNodes();
-
-		if (!node) {
-			selectedTable = null;
-			return;
-		}
-
-		const closestParentTable = node.getParents().find((node) => isTableNode(node));
-
-		if (!closestParentTable) {
-			selectedTable = null;
-			return;
-		}
-
-		selectedTable = closestParentTable;
-		return;
-	};
-
-	onMount(() => {
-		c.subscribe((composer) => {
-			if (composer === null) {
+			if (!selection?.isCollapsed) {
+				selectedTable = null;
 				return;
 			}
 
-			const editor = composer.getEditor();
+			const [node] = selection.getNodes();
 
-			editor.registerCommand(
-				SELECTION_CHANGE_COMMAND,
-				() => {
-					updateToolbar();
-					return false;
-				},
-				COMMAND_PRIORITY_CRITICAL
-			);
+			if (!node) {
+				selectedTable = null;
+				return;
+			}
+
+			const closestParentTable = node.getParents().find((node) => isTableNode(node));
+
+			if (!closestParentTable) {
+				selectedTable = null;
+				return;
+			}
+
+			selectedTable = closestParentTable;
 		});
+	};
+
+	onMount(() => {
+		return mergeRegister(
+			editor.registerUpdateListener(() => {
+				updateToolbar();
+			})
+		);
 	});
 </script>
 

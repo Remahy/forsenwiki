@@ -1,10 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import {
-		COMMAND_PRIORITY_CRITICAL,
-		FORMAT_ELEMENT_COMMAND,
-		SELECTION_CHANGE_COMMAND,
-	} from 'lexical';
+	import { COMMAND_PRIORITY_CRITICAL, FORMAT_ELEMENT_COMMAND } from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 	import { mergeRegister } from '@lexical/utils';
 	import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from 'lucide-svelte';
@@ -62,10 +58,6 @@
 	};
 
 	const updateToolbar = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.read(() => {
 			const nodes = getSelectedElements();
 			const formats = [...new Set(nodes.map((node) => node.getFormatType()))];
@@ -78,15 +70,6 @@
 			editor.registerUpdateListener(() => {
 				updateToolbar();
 			}),
-
-			editor.registerCommand(
-				SELECTION_CHANGE_COMMAND,
-				() => {
-					updateToolbar();
-					return false;
-				},
-				COMMAND_PRIORITY_CRITICAL
-			),
 
 			editor.registerCommand(
 				FORMAT_ELEMENT_COMMAND,
