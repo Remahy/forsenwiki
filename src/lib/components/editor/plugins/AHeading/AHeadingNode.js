@@ -23,8 +23,7 @@ export class AHeadingNode extends HeadingNode {
 
 	/** @param {import('@lexical/rich-text').SerializedHeadingNode} serializedNode */
 	static importJSON(serializedNode) {
-		/** @type {AHeadingNode} */
-		const node = /** @type {any} */ (new AHeadingNode(serializedNode.tag));
+		const node = new AHeadingNode(serializedNode.tag);
 
 		node.setDirection(serializedNode.direction);
 		node.setFormat(serializedNode.format);
@@ -34,6 +33,7 @@ export class AHeadingNode extends HeadingNode {
 
 		return node;
 	}
+
 	/**
 	 * @param {LexicalEditor} editor
 	 */

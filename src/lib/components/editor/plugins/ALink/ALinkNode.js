@@ -44,8 +44,7 @@ export class ALinkNode extends LinkNode {
 
 	/** @param {import('@lexical/link').SerializedLinkNode & { isInternal: boolean }} serializedNode */
 	static importJSON(serializedNode) {
-		/** @type {ALinkNode} */
-		const node = /** @type {any} */ (new ALinkNode(serializedNode.url, { ...serializedNode }));
+		const node = new ALinkNode(serializedNode.url, { ...serializedNode });
 
 		node.setIsInternal(serializedNode.isInternal);
 		node.setDirection(serializedNode.direction);

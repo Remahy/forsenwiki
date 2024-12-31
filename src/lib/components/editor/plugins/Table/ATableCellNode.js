@@ -30,9 +30,10 @@ export class ATableCellNode extends TableCellNode {
 
 	/** @param {import('@lexical/table').SerializedTableCellNode} serializedNode */
 	static importJSON(serializedNode) {
-		/** @type {ATableCellNode} */
-		const node = /** @type {any} */ (
-			new ATableCellNode(serializedNode.headerState, serializedNode.colSpan, serializedNode.width)
+		const node = new ATableCellNode(
+			serializedNode.headerState,
+			serializedNode.colSpan,
+			serializedNode.width
 		);
 
 		node.setDirection(serializedNode.direction);
