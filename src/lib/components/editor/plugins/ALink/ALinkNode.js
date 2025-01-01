@@ -54,8 +54,6 @@ export class ALinkNode extends LinkNode {
 			node.setRel(serializedNode.rel);
 		}
 
-		node.__type = ALinkNode.getType();
-
 		return node;
 	}
 

@@ -40,8 +40,6 @@ export class ATableCellNode extends TableCellNode {
 		node.setFormat(serializedNode.format);
 		node.setIndent(serializedNode.indent);
 
-		node.__type = ATableCellNode.getType();
-
 		return node;
 	}
 	/**

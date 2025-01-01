@@ -29,8 +29,6 @@ export class AHeadingNode extends HeadingNode {
 		node.setFormat(serializedNode.format);
 		node.setIndent(serializedNode.indent);
 
-		node.__type = AHeadingNode.getType();
-
 		return node;
 	}
 
