@@ -7,22 +7,21 @@ import { Y } from './index.mjs';
 const noop = () => {};
 
 /**
+ * @typedef {IndexeddbPersistence & { awareness: any, connect: typeof noop, disconnect: typeof noop }} IndexeddbPersistenceProvider
+ *
+ * @typedef {{ update: string, id: string, yjsDocMap: Map<string, Y.Doc>, initialUpdate?: string }} ProviderFactory
+ */
+
+/**
  * @type {undefined | import('@lexical/yjs').Provider}
  */
 let provider;
 
 /**
- * @typedef {IndexeddbPersistence & { awareness: any, connect: typeof noop, disconnect: typeof noop }} IndexeddbPersistenceProvider
- */
-
-/**
- * @param {string} update
- * @param {string} id
- * @param {Map<string, Y.Doc>} yjsDocMap
- * @param {string} [initialUpdate]
+ * @param {ProviderFactory} arg1
  * @returns {import('@lexical/yjs').Provider}
  */
-function providerFactory(update, id = 'new', yjsDocMap, initialUpdate) {
+function providerFactory({ update, id = 'new', yjsDocMap, initialUpdate }) {
 	if (provider) {
 		return provider;
 	}
@@ -118,8 +117,8 @@ function providerFactory(update, id = 'new', yjsDocMap, initialUpdate) {
  */
 export function instantiateProvider(update, initialUpdate) {
 	/**
-	 * @param {string} id
-	 * @param {any} yjsDocMap
+	 * @param {ProviderFactory['id']} id
+	 * @param {ProviderFactory['yjsDocMap']} yjsDocMap
 	 */
-	return (id, yjsDocMap) => providerFactory(update, id, yjsDocMap, initialUpdate);
+	return (id, yjsDocMap) => providerFactory({ update, id, yjsDocMap, initialUpdate });
 }
