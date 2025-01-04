@@ -32,14 +32,19 @@ export async function POST({ request, locals }) {
 	let title;
 	let doc;
 	try {
+		title = sanitizeTitle(rawTitle);
+
+		const foundTitle = await readYPostByTitle(title.sanitized);
+		if (foundTitle) {
+			return error(400, 'Article with that title already exists.');
+		}
+
 		const data = getYjsAndEditor(articleConfig(null, false, null), base64ToUint8Array(content));
 		editor = data.editor;
 		doc = data.doc;
 
 		// Does not modify the editor.
 		await validateArticle(editor);
-
-		title = sanitizeTitle(rawTitle);
 
 		// Modifies the editor.
 		await adjustAndUploadImages(editor, title.sanitized, { id: session.user.id });
@@ -53,21 +58,16 @@ export async function POST({ request, locals }) {
 		return error(400);
 	}
 
+	if (!title) {
+		return error(400, 'No title provided');
+	}
+
 	// By this point, we have probably modified the editor. Let's recreate the content.
 	const backendUpdate = encodeYDocToUpdateV2(doc);
 
 	const { byteLength } = backendUpdate;
 
 	const backendContent = uint8ArrayToBase64(backendUpdate);
-
-	if (!title) {
-		return error(400, 'No title provided');
-	}
-
-	const foundTitle = await readYPostByTitle(title.sanitized);
-	if (foundTitle) {
-		return error(400, 'Article with that title already exists.');
-	}
 
 	const internalIds = await getArticleURLIds(editor);
 
