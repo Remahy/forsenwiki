@@ -128,10 +128,10 @@ export const adjustAndUploadImages = (editor, title, author) => {
 						image.setSrc(IMAGE_OFF);
 					}
 				}
-
-				resolve(null);
 			},
 			{ discrete: true }
 		);
+
+		resolve(null);
 	});
 };
