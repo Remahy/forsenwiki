@@ -9,6 +9,7 @@ import { getDiffJSON } from '$lib/diff/index.server';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { diffConfig } from '$lib/components/editor/config/diff';
 import toHTML from '$lib/worker/toHTML';
+import { EDITOR_IS_READONLY } from '../../../../../../../../types';
 
 /**
  * @param {string} title
@@ -53,10 +54,10 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 	const updatesTo = mergePostUpdates(toPostUpdates);
 	const updatesFrom = mergePostUpdates(fromPostUpdates);
 
-	const { editor: tEditor } = getYjsAndEditor(articleConfig(null, false, null), updatesTo);
+	const { editor: tEditor } = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), updatesTo);
 	const toUpdate = tEditor.toJSON();
 
-	const { editor: fEditor } = getYjsAndEditor(articleConfig(null, false, null), updatesFrom);
+	const { editor: fEditor } = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), updatesFrom);
 	const fromUpdate = fEditor.toJSON();
 
 	const [toAuthor, fromAuthor] = await Promise.all([
@@ -66,7 +67,7 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 
 	const diffJSON = getDiffJSON(toUpdate, fromUpdate);
 
-	const editor = createHeadlessEditor(diffConfig(null, false, null));
+	const editor = createHeadlessEditor(diffConfig(null, EDITOR_IS_READONLY, null));
 
 	editor.setEditorState(editor.parseEditorState(diffJSON.editorState));
 

@@ -6,6 +6,7 @@ import { $createTextNode, $getRoot, $createParagraphNode } from 'lexical';
 import { Y } from '$lib/yjs/index.mjs';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { articleConfig } from '$lib/components/editor/config/article';
+import { EDITOR_IS_READONLY } from '../src/constants';
 
 export const initialUpdateWorker = () => {
 	let emptyUpdate;
@@ -15,7 +16,7 @@ export const initialUpdateWorker = () => {
 		emptyUpdate = Y.encodeStateAsUpdateV2(yDoc);
 	}
 
-	const { doc, editor } = getYjsAndEditor(articleConfig(null, false, null), emptyUpdate);
+	const { doc, editor } = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), emptyUpdate);
 
 	editor.update(
 		() => {

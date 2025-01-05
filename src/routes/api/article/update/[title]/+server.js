@@ -23,6 +23,7 @@ import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import toHTML from '$lib/worker/toHTML';
 import { _emit } from '../../../../adonis/frontpage/+server';
+import { EDITOR_IS_READONLY } from '../../../../../../types';
 
 export async function POST({ request, locals, params }) {
 	if (locals.isBlocked) {
@@ -70,7 +71,7 @@ export async function POST({ request, locals, params }) {
 
 	let e;
 	try {
-		e = getYjsAndEditor(articleConfig(null, false, null), combinedInitialUpdate);
+		e = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), combinedInitialUpdate);
 		const editor = e.editor;
 
 		// Does not modify the editor.

@@ -15,6 +15,7 @@ import { upsertHTML } from '$lib/db/article/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 import toHTML from '$lib/worker/toHTML';
+import { EDITOR_IS_READONLY } from '../../../../../types';
 
 export async function POST({ request, locals }) {
 	if (locals.isBlocked) {
@@ -32,7 +33,7 @@ export async function POST({ request, locals }) {
 	let title;
 	let doc;
 	try {
-		const data = getYjsAndEditor(articleConfig(null, false, null), base64ToUint8Array(content));
+		const data = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), base64ToUint8Array(content));
 		editor = data.editor;
 		doc = data.doc;
 
