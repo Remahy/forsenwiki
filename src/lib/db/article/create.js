@@ -1,5 +1,5 @@
 import prisma from '$lib/prisma';
-import { Y_POST_TYPES } from '../../../../types';
+import { Y_POST_TYPES } from '../../../../constants';
 
 /**
  * @param {{ title: {raw: string, sanitized: string}, data: { content: string }, ids: string[] }} arg1
