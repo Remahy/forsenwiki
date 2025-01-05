@@ -11,6 +11,7 @@
 	import Box from '$lib/components/Box.svelte';
 	import ToC from '$lib/components/ToC.svelte';
 	import RandomButton from '$lib/components/RandomButton.svelte';
+	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
 
 	export let data;
 
@@ -114,4 +115,10 @@
 			{/if}
 		</footer>
 	</article>
+
+	<details class="-mt-4">
+		<summary></summary>
+
+		<CacheBustButton />
+	</details>
 </Container>
