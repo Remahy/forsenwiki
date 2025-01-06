@@ -11,6 +11,7 @@
 	} from 'svelte-lexical';
 
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
+	import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
 	import Toolbar from './toolbar/index.svelte';
 	import Footer from './footer/index.svelte';
 	import { articleConfig } from './config/article';

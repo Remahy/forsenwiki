@@ -1,12 +1,13 @@
 <script>
-	import { onMount } from 'svelte';
 	import { getEditor } from 'svelte-lexical';
 	import { FileQuestionIcon, LinkIcon, RectangleHorizontalIcon, RectangleVerticalIcon, YoutubeIcon } from 'lucide-svelte';
 
-	import { VideoEmbedNode } from '$lib/lexical/custom';
 	import Select from '$lib/components/Select.svelte';
 	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
 	import { VIDEO_CONSTANTS } from '$lib/constants/video';
+	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
+	import { DOMAIN } from '$lib/environment/environment';
+	import { getURLAndTitle } from '../../plugins/VideoEmbed/VideoEmbed';
 
 	/** @type {import("$lib/lexical/custom").VideoEmbedNode} */
 	export let selectedVideoEmbedNode;
@@ -16,11 +17,16 @@
 	/** @type {HTMLSelectElement} */
 	let platformElement;
 
-	let currentPlatform = selectedVideoEmbedNode.__platform;
-	let currentURL = selectedVideoEmbedNode.__src;
+	$: currentPlatform = selectedVideoEmbedNode.__platform;
+	$: currentURL = selectedVideoEmbedNode.__src;
 
-	let currentWidth = selectedVideoEmbedNode.__width;
-	let currentHeight = selectedVideoEmbedNode.__height;
+	$: currentWidth = selectedVideoEmbedNode.__width;
+	$: currentHeight = selectedVideoEmbedNode.__height;
+
+	$: url = currentURL;
+
+	$: width = currentWidth;
+	$: height = currentHeight;
 
 	/**
 	 * @type {{[x: string]: typeof import('svelte').SvelteComponent<any>}}
@@ -36,14 +42,14 @@
 
 	const onChange = () => {
 		editor.update(() => {
-			selectedVideoEmbedNode.setWidthAndHeight({ width: currentWidth, height: currentHeight });
+			selectedVideoEmbedNode.setWidthAndHeight({ width, height });
 		});
 	};
 
 	/**
 	 * @param {Event} e
 	 */
-	const platform = (e) => {
+	const setPlatform = (e) => {
 		const { value } = /** @type {HTMLSelectElement} */ (e.currentTarget);
 
 		editor.update(() => {
@@ -51,28 +57,11 @@
 		});
 	};
 
-	/**
-	 * @param {Event} e
-	 */
-	const url = (e) => {
-		const { value } = /** @type {HTMLInputElement} */ (e.target);
-
+	const setURL = () => {
 		editor.update(() => {
-			selectedVideoEmbedNode.setSrc(value);
+			selectedVideoEmbedNode.setSrc(getURLAndTitle(currentPlatform, url, DOMAIN).url || url);
 		});
 	};
-
-	onMount(() => {
-		const unregister = editor.registerNodeTransform(VideoEmbedNode, (node) => {
-			if (node.getKey() === selectedVideoEmbedNode.getKey()) {
-				selectedVideoEmbedNode = node;
-			}
-		});
-
-		return () => {
-			unregister()
-		}
-	});
 </script>
 
 <div class="flex min-h-[42px] items-center gap-2 pl-2">
@@ -81,7 +70,7 @@
 	<Select
 		title="Platform"
 		bind:ref={platformElement}
-		on:change={platform}
+		on:change={setPlatform}
 		bind:value={currentPlatform}
 		class="!-ml-10 h-full !px-10"
 	>
@@ -99,8 +88,8 @@
 
 	<input
 		class="input-color -ml-10 h-full w-auto py-1 pl-10 pr-0 text-sm lg:h-full"
-		bind:value={currentURL}
-		on:change={url}
+		bind:value={url}
+		on:change={setURL}
 		placeholder="https://..."
 		type="url"
 	/>
@@ -112,8 +101,9 @@
 
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		bind:value={currentWidth}
+		bind:value={width}
 		on:change={onChange}
+		min={IMAGE_MIN_WIDTH}
 		type="number"
 	/>
 </label>
@@ -124,8 +114,9 @@
 
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		bind:value={currentHeight}
+		bind:value={height}
 		on:change={onChange}
+		min={IMAGE_MIN_HEIGHT}
 		type="number"
 	/>
 </label>

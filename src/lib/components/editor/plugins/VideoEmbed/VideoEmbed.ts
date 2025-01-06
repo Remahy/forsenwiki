@@ -20,18 +20,19 @@ import {
 } from 'lexical';
 
 import { DOMAIN } from '$lib/environment/environment';
-import { VIDEO_CONSTANTS } from '$lib/constants/video';
+import { VIDEO_CONSTANTS, VIDEO_MIN_HEIGHT, VIDEO_MIN_WIDTH } from '$lib/constants/video';
 
 import VideoEmbedComponent from './VideoEmbedComponent.svelte';
 import {
 	DecoratorBlockNode,
-	decoratorFormatToFlexStyle,
 	decoratorFormatToMarginStyle,
 	type SerializedDecoratorBlockNode,
 } from './DecoratorBlockNode';
 import { sanitizeUrl } from '../../utils/sanitizeUrl';
 
 export type SupportedPlatforms = 'twitch' | 'youtube';
+
+const platforms = Object.keys(VIDEO_CONSTANTS.PLATFORMS);
 
 export const getURLAndTitle = (
 	platform: SupportedPlatforms,
@@ -55,7 +56,7 @@ export const getURLAndTitle = (
 			const clipSlug = url.searchParams.get('clip');
 			const clipTId = url.searchParams.get('clipt');
 
-			const youtubeEmbedURL = new URL(`embed/${fullVideoSlug}`, 'https://www.youtube.com/');
+			const youtubeEmbedURL = new URL(`https://www.youtube.com/embed/${fullVideoSlug}`, 'https://www.youtube.com/');
 
 			if (clipSlug && clipTId) {
 				youtubeEmbedURL.searchParams.set('clip', clipSlug);
@@ -160,10 +161,14 @@ export const getURLAndTitle = (
 function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl: string) {
 	const element = document.createElement('iframe');
 
-	const { url, title } = getURLAndTitle(node.__platform, node.__src, parentUrl);
+	const { url, title } = getURLAndTitle(node.getPlatform(), node.getSrc(), parentUrl);
+	const { width: rawWidth, height: rawHeight } = node.getWidthAndHeight();
 
-	element.setAttribute('width', node.__width.toString() || 'inherit');
-	element.setAttribute('height', node.__height.toString() || 'inherit');
+	const width = typeof rawWidth === 'number' ? Math.max(VIDEO_MIN_WIDTH, Math.round(rawWidth)).toString() : 'inherit';
+	const height = typeof rawHeight === 'number' ? Math.max(VIDEO_MIN_HEIGHT, Math.round(rawHeight)).toString() : 'inherit'
+
+	element.setAttribute('width', width);
+	element.setAttribute('height', height);
 	element.setAttribute('src', url);
 	element.setAttribute('frameborder', '0');
 	element.setAttribute(
@@ -175,7 +180,7 @@ function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl:
 	element.setAttribute('loading', 'lazy');
 	element.setAttribute(
 		'style',
-		`max-width:100%;height:auto;aspect-ratio:16/9;${decoratorFormatToMarginStyle(node.getFormatType())}`
+		`max-width:100%;${'height:auto;aspect-ratio:16/9;'}${decoratorFormatToMarginStyle(node.getFormatType())}`
 	);
 
 	return element;
@@ -187,26 +192,26 @@ const setFallbackElement = (element: HTMLIFrameElement, platform: string) => {
 };
 
 function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
-	const { url } = getURLAndTitle(node.__platform, node.__src, parentUrl);
+	const { url } = getURLAndTitle(node.getPlatform(), node.getSrc(), parentUrl);
 
 	const element = createBoilerplateVideoIframeAttributes(node, parentUrl);
-	element.setAttribute('data-lexical-youtube', node.__src);
+	element.setAttribute('data-lexical-youtube', node.getSrc());
 
 	if (!url) {
-		setFallbackElement(element, node.__platform);
+		setFallbackElement(element, node.getPlatform());
 	}
 
 	return { element };
 }
 
 function generateTwitchIframe(node: VideoEmbedNode, parentUrl: string) {
-	const { url } = getURLAndTitle(node.__platform, node.__src, parentUrl);
+	const { url } = getURLAndTitle(node.getPlatform(), node.getSrc(), parentUrl);
 
 	const element = createBoilerplateVideoIframeAttributes(node, parentUrl);
-	element.setAttribute('data-lexical-twitch', node.__src);
+	element.setAttribute('data-lexical-twitch', node.getSrc());
 
 	if (!url) {
-		setFallbackElement(element, node.__platform);
+		setFallbackElement(element, node.getPlatform());
 	}
 
 	return { element };
@@ -335,22 +340,26 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	// Getters
 
 	getWidthAndHeight() {
-		return { width: this.__width, height: this.__height };
+		const self = this.getLatest();
+		return { width: self.__width, height: self.__height };
 	}
 
 	getSrc(): string {
-		return this.__src;
+		const self = this.getLatest();
+		return self.__src;
 	}
 
 	getPlatform(): SupportedPlatforms {
-		return this.__platform;
+		const self = this.getLatest();
+		return self.__platform;
 	}
 
 	getTextContent(
 		_includeInert?: boolean | undefined,
 		_includeDirectionless?: false | undefined
 	): string {
-		return this.__src;
+		const self = this.getLatest();
+		return self.__src;
 	}
 
 	// Setters
@@ -362,29 +371,27 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		width: 'inherit' | number;
 		height: 'inherit' | number;
 	}): void {
-		const writable = this.getWritable();
-		writable.__width = width;
-		writable.__height = height;
+		const self = this.getWritable();
+		self.__width = typeof width === 'number' ? Math.max(VIDEO_MIN_WIDTH, Math.round(width)) : 'inherit';
+		self.__height = typeof height === 'number' ? Math.max(VIDEO_MIN_HEIGHT, Math.round(height)) : 'inherit';
 	}
 
 	setSrc(src: string): void {
-		const writable = this.getWritable();
-		writable.__src = src;
+		const self = this.getWritable();
+		self.__src = src;
 	}
 
 	setPlatform(platform: string) {
-		const writable = this.getWritable();
-		if (['twitch', 'youtube'].includes(platform)) {
-			writable.__platform = platform as SupportedPlatforms;
-		}
+		const self = this.getWritable();
+		self.__platform = (platforms.includes(platform) ? platform : platforms[0]) as SupportedPlatforms;
 	}
 
 	exportJSON(): SerializedVideoEmbedNode {
 		return {
 			...super.exportJSON(),
 			type: VideoEmbedNode.getType(),
-			platform: this.__platform,
-			src: this.__src,
+			platform: this.getPlatform(),
+			src: this.getSrc(),
 			width: this.__width,
 			height: this.__height,
 			version: 1,
@@ -428,12 +435,11 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 			componentClass: VideoEmbedComponent,
 			props: {
 				node: this,
-				platform: this.__platform,
-				src: this.__src,
+				platform: this.getPlatform(),
+				src: this.getSrc(),
 				format: this.getFormatType(),
 				nodeKey: this.__key,
-				width: this.__width,
-				height: this.__height,
+				...this.getWidthAndHeight(),
 				resizable: true,
 				editor: editor,
 			},

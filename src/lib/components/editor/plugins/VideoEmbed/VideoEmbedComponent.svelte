@@ -28,6 +28,7 @@
 		clearSelection,
 		createNodeSelectionStore,
 	} from '$lib/components/editor/utils/getSelection';
+	import { VIDEO_MIN_HEIGHT, VIDEO_MIN_WIDTH } from '$lib/constants/video';
 	import ImageResizer from '../Image/ImageResizer.svelte';
 	import {
 		getURLAndTitle,
@@ -211,7 +212,7 @@
 			/>
 		</div>
 		{#if resizable && isNodeSelection(selection) && isFocused}
-			<ImageResizer {editor} imageRef={embedRef} {onResizeStart} {onResizeEnd} />
+			<ImageResizer {editor} imageRef={embedRef} {onResizeStart} {onResizeEnd} minWidth={VIDEO_MIN_WIDTH} minHeight={VIDEO_MIN_HEIGHT} />
 		{/if}
 	</div>
 </div>

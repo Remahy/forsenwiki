@@ -6,7 +6,7 @@ import { $createTextNode, $getRoot, $createParagraphNode } from 'lexical';
 import { Y } from '$lib/yjs/index.mjs';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { articleConfig } from '$lib/components/editor/config/article';
-import { EDITOR_IS_READONLY } from '../src/constants';
+import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 
 export const initialUpdateWorker = () => {
 	let emptyUpdate;

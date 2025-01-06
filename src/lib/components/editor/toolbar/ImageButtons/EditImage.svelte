@@ -1,12 +1,10 @@
 <script>
-	import { onMount } from 'svelte';
 	import { $getNodeByKey as getNodeByKey } from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 	import { RectangleHorizontalIcon, RectangleVerticalIcon } from 'lucide-svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { modal } from '$lib/stores/modal';
-	import { ImageNode } from '$lib/lexical/custom';
-	import { MIN_IMAGE_HEIGHT, MIN_IMAGE_WIDTH } from '$lib/constants/image';
+	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import EditImageModal from './EditImageModal.svelte';
 
 	/** @type {import("$lib/lexical/custom").ImageNode} */
@@ -14,12 +12,15 @@
 
 	const editor = getEditor();
 
-	let currentWidth = selectedImageNode.__width;
-	let currentHeight = selectedImageNode.__height;
+	$: currentWidth = selectedImageNode.__width;
+	$: currentHeight = selectedImageNode.__height;
+
+	$: width = currentWidth;
+	$: height = currentHeight;
 
 	const onChange = () => {
 		editor.update(() => {
-			selectedImageNode.setWidthAndHeight({ width: currentWidth, height: currentHeight });
+			selectedImageNode.setWidthAndHeight({ width, height });
 		});
 	};
 
@@ -45,8 +46,8 @@
 						if (
 							typeof width === 'number' &&
 							typeof height === 'number' &&
-							height >= MIN_IMAGE_HEIGHT &&
-							width >= MIN_IMAGE_WIDTH
+							height >= IMAGE_MIN_HEIGHT &&
+							width >= IMAGE_MIN_WIDTH
 						) {
 							node.setWidthAndHeight({ width, height });
 						}
@@ -64,33 +65,19 @@
 			});
 		});
 	};
-
-	onMount(() => {
-		const unregister = editor.registerNodeTransform(ImageNode, (node) => {
-			const { width, height } = node.getWidthAndHeight();
-			if (node.getKey() === selectedImageNode.getKey()) {
-				currentWidth = width;
-				currentHeight = height;
-				selectedImageNode = node;
-			}
-		});
-
-		return () => {
-			unregister();
-		};
-	});
 </script>
 
 <Button on:click={image} class="text-xs">Change image</Button>
+
 <label title="Width" class="flex min-h-[42px] items-center gap-2 pl-2">
 	<span class="hidden">Width</span>
 	<RectangleHorizontalIcon />
 
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		bind:value={currentWidth}
+		bind:value={width}
 		on:change={onChange}
-		min="{MIN_IMAGE_WIDTH}"
+		min="{IMAGE_MIN_WIDTH}"
 		type="number"
 	/>
 </label>
@@ -101,9 +88,9 @@
 
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		bind:value={currentHeight}
+		bind:value={height}
 		on:change={onChange}
-		min="{MIN_IMAGE_HEIGHT}"
+		min="{IMAGE_MIN_HEIGHT}"
 		type="number"
 	/>
 </label>

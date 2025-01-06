@@ -30,6 +30,7 @@
 		clearSelection,
 		createNodeSelectionStore,
 	} from '$lib/components/editor/utils/getSelection';
+	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import { mergeElements } from '../../utils/elementUtils';
 	import ImageResizer from './ImageResizer.svelte';
 	import {
@@ -371,5 +372,5 @@
 	{/await}
 </div>
 {#if resizable && isNodeSelection(selection) && isFocused}
-	<ImageResizer {editor} {imageRef} {onResizeStart} {onResizeEnd} />
+	<ImageResizer {editor} {imageRef} {onResizeStart} {onResizeEnd} minWidth={IMAGE_MIN_WIDTH} minHeight={IMAGE_MIN_HEIGHT} />
 {/if}
