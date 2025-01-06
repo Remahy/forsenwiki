@@ -39,7 +39,7 @@
 	import { CAN_USE_DOM } from '$lib/environment/utils';
 	import { cacheServiceBaseURLWithStatic } from '$lib/utils/getCacheURL';
 	import { modal } from '$lib/stores/modal';
-	import { MIN_IMAGE_HEIGHT, MIN_IMAGE_WIDTH } from '$lib/constants/image';
+	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import EditImageModal from '../../toolbar/ImageButtons/EditImageModal.svelte';
 	import {
 		$createImageNode as createImageNode,
@@ -269,8 +269,8 @@
 					if (
 						typeof width === 'number' &&
 						typeof height === 'number' &&
-						width >= MIN_IMAGE_WIDTH &&
-						height >= MIN_IMAGE_HEIGHT
+						width >= IMAGE_MIN_WIDTH &&
+						height >= IMAGE_MIN_HEIGHT
 					) {
 						node.setWidthAndHeight({ width, height });
 					}

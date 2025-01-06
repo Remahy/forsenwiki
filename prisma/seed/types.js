@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { SYSTEM, Y_POST_TYPES } from '../../types.js';
+import { SYSTEM, Y_POST_TYPES } from '../../src/types.js';
 
 const { ARTICLE, BIO } = Y_POST_TYPES;
 

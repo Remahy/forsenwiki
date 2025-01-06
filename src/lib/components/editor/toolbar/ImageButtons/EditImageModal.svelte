@@ -4,7 +4,7 @@
 	import { modal } from '$lib/stores/modal';
 	import Select from '$lib/components/Select.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
-	import { MAX_IMAGE_SIZE_MIB, MIN_IMAGE_HEIGHT, MIN_IMAGE_WIDTH } from '$lib/constants/image';
+	import { MAX_IMAGE_SIZE_MIB, IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 
 	/** @type {string} */
 	export let src = '';
@@ -13,10 +13,10 @@
 	export let altText = '';
 
 	/** @type {number} */
-	export let width = MIN_IMAGE_WIDTH;
+	export let width = IMAGE_MIN_WIDTH;
 
 	/** @type {number} */
-	export let height = MIN_IMAGE_HEIGHT;
+	export let height = IMAGE_MIN_HEIGHT;
 
 	/** @type {(data:import('../../plugins/Image/Image').ImagePayload) => void} */
 	export let onSubmit = () => {};
@@ -194,7 +194,7 @@
 					</span>
 					<input
 						type="number"
-						min={MIN_IMAGE_WIDTH}
+						min={IMAGE_MIN_WIDTH}
 						class="input-color w-full rounded p-2"
 						bind:value={width}
 					/>
@@ -208,7 +208,7 @@
 					</span>
 					<input
 						type="number"
-						min={MIN_IMAGE_HEIGHT}
+						min={IMAGE_MIN_HEIGHT}
 						class="input-color w-full rounded p-2"
 						bind:value={height}
 					/>

@@ -20,36 +20,55 @@ const IS_ALIGN_START = 5;
 const IS_ALIGN_END = 6;
 
 export const ELEMENT_FORMAT_TO_TYPE = {
-  [IS_ALIGN_AUTO]: '',
-  [IS_ALIGN_CENTER]: 'center',
-  [IS_ALIGN_END]: 'end',
-  [IS_ALIGN_JUSTIFY]: 'justify',
-  [IS_ALIGN_LEFT]: 'left',
-  [IS_ALIGN_RIGHT]: 'right',
-  [IS_ALIGN_START]: 'start'
+	[IS_ALIGN_AUTO]: '',
+	[IS_ALIGN_CENTER]: 'center',
+	[IS_ALIGN_END]: 'end',
+	[IS_ALIGN_JUSTIFY]: 'justify',
+	[IS_ALIGN_LEFT]: 'left',
+	[IS_ALIGN_RIGHT]: 'right',
+	[IS_ALIGN_START]: 'start',
 };
 
 const ELEMENT_TYPE_TO_FORMAT = {
-  '': IS_ALIGN_AUTO,
-  center: IS_ALIGN_CENTER,
-  end: IS_ALIGN_END,
-  justify: IS_ALIGN_JUSTIFY,
-  left: IS_ALIGN_LEFT,
-  right: IS_ALIGN_RIGHT,
-  start: IS_ALIGN_START
+	'': IS_ALIGN_AUTO,
+	center: IS_ALIGN_CENTER,
+	end: IS_ALIGN_END,
+	justify: IS_ALIGN_JUSTIFY,
+	left: IS_ALIGN_LEFT,
+	right: IS_ALIGN_RIGHT,
+	start: IS_ALIGN_START,
 };
 
 /**
  * @param {ElementFormatType} type
  */
 export const getFormat = (type) => {
-	return type !== '' ? /** @type {keyof typeof ELEMENT_FORMAT_TO_TYPE} */ (ELEMENT_TYPE_TO_FORMAT[type]) : 0;
+	return type !== ''
+		? /** @type {keyof typeof ELEMENT_FORMAT_TO_TYPE} */ (ELEMENT_TYPE_TO_FORMAT[type])
+		: 0;
 };
-
 
 /**
  * @param {keyof ELEMENT_FORMAT_TO_TYPE} format
  */
 export const getFormatType = (format) => {
 	return /** @type {ElementFormatType} */ (ELEMENT_FORMAT_TO_TYPE[format]) || '';
+};
+
+/**
+ * @param {LexicalEditor} editor
+ * @param {ElementNode} currentNode
+ * @param {ElementNode} prevNode
+ */
+export const mergeElements = (editor, currentNode, prevNode) => {
+	const children = currentNode.getChildren();
+
+	editor.update(
+		() => {
+			prevNode.append(...children);
+
+			currentNode.remove();
+		},
+		{ discrete: true }
+	);
 };
