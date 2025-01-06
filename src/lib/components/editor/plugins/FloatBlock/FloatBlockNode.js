@@ -186,6 +186,10 @@ export class FloatBlockNode extends ElementNode {
 
 		return false;
 	}
+
+	isShadowRoot() {
+		return true;
+	}
 }
 
 /** @param {FloatBlockNodePayload & { key?: NodeKey }} arg1 */
