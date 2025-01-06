@@ -11,7 +11,6 @@
 	} from 'svelte-lexical';
 
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
-	import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
 	import Toolbar from './toolbar/index.svelte';
 	import Footer from './footer/index.svelte';
 	import { articleConfig } from './config/article';
@@ -19,7 +18,7 @@
 	import AutoFocus from './plugins/AutoFocus.svelte';
 	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 	import TablePlugin from './plugins/Table/TablePlugin.svelte';
-	import { EDITOR_IS_EDITABLE } from '../../../../types';
+	import { EDITOR_IS_EDITABLE } from '../../../types';
 
 	export let id;
 	export let update;

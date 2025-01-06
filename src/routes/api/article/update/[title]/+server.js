@@ -23,7 +23,7 @@ import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations
 import toHTML from '$lib/worker/toHTML';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import { _emit } from '../../../../adonis/frontpage/+server';
-import { EDITOR_IS_READONLY } from '../../../../../../types';
+import { EDITOR_IS_READONLY } from '../../../../../types';
 
 export async function POST({ request, locals, params }) {
 	if (locals.isBlocked) {
