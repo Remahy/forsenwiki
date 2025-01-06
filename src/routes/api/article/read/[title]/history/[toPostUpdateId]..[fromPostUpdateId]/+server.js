@@ -9,7 +9,7 @@ import { getDiffJSON } from '$lib/diff/index.server';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { diffConfig } from '$lib/components/editor/config/diff';
 import toHTML from '$lib/worker/toHTML';
-import { EDITOR_IS_READONLY } from '../../../../../../../types';
+import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 
 /**
  * @param {string} title

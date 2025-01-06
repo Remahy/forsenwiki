@@ -15,7 +15,7 @@ import { upsertHTML } from '$lib/db/article/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 import toHTML from '$lib/worker/toHTML';
-import { EDITOR_IS_READONLY } from '../../../../types';
+import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 
 export async function POST({ request, locals }) {
 	if (locals.isBlocked) {
@@ -34,6 +34,10 @@ export async function POST({ request, locals }) {
 	let doc;
 	try {
 		title = sanitizeTitle(rawTitle);
+
+		if (!title) {
+			return error(400, 'No title provided');
+		}
 
 		const foundTitle = await readYPostByTitle(title.sanitized);
 		if (foundTitle) {
@@ -57,10 +61,6 @@ export async function POST({ request, locals }) {
 
 		console.error(err);
 		return error(400);
-	}
-
-	if (!title) {
-		return error(400, 'No title provided');
 	}
 
 	// By this point, we have probably modified the editor. Let's recreate the content.
