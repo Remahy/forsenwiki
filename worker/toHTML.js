@@ -10,6 +10,7 @@ import { base64ToUint8Array } from 'uint8array-extras';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { diffConfig } from '$lib/components/editor/config/diff';
+import { EDITOR_IS_READONLY } from '../src/types';
 
 export const toHTMLWorker = async (data) => {
 	/**
@@ -40,10 +41,10 @@ export const toHTMLWorker = async (data) => {
 	 */
 	let editor;
 	if (update) {
-		const eY = getYjsAndEditor(cfg(null, false, null), base64ToUint8Array(update));
+		const eY = getYjsAndEditor(cfg(null, EDITOR_IS_READONLY, null), base64ToUint8Array(update));
 		editor = eY.editor;
 	} else {
-		editor = createHeadlessEditor(cfg(null, false, null));
+		editor = createHeadlessEditor(cfg(null, EDITOR_IS_READONLY, null));
 
 		editor.setEditorState(editor.parseEditorState(content));
 	}

@@ -1,6 +1,5 @@
 <script>
 	import { calculateZoomLevel } from '@lexical/utils';
-	import { MIN_IMAGE_HEIGHT, MIN_IMAGE_WIDTH } from '$lib/constants/image';
 
 	/** @type {() => void} */
 	export let onResizeStart;
@@ -10,6 +9,9 @@
 	export let imageRef;
 	/** @type {import('lexical').LexicalEditor} */
 	export let editor;
+
+	export let minWidth = 16;
+	export let minHeight = 16;
 
 	/** @type {HTMLDivElement} */
 	let controlWrapperRef;
@@ -59,9 +61,6 @@
 		startX: 0,
 		startY: 0,
 	};
-
-	const minWidth = MIN_IMAGE_WIDTH;
-	const minHeight = MIN_IMAGE_HEIGHT;
 
 	const editorRootElement = editor.getRootElement();
 	// Find max width, accounting for editor padding.

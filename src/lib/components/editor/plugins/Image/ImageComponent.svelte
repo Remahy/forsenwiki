@@ -30,6 +30,8 @@
 		clearSelection,
 		createNodeSelectionStore,
 	} from '$lib/components/editor/utils/getSelection';
+	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
+	import { mergeElements } from '../../utils/elementUtils';
 	import ImageResizer from './ImageResizer.svelte';
 	import {
 		IMAGE_OFF,
@@ -124,13 +126,7 @@
 			return false;
 		}
 
-		const children = currentNodeParent.getChildren();
-
-		editor.update(() => {
-			prevSibling.append(...children);
-
-			currentNodeParent.remove();
-		});
+		mergeElements(editor, currentNodeParent, prevSibling);
 
 		return true;
 	};
@@ -180,13 +176,20 @@
 			return true;
 		}
 
-		if (prevSibling && isElementNode(prevSibling)) {
-			const prevSiblingLastChild = prevSibling.getLastChild();
+		if (!prevSibling || (prevSibling && !isElementNode(prevSibling))) {
+			return false;
+		}
 
-			if (prevSibling && isImageNode(prevSiblingLastChild) && node === prevSiblingLastChild) {
-				imageRef?.click();
-				return true;
-			}
+		if (isParagraphNode(currentNode) && isParagraphNode(prevSibling)) {
+			mergeElements(editor, currentNode, prevSibling);
+			return true;
+		}
+
+		const prevSiblingLastChild = prevSibling.getLastChild();
+
+		if (prevSibling && isImageNode(prevSiblingLastChild) && node === prevSiblingLastChild) {
+			imageRef?.click();
+			return true;
 		}
 
 		return false;
@@ -363,11 +366,11 @@
 			src={src === TRANSPARENT_IMAGE ? IMAGE_OFF : src}
 			alt={altText}
 			bind:this={imageRef}
-			style="height:{heightCss};px;width:{widthCss};"
+			style="height:{heightCss};width:{widthCss};"
 			draggable="false"
 		/>
 	{/await}
 </div>
 {#if resizable && isNodeSelection(selection) && isFocused}
-	<ImageResizer {editor} {imageRef} {onResizeStart} {onResizeEnd} />
+	<ImageResizer {editor} {imageRef} {onResizeStart} {onResizeEnd} minWidth={IMAGE_MIN_WIDTH} minHeight={IMAGE_MIN_HEIGHT} />
 {/if}

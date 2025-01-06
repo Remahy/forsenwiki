@@ -18,6 +18,7 @@
 	import AutoFocus from './plugins/AutoFocus.svelte';
 	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 	import TablePlugin from './plugins/Table/TablePlugin.svelte';
+	import { EDITOR_IS_EDITABLE } from '../../../types';
 
 	export let id;
 	export let update;
@@ -25,7 +26,7 @@
 	export let initialUpdate = undefined;
 
 	/** @type {any} */
-	const initialConfig = articleConfig(editableTheme, true, null);
+	const initialConfig = articleConfig(editableTheme, EDITOR_IS_EDITABLE, null);
 
 	/** @type {Composer | null} */
 	let composer = null;
