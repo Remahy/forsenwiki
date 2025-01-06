@@ -24,7 +24,7 @@ import { $createATableCellNode } from '../plugins/Table/ATableCellNode';
 
 export const articleTheme = {
 	paragraph: 'm-0',
-	image: 'm-0',
+	image: 'm-0 image',
 	heading: {
 		h1: 'break-words',
 		h2: 'break-words',
@@ -37,7 +37,7 @@ export const articleTheme = {
 export const editableTheme = {
 	...articleTheme,
 	root: 'editor-shell',
-	image: 'm-0 editor-image',
+	image: 'm-0 image editor-image',
 	tableCell: 'tableCell',
 	tableCellResizer: 'tableCellResizer',
 	tableCellSelected: 'tableCellSelected',

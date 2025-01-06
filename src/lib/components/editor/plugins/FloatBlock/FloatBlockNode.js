@@ -145,6 +145,8 @@ export class FloatBlockNode extends ElementNode {
 		return div;
 	}
 
+	// We don't need to define exportDOM method ourselves here, since Lexical calls createDOM in the super's exportDOM.
+
 	/**
 	 * @param {FloatBlockNode | null} _
 	 * @param {HTMLDivElement} dom

@@ -1,10 +1,13 @@
+.image {
+	display: inline-block;
+	white-space: nowrap; /* without this, image editor is having extra height (// TODO: see if still required after fully porting lexical) */
+}
+
 .editor-shell span.editor-image {
 	cursor: default;
-	display: inline-block;
 	position: relative;
 	-webkit-user-select: none;
 	user-select: none;
-	white-space: nowrap; /* without this, image editor is having extra height (// TODO: see if still required after fully porting lexical) */
 }
 
 .editor-shell .editor-image * {
