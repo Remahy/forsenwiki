@@ -15,7 +15,7 @@
 		}
 
 		return els;
-	}
+	};
 
 	/**
 	 * @param {HTMLElement} element
@@ -31,7 +31,7 @@
 
 		const headings = [...article?.querySelectorAll('h1, h2, h3, h4, h5')].filter((element) => {
 			const parents = getParents(element);
-			return !parents.some((n) => n instanceof HTMLTableCellElement)
+			return !parents.some((n) => n instanceof HTMLTableCellElement);
 		});
 
 		if (!headings?.length) {
@@ -93,6 +93,6 @@
 			{@html toc}
 		</Box>
 	{:else}
-		<img src="/favicon.png" alt="The face of Twitch" class="opacity-[.04]" />
+		<img src="/favicon.png" alt="The face of Twitch" class="select-none opacity-[.04]" />
 	{/if}
 </div>
