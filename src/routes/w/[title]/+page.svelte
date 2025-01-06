@@ -11,6 +11,7 @@
 	import Box from '$lib/components/Box.svelte';
 	import ToC from '$lib/components/ToC.svelte';
 	import RandomButton from '$lib/components/RandomButton.svelte';
+	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
 
 	export let data;
 
@@ -63,7 +64,7 @@
 
 			<div class="flex grow flex-col gap-4 lg:flex-row">
 				<Box class="flex grow flex-col p-4 lg:mb-0">
-					<main class="editor-shell prose max-w-[unset] grow dark:prose-invert">
+					<main class="article-root prose max-w-[unset] grow dark:prose-invert">
 						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>
@@ -114,4 +115,10 @@
 			{/if}
 		</footer>
 	</article>
+
+	<details class="-mt-4">
+		<summary></summary>
+
+		<CacheBustButton />
+	</details>
 </Container>

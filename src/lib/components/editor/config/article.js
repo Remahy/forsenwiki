@@ -23,9 +23,8 @@ import { $createAHeadingNode } from '../plugins/AHeading/AHeadingNode';
 import { $createATableCellNode } from '../plugins/Table/ATableCellNode';
 
 export const articleTheme = {
-	root: 'editor-shell',
 	paragraph: 'm-0',
-	image: 'm-0 editor-image',
+	image: 'm-0',
 	heading: {
 		h1: 'break-words',
 		h2: 'break-words',
@@ -33,6 +32,12 @@ export const articleTheme = {
 		h4: 'break-words',
 		h5: 'break-words',
 	},
+};
+
+export const editableTheme = {
+	...articleTheme,
+	root: 'editor-shell',
+	image: 'm-0 editor-image',
 	tableCell: 'tableCell',
 	tableCellResizer: 'tableCellResizer',
 	tableCellSelected: 'tableCellSelected',

@@ -38,25 +38,6 @@ export const decoratorFormatToMarginStyle = (type: ElementFormatType) => {
 	}
 };
 
-export const decoratorFormatToFlexStyle = (type: ElementFormatType) => {
-	switch (type) {
-		case 'left':
-			return 'display:flex;justify-content:left;';
-		case 'center':
-			return 'display:flex;justify-content:center;';
-		case 'right':
-			return 'display:flex;justify-content:right;';
-		case 'justify':
-			return '';
-		case 'start':
-			return 'display:flex;justify-content:start;';
-		case 'end':
-			return 'display:flex;justify-content:end;';
-		default:
-			return '';
-	}
-};
-
 export type SerializedDecoratorBlockNode = Spread<
 	{
 		format: ElementFormatType;

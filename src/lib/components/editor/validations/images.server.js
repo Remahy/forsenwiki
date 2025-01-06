@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { $nodesOfType as nodesOfType } from 'lexical';
 
 import { ImageNode } from '$lib/lexical/custom';
-import { MAX_IMAGE_SIZE_MIB, MIN_IMAGE_HEIGHT, MIN_IMAGE_WIDTH } from '$lib/constants/image';
+import { MAX_IMAGE_SIZE_MIB, IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 import { cacheServiceBaseURLWithStatic, getCacheURL } from '$lib/utils/getCacheURL';
 import { createContent } from '$lib/db/content/create';
 import { writeContent } from '$lib/fs/content';
@@ -80,8 +80,8 @@ export const adjustAndUploadImages = (editor, title, author) => {
 					let { width, height } = image.getWidthAndHeight();
 
 					// TODO: Revisit image sizes.
-					width = typeof width === 'number' ? Math.max(MIN_IMAGE_WIDTH, width) : width;
-					height = typeof height === 'number' ? Math.max(MIN_IMAGE_HEIGHT, height) : height;
+					width = typeof width === 'number' ? Math.max(IMAGE_MIN_WIDTH, width) : width;
+					height = typeof height === 'number' ? Math.max(IMAGE_MIN_HEIGHT, height) : height;
 
 					image.setWidthAndHeight({
 						width,
@@ -128,10 +128,10 @@ export const adjustAndUploadImages = (editor, title, author) => {
 						image.setSrc(IMAGE_OFF);
 					}
 				}
-
-				resolve(null);
 			},
 			{ discrete: true }
 		);
+
+		resolve(null);
 	});
 };

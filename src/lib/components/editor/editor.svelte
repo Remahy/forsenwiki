@@ -11,9 +11,10 @@
 	} from 'svelte-lexical';
 
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
+	import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
 	import Toolbar from './toolbar/index.svelte';
 	import Footer from './footer/index.svelte';
-	import { articleConfig } from './config/article';
+	import { articleConfig, editableTheme } from './config/article';
 	import ImagePlugin from './plugins/Image/ImagePlugin.svelte';
 	import AutoFocus from './plugins/AutoFocus.svelte';
 	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
@@ -26,7 +27,7 @@
 	export let initialUpdate = undefined;
 
 	/** @type {any} */
-	const initialConfig = articleConfig(null, true, null);
+	const initialConfig = articleConfig(editableTheme, EDITOR_IS_EDITABLE, null);
 
 	/** @type {Composer | null} */
 	let composer = null;

@@ -30,10 +30,10 @@ export const adjustVideoEmbedNodeSiblings = (editor) => {
 						node.insertAfter(p, false);
 					}
 				}
-
-				resolve(null);
 			},
 			{ discrete: true }
 		);
+
+		resolve(null);
 	});
 };
