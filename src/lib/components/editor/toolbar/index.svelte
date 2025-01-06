@@ -10,6 +10,7 @@
 	import ImageButtons from './ImageButtons/index.svelte';
 	import VideoButtons from './VideoButtons/index.svelte';
 	import TableButtons from './TableButtons/index.svelte';
+	import FloatBlockButtons from './FloatBlockButtons/index.svelte';
 </script>
 
 <div class="flex flex-wrap items-stretch gap-2">
@@ -23,7 +24,8 @@
 	<Divider />
 	<InsertButton />
 
+	<FloatBlockButtons />
+	<TableButtons />
 	<ImageButtons />
 	<VideoButtons />
-	<TableButtons />
 </div>

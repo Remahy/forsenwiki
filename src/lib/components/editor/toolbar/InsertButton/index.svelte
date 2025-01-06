@@ -8,6 +8,7 @@
 	import { TRANSPARENT_IMAGE } from '../../plugins/Image/Image';
 	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
 	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';
+	import { INSERT_FLOATBLOCK_COMMAND } from '../../plugins/FloatBlock/FloatBlockPlugin.svelte';
 
 	/** @type {HTMLSelectElement} */
 	let insertElementTypeElement;
@@ -42,6 +43,9 @@
 		});
 	};
 
+	const insertFloatBlock = () => {
+		editor.dispatchCommand(INSERT_FLOATBLOCK_COMMAND, { float: 'inline-start', width: null, height: null });
+	};
 
 	const insertElementTypeOptions = [
 		{
@@ -58,6 +62,11 @@
 			value: 'table',
 			label: 'Table',
 			insertFunc: insertTable,
+		},
+		{
+			value: 'floatblock',
+			label: 'Float Block',
+			insertFunc: insertFloatBlock,
 		},
 	];
 

@@ -16,6 +16,7 @@ import {
 	FallbackNode,
 	ImageNode,
 	VideoEmbedNode,
+	FloatBlockNode,
 } from '$lib/lexical/custom';
 import { $createALinkNode } from '../plugins/ALink/ALinkNode';
 import { $createAHeadingNode } from '../plugins/AHeading/AHeadingNode';
@@ -40,6 +41,7 @@ export const editableTheme = {
 	tableCell: 'tableCell',
 	tableCellResizer: 'tableCellResizer',
 	tableCellSelected: 'tableCellSelected',
+	floatBlockNodeBoxShadow: '#696969 0px 0px 0px 1px',
 };
 
 /**
@@ -107,6 +109,8 @@ export const articleConfig = (theme, editable, editorState, onError = onErrorDef
 			withKlass: ATableCellNode,
 		},
 		TableRowNode,
+
+		FloatBlockNode,
 
 		// Old nodes / Migration nodes
 		FallbackNode,

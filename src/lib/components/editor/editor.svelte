@@ -19,6 +19,7 @@
 	import AutoFocus from './plugins/AutoFocus.svelte';
 	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 	import TablePlugin from './plugins/Table/TablePlugin.svelte';
+	import FloatBlockPlugin from './plugins/FloatBlock/FloatBlockPlugin.svelte';
 
 	export let id;
 	export let update;
@@ -57,6 +58,8 @@
 		<VideoEmbedPlugin />
 
 		<TablePlugin hasCellBackgroundColor={false} />
+
+		<FloatBlockPlugin />
 
 		<CollaborationPlugin {id} {providerFactory} shouldBootstrap={false} />
 

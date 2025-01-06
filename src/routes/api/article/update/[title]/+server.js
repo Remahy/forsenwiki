@@ -21,9 +21,9 @@ import { upsertHTML } from '$lib/db/article/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 import toHTML from '$lib/worker/toHTML';
+import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import { _emit } from '../../../../adonis/frontpage/+server';
-import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 
 export async function POST({ request, locals, params }) {
 	if (locals.isBlocked) {
