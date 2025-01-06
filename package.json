@@ -16,7 +16,8 @@
 		"prisma:migrate-dev": "prisma migrate dev",
 		"prisma:seed": "node ./prisma/seed/types.js",
 		"prisma:generate": "prisma generate",
-		"prisma:migrate-deploy": "prisma migrate deploy"
+		"prisma:migrate-deploy": "prisma migrate deploy",
+		"generate-changelog": "npx conventional-changelog -p conventionalcommits -i CHANGELOG.md -s && node changelogsToHTML.js"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.17.0",

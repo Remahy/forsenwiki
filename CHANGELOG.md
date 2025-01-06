@@ -1,3 +1,8 @@
+## [1.0.0-beta.12](https://github.com/Remahy/forsenwiki/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2025-01-06)
+
+### Features
+
+* Changelogs ([dd3f738](https://github.com/Remahy/forsenwiki/commit/dd3f7386651baaa6fc5a01bc6d821d6051ecb834))
 ## 1.0.0-beta.11 (2025-01-06) and prior
 
 ### Features
@@ -7,7 +12,6 @@
 * Add simple UI style ([7f82bcd](https://github.com/Remahy/forsenwiki/commit/7f82bcdfdf771ed145f1e14364ba6dd6e1d93b61))
 * Content management ([#30](https://github.com/Remahy/forsenwiki/issues/30)) ([5c8b573](https://github.com/Remahy/forsenwiki/commit/5c8b573736718aa3003cd30c28bdc3d62a8f0dd3))
 * FallbackNode & More QoL ([#38](https://github.com/Remahy/forsenwiki/issues/38)) ([3748c0d](https://github.com/Remahy/forsenwiki/commit/3748c0d8753c32c9f73429cc84e0f9d27459c926))
-* Float Block ([#93](https://github.com/Remahy/forsenwiki/issues/93)) ([4b2f4be](https://github.com/Remahy/forsenwiki/commit/4b2f4be1d985c6817c06c902b49ead246a39648f))
 * Frontpage SSE ([#10](https://github.com/Remahy/forsenwiki/issues/10)) ([7154990](https://github.com/Remahy/forsenwiki/commit/7154990bb7bbe2b78a3776926573dc9a0d26088b))
 * History diff viewer ([#44](https://github.com/Remahy/forsenwiki/issues/44)) ([7fe389c](https://github.com/Remahy/forsenwiki/commit/7fe389c0772499f9a1e74659af3b47652f2c0a7d))
 * HTML cache bust & QoL improvements ([#99](https://github.com/Remahy/forsenwiki/issues/99)) ([5dec771](https://github.com/Remahy/forsenwiki/commit/5dec7716d8e34253527bc7142f0aacff90f4ec5a))
