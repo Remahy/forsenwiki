@@ -1,11 +1,13 @@
-export { $isImageNode, ImageNode } from '../components/editor/plugins/Image/Image';
 export { $isALinkNode, ALinkNode } from '../components/editor/plugins/ALink/ALinkNode';
 export { AHeadingNode } from '../components/editor/plugins/AHeading/AHeadingNode';
 export { ATableCellNode } from '../components/editor/plugins/Table/ATableCellNode';
+
+export { $isImageNode, ImageNode } from '../components/editor/plugins/Image/Image';
 export {
 	$isVideoEmbedNode,
 	VideoEmbedNode,
 } from '../components/editor/plugins/VideoEmbed/VideoEmbed';
+export { $isFloatBlockNode, FloatBlockNode } from '../components/editor/plugins/FloatBlock/FloatBlockNode';
 
 export { DiffAHeadingNode } from '../components/editor/plugins/Diff/AHeading';
 export { DiffListNode } from '../components/editor/plugins/Diff/List';
