@@ -101,6 +101,7 @@
 
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
+		placeholder={width === 'inherit' ? "Inherit" : ""}
 		bind:value={width}
 		on:change={onChange}
 		min={IMAGE_MIN_WIDTH}
@@ -114,15 +115,10 @@
 
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
+		placeholder={height === 'inherit' ? "Inherit" : ""}
 		bind:value={height}
 		on:change={onChange}
 		min={IMAGE_MIN_HEIGHT}
 		type="number"
 	/>
 </label>
-
-{#if currentWidth === 'inherit' && currentHeight === 'inherit'}
-	<div class="self-end" title="Width and height have been set to inherit the original size.">
-		<small>inherit</small>
-	</div>
-{/if}
