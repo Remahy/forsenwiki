@@ -1,6 +1,6 @@
 {
 	"name": "forsenwiki",
-	"version": "1.0.0-beta.11",
+	"version": "1.0.0-beta.12",
 	"scripts": {
 		"start": "node -r dotenv/config build",
 		"dev": "vite dev & npm run dev:usercontent",
@@ -16,7 +16,8 @@
 		"prisma:migrate-dev": "prisma migrate dev",
 		"prisma:seed": "node ./prisma/seed/types.js",
 		"prisma:generate": "prisma generate",
-		"prisma:migrate-deploy": "prisma migrate deploy"
+		"prisma:migrate-deploy": "prisma migrate deploy",
+		"generate-changelog": "npx conventional-changelog -p conventionalcommits -i CHANGELOG.md -s && node changelogsToHTML.js"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.17.0",
@@ -33,6 +34,8 @@
 		"eslint": "^9.17.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.46.0",
+		"marked": "^15.0.6",
+		"marked-gfm-heading-id": "^4.1.1",
 		"postcss": "^8.4.49",
 		"postcss-load-config": "^6.0.1",
 		"prettier": "^3.4.2",
