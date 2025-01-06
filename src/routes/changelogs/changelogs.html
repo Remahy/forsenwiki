@@ -1,14 +1,10 @@
-<h2 id="100-beta12-2025-01-06"><a href="https://github.com/Remahy/forsenwiki/compare/v1.0.0-beta.11...v1.0.0-beta.12">1.0.0-beta.12</a> (2025-01-06)</h2>
+<h2 id="100-beta13-2025-01-06">1.0.0-beta.13 (2025-01-06)</h2>
 <h3 id="features">Features</h3>
-<ul>
-<li>Changelogs (<a href="https://github.com/Remahy/forsenwiki/commit/dd3f7386651baaa6fc5a01bc6d821d6051ecb834">dd3f738</a>)</li>
-</ul>
-<h2 id="100-beta11-2025-01-06-and-prior">1.0.0-beta.11 (2025-01-06) and prior</h2>
-<h3 id="features-1">Features</h3>
 <ul>
 <li>/browse -ing around endpoint (<a href="https://github.com/Remahy/forsenwiki/issues/27">#27</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/fd03f14c6fbea2f10cbf2169452a0f51e93a93c4">fd03f14</a>)</li>
 <li>Add programmatic version printing (<a href="https://github.com/Remahy/forsenwiki/commit/8c584fd0530df799c14464150b106053ed012008">8c584fd</a>)</li>
 <li>Add simple UI style (<a href="https://github.com/Remahy/forsenwiki/commit/7f82bcdfdf771ed145f1e14364ba6dd6e1d93b61">7f82bcd</a>)</li>
+<li>Changelogs &amp; Tagged releases (<a href="https://github.com/Remahy/forsenwiki/issues/100">#100</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/1830a23cbc4b801e18efc9da85a10792ffa5fe29">1830a23</a>)</li>
 <li>Content management (<a href="https://github.com/Remahy/forsenwiki/issues/30">#30</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/5c8b573736718aa3003cd30c28bdc3d62a8f0dd3">5c8b573</a>)</li>
 <li>FallbackNode &amp; More QoL (<a href="https://github.com/Remahy/forsenwiki/issues/38">#38</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/3748c0d8753c32c9f73429cc84e0f9d27459c926">3748c0d</a>)</li>
 <li>Float Block (<a href="https://github.com/Remahy/forsenwiki/issues/93">#93</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/4b2f4be1d985c6817c06c902b49ead246a39648f">4b2f4be</a>)</li>
@@ -33,6 +29,67 @@
 <li>YouTube &amp; Twitch embeds (<a href="https://github.com/Remahy/forsenwiki/issues/35">#35</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/9e7db7b4366bd23ff6eeb2f6df7148d6e987df6e">9e7db7b</a>)</li>
 </ul>
 <h3 id="bug-fixes">Bug Fixes</h3>
+<ul>
+<li>Add ?random param to the <code>/random</code> endpoint results (<a href="https://github.com/Remahy/forsenwiki/commit/66c2d9d7e92eddd8a91d8a48c4fb94605defd060">66c2d9d</a>)</li>
+<li>Add checks to prevent overeager deletion of ImageComponent (<a href="https://github.com/Remahy/forsenwiki/issues/80">#80</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/c31fdc34b46f88d2972ac881dfd8e6ca9663c237">c31fdc3</a>)</li>
+<li>Add CSS rule to make image inline-block (<a href="https://github.com/Remahy/forsenwiki/commit/d1371162d1a3cb1344c4d981b791e9c9bb44622c">d137116</a>)</li>
+<li>Add initial content on new articles &amp; fix AutoFocus (<a href="https://github.com/Remahy/forsenwiki/issues/53">#53</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/2e4222f30613954c75d6c15553fcec4d9162bad8">2e4222f</a>)</li>
+<li>Cloudflare &amp; lexical html output cache &amp; Various UI fixes (<a href="https://github.com/Remahy/forsenwiki/issues/31">#31</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/6bfd89b431d52c6edf01108b49d361e1dcd2a9ce">6bfd89b</a>)</li>
+<li>Don&#39;t use Lexical&#39;s node.key for heading ids (<a href="https://github.com/Remahy/forsenwiki/issues/78">#78</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/28bb78878513cdb4fd8c6ed5894b86ff6c720837">28bb788</a>)</li>
+<li>Import image CSS in the history endpoints (<a href="https://github.com/Remahy/forsenwiki/issues/51">#51</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/df9b250406803ee878ca595eca0c5f2f61d700bc">df9b250</a>)</li>
+<li>Improve ImageNode &amp; VideoEmbedNode (<a href="https://github.com/Remahy/forsenwiki/issues/98">#98</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/053bb4354a854bd96a97d810adf0a70767ca4389">053bb43</a>)</li>
+<li>Linting &amp; catch error fixes for article create/update (<a href="https://github.com/Remahy/forsenwiki/issues/43">#43</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/7f0f818f27908d54391306c07c777a0d6237fa8f">7f0f818</a>)</li>
+<li>Make overriden linkAccount return AdapterAccount (<a href="https://github.com/Remahy/forsenwiki/issues/5">#5</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/bdaace77bda1c0cf32eda1ecb55ed77b8dfac8dd">bdaace7</a>)</li>
+<li>Make random button conditional on whether <code>random</code> is in the url searchParams (<a href="https://github.com/Remahy/forsenwiki/commit/43093ab40affec0c1e54b87eaaa00037621086a4">43093ab</a>)</li>
+<li>Minor accessibility fixes &amp; navbar UI improvements (<a href="https://github.com/Remahy/forsenwiki/issues/21">#21</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/d3f6708eefad2aeaeb4c086335b1553c0eee7293">d3f6708</a>)</li>
+<li>More than 1, not more than 2 (<a href="https://github.com/Remahy/forsenwiki/commit/9aaba53c0517002fcd780307c7df9494aedf9da3">9aaba53</a>)</li>
+<li>Prevent crash with missing diff-linebreak &amp; diff-tab (<a href="https://github.com/Remahy/forsenwiki/issues/75">#75</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/4cfdeec2d4855263c1888de9ccc5744cd64ea734">4cfdeec</a>)</li>
+<li>Prevent various crashes (<a href="https://github.com/Remahy/forsenwiki/issues/88">#88</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/7e3efc178e3d952643a1ad24fe8dc69ecca9abcc">7e3efc1</a>)</li>
+<li>Put linkedom behind a worker_thread to prevent prismjs timeout (<a href="https://github.com/Remahy/forsenwiki/issues/50">#50</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/e09472ae4a5dff5109195ceed85febe91d77cce8">e09472a</a>)</li>
+<li>Reduce crashes when loading in a diff for old updates with heading and link (<a href="https://github.com/Remahy/forsenwiki/issues/86">#86</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/5b4602fce82ffcd4499d8a7f3d08034951edff74">5b4602f</a>)</li>
+<li>Remove boilerplate code &amp; Add placeholders (<a href="https://github.com/Remahy/forsenwiki/commit/b773b13c9b719a747e300970c22d2bfb98a73455">b773b13</a>)</li>
+<li>Remove parentheses around the at signs (<a href="https://github.com/Remahy/forsenwiki/issues/73">#73</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/22a4822f794994c1e91ef8f87c6ec73a8afd105d">22a4822</a>)</li>
+<li><strong>Styling:</strong> New colors, dividers, flex layout (<a href="https://github.com/Remahy/forsenwiki/issues/3">#3</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/6b07125a351e2c5125d0d5108fd1ced8d75758c2">6b07125</a>)</li>
+<li>Use cache url for checking when to turn img into b64 (<a href="https://github.com/Remahy/forsenwiki/issues/24">#24</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/f74540f455bdd079d08cce6d3cdbcdb7671b1a83">f74540f</a>)</li>
+<li>Use esbuild to create worker files &amp; don&#39;t import Prism into worker (<a href="https://github.com/Remahy/forsenwiki/issues/59">#59</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/736b33e2bed677789c11075e5af18645d9c0305f">736b33e</a>)</li>
+<li>Various VideoEmbedNode &amp; ImageNode improvements (<a href="https://github.com/Remahy/forsenwiki/issues/85">#85</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/66553cb3c3a652fe1d853f54cae6bbaa2e0b05fc">66553cb</a>)</li>
+<li><strong>VideoEmbed:</strong> Bug fixes &amp; QoL (<a href="https://github.com/Remahy/forsenwiki/issues/37">#37</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/e3a1c0dd30106bceb2454dd5ed2ca597a974bf6b">e3a1c0d</a>)</li>
+<li>Whitespace changes &amp; VideoEmbedNode responsiveness (<a href="https://github.com/Remahy/forsenwiki/issues/42">#42</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/4a5b1a55bef171c8e7a3188ea8117a54ecea932a">4a5b1a5</a>)</li>
+</ul>
+<h2 id="100-beta12-2025-01-06"><a href="https://github.com/Remahy/forsenwiki/compare/v1.0.0-beta.11...v1.0.0-beta.12">1.0.0-beta.12</a> (2025-01-06)</h2>
+<h3 id="features-1">Features</h3>
+<ul>
+<li>Changelogs (<a href="https://github.com/Remahy/forsenwiki/commit/dd3f7386651baaa6fc5a01bc6d821d6051ecb834">dd3f738</a>)</li>
+</ul>
+<h2 id="100-beta11-2025-01-06-and-prior">1.0.0-beta.11 (2025-01-06) and prior</h2>
+<h3 id="features-2">Features</h3>
+<ul>
+<li>/browse -ing around endpoint (<a href="https://github.com/Remahy/forsenwiki/issues/27">#27</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/fd03f14c6fbea2f10cbf2169452a0f51e93a93c4">fd03f14</a>)</li>
+<li>Add programmatic version printing (<a href="https://github.com/Remahy/forsenwiki/commit/8c584fd0530df799c14464150b106053ed012008">8c584fd</a>)</li>
+<li>Add simple UI style (<a href="https://github.com/Remahy/forsenwiki/commit/7f82bcdfdf771ed145f1e14364ba6dd6e1d93b61">7f82bcd</a>)</li>
+<li>Content management (<a href="https://github.com/Remahy/forsenwiki/issues/30">#30</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/5c8b573736718aa3003cd30c28bdc3d62a8f0dd3">5c8b573</a>)</li>
+<li>FallbackNode &amp; More QoL (<a href="https://github.com/Remahy/forsenwiki/issues/38">#38</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/3748c0d8753c32c9f73429cc84e0f9d27459c926">3748c0d</a>)</li>
+<li>Frontpage SSE (<a href="https://github.com/Remahy/forsenwiki/issues/10">#10</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/7154990bb7bbe2b78a3776926573dc9a0d26088b">7154990</a>)</li>
+<li>History diff viewer (<a href="https://github.com/Remahy/forsenwiki/issues/44">#44</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/7fe389c0772499f9a1e74659af3b47652f2c0a7d">7fe389c</a>)</li>
+<li>HTML cache bust &amp; QoL improvements (<a href="https://github.com/Remahy/forsenwiki/issues/99">#99</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/5dec7716d8e34253527bc7142f0aacff90f4ec5a">5dec771</a>)</li>
+<li>Improve article page &amp; rudimentary ToC &amp; dev fixes (<a href="https://github.com/Remahy/forsenwiki/issues/77">#77</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/fde63c8f0afec37e3ed0a4bfc41f2bd2a30ebcc5">fde63c8</a>)</li>
+<li>Post creation &amp; Twitch login  (<a href="https://github.com/Remahy/forsenwiki/issues/1">#1</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/33cd98d027b6e2802190050acf3f3c4b8858e0e7">33cd98d</a>)</li>
+<li>Post read (<a href="https://github.com/Remahy/forsenwiki/issues/4">#4</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/3f692c41bb928d3fe1c2da6c3f05ca67ba22c166">3f692c4</a>)</li>
+<li>Post update (<a href="https://github.com/Remahy/forsenwiki/issues/9">#9</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/b646a04b7cd5221f6465d1593a7906455d7819e4">b646a04</a>)</li>
+<li>Random endpoint (<a href="https://github.com/Remahy/forsenwiki/issues/76">#76</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/1b8ebfdf48209733321d07b75c6816cb9d09da54">1b8ebfd</a>)</li>
+<li>Recent updates takes you to the historical version &amp; diff editor fix (<a href="https://github.com/Remahy/forsenwiki/issues/79">#79</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/bba42a0129f119d924c0c359d1741d0186c0fbc6">bba42a0</a>)</li>
+<li>Reset draft cache button (<a href="https://github.com/Remahy/forsenwiki/issues/57">#57</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/90a8653f35b993cdc4d6411a46bf71b4a922f6ff">90a8653</a>)</li>
+<li>Rudimentary table diff (<a href="https://github.com/Remahy/forsenwiki/issues/89">#89</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/373ca8f90ac2bf96a15f309071572ebfb81a05da">373ca8f</a>)</li>
+<li>Search endpoint (<a href="https://github.com/Remahy/forsenwiki/issues/20">#20</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/7c0a3c49859836969c3c5c1d1eb1554a2059e1a7">7c0a3c4</a>)</li>
+<li>Setup prisma &amp; authjs (<a href="https://github.com/Remahy/forsenwiki/commit/4ccf76dc5bced7efe070cf95be5f28c3b8706ba2">4ccf76d</a>)</li>
+<li>Show article authors &amp; send less data on requests &amp; img fixes (<a href="https://github.com/Remahy/forsenwiki/issues/26">#26</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/40a1d3c03f94ffe384a1572761a6731b2d3fc27b">40a1d3c</a>)</li>
+<li>Static content (images) (<a href="https://github.com/Remahy/forsenwiki/issues/11">#11</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/0ef5a87aca4bd47a9c5b7bc1cd0569d227dfd01e">0ef5a87</a>)</li>
+<li>Style changes &amp; forsen-wiki-theme classnames (<a href="https://github.com/Remahy/forsenwiki/issues/71">#71</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/b6143979b5c93704d1f0de0edf0e2f77dca309fb">b614397</a>)</li>
+<li>Support YouTube clips &amp; Handle new twitch clip url (<a href="https://github.com/Remahy/forsenwiki/issues/74">#74</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/43b26f79ad5f098a5b61791a46e8923e41234da2">43b26f7</a>)</li>
+<li>Tables (<a href="https://github.com/Remahy/forsenwiki/issues/83">#83</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/16bd5e8b3b960f329acc136b01dc15e759626da0">16bd5e8</a>)</li>
+<li>YouTube &amp; Twitch embeds (<a href="https://github.com/Remahy/forsenwiki/issues/35">#35</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/9e7db7b4366bd23ff6eeb2f6df7148d6e987df6e">9e7db7b</a>)</li>
+</ul>
+<h3 id="bug-fixes-1">Bug Fixes</h3>
 <ul>
 <li>Add ?random param to the <code>/random</code> endpoint results (<a href="https://github.com/Remahy/forsenwiki/commit/66c2d9d7e92eddd8a91d8a48c4fb94605defd060">66c2d9d</a>)</li>
 <li>Add checks to prevent overeager deletion of ImageComponent (<a href="https://github.com/Remahy/forsenwiki/issues/80">#80</a>) (<a href="https://github.com/Remahy/forsenwiki/commit/c31fdc34b46f88d2972ac881dfd8e6ca9663c237">c31fdc3</a>)</li>
