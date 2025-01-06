@@ -154,8 +154,13 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 	// View
 
 	exportDOM(editor: LexicalEditor): DOMExportOutput {
-		const theme = editor._config.theme;
 		const element = document.createElement('img');
+
+		const theme = editor._config.theme;
+		const className = theme?.image;
+		if (className) {
+			element.setAttribute('class', className);
+		}
 
 		const { width, height } = this.getWidthAndHeight();
 
@@ -164,23 +169,18 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 		element.setAttribute('width', width.toString());
 		element.setAttribute('height', height.toString());
 
-		// element.style.width = this.__width.toString()+'px';
-		// element.style.height = this.__height.toString()+'px';
-
-		if (theme.image) {
-			element.setAttribute('class', theme.image);
-		}
-
 		return { element };
 	}
 
 	createDOM(config: EditorConfig): HTMLElement {
 		const span = document.createElement('span');
+
 		const theme = config.theme;
-		const className = theme.image;
+		const className = theme?.image;
 		if (className !== undefined) {
-			span.className = className;
+			span.setAttribute('class', className);
 		}
+
 		return span;
 	}
 
