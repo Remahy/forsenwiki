@@ -31,11 +31,11 @@
 	import { VIDEO_MIN_HEIGHT, VIDEO_MIN_WIDTH } from '$lib/constants/video';
 	import ImageResizer from '../Image/ImageResizer.svelte';
 	import {
+		getIframeStyle,
 		getURLAndTitle,
 		$isVideoEmbedNode as isVideoEmbedNode,
 		VideoEmbedNode,
 	} from './VideoEmbed';
-	import { decoratorFormatToFlexStyle } from './DecoratorBlockNode';
 
 	/** @type {VideoEmbedNode} */
 	export let node;
@@ -188,8 +188,8 @@
 	});
 </script>
 
-<div style={decoratorFormatToFlexStyle(format)}>
-	<div class="editor-image editor-video">
+<div style={getIframeStyle(width, height)}>
+	<div class="editor-image editor-video" style={getIframeStyle(width, height)}>
 		<div
 			bind:this={embedRef}
 			class="element-placeholder-color overflow-hidden text-black"
@@ -209,10 +209,18 @@
 				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 				allowFullScreen={true}
 				{title}
+				style={getIframeStyle(width, height, format)}
 			/>
 		</div>
 		{#if resizable && isNodeSelection(selection) && isFocused}
-			<ImageResizer {editor} imageRef={embedRef} {onResizeStart} {onResizeEnd} minWidth={VIDEO_MIN_WIDTH} minHeight={VIDEO_MIN_HEIGHT} />
+			<ImageResizer
+				{editor}
+				imageRef={embedRef}
+				{onResizeStart}
+				{onResizeEnd}
+				minWidth={VIDEO_MIN_WIDTH}
+				minHeight={VIDEO_MIN_HEIGHT}
+			/>
 		{/if}
 	</div>
 </div>

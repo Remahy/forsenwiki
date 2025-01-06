@@ -32,7 +32,40 @@ import { sanitizeUrl } from '../../utils/sanitizeUrl';
 
 export type SupportedPlatforms = 'twitch' | 'youtube';
 
+export type VideoEmbedComponentProps = Readonly<{
+	// className: Readonly<{
+	// 	base: string;
+	// 	focus: string;
+	// }>;
+	format: ElementFormatType | null;
+	nodeKey: NodeKey;
+	platform: SupportedPlatforms;
+	src: string;
+}>;
+
+export type VideoEmbedPayload = {
+	platform: SupportedPlatforms;
+	src: string;
+	width: number | 'inherit';
+	height: number | 'inherit';
+};
+
+export type SerializedVideoEmbedNode = Spread<VideoEmbedPayload, SerializedDecoratorBlockNode>;
+
 const platforms = Object.keys(VIDEO_CONSTANTS.PLATFORMS);
+
+export const getIframeStyle = (
+	width: VideoEmbedPayload['width'],
+	height: VideoEmbedPayload['height'],
+	formatType?: ElementFormatType
+) => {
+	const widthStyle = width === 'inherit' ? 'width:100%;' : '';
+	const heightStyle = height === 'inherit' ? 'height:auto;' : '';
+	// It's an iframe, they have silly values.
+	const aspectRatio = width === 'inherit' && height === 'inherit' ? 'aspect-ratio:16/9;' : '';
+
+	return `max-width:100%;${widthStyle}${heightStyle}${aspectRatio}${formatType ? decoratorFormatToMarginStyle(formatType) : ''}`;
+};
 
 export const getURLAndTitle = (
 	platform: SupportedPlatforms,
@@ -56,7 +89,7 @@ export const getURLAndTitle = (
 			const clipSlug = url.searchParams.get('clip');
 			const clipTId = url.searchParams.get('clipt');
 
-			const youtubeEmbedURL = new URL(`https://www.youtube.com/embed/${fullVideoSlug}`, 'https://www.youtube.com/');
+			const youtubeEmbedURL = new URL(`/embed/${fullVideoSlug}`, 'https://www.youtube.com/');
 
 			if (clipSlug && clipTId) {
 				youtubeEmbedURL.searchParams.set('clip', clipSlug);
@@ -164,8 +197,14 @@ function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl:
 	const { url, title } = getURLAndTitle(node.getPlatform(), node.getSrc(), parentUrl);
 	const { width: rawWidth, height: rawHeight } = node.getWidthAndHeight();
 
-	const width = typeof rawWidth === 'number' ? Math.max(VIDEO_MIN_WIDTH, Math.round(rawWidth)).toString() : 'inherit';
-	const height = typeof rawHeight === 'number' ? Math.max(VIDEO_MIN_HEIGHT, Math.round(rawHeight)).toString() : 'inherit'
+	const width =
+		typeof rawWidth === 'number'
+			? Math.max(VIDEO_MIN_WIDTH, Math.round(rawWidth)).toString()
+			: 'inherit';
+	const height =
+		typeof rawHeight === 'number'
+			? Math.max(VIDEO_MIN_HEIGHT, Math.round(rawHeight)).toString()
+			: 'inherit';
 
 	element.setAttribute('width', width);
 	element.setAttribute('height', height);
@@ -178,9 +217,14 @@ function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl:
 	element.setAttribute('allowfullscreen', 'true');
 	element.setAttribute('title', title);
 	element.setAttribute('loading', 'lazy');
+
 	element.setAttribute(
 		'style',
-		`max-width:100%;${'height:auto;aspect-ratio:16/9;'}${decoratorFormatToMarginStyle(node.getFormatType())}`
+		getIframeStyle(
+			width as VideoEmbedPayload['width'],
+			height as VideoEmbedPayload['height'],
+			node.getFormatType()
+		)
 	);
 
 	return element;
@@ -216,26 +260,6 @@ function generateTwitchIframe(node: VideoEmbedNode, parentUrl: string) {
 
 	return { element };
 }
-
-export type VideoEmbedComponentProps = Readonly<{
-	// className: Readonly<{
-	// 	base: string;
-	// 	focus: string;
-	// }>;
-	format: ElementFormatType | null;
-	nodeKey: NodeKey;
-	platform: SupportedPlatforms;
-	src: string;
-}>;
-
-export type VideoEmbedPayload = {
-	platform: SupportedPlatforms;
-	src: string;
-	width: number | 'inherit';
-	height: number | 'inherit';
-};
-
-export type SerializedVideoEmbedNode = Spread<VideoEmbedPayload, SerializedDecoratorBlockNode>;
 
 function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput {
 	const width = domNode.getAttribute('width') ? Number(domNode.getAttribute('width')) : 'inherit';
@@ -372,8 +396,10 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		height: 'inherit' | number;
 	}): void {
 		const self = this.getWritable();
-		self.__width = typeof width === 'number' ? Math.max(VIDEO_MIN_WIDTH, Math.round(width)) : 'inherit';
-		self.__height = typeof height === 'number' ? Math.max(VIDEO_MIN_HEIGHT, Math.round(height)) : 'inherit';
+		self.__width =
+			typeof width === 'number' ? Math.max(VIDEO_MIN_WIDTH, Math.round(width)) : 'inherit';
+		self.__height =
+			typeof height === 'number' ? Math.max(VIDEO_MIN_HEIGHT, Math.round(height)) : 'inherit';
 	}
 
 	setSrc(src: string): void {
@@ -383,7 +409,9 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 
 	setPlatform(platform: string) {
 		const self = this.getWritable();
-		self.__platform = (platforms.includes(platform) ? platform : platforms[0]) as SupportedPlatforms;
+		self.__platform = (
+			platforms.includes(platform) ? platform : platforms[0]
+		) as SupportedPlatforms;
 	}
 
 	exportJSON(): SerializedVideoEmbedNode {
