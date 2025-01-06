@@ -366,7 +366,7 @@
 			src={src === TRANSPARENT_IMAGE ? IMAGE_OFF : src}
 			alt={altText}
 			bind:this={imageRef}
-			style="height:{heightCss};px;width:{widthCss};"
+			style="height:{heightCss};width:{widthCss};"
 			draggable="false"
 		/>
 	{/await}

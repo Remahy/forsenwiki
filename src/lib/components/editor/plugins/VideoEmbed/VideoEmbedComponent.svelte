@@ -56,6 +56,9 @@
 	/** @type {import('lexical').LexicalEditor} */
 	export let editor;
 
+	$: heightCss = height === 'inherit' ? 'inherit' : height + 'px';
+	$: widthCss = width === 'inherit' ? 'inherit' : width + 'px';
+
 	/** @type {BaseSelection | null} */
 	let selection = null;
 	/** @type {HTMLDivElement | null} */
@@ -196,6 +199,7 @@
 			class:focused={isFocused}
 			class:draggable={isFocused && isNodeSelection(selection)}
 			draggable="false"
+			style={`height:${heightCss};width:${widthCss}`}
 		>
 			<iframe
 				class="pointer-events-none"
