@@ -89,7 +89,7 @@
 			</div>
 		</header>
 
-		<main class="editor-shell prose max-w-[unset] grow dark:prose-invert">
+		<main class="article-root prose max-w-[unset] grow dark:prose-invert">
 			<h1>{rawTitle}</h1>
 
 			{@html html}

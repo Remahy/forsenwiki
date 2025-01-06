@@ -26,12 +26,13 @@ export const _getYPostByTitle = async (title) => {
 
 /**
  * @param {string} title
+ * @param {boolean} [shouldCacheBust]
  */
-export const _getYPostHTML = async (title) => {
+export const _getYPostHTML = async (title, shouldCacheBust) => {
 	try {
 		const yPost = await readYPostByTitle(title);
 
-		if (yPost?.html?.content) {
+		if (yPost?.html?.content && !shouldCacheBust) {
 			return { post: { ...yPost, html: undefined }, html: yPost.html.content };
 		}
 	} catch (err) {

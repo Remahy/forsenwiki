@@ -117,6 +117,23 @@
 		<div class="mb-4 flex grow flex-col lg:mb-0">
 			<Box class="mb-4 grow p-4">
 				<div class="box-heading-wrapper mb-2">
+					<h2 class="text-2xl">New articles</h2>
+				</div>
+				{#each $latestArticles as article}
+					<div class="p-2 pl-0">
+						<Link href="/w/{article.title}">
+							<span>
+								<strong>{article.rawTitle}</strong> - {new Date(
+									article.createdTimestamp
+								).toDateString()} - By {article.author}
+							</span>
+						</Link>
+					</div>
+				{/each}
+			</Box>
+
+			<Box class="grow p-4">
+				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">Recent updates</h2>
 				</div>
 				{#each $latestUpdates as update}
@@ -133,26 +150,9 @@
 					</div>
 				{/each}
 			</Box>
-
-			<Box class="grow p-4">
-				<div class="box-heading-wrapper mb-2">
-					<h2 class="text-2xl">New articles</h2>
-				</div>
-				{#each $latestArticles as article}
-					<div class="p-2 pl-0">
-						<Link href="/w/{article.title}">
-							<span>
-								<strong>{article.rawTitle}</strong> - {new Date(
-									article.createdTimestamp
-								).toDateString()} - By {article.author}
-							</span>
-						</Link>
-					</div>
-				{/each}
-			</Box>
 		</div>
 
-		<div class="block flex-col gap-4 lg:flex lg:min-w-96 lg:w-96">
+		<div class="block flex-col gap-4 lg:flex lg:w-96 lg:min-w-96">
 			<Box class="mb-4 flex flex-col gap-2 p-4 lg:mb-0">
 				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">Navigation</h2>

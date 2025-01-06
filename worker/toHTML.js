@@ -10,7 +10,7 @@ import { base64ToUint8Array } from 'uint8array-extras';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { diffConfig } from '$lib/components/editor/config/diff';
-import { EDITOR_IS_READONLY } from '../src/types';
+import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 
 export const toHTMLWorker = async (data) => {
 	/**

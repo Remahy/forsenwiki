@@ -2,11 +2,37 @@ import { error } from '@sveltejs/kit';
 import { readAuthorsForYPostByTitle } from '$lib/db/article/read';
 import { _getYPostHTML } from '../../api/article/read/[title]/+server';
 
-export async function load({ params }) {
+/** @type {Map<string, number>} */
+const cacheBustRateLimit = new Map();
+
+/**
+ * @param {string} title
+ * @param {URL} url
+ */
+const getShouldCacheBust = (title, url) => {
+	const { searchParams } = url;
+
+	let cacheBust = searchParams.has('cachebust');
+
+	if (cacheBust) {
+		const ratelimit = cacheBustRateLimit.get(title);
+		if (ratelimit && ratelimit > Date.now()) {
+			cacheBust = false;
+		} else {
+			cacheBustRateLimit.set(title, Date.now() + 123_960_000);
+		}
+	}
+
+	return cacheBust;
+};
+
+export async function load({ params, url }) {
 	const { title } = params;
 
+	const shouldCacheBust = getShouldCacheBust(title, url);
+
 	try {
-		const res = await _getYPostHTML(params.title);
+		const res = await _getYPostHTML(params.title, shouldCacheBust);
 
 		const authors = await readAuthorsForYPostByTitle(title);
 

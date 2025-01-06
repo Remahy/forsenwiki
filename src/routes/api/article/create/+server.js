@@ -15,7 +15,7 @@ import { upsertHTML } from '$lib/db/article/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 import toHTML from '$lib/worker/toHTML';
-import { EDITOR_IS_READONLY } from '../../../../types';
+import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 
 export async function POST({ request, locals }) {
 	if (locals.isBlocked) {
@@ -33,14 +33,23 @@ export async function POST({ request, locals }) {
 	let title;
 	let doc;
 	try {
+		title = sanitizeTitle(rawTitle);
+
+		if (!title) {
+			return error(400, 'No title provided');
+		}
+
+		const foundTitle = await readYPostByTitle(title.sanitized);
+		if (foundTitle) {
+			return error(400, 'Article with that title already exists.');
+		}
+
 		const data = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), base64ToUint8Array(content));
 		editor = data.editor;
 		doc = data.doc;
 
 		// Does not modify the editor.
 		await validateArticle(editor);
-
-		title = sanitizeTitle(rawTitle);
 
 		// Modifies the editor.
 		await adjustAndUploadImages(editor, title.sanitized, { id: session.user.id });
@@ -60,15 +69,6 @@ export async function POST({ request, locals }) {
 	const { byteLength } = backendUpdate;
 
 	const backendContent = uint8ArrayToBase64(backendUpdate);
-
-	if (!title) {
-		return error(400, 'No title provided');
-	}
-
-	const foundTitle = await readYPostByTitle(title.sanitized);
-	if (foundTitle) {
-		return error(400, 'Article with that title already exists.');
-	}
 
 	const internalIds = await getArticleURLIds(editor);
 
