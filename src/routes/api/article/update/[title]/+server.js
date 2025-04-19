@@ -20,8 +20,9 @@ import { invalidateArticleCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/article/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
-import { _getYPostByTitle } from '../../read/[title]/+server';
 import toHTML from '$lib/worker/toHTML';
+import { EDITOR_IS_READONLY } from '$lib/constants/constants';
+import { _getYPostByTitle } from '../../read/[title]/+server';
 import { _emit } from '../../../../adonis/frontpage/+server';
 
 export async function POST({ request, locals, params }) {
@@ -47,6 +48,14 @@ export async function POST({ request, locals, params }) {
 		throw err;
 	}
 
+	const isSystem =
+		post.outRelations.find(({ isSystem, toPostId }) => isSystem && toPostId === 'system') ||
+		post.id === 'system';
+
+	if (isSystem) {
+		return ForbiddenError('This is a system article that cannot be edited.');
+	}
+
 	// Current
 	const currentUpdate = base64ToUint8Array(post.update);
 	const stateVector = getStateVectorFromUpdate(currentUpdate);
@@ -62,7 +71,7 @@ export async function POST({ request, locals, params }) {
 
 	let e;
 	try {
-		e = getYjsAndEditor(articleConfig(null, false, null), combinedInitialUpdate);
+		e = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), combinedInitialUpdate);
 		const editor = e.editor;
 
 		// Does not modify the editor.

@@ -11,7 +11,10 @@ import type {
 } from 'lexical';
 
 import { $applyNodeReplacement, DecoratorNode } from 'lexical';
-import type { ComponentProps, Component } from 'svelte';
+import type { Component, ComponentProps } from 'svelte';
+
+import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
+
 import ImageComponent from './ImageComponent.svelte';
 
 export interface ImagePayload {
@@ -100,15 +103,18 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 	// Getters
 
 	getWidthAndHeight() {
-		return { width: this.__width, height: this.__height };
+		const self = this.getLatest();
+		return { width: self.__width, height: self.__height };
 	}
 
 	getSrc(): string {
-		return this.__src;
+		const self = this.getLatest();
+		return self.__src;
 	}
 
 	getAltText(): string {
-		return this.__altText;
+		const self = this.getLatest();
+		return self.__altText;
 	}
 
 	// Setters
@@ -120,29 +126,26 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 		width: 'inherit' | number;
 		height: 'inherit' | number;
 	}): void {
-		const writable = this.getWritable();
-		writable.__width = width;
-		writable.__height = height;
+		const self = this.getWritable();
+		self.__width = typeof width === 'number' ? Math.max(IMAGE_MIN_WIDTH, Math.round(width)) : 'inherit';
+		self.__height = typeof height === 'number' ? Math.max(IMAGE_MIN_HEIGHT, Math.round(height)) : 'inherit';
 	}
 
 	setSrc(src: string): void {
-		const writable = this.getWritable();
-		writable.__src = src;
+		const self = this.getWritable();
+		self.__src = src;
 	}
 
 	setAltText(altText: string): void {
-		const writable = this.getWritable();
-		writable.__altText = altText;
+		const self = this.getWritable();
+		self.__altText = altText;
 	}
 
 	exportJSON(): SerializedImageNode {
-		const { width, height } = this.getWidthAndHeight();
-
 		return {
 			src: this.getSrc(),
 			altText: this.getAltText(),
-			width,
-			height,
+				...this.getWidthAndHeight(),
 			type: ImageNode.getType(),
 			version: 1,
 		};
@@ -151,33 +154,33 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 	// View
 
 	exportDOM(editor: LexicalEditor): DOMExportOutput {
-		const theme = editor._config.theme;
 		const element = document.createElement('img');
+
+		const theme = editor._config.theme;
+		const className = theme?.image;
+		if (className) {
+			element.setAttribute('class', className);
+		}
 
 		const { width, height } = this.getWidthAndHeight();
 
-		element.setAttribute('src', this.__src);
-		element.setAttribute('alt', this.__altText);
+		element.setAttribute('src', this.getSrc());
+		element.setAttribute('alt', this.getAltText());
 		element.setAttribute('width', width.toString());
 		element.setAttribute('height', height.toString());
-
-		// element.style.width = this.__width.toString()+'px';
-		// element.style.height = this.__height.toString()+'px';
-
-		if (theme.image) {
-			element.setAttribute('class', theme.image);
-		}
 
 		return { element };
 	}
 
 	createDOM(config: EditorConfig): HTMLElement {
 		const span = document.createElement('span');
+
 		const theme = config.theme;
-		const className = theme.image;
+		const className = theme?.image;
 		if (className !== undefined) {
-			span.className = className;
+			span.setAttribute('class', className);
 		}
+
 		return span;
 	}
 
@@ -190,10 +193,9 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 			component: ImageComponent,
 			props: {
 				node: this,
-				src: this.__src,
-				altText: this.__altText,
-				width: this.__width,
-				height: this.__height,
+				src: this.getSrc(),
+				altText: this.getAltText(),
+				...this.getWidthAndHeight(),
 				nodeKey: this.__key,
 				resizable: true,
 				editor: editor,

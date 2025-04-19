@@ -12,6 +12,7 @@
 </script>
 
 <script>
+	// Based on umaranis' svelte-lexical
 	import './Image.css';
 
 	import {
@@ -38,6 +39,7 @@
 	import { CAN_USE_DOM } from '$lib/environment/utils';
 	import { cacheServiceBaseURLWithStatic } from '$lib/utils/getCacheURL';
 	import { modal } from '$lib/stores/modal';
+	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import EditImageModal from '../../toolbar/ImageButtons/EditImageModal.svelte';
 	import {
 		$createImageNode as createImageNode,
@@ -274,8 +276,8 @@
 					if (
 						typeof width === 'number' &&
 						typeof height === 'number' &&
-						width >= 28 &&
-						height >= 28
+						width >= IMAGE_MIN_WIDTH &&
+						height >= IMAGE_MIN_HEIGHT
 					) {
 						node.setWidthAndHeight({ width, height });
 					}
@@ -300,7 +302,7 @@
 
 	onMount(() => {
 		if (!editor.hasNodes([ImageNode])) {
-			throw new Error('ImagesPlugin: ImageNode not registered on editor');
+			throw new Error('ImagePlugin: ImageNode not registered on editor');
 		}
 
 		img = document.createElement('img');
@@ -310,8 +312,7 @@
 			editor.registerMutationListener(ImageNode, (mutatedNodes) => {
 				/** @type {any[]} */
 				const promises = [];
-
-				editor.update(async () => {
+				editor.read(async () => {
 					for (const [key, mutation] of mutatedNodes) {
 						if (mutation === 'destroyed') continue;
 						/** @type {ImageNode | null} */
@@ -346,12 +347,13 @@
 
 						promises.push(getBase64Image({ src }, node));
 					}
-				});
 
-				if (promises.length) {
-					Promise.all(promises.map((fn) => fn()));
-				}
+					if (promises.length) {
+						Promise.all(promises.map((fn) => fn()));
+					}
+				});
 			}),
+
 			editor.registerCommand(
 				INSERT_IMAGE_COMMAND,
 				(payload) => {
@@ -361,6 +363,7 @@
 				},
 				COMMAND_PRIORITY_EDITOR
 			),
+
 			editor.registerCommand(
 				DRAGSTART_COMMAND,
 				(event) => {
@@ -368,6 +371,7 @@
 				},
 				COMMAND_PRIORITY_HIGH
 			),
+
 			editor.registerCommand(
 				DRAGOVER_COMMAND,
 				(event) => {
@@ -375,6 +379,7 @@
 				},
 				COMMAND_PRIORITY_LOW
 			),
+
 			editor.registerCommand(
 				DROP_COMMAND,
 				(event) => {

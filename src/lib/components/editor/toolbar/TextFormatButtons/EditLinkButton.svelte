@@ -1,23 +1,23 @@
 <script>
-	import { TOGGLE_LINK_COMMAND, $toggleLink as toggleLink } from '@lexical/link';
+	import { onMount } from 'svelte';
 	import {
-		COMMAND_PRIORITY_CRITICAL,
 		COMMAND_PRIORITY_HIGH,
 		COMMAND_PRIORITY_NORMAL,
 		KEY_MODIFIER_COMMAND,
-		SELECTION_CHANGE_COMMAND,
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,
 	} from 'lexical';
+	import { getEditor } from 'svelte-lexical';
+	import { TOGGLE_LINK_COMMAND, $toggleLink as toggleLink } from '@lexical/link';
 	import { Link2Icon, SettingsIcon } from 'lucide-svelte';
-	import { getContext, onMount } from 'svelte';
 
-	import EditorButton from '../EditorButton.svelte';
 	import { ctrlKey } from '$lib/environment/environment';
 	import { getSelectedNode } from '$lib/components/editor/utils/getSelection';
 	import { modal } from '$lib/stores/modal';
 	import { $isALinkNode as isALinkNode } from '$lib/lexical/custom';
+	import EditorButton from '../EditorButton.svelte';
 	import EditLinkButtonModal from './EditLinkButtonModal.svelte';
+	import { mergeRegister } from '@lexical/utils';
 
 	let hasLink = $state(false);
 	
@@ -26,19 +26,10 @@
 	let attrs = $state({});
 	
 	let isInternal = $state(false);
-	
 
-	/** @type {ComposerWritable} */
-	const c = getContext('COMPOSER');
-	let composer = $derived($c);
-	let editor = $derived(composer?.getEditor?.());
-	let canEdit = $derived(editor?.isEditable());
+	let editor = $derived(getEditor?.());
 
 	const link = () => {
-		if (!editor) {
-			return;
-		}
-
 		if (!hasLink) {
 			return editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://');
 		} else {
@@ -51,10 +42,6 @@
 	 * @param {{ target?: string | null, rel?: string | null, title?: string | null }} [definedAttrs]
 	 */
 	const wrapperToggleLink = (definedUrl, definedAttrs) => {
-		if (!editor) {
-			return;
-		}
-
 		modal.set({
 			component: EditLinkButtonModal,
 			hasLink,
@@ -93,16 +80,13 @@
 	};
 
 	const updateToolbar = () => {
-		/**
-		 * @type { BaseSelection & { hasFormat?: (format: string) => boolean } | null }
-		 */
-		const selection = getSelection();
+		editor.read(() => {
+			const selection = getSelection();
 
-		if (!selection?.hasFormat) {
-			return;
-		}
+			if (!isRangeSelection(selection)) {
+				return;
+			}
 
-		if (isRangeSelection(selection)) {
 			/** @type {LexicalNode} */
 			const node = getSelectedNode(selection);
 			const parent = node.getParent();
@@ -123,25 +107,14 @@
 				attrs = {};
 				isInternal = false;
 			}
-		}
+		});
 	};
 
 	onMount(() => {
-		c.subscribe((composer) => {
-			if (!composer) {
-				return;
-			}
-
-			const editor = composer.getEditor();
-
-			editor.registerCommand(
-				SELECTION_CHANGE_COMMAND,
-				() => {
-					updateToolbar();
-					return false;
-				},
-				COMMAND_PRIORITY_CRITICAL
-			);
+		return mergeRegister(
+			editor.registerUpdateListener(() => {
+				updateToolbar();
+			}),
 
 			editor.registerCommand(
 				KEY_MODIFIER_COMMAND,
@@ -156,7 +129,7 @@
 					return false;
 				},
 				COMMAND_PRIORITY_NORMAL
-			);
+			),
 
 			editor.registerCommand(
 				TOGGLE_LINK_COMMAND,
@@ -173,20 +146,15 @@
 					return true;
 				},
 				COMMAND_PRIORITY_HIGH
-			);
-		});
+			)
+		);
 	});
 </script>
 
-<EditorButton
-	title="Insert link ({ctrlKey}K)"
-	on:click={link}
-	disabled={!canEdit}
-	isActive={hasLink}
->
+<EditorButton title="Insert link ({ctrlKey}K)" on:click={link} isActive={hasLink}>
 	{#if hasLink}
 		<Link2Icon />
-		<SettingsIcon size={'16'} class="absolute right-0 top-0" />
+		<SettingsIcon size="16" class="absolute right-0 top-0" />
 	{:else}
 		<Link2Icon />
 	{/if}

@@ -1,28 +1,23 @@
 <script>
-	import { getContext } from 'svelte';
+	import { getEditor } from 'svelte-lexical';
+	import { INSERT_TABLE_COMMAND } from '@lexical/table';
 	import { PlusIcon } from 'lucide-svelte';
-
+	
 	import Select from '$lib/components/Select.svelte';
+
 	import { TRANSPARENT_IMAGE } from '../../plugins/Image/Image';
 	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
 	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';
+	import { INSERT_FLOATBLOCK_COMMAND } from '../../plugins/FloatBlock/FloatBlockPlugin.svelte';
 
 	/** @type {HTMLSelectElement | null} */
 	let insertElementTypeElement = $state(null);
 
 	let currentInsertElementType = $state('');
 
-	/** @type {ComposerWritable} */
-	const c = getContext('COMPOSER');
-	let composer = $derived($c);
-	let canEdit = $derived(composer?.getEditor().isEditable());
-	let editor = $derived(composer?.getEditor());
+	let editor = $derived(getEditor());
 
 	const insertImage = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
 			altText: '',
 			src: TRANSPARENT_IMAGE,
@@ -32,16 +27,24 @@
 	};
 
 	const insertVideo = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.dispatchCommand(INSERT_VIDEOEMBED_COMMAND, {
 			platform: 'youtube',
 			src: '',
 			width: 1280,
 			height: 720,
 		});
+	};
+
+	const insertTable = () => {
+		editor.dispatchCommand(INSERT_TABLE_COMMAND, {
+			columns: '3',
+			rows: '3',
+			includeHeaders: false,
+		});
+	};
+
+	const insertFloatBlock = () => {
+		editor.dispatchCommand(INSERT_FLOATBLOCK_COMMAND, { float: 'inline-start', width: null, height: null });
 	};
 
 	const insertElementTypeOptions = [
@@ -55,14 +58,20 @@
 			label: 'Video',
 			insertFunc: insertVideo,
 		},
+		{
+			value: 'table',
+			label: 'Table',
+			insertFunc: insertTable,
+		},
+		{
+			value: 'floatblock',
+			label: 'Float Block',
+			insertFunc: insertFloatBlock,
+		},
 	];
 
 	/** @param {Event} e */
 	const insertElementType = (e) => {
-		if (!editor) {
-			return;
-		}
-
 		/** @type {HTMLSelectElement} */
 		const target = /** @type {any} */ (e.target);
 		if (target) {
@@ -92,7 +101,6 @@
 
 	<Select
 		title="Insert new element"
-		disabled={!canEdit}
 		bind:value={currentInsertElementType}
 		bind:ref={insertElementTypeElement}
 		on:change={insertElementType}

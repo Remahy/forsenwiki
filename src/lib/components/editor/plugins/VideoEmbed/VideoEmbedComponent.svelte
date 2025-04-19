@@ -1,9 +1,8 @@
 <script module>
 	/** @type {import('lexical').LexicalCommand<MouseEvent>} */
 	export const RIGHT_CLICK_VIDEOEMBED_COMMAND = createCommand('RIGHT_CLICK_VIDEOEMBED_COMMAND');
-</script>
 
-<script>
+	// Based on umaranis' svelte-lexical
 	import '../Image/Image.css';
 
 	import { onMount } from 'svelte';
@@ -27,8 +26,10 @@
 		clearSelection,
 		createNodeSelectionStore,
 	} from '$lib/components/editor/utils/getSelection';
+	import { VIDEO_MIN_HEIGHT, VIDEO_MIN_WIDTH } from '$lib/constants/video';
 	import ImageResizer from '../Image/ImageResizer.svelte';
 	import {
+		getIframeStyle,
 		getURLAndTitle,
 		$isVideoEmbedNode as isVideoEmbedNode,
 		VideoEmbedNode,
@@ -43,6 +44,7 @@
 	 * @property {'inherit' | number} height
 	 * @property {'inherit' | number} width
 	 * @property {boolean} resizable
+	 * @property {import('lexical').ElementFormatType} format
 	 * @property {import('lexical').LexicalEditor} editor
 	 */
 
@@ -55,8 +57,12 @@
 		height,
 		width,
 		resizable,
+		format,
 		editor
 	} = $props();
+
+	$: heightCss = height === 'inherit' ? 'inherit' : height + 'px';
+	$: widthCss = width === 'inherit' ? 'inherit' : width + 'px';
 
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);
@@ -75,7 +81,7 @@
 	 * @returns {void}
 	 */
 	const onRightClick = (event) => {
-		editor.getEditorState().read(() => {
+		editor.read(() => {
 			const latestSelection = getSelection();
 			const domElement = /** @type {HTMLElement} */ (event.target);
 			if (
@@ -190,27 +196,40 @@
 	});
 </script>
 
-<div
-	bind:this={embedRef}
-	class="element-placeholder-color overflow-hidden text-black"
-	class:focused={isFocused}
-	class:draggable={isFocused && isNodeSelection(selection)}
-	draggable="false"
->
-	<iframe
-		class="pointer-events-none"
-		srcdoc={!url
-			? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform.toUpperCase()} embed.</strong></p>`
-			: undefined}
-		{width}
-		{height}
-		src={url}
-		frameBorder="0"
-		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-		allowFullScreen={true}
-		{title}
-	></iframe>
+<div style={getIframeStyle(width, height)}>
+	<div class="editor-image editor-video" style={getIframeStyle(width, height)}>
+		<div
+			bind:this={embedRef}
+			class="element-placeholder-color overflow-hidden text-black"
+			class:focused={isFocused}
+			class:draggable={isFocused && isNodeSelection(selection)}
+			draggable="false"
+			style={`height:${heightCss};width:${widthCss}`}
+		>
+			<iframe
+				class="pointer-events-none"
+				srcdoc={!url
+					? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform.toUpperCase()} embed.</strong></p>`
+					: undefined}
+				{width}
+				{height}
+				src={url}
+				frameBorder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+				allowFullScreen={true}
+				{title}
+				style={getIframeStyle(width, height, format)}
+			/>
+		</div>
+		{#if resizable && isNodeSelection(selection) && isFocused}
+			<ImageResizer
+				{editor}
+				imageRef={embedRef}
+				{onResizeStart}
+				{onResizeEnd}
+				minWidth={VIDEO_MIN_WIDTH}
+				minHeight={VIDEO_MIN_HEIGHT}
+			/>
+		{/if}
+	</div>
 </div>
-{#if resizable && isNodeSelection(selection) && isFocused}
-	<ImageResizer {editor} imageRef={embedRef} {onResizeStart} {onResizeEnd} />
-{/if}

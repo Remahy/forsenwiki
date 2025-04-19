@@ -41,7 +41,7 @@ export class DiffParagraphNode extends ParagraphNode {
 	}
 
 	/**
-	 * @param {any} serializedNode
+	 * @param {import('lexical').SerializedParagraphNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
 		const paragraph = ParagraphNode.importJSON(serializedNode);
@@ -72,7 +72,7 @@ export class DiffParagraphNode extends ParagraphNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffParagraphNode.getType() };
 	}
 }
 

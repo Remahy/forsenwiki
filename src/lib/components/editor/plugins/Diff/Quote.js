@@ -39,7 +39,7 @@ export class DiffQuoteNode extends QuoteNode {
 	}
 
 	/**
-	 * @param {any} serializedNode
+	 * @param {import('@lexical/rich-text').SerializedQuoteNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
 		const quote = QuoteNode.importJSON(serializedNode);
@@ -70,7 +70,7 @@ export class DiffQuoteNode extends QuoteNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffQuoteNode.getType() };
 	}
 }
 

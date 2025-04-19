@@ -21,15 +21,17 @@ export class AHeadingNode extends HeadingNode {
 		return new AHeadingNode(node.__tag, node.__key);
 	}
 
-	/** @param {any} serializedNode */
+	/** @param {import('@lexical/rich-text').SerializedHeadingNode} serializedNode */
 	static importJSON(serializedNode) {
-		/** @type {AHeadingNode} */
-		const node = /** @type {any} */ (new AHeadingNode(serializedNode.tag));
+		const node = new AHeadingNode(serializedNode.tag);
 
-		node.__type = AHeadingNode.getType();
+		node.setDirection(serializedNode.direction);
+		node.setFormat(serializedNode.format);
+		node.setIndent(serializedNode.indent);
 
 		return node;
 	}
+
 	/**
 	 * @param {LexicalEditor} editor
 	 */
@@ -51,7 +53,7 @@ export class AHeadingNode extends HeadingNode {
 	exportJSON() {
 		return {
 			...super.exportJSON(),
-			type: this.getType(),
+			type: AHeadingNode.getType(),
 		};
 	}
 }

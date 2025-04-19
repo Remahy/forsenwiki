@@ -41,7 +41,7 @@ export class DiffTextNode extends TextNode {
 	}
 
 	/**
-	 * @param {any} serializedNode
+	 * @param {import('lexical').SerializedTextNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
 		const textNode = TextNode.importJSON(serializedNode);
@@ -98,7 +98,7 @@ export class DiffTextNode extends TextNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffTextNode.getType() };
 	}
 }
 

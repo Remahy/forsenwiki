@@ -1,22 +1,40 @@
 <script>
 	import Box from './Box.svelte';
-	import Spinner from './Spinner.svelte';
+
+	/**
+	 * @param {Node | null} _element
+	 */
+	const getParents = (_element) => {
+		let element = _element;
+
+		const els = [];
+
+		while (element) {
+			els.unshift(element);
+			element = element.parentNode;
+		}
+
+		return els;
+	};
 
 	/**
 	 * @param {HTMLElement} element
 	 */
-	function greet(element) {
+	function tocAction(element) {
 		const doc = element.ownerDocument;
 
-		const article = doc.querySelector('main.editor-shell');
+		const article = doc.querySelector('main.article-root');
 
 		if (!article) {
 			return;
 		}
 
-		const headings = article?.querySelectorAll('h1, h2, h3, h4, h5');
+		const headings = [...article?.querySelectorAll('h1, h2, h3, h4, h5')].filter((element) => {
+			const parents = getParents(element);
+			return !parents.some((n) => n instanceof HTMLTableCellElement);
+		});
 
-		if (!headings) {
+		if (!headings?.length) {
 			return;
 		}
 
@@ -24,10 +42,6 @@
 
 		// TODO: Rewrite it to use ordered list with nesting.
 		const ul = doc.createElement('ul');
-
-		if (!headings.length) {
-			return;
-		}
 
 		for (let index = 0; index < headings.length; index++) {
 			const element = headings[index];
@@ -69,7 +83,7 @@
 	let toc = $state('');
 </script>
 
-<div use:greet class="hidden lg:block lg:w-96 lg:min-w-96">
+<div use:tocAction class="hidden lg:block lg:w-96 lg:min-w-96">
 	{#if toc}
 		<Box class="top-4 hidden flex-col overflow-hidden break-all p-4 lg:sticky lg:flex">
 			<div class="box-heading-wrapper mb-2">
@@ -79,6 +93,6 @@
 			{@html toc}
 		</Box>
 	{:else}
-		<img src="/favicon.png" alt="The face of Twitch" class="opacity-[.04]" />
+		<img src="/favicon.png" alt="The face of Twitch" class="select-none opacity-[.04]" />
 	{/if}
 </div>

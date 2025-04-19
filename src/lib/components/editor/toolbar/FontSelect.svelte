@@ -1,15 +1,16 @@
 <script>
+	import { onMount } from 'svelte';
 	import {
 		$isNodeSelection as isNodeSelection,
-		COMMAND_PRIORITY_CRITICAL,
 		$getSelection as getSelection,
-		SELECTION_CHANGE_COMMAND,
+		$isRangeSelection as isRangeSelection,
 	} from 'lexical';
+	import { getEditor } from 'svelte-lexical';
 	import {
 		$patchStyleText as patchStyleText,
 		$getSelectionStyleValueForProperty as getSelectionStyleValueForProperty,
 	} from '@lexical/selection';
-	import { getContext, onMount } from 'svelte';
+	import { mergeRegister } from '@lexical/utils';
 	import { TypeIcon } from 'lucide-svelte';
 
 	import Select from '$lib/components/Select.svelte';
@@ -23,18 +24,10 @@
 
 	let currentFont = $state('');
 
-	/** @type {ComposerWritable} */
-	const c = getContext('COMPOSER');
-	let composer = $derived($c);
-	let editor = $derived(composer?.getEditor?.());
-	let canEdit = $derived(editor?.isEditable());
+	let editor = $derived(getEditor?.());
 
 	/** @param {Event} e */
 	const font = (e) => {
-		if (!editor) {
-			return;
-		}
-
 		/** @type {HTMLSelectElement} */
 		const target = /** @type {any} */ (e.target);
 		if (target) {
@@ -61,46 +54,35 @@
 	};
 
 	const updateToolbar = () => {
-		/** @type {RangeSelection | null} */
-		const selection = /** @type {any} */ (getSelection());
+		editor.read(() => {
+			const selection = getSelection();
 
-		if (selection !== null && !isNodeSelection(selection)) {
-			const value = getSelectionStyleValueForProperty(selection, 'font-family', 'default');
-
-			if (value === '' && !selection.isCollapsed()) {
-				currentFont = 'mixed';
-				return;
-			} else if (value === 'default') {
-				currentFont = '';
+			if (!isRangeSelection(selection)) {
 				return;
 			}
 
-			currentFont = value;
-		}
+			if (selection !== null && !isNodeSelection(selection)) {
+				const value = getSelectionStyleValueForProperty(selection, 'font-family', 'default');
+
+				if (value === '' && !selection.isCollapsed()) {
+					currentFont = 'mixed';
+					return;
+				} else if (value === 'default') {
+					currentFont = '';
+					return;
+				}
+
+				currentFont = value;
+			}
+		});
 	};
 
 	onMount(() => {
-		c.subscribe((composer) => {
-			if (!composer) {
-				return;
-			}
-			const editor = composer.getEditor();
-
-			editor.registerUpdateListener(({ editorState }) => {
-				editorState.read(() => {
-					updateToolbar();
-				});
-			});
-
-			editor.registerCommand(
-				SELECTION_CHANGE_COMMAND,
-				() => {
-					updateToolbar();
-					return false;
-				},
-				COMMAND_PRIORITY_CRITICAL
-			);
-		});
+		return mergeRegister(
+			editor.registerUpdateListener(() => {
+				updateToolbar();
+			})
+		);
 	});
 </script>
 
@@ -109,7 +91,6 @@
 
 	<Select
 		title="Font family"
-		disabled={!canEdit}
 		bind:ref={fontElement}
 		on:change={font}
 		bind:value={currentFont}

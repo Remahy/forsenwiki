@@ -2,11 +2,13 @@
 	import { Trash2Icon } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+
 	import { changeName, deleteContent } from '$lib/api/content';
 	import { getCacheURL } from '$lib/utils/getCacheURL';
 	import Box from '$lib/components/Box.svelte';
 	import Container from '$lib/components/Container.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import RandomButton from '$lib/components/RandomButton.svelte';
 
 	const result = $page.data.result;
 	const src = getCacheURL(result.hash, result.name).toString();
@@ -75,6 +77,8 @@
 </script>
 
 <Container class="overflow-hidden">
+	<RandomButton />
+
 	<div class="items-start gap-8 xl:flex">
 		<div class="mb-4 xl:mb-0 xl:w-fit">
 			<Box class="xl:min-h-96 xl:min-w-96 xl:max-w-3xl">

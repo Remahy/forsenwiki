@@ -1,3 +1,4 @@
+import { writable } from 'svelte/store';
 import {
 	$getSelection as getSelection,
 	$isRangeSelection as isRangeSelection,
@@ -9,7 +10,12 @@ import {
 } from 'lexical';
 import { $findMatchingParent as findMatchingParent } from '@lexical/utils';
 import { $isAtNodeEnd as isAtNodeEnd } from '@lexical/selection';
-import { writable } from 'svelte/store';
+
+import { $isDecoratorBlockNode as isDecoratorBlockNode } from '../plugins/VideoEmbed/DecoratorBlockNode';
+
+/**
+ * @typedef {import('../plugins/VideoEmbed/DecoratorBlockNode').DecoratorBlockNode} DecoratorBlockNode
+ */
 
 export function getSelectedElements() {
 	const selection = getSelection();
@@ -25,22 +31,29 @@ export function getSelectedElements() {
 	}
 
 	/**
-	 * @type {Map<string, ElementNode>}
+	 * @type {Map<string, ElementNode | DecoratorBlockNode>}
 	 */
 	const elements = new Map();
 
 	for (let index = 0; index < nodes.length; index++) {
 		const node = nodes[index];
-		const parent = findMatchingParent(
-			node,
-			(parentNode) => isElementNode(parentNode) && !parentNode.isInline()
+
+		const parent = /** @type {ElementNode | null} */ (
+			findMatchingParent(node, (parentNode) => isElementNode(parentNode) && !parentNode.isInline())
 		);
+
+		const nodeIsElement = isDecoratorBlockNode(node) && !node.isInline();
+
+		if (nodeIsElement) {
+			elements.set(node.getKey(), node);
+			continue;
+		}
 
 		if (!parent) {
 			continue;
 		}
 
-		elements.set(parent.getKey(), /** @type {ElementNode} */ (parent));
+		elements.set(parent.getKey(), parent);
 	}
 
 	return [...elements.values()];

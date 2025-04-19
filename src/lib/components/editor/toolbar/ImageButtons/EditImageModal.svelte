@@ -4,7 +4,7 @@
 	import { modal } from '$lib/stores/modal';
 	import Select from '$lib/components/Select.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
-	import { MAX_IMAGE_SIZE_MIB } from '$lib/constants/image';
+	import { MAX_IMAGE_SIZE_MIB, IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 
 	/**
 	 * @typedef {Object} Props
@@ -19,8 +19,8 @@
 	let {
 		src = $bindable(''),
 		altText = $bindable(''),
-		width = $bindable(24),
-		height = $bindable(24),
+		width = $bindable(IMAGE_MIN_WIDTH),
+		height = $bindable(IMAGE_MIN_HEIGHT),
 		onSubmit
 	} = $props();
 
@@ -141,10 +141,7 @@
 <div class="modal-color pointer-events-auto relative p-0">
 	<header class="forsen-wiki-theme-border flex items-center justify-between border-b p-6">
 		<h1 class="text-xl font-semibold lg:text-2xl">Edit image</h1>
-		<Button
-			class="ml-auto inline-flex items-center rounded-lg"
-			on:click={() => ($modal.isOpen = false)}
-		>
+		<Button class="ml-auto inline-flex items-center rounded-lg" on:click={cancel}>
 			<XIcon />
 		</Button>
 	</header>
@@ -206,7 +203,12 @@
 							<small>Original: <span>{originalImageWidth}</span></small>
 						{/if}
 					</span>
-					<input type="number" class="input-color w-full rounded p-2" bind:value={width} />
+					<input
+						type="number"
+						min={IMAGE_MIN_WIDTH}
+						class="input-color w-full rounded p-2"
+						bind:value={width}
+					/>
 				</label>
 				<label class="inline-flex grow flex-col gap-2">
 					<span>
@@ -215,7 +217,12 @@
 							<small>Original: <span>{originalImageHeight}</span></small>
 						{/if}
 					</span>
-					<input type="number" class="input-color w-full rounded p-2" bind:value={height} />
+					<input
+						type="number"
+						min={IMAGE_MIN_HEIGHT}
+						class="input-color w-full rounded p-2"
+						bind:value={height}
+					/>
 				</label>
 			</div>
 		{/if}

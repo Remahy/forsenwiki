@@ -1,21 +1,30 @@
-import { LinkNode, ListNode, ListItemNode, HeadingNode, QuoteNode } from '$lib/lexical/index';
+import {
+	LinkNode,
+	ListNode,
+	ListItemNode,
+	HeadingNode,
+	QuoteNode,
+	TableNode,
+	TableCellNode,
+	TableRowNode,
+} from '$lib/lexical/index';
 import {
 	ALinkNode,
 	AHeadingNode,
+	ATableCellNode,
 	DeprecatedVideoEmbedNode,
 	FallbackNode,
 	ImageNode,
 	VideoEmbedNode,
+	FloatBlockNode,
 } from '$lib/lexical/custom';
 import { $createALinkNode } from '../plugins/ALink/ALinkNode';
 import { $createAHeadingNode } from '../plugins/AHeading/AHeadingNode';
+import { $createATableCellNode } from '../plugins/Table/ATableCellNode';
 
 export const articleTheme = {
-	root: 'editor-shell',
 	paragraph: 'm-0',
-	image: 'm-0 editor-image',
-	// TODO: The 'editor-image' is for resizing capabilities, just fix the css rules instead.
-	video: 'm-0 editor-image editor-video',
+	image: 'm-0 image',
 	heading: {
 		h1: 'break-words',
 		h2: 'break-words',
@@ -23,6 +32,16 @@ export const articleTheme = {
 		h4: 'break-words',
 		h5: 'break-words',
 	},
+};
+
+export const editableTheme = {
+	...articleTheme,
+	root: 'editor-shell',
+	image: 'm-0 image editor-image',
+	tableCell: 'tableCell',
+	tableCellResizer: 'tableCellResizer',
+	tableCellSelected: 'tableCellSelected',
+	floatBlockNodeBoxShadow: '#696969 0px 0px 0px 1px',
 };
 
 /**
@@ -69,15 +88,29 @@ export const articleConfig = (theme, editable, editorState, onError = onErrorDef
 			 * @param {HeadingNode} node
 			 */
 			with: (node) => {
-				return $createAHeadingNode(
-					node.__tag,
-				);
+				return $createAHeadingNode(node.__tag);
 			},
 			withKlass: AHeadingNode,
 		},
 		QuoteNode,
 		ImageNode,
 		VideoEmbedNode,
+
+		TableNode,
+		ATableCellNode,
+		{
+			replace: TableCellNode,
+			/**
+			 * @param {TableCellNode} node
+			 */
+			with: (node) => {
+				return $createATableCellNode(node.__headerState, node.__colSpan, node.__width);
+			},
+			withKlass: ATableCellNode,
+		},
+		TableRowNode,
+
+		FloatBlockNode,
 
 		// Old nodes / Migration nodes
 		FallbackNode,

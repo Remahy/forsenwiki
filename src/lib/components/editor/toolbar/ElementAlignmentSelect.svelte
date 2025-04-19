@@ -1,10 +1,8 @@
 <script>
-	import {
-		COMMAND_PRIORITY_CRITICAL,
-		FORMAT_ELEMENT_COMMAND,
-		SELECTION_CHANGE_COMMAND,
-	} from 'lexical';
-	import { getContext, onMount } from 'svelte';
+	import { onMount } from 'svelte';
+	import { COMMAND_PRIORITY_CRITICAL, FORMAT_ELEMENT_COMMAND } from 'lexical';
+	import { getEditor } from 'svelte-lexical';
+	import { mergeRegister } from '@lexical/utils';
 	import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from 'lucide-svelte';
 
 	import Select from '$lib/components/Select.svelte';
@@ -28,21 +26,12 @@
 
 	/** @type {HTMLSelectElement | null} */
 	let alignmentElement = $state(null);
-
 	let currentAlignment = $state('');
 
-	/** @type {ComposerWritable} */
-	const c = getContext('COMPOSER');
-	let composer = $derived($c);
-	let editor = $derived(composer?.getEditor?.());
-	let canEdit = $derived(editor?.isEditable());
+	let editor = $derived(getEditor?.());
 
 	/** @param {Event} e */
 	const alignment = (e) => {
-		if (!editor) {
-			return;
-		}
-
 		/** @type {HTMLSelectElement} */
 		const target = /** @type {any} */ (e.target);
 		if (target) {
@@ -64,11 +53,7 @@
 	};
 
 	const updateToolbar = () => {
-		if (!editor) {
-			return;
-		}
-
-		editor.update(() => {
+		editor.read(() => {
 			const nodes = getSelectedElements();
 			const formats = [...new Set(nodes.map((node) => node.getFormatType()))];
 			currentAlignment = formats.length > 1 ? 'mixed' : formats[0];
@@ -76,41 +61,37 @@
 	};
 
 	onMount(() => {
-		c.subscribe((composer) => {
-			if (composer === null) {
-				return;
-			}
-
-			const editor = composer.getEditor();
-
-			editor.registerUpdateListener(({ editorState }) => {
-				editorState.read(() => {
-					updateToolbar();
-				});
-			});
+		return mergeRegister(
+			editor.registerUpdateListener(() => {
+				updateToolbar();
+			}),
 
 			editor.registerCommand(
-				SELECTION_CHANGE_COMMAND,
-				() => {
-					updateToolbar();
-					return false;
+				FORMAT_ELEMENT_COMMAND,
+				(format) => {
+					const nodes = getSelectedElements();
+					for (const node of nodes) {
+						if (node !== null) {
+							node.setFormat(format);
+						}
+					}
+					return true;
 				},
 				COMMAND_PRIORITY_CRITICAL
-			);
-		});
+			)
+		);
 	});
 
 	const SvelteComponent = $derived(alignmentIcons[currentAlignment] || alignmentIcons.default);
 </script>
 
 <div class="flex items-center gap-2 pl-2">
-	<div class="">
+	<div>
 		<SvelteComponent />
 	</div>
 
 	<Select
 		title="Element alignment"
-		disabled={!canEdit}
 		bind:ref={alignmentElement}
 		on:change={alignment}
 		bind:value={currentAlignment}

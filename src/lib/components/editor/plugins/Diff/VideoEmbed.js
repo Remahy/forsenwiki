@@ -11,24 +11,28 @@ export class DiffVideoEmbedNode extends VideoEmbedNode {
 	/** @type {import('./Types').___Change} */
 	___change;
 
+	/** @type {keyof typeof import('../../utils/elementUtils').ELEMENT_FORMAT_TO_TYPE} */
+	__format = 0;
+
 	/**
 	 * @param {VideoEmbedNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
-		super(node.__platform, node.__src, node.__width, node.__height, node.__format, key);
+		super(node.__platform, node.__src, node.__width, node.__height, node.getFormatType(), key);
 
-		this.setFormat(node.__format);
-		this.setPlatform(node.getPlatform());
-		this.setSrc(node.getSrc());
-		this.setWidthAndHeight(node.getWidthAndHeight());
+		this.__format = node.getFormat() || 0;
+		this.__platform = node.getPlatform();
+		this.__src = node.getSrc();
+		this.__width = node.getWidthAndHeight().width;
+		this.__height = node.getWidthAndHeight().height;
 
 		// @ts-ignore
 		this.___change = node.___change;
 	}
 
 	/**
-	 * @param {DiffVideoEmbedNode} node
+	 * @param {VideoEmbedNode} node
 	 */
 	static clone(node) {
 		return new DiffVideoEmbedNode(node, node.__key);
@@ -39,7 +43,7 @@ export class DiffVideoEmbedNode extends VideoEmbedNode {
 	}
 
 	/**
-	 * @param {any} serializedNode
+	 * @param {import('../VideoEmbed/VideoEmbed').SerializedVideoEmbedNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
 		const VideoEmbed = VideoEmbedNode.importJSON(serializedNode);
@@ -74,7 +78,7 @@ export class DiffVideoEmbedNode extends VideoEmbedNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffVideoEmbedNode.getType() };
 	}
 
 	/**

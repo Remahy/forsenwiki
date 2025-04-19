@@ -14,7 +14,7 @@
 	let to = $state(1);
 	let from = $state(0);
 
-	let link = $derived(`history/${postUpdates[to].id}..${postUpdates[from].id}`);
+	let link = $derived(postUpdates.length > 1 ? `history/${postUpdates[to].id}..${postUpdates[from].id}` : null);
 </script>
 
 <svelte:head>
@@ -49,11 +49,13 @@
 	</SuggestionBox>
 
 	<Box class="p-4">
-		<div class="flex">
-			<LinkButton href={link} class="flex items-center gap-2 text-sm">
-				Compare selected versions</LinkButton
-			>
-		</div>
+		{#if link}
+			<div class="flex">
+				<LinkButton href={link} class="flex items-center gap-2 text-sm">
+					Compare selected versions</LinkButton
+				>
+			</div>
+		{/if}
 
 		<div class="prose mt-3 max-w-[unset] dark:prose-invert">
 			<ul>

@@ -1,22 +1,20 @@
-import { HeadingNode } from '@lexical/rich-text';
+import { TableNode } from '@lexical/table';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
- * @typedef {import("lexical").NodeKey} NodeKey
- * @typedef {import("lexical").LexicalEditor} LexicalEditor
- * @typedef {import("lexical").EditorConfig} EditorConfig
+ * @typedef {import('lexical').NodeKey} NodeKey
  */
 
-export class DiffHeadingNode extends HeadingNode {
+export class DiffTableNode extends TableNode {
 	/** @type {import('./Types').___Change} */
 	___change;
 
 	/**
-	 * @param {HeadingNode} node
+	 * @param {TableNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
-		super(node.__tag, key);
+		super(key);
 
 		this.setDirection(node.getDirection());
 		this.setFormat(node.getFormatType());
@@ -28,26 +26,27 @@ export class DiffHeadingNode extends HeadingNode {
 	}
 
 	/**
-	 * @param {DiffHeadingNode} node
+	 * @param {DiffTableNode} node
 	 */
 	static clone(node) {
-		return new DiffHeadingNode(node, node.__key);
+		return new DiffTableNode(node, node.__key);
 	}
 
 	static getType() {
-		return 'diff-heading';
+		return 'diff-table';
 	}
 
 	/**
-	 * @param {any} serializedNode
+	 * @param {import('@lexical/table').SerializedTableNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const heading = HeadingNode.importJSON(serializedNode);
+		const table = TableNode.importJSON(serializedNode);
 
 		// @ts-ignore
-		heading.___change = serializedNode.___change;
+		table.___change = serializedNode.___change;
 
-		const node = new DiffHeadingNode(heading);
+		const node = new DiffTableNode(table);
+
 		return node;
 	}
 
@@ -70,13 +69,6 @@ export class DiffHeadingNode extends HeadingNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffTableNode.getType() };
 	}
 }
-
-// /**
-//  * @param {HeadingNode} node
-//  */
-// export function $createDiffHeadingNode(node) {
-// 	return new DiffHeadingNode(node);
-// }

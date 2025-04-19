@@ -41,7 +41,7 @@ export class DiffListItemNode extends ListItemNode {
 	}
 
 	/**
-	 * @param {any} serializedNode
+	 * @param {import('@lexical/list').SerializedListItemNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
 		const listItem = ListItemNode.importJSON(serializedNode);
@@ -84,7 +84,7 @@ export class DiffListItemNode extends ListItemNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffListItemNode.getType() };
 	}
 }
 

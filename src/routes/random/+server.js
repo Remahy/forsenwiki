@@ -2,12 +2,6 @@ import { redirect } from '@sveltejs/kit';
 
 import prisma from '$lib/prisma';
 
-import { Y_POST_TYPES, SYSTEM } from '../../../types';
-
-const { ARTICLE, BIO } = Y_POST_TYPES;
-
-const systemArticles = [ARTICLE, BIO, SYSTEM];
-
 function unluckyRedirect () {
 	return redirect(307, '/');
 }
@@ -25,11 +19,7 @@ export async function GET() {
 			// DO NOT pass in or accept user input here
 		const [randomArticle] = await prisma.$queryRaw`SELECT * FROM "YPost" ORDER BY RANDOM() LIMIT 1;`;
 
-		if (systemArticles.includes(randomArticle.id)) {
-			return unluckyRedirect();
-		}
-
-		randomURL = `/w/${randomArticle.title}`;
+		randomURL = `/w/${randomArticle.title}?random`;
 	} else {
 		/**
 		 * @type {[import('@prisma/client').Content]}
@@ -41,7 +31,7 @@ export async function GET() {
 			return unluckyRedirect();
 		}
 
-		randomURL = `/content/${randomContent.id}`;
+		randomURL = `/content/${randomContent.id}?random`;
 	}
 
 	return redirect(307, randomURL);

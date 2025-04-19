@@ -42,13 +42,17 @@ export class ALinkNode extends LinkNode {
 		);
 	}
 
-	/** @param {any} serializedNode */
+	/** @param {import('@lexical/link').SerializedLinkNode & { isInternal: boolean }} serializedNode */
 	static importJSON(serializedNode) {
-		/** @type {ALinkNode} */
-		const node = /** @type {any} */ (new ALinkNode(serializedNode.url, { ...serializedNode }));
+		const node = new ALinkNode(serializedNode.url, { ...serializedNode });
 
 		node.setIsInternal(serializedNode.isInternal);
-		node.__type = ALinkNode.getType();
+		node.setDirection(serializedNode.direction);
+		node.setFormat(serializedNode.format);
+		node.setIndent(serializedNode.indent);
+		if (serializedNode.rel) {
+			node.setRel(serializedNode.rel);
+		}
 
 		return node;
 	}
@@ -71,7 +75,7 @@ export class ALinkNode extends LinkNode {
 		return {
 			...super.exportJSON(),
 			__isInternal: this.__isInternal,
-			type: this.getType(),
+			type: ALinkNode.getType(),
 		};
 	}
 }

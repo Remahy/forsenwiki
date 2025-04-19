@@ -1,0 +1,19 @@
+.tableCell {
+	position: relative;
+}
+
+.tableCellSelected {
+	caret-color: transparent;
+}
+
+.tableCellSelected::after {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 0;
+	background-color: highlight;
+	mix-blend-mode: lighten;
+	content: '';
+	pointer-events: none;
+}

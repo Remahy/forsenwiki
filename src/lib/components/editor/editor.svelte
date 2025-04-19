@@ -13,12 +13,15 @@
 	} from 'svelte-lexical';
 
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
+	import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
 	import Toolbar from './toolbar/index.svelte';
 	import Footer from './footer/index.svelte';
-	import { articleConfig } from './config/article';
+	import { articleConfig, editableTheme } from './config/article';
 	import ImagePlugin from './plugins/Image/ImagePlugin.svelte';
 	import AutoFocus from './plugins/AutoFocus.svelte';
 	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
+	import TablePlugin from './plugins/Table/TablePlugin.svelte';
+	import FloatBlockPlugin from './plugins/FloatBlock/FloatBlockPlugin.svelte';
 
 	/**
 	 * @typedef {Object} Props
@@ -31,7 +34,7 @@
 	let { id, update, initialUpdate = null } = $props();
 
 	/** @type {any} */
-	const initialConfig = articleConfig(null, true, null);
+	const initialConfig = articleConfig(editableTheme, EDITOR_IS_EDITABLE, null);
 
 	/** @type {Composer | null} */
 	let composer = $state(null);
@@ -63,6 +66,10 @@
 		<ImagePlugin />
 
 		<VideoEmbedPlugin />
+
+		<TablePlugin hasCellBackgroundColor={false} />
+
+		<FloatBlockPlugin />
 
 		<CollaborationPlugin {id} {providerFactory} shouldBootstrap={false} />
 

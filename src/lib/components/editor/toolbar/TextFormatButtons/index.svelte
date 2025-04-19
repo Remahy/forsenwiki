@@ -1,82 +1,59 @@
 <script>
+	import { onMount } from 'svelte';
 	import {
-		COMMAND_PRIORITY_CRITICAL,
+		$isRangeSelection as isRangeSelection,
 		FORMAT_TEXT_COMMAND,
-		SELECTION_CHANGE_COMMAND,
 		$getSelection as getSelection,
 	} from 'lexical';
+	import { getEditor } from 'svelte-lexical';
+	import { mergeRegister } from '@lexical/utils';
 	import { BoldIcon, ItalicIcon } from 'lucide-svelte';
-	import { getContext, onMount } from 'svelte';
 
-	import EditorButton from '../EditorButton.svelte';
 	import { ctrlKey } from '$lib/environment/environment';
+	import EditorButton from '../EditorButton.svelte';
 	import EditLinkButton from './EditLinkButton.svelte';
 
 	let isBold = $state(false);
 	
 	let isItalic = $state(false);
-	
 
-	/** @type {ComposerWritable} */
-	const c = getContext('COMPOSER');
-	let composer = $derived($c);
-	let editor = $derived(composer?.getEditor?.());
-	let canEdit = $derived(editor?.isEditable());
+	let editor = $derived(getEditor?.());
 
 	const updateToolbar = () => {
-		/**
-		 * @type { BaseSelection & { hasFormat?: (format: string) => boolean } | null }
-		 */
-		const selection = getSelection();
+		editor.read(() => {
+			const selection = getSelection();
 
-		if (!selection?.hasFormat) {
-			return;
-		}
+			if (!isRangeSelection(selection)) {
+				return;
+			}
 
-		isBold = selection.hasFormat('bold');
-		isItalic = selection.hasFormat('italic');
+			isBold = selection.hasFormat('bold');
+			isItalic = selection.hasFormat('italic');
+		});
 	};
 
 	const bold = () => {
-		if (!editor) {
-			return;
-		}
 		editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
 	};
 
 	const italic = () => {
-		if (!editor) {
-			return;
-		}
-
 		editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
 	};
 
 	onMount(() => {
-		c.subscribe((composer) => {
-			if (!composer) {
-				return;
-			}
-
-			const editor = composer.getEditor();
-
-			editor.registerCommand(
-				SELECTION_CHANGE_COMMAND,
-				() => {
-					updateToolbar();
-					return false;
-				},
-				COMMAND_PRIORITY_CRITICAL
-			);
-		});
+		return mergeRegister(
+			editor.registerUpdateListener(() => {
+				updateToolbar();
+			})
+		);
 	});
 </script>
 
-<EditorButton title="Bold ({ctrlKey}B)" on:click={bold} disabled={!canEdit} isActive={isBold}>
+<EditorButton title="Bold ({ctrlKey}B)" on:click={bold} isActive={isBold}>
 	<BoldIcon size="16" />
 </EditorButton>
 
-<EditorButton title="Italic ({ctrlKey}I)" on:click={italic} disabled={!canEdit} isActive={isItalic}>
+<EditorButton title="Italic ({ctrlKey}I)" on:click={italic} isActive={isItalic}>
 	<ItalicIcon size="16" />
 </EditorButton>
 

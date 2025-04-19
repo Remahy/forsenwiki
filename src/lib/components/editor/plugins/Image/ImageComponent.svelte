@@ -22,6 +22,7 @@
 		DELETE_CHARACTER_COMMAND,
 		$isParagraphNode as isParagraphNode,
 		$isElementNode as isElementNode,
+		$isTextNode as isTextNode,
 	} from 'lexical';
 	import { onMount } from 'svelte';
 	import { mergeRegister } from '@lexical/utils';
@@ -29,6 +30,8 @@
 		clearSelection,
 		createNodeSelectionStore,
 	} from '$lib/components/editor/utils/getSelection';
+	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
+	import { mergeElements } from '../../utils/elementUtils';
 	import ImageResizer from './ImageResizer.svelte';
 	import {
 		IMAGE_OFF,
@@ -130,13 +133,7 @@
 			return false;
 		}
 
-		const children = currentNodeParent.getChildren();
-
-		editor.update(() => {
-			prevSibling.append(...children);
-
-			currentNodeParent.remove();
-		});
+		mergeElements(editor, currentNodeParent, prevSibling);
 
 		return true;
 	};
@@ -159,29 +156,47 @@
 	 * @param {boolean} payload
 	 */
 	const onDeleteCharacter = (payload) => {
-		if (payload) {
-			const selection = /** @type {RangeSelection | undefined} */ (getSelection()?.clone());
+		if (!payload) {
+			return false;
+		}
 
-			if (!selection?.isCollapsed()) {
-				return false;
-			}
+		const selection = /** @type {RangeSelection | undefined} */ (getSelection()?.clone());
 
-			const currentNode = selection.getNodes()[0];
+		if (!selection?.isCollapsed()) {
+			return false;
+		}
 
-			if (onDeleteCharacterDecorationBug(selection, currentNode)) {
-				return true;
-			}
+		const currentNode = selection.getNodes()[0];
 
-			if (onDeleteCharacterNextToImage(currentNode)) {
-				return true;
-			}
+		if (onDeleteCharacterDecorationBug(selection, currentNode)) {
+			return true;
+		}
 
-			const prevSibling = currentNode.getPreviousSibling();
+		if (onDeleteCharacterNextToImage(currentNode)) {
+			return true;
+		}
 
-			if (prevSibling && isImageNode(prevSibling) && node === prevSibling) {
-				imageRef?.click();
-				return true;
-			}
+		const prevSibling = currentNode.getPreviousSibling();
+
+		if (prevSibling && isImageNode(prevSibling) && node === prevSibling && !isTextNode(currentNode)) {
+			imageRef?.click();
+			return true;
+		}
+
+		if (!prevSibling || (prevSibling && !isElementNode(prevSibling))) {
+			return false;
+		}
+
+		if (isParagraphNode(currentNode) && isParagraphNode(prevSibling)) {
+			mergeElements(editor, currentNode, prevSibling);
+			return true;
+		}
+
+		const prevSiblingLastChild = prevSibling.getLastChild();
+
+		if (prevSibling && isImageNode(prevSiblingLastChild) && node === prevSiblingLastChild) {
+			imageRef?.click();
+			return true;
 		}
 
 		return false;
@@ -257,7 +272,7 @@
 	 * @returns {void}
 	 */
 	const onRightClick = (event) => {
-		editor.getEditorState().read(() => {
+		editor.read(() => {
 			const latestSelection = getSelection();
 			const domElement = /** @type {HTMLElement} */ (event.target);
 			if (
@@ -358,11 +373,11 @@
 			src={src === TRANSPARENT_IMAGE ? IMAGE_OFF : src}
 			alt={altText}
 			bind:this={imageRef}
-			style="height:{heightCss};px;width:{widthCss};"
+			style="height:{heightCss};width:{widthCss};"
 			draggable="false"
 		/>
 	{/await}
 </div>
 {#if resizable && isNodeSelection(selection) && isFocused}
-	<ImageResizer {editor} {imageRef} {onResizeStart} {onResizeEnd} />
+	<ImageResizer {editor} {imageRef} {onResizeStart} {onResizeEnd} minWidth={IMAGE_MIN_WIDTH} minHeight={IMAGE_MIN_HEIGHT} />
 {/if}

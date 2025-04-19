@@ -3,6 +3,8 @@
 
 	/**
 	 * @typedef {Object} Props
+	 * @property {number} minWidth
+	 * @property {number} minHeight
 	 * @property {() => void} onResizeStart
 	 * @property {(width: 'inherit' | number, height: 'inherit' | number) => void} onResizeEnd
 	 * @property {HTMLElement | null} imageRef
@@ -11,6 +13,8 @@
 
 	/** @type {Props} */
 	let {
+		minWidth,
+		minHeight,
 		onResizeStart,
 		onResizeEnd,
 		imageRef,
@@ -20,12 +24,13 @@
 	/** @type {HTMLDivElement | null} */
 	let controlWrapperRef = $state(null);
 
+
 	/**
 	 * @param {number} value
 	 * @param {number} min
 	 * @param {number} max
 	 */
-	function clamp(value, min, max) {
+	const clamp = (value, min, max) => {
 		return Math.min(Math.max(value, min), max);
 	}
 
@@ -69,12 +74,9 @@
 	const editorRootElement = editor.getRootElement();
 	// Find max width, accounting for editor padding.
 	const maxWidthContainer =
-		editorRootElement !== null ? editorRootElement.getBoundingClientRect().width - 20 : 28;
+		editorRootElement !== null ? editorRootElement.getBoundingClientRect().width - 20 : minWidth;
 	const maxHeightContainer =
-		editorRootElement !== null ? editorRootElement.getBoundingClientRect().height - 20 : 28;
-
-	const minWidth = 28;
-	const minHeight = 28;
+		editorRootElement !== null ? editorRootElement.getBoundingClientRect().height - 20 : minHeight;
 
 	/** @param {number} direction */
 	const setStartCursor = (direction) => {

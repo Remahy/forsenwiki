@@ -3,6 +3,8 @@
 	import { FileUpIcon } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { browser } from '$app/environment';
+
 	import { resetIndexedDb } from '$lib/yjs/resetIndexedDb';
 	import { createArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
@@ -153,9 +155,11 @@
 		{/if}
 	</label>
 
-	<div class="flex min-h-96">
-		<Editor update={null} id={'new'} {initialUpdate} />
-	</div>
+	{#if browser}
+		<div class="flex min-h-96">
+			<Editor update={null} id="new" {initialUpdate} />
+		</div>
+	{/if}
 
 	{#if error}
 		<Box class="flex items-center !bg-red-200 p-2 dark:text-black">
@@ -166,7 +170,7 @@
 	<Box class="flex items-center gap-4 p-2">
 		<small class="grow">
 			Make sure you read the <Link href="/terms" target="forsenwiki-tos">Terms & Conditions</Link>.
-			Anyone can edit this article once it's submitted. Don't complain if your article get modified
+			Anyone can edit this article once it's submitted. Don't complain if your article is modified
 			or deleted. <Clown />
 		</small>
 

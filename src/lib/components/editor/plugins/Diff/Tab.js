@@ -26,7 +26,7 @@ export class DiffTabNode extends TabNode {
 	}
 
 	/**
-	 * @param {any} serializedNode
+	 * @param {import('lexical').SerializedTabNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
 		const tab = TabNode.importJSON(serializedNode);
@@ -49,6 +49,6 @@ export class DiffTabNode extends TabNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: this.getType() };
+		return { ...super.exportJSON(), type: DiffTabNode.getType() };
 	}
 }
