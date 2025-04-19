@@ -117,7 +117,7 @@
 	<!--
 	{#if !hasSeenPrivacyUpdateNotice}
 		<Box
-			class="!rounded-none !bg-yellow-900 !bg-opacity-20 dark:!bg-yellow-300 dark:!bg-opacity-20"
+			class="!rounded-none !bg-yellow-900/20 dark:!bg-yellow-300/20"
 		>
 			<div class="container mx-auto flex items-center gap-4 p-4">
 				<ScaleIcon class="w-8 h-8 hidden lg:block"/>

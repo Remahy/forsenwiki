@@ -7,16 +7,16 @@ export const applyCSSColorDiff = (element, changeType) => {
 		case '~':
 			// Modified.
 			element.style.outline = '1px rgba(255, 127.5, 0, 0.5) dotted';
-			element.classList.add('bg-orange-300', 'bg-opacity-10');
+			element.classList.add('bg-orange-300/10');
 			break;
 		case '+':
 			// Added.
 			element.style.outline = '1px rgba(0, 255, 0, 0.5) solid';
-			element.classList.add('bg-green-500', 'bg-opacity-10');
+			element.classList.add('bg-green-500/10');
 			break;
 		case '-':
 			element.style.outline = '1px rgba(255, 0, 0, 0.5) solid';
-			element.classList.add('bg-red-500', 'bg-opacity-10');
+			element.classList.add('bg-red-500/10');
 			break;
 	}
 };
@@ -68,8 +68,7 @@ export const addInformationHover = (element, ___change) => {
 
 	const informationIconHover = document.createElement('span');
 	informationIconHover.classList.add(
-		'bg-blue-500',
-		'bg-opacity-50',
+		'bg-blue-500/50',
 		'rounded-full',
 		'absolute',
 		'top-0',

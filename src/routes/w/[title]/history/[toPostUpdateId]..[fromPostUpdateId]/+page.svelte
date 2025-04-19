@@ -94,7 +94,7 @@
 			</p>
 			<p>
 				When available, hover over the question mark <span
-					class="mx-1 rounded-full bg-blue-500 bg-opacity-50 px-2 py-1 font-bold outline outline-1 outline-white"
+					class="mx-1 rounded-full bg-blue-500/50 px-2 py-1 font-bold outline outline-1 outline-white"
 					>?</span
 				> to read what fields were modified.
 			</p>

@@ -21,7 +21,7 @@
 
 <Button
 	{disabled}
-	class="bg-error-color flex-col !font-bold hover:!bg-opacity-70"
+	class="bg-error-color flex-col !font-bold"
 	title="Reset"
 	on:click={onClickReset}
 >

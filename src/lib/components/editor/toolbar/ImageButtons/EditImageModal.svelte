@@ -172,7 +172,7 @@
 			<input
 				type="file"
 				accept="image/*"
-				class="forsen-wiki-theme-border rounded border p-2"
+				class="forsen-wiki-theme-border rounded-sm border p-2"
 				bind:value={src}
 				oninput={handleInputChange}
 				bind:this={inputElement}
@@ -193,7 +193,7 @@
 		{#if src.length}
 			<label class="flex flex-col gap-2">
 				<strong>Alt text</strong>
-				<input class="input-color rounded p-2" bind:value={altText} />
+				<input class="input-color rounded-sm p-2" bind:value={altText} />
 			</label>
 			<div class="flex gap-16">
 				<label class="inline-flex grow flex-col gap-2">
@@ -206,7 +206,7 @@
 					<input
 						type="number"
 						min={IMAGE_MIN_WIDTH}
-						class="input-color w-full rounded p-2"
+						class="input-color w-full rounded-sm p-2"
 						bind:value={width}
 					/>
 				</label>
@@ -220,7 +220,7 @@
 					<input
 						type="number"
 						min={IMAGE_MIN_HEIGHT}
-						class="input-color w-full rounded p-2"
+						class="input-color w-full rounded-sm p-2"
 						bind:value={height}
 					/>
 				</label>

@@ -142,7 +142,7 @@
 	</div>
 
 	<div
-		class="forsen-wiki-theme-border flex rounded border bg-violet-900 text-sm text-white dark:bg-opacity-50"
+		class="forsen-wiki-theme-border flex rounded-sm border bg-violet-900 dark:bg-violet-900/50 text-sm text-white"
 	>
 		<div class="flex items-center gap-2 p-2" title="Add column">
 			<PlusIcon size="16" />

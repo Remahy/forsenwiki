@@ -147,7 +147,7 @@
 		<input
 			oninput={unsetError}
 			required
-			class="w-full rounded p-2 {titleError && '!bg-red-200'} input-color"
+			class="w-full rounded-sm p-2 {titleError && '!bg-red-200'} input-color"
 			bind:value={title}
 		/>
 		{#if titleError}

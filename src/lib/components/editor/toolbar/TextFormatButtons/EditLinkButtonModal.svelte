@@ -138,7 +138,7 @@
 		<label class="flex flex-col gap-2">
 			<strong>{currentLinkType === 'internal' ? 'Search article' : 'URL'}</strong>
 			<input
-				class="input-color w-full rounded p-2"
+				class="input-color w-full rounded-sm p-2"
 				bind:value={url}
 				oninput={handleInputChange}
 				bind:this={inputElement}

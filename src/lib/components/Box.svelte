@@ -9,6 +9,6 @@
 	let { class: className = '', children } = $props();
 </script>
 
-<div class="box rounded {className}">
+<div class="box rounded-sm {className}">
 	{@render children?.()}
 </div>

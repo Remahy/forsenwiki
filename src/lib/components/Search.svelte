@@ -17,12 +17,12 @@
 	<input
 		type="text"
 		name="query"
-		class="search w-full rounded-l border-0"
+		class="search w-full rounded-l-sm border-0"
 		placeholder="Search..."
 		bind:value={query}
 	/>
 
-	<Button type="submit" class="h-full rounded-l-none rounded-r">
+	<Button type="submit" class="h-full rounded-l-none rounded-r-sm">
 		<SearchIcon />
 		<span class="hidden">Search</span>
 	</Button>

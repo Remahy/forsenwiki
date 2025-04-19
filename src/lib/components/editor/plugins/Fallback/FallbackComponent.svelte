@@ -117,7 +117,7 @@
 
 <div
 	bind:this={embedRef}
-	class="mb-1 overflow-hidden rounded bg-red-500 bg-opacity-50 p-4"
+	class="mb-1 overflow-hidden rounded-sm bg-red-500/50 p-4"
 	class:focused={isFocused}
 	class:draggable={isFocused && isNodeSelection(selection)}
 	class:outline={isFocused}

@@ -1,12 +1,13 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import path from 'path';
+import tailwindcss from '@tailwindcss/vite';
 
 // vite needs to work on proper support for Node.js worker_threads...
 import modulePathPlugin from './modulePathPlugin';
 
 export default defineConfig({
-	plugins: [modulePathPlugin(), sveltekit()],
+	plugins: [tailwindcss(), modulePathPlugin(), sveltekit()],
 	server: {
 		proxy: {
 			'/usercontent': {
