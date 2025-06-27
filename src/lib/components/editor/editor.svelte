@@ -54,7 +54,7 @@
 </script>
 
 <Composer {initialConfig} bind:this={composer}>
-	<div class="editor-shell">
+	<div class="editor-shell w-full">
 		<RichTextPlugin />
 
 		<ListPlugin />
