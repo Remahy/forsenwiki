@@ -1,10 +1,11 @@
 import { ALinkNode } from '$lib/lexical/custom';
+import { $createALinkNode } from '../ALink/ALinkNode';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
- * @typedef {import("lexical").NodeKey} NodeKey
- * @typedef {import("lexical").LexicalEditor} LexicalEditor
- * @typedef {import("lexical").EditorConfig} EditorConfig
+ * @typedef {import('lexical').NodeKey} NodeKey
+ * @typedef {import('lexical').LexicalEditor} LexicalEditor
+ * @typedef {import('lexical').EditorConfig} EditorConfig
  */
 
 export class DiffALinkNode extends ALinkNode {
@@ -22,16 +23,6 @@ export class DiffALinkNode extends ALinkNode {
 			node.__isInternal,
 			key
 		);
-
-		this.setDirection(node.getDirection());
-		this.setFormat(node.getFormatType());
-		this.setIndent(node.getIndent());
-		this.setIsInternal(node.getIsInternal());
-		this.setRel(node.getRel());
-		this.setStyle(node.getStyle());
-		this.setTarget(node.getTarget());
-		this.setTitle(node.getTitle());
-		this.setURL(node.getURL());
 
 		// @ts-ignore
 		this.___change = node.___change;
@@ -52,12 +43,11 @@ export class DiffALinkNode extends ALinkNode {
 	 * @param {import('@lexical/link').SerializedLinkNode & { isInternal: boolean }} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const aLink = ALinkNode.importJSON(serializedNode);
+		const node = $createALinkNode().updateFromJSON(serializedNode);
 
 		// @ts-ignore
-		aLink.___change = serializedNode.___change;
+		node.___change = serializedNode.___change;
 
-		const node = new DiffALinkNode(aLink);
 		return node;
 	}
 

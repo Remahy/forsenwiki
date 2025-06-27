@@ -130,7 +130,6 @@ export class FloatBlockNode extends ElementNode {
 			width: this.getWidth(),
 			height: this.getHeight(),
 			type: FloatBlockNode.getType(),
-			version: 1,
 		};
 	}
 

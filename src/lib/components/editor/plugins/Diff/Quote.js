@@ -1,10 +1,10 @@
-import { QuoteNode } from '@lexical/rich-text';
+import { $createQuoteNode, QuoteNode } from '@lexical/rich-text';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
- * @typedef {import("lexical").NodeKey} NodeKey
- * @typedef {import("lexical").LexicalEditor} LexicalEditor
- * @typedef {import("lexical").EditorConfig} EditorConfig
+ * @typedef {import('lexical').NodeKey} NodeKey
+ * @typedef {import('lexical').LexicalEditor} LexicalEditor
+ * @typedef {import('lexical').EditorConfig} EditorConfig
  */
 
 export class DiffQuoteNode extends QuoteNode {
@@ -17,11 +17,6 @@ export class DiffQuoteNode extends QuoteNode {
 	 */
 	constructor(node, key) {
 		super(key);
-
-		this.setDirection(node.getDirection());
-		this.setFormat(node.getFormatType());
-		this.setIndent(node.getIndent());
-		this.setStyle(node.getStyle());
 
 		// @ts-ignore
 		this.___change = node.___change;
@@ -42,12 +37,11 @@ export class DiffQuoteNode extends QuoteNode {
 	 * @param {import('@lexical/rich-text').SerializedQuoteNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const quote = QuoteNode.importJSON(serializedNode);
+		const node = $createQuoteNode().updateFromJSON(serializedNode);
 
 		// @ts-ignore
-		quote.___change = serializedNode.___change;
+		node.___change = serializedNode.___change;
 
-		const node = new DiffQuoteNode(quote);
 		return node;
 	}
 

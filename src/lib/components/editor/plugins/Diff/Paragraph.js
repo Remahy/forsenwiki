@@ -1,10 +1,10 @@
-import { ParagraphNode } from 'lexical';
+import { $createParagraphNode, ParagraphNode } from 'lexical';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
- * @typedef {import("lexical").NodeKey} NodeKey
- * @typedef {import("lexical").LexicalEditor} LexicalEditor
- * @typedef {import("lexical").EditorConfig} EditorConfig
+ * @typedef {import('lexical').NodeKey} NodeKey
+ * @typedef {import('lexical').LexicalEditor} LexicalEditor
+ * @typedef {import('lexical').EditorConfig} EditorConfig
  */
 
 export class DiffParagraphNode extends ParagraphNode {
@@ -17,13 +17,6 @@ export class DiffParagraphNode extends ParagraphNode {
 	 */
 	constructor(node, key) {
 		super(key);
-
-		this.setDirection(node.getDirection());
-		this.setFormat(node.getFormatType());
-		this.setIndent(node.getIndent());
-		this.setStyle(node.getStyle());
-		this.setTextFormat(node.getTextFormat());
-		this.setTextStyle(node.getTextStyle());
 
 		// @ts-ignore
 		this.___change = node.___change;
@@ -44,12 +37,11 @@ export class DiffParagraphNode extends ParagraphNode {
 	 * @param {import('lexical').SerializedParagraphNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const paragraph = ParagraphNode.importJSON(serializedNode);
+		const node = $createParagraphNode().updateFromJSON(serializedNode);
 
 		// @ts-ignore
-		paragraph.___change = serializedNode.___change;
+		node.___change = serializedNode.___change;
 
-		const node = new DiffParagraphNode(paragraph);
 		return node;
 	}
 

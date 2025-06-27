@@ -8,7 +8,7 @@ import { $applyNodeReplacement } from 'lexical';
 import { $createLinkNode, LinkNode } from '$lib/lexical/index';
 
 /**
- * @typedef {import("@lexical/link").LinkAttributes} LinkAttributes
+ * @typedef {import('@lexical/link').LinkAttributes} LinkAttributes
  */
 
 export class ALinkNode extends LinkNode {

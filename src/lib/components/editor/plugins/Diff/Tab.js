@@ -1,9 +1,9 @@
-import { TabNode } from 'lexical';
+import { $createTabNode, TabNode } from 'lexical';
 
 /**
- * @typedef {import("lexical").NodeKey} NodeKey
- * @typedef {import("lexical").LexicalEditor} LexicalEditor
- * @typedef {import("lexical").EditorConfig} EditorConfig
+ * @typedef {import('lexical').NodeKey} NodeKey
+ * @typedef {import('lexical').LexicalEditor} LexicalEditor
+ * @typedef {import('lexical').EditorConfig} EditorConfig
  */
 
 export class DiffTabNode extends TabNode {
@@ -29,12 +29,12 @@ export class DiffTabNode extends TabNode {
 	 * @param {import('lexical').SerializedTabNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const tab = TabNode.importJSON(serializedNode);
+		const node = $createTabNode().updateFromJSON(serializedNode);
 
-		tab.setFormat(serializedNode.format);
-		tab.setStyle(serializedNode.style);
+		// @ts-ignore
+		node.___change = serializedNode.___change;
 
-		return tab;
+		return node;
 	}
 
 	/**

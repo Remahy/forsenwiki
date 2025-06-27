@@ -1,9 +1,9 @@
-import { LineBreakNode } from 'lexical';
+import { $createLineBreakNode, LineBreakNode } from 'lexical';
 
 /**
- * @typedef {import("lexical").NodeKey} NodeKey
- * @typedef {import("lexical").LexicalEditor} LexicalEditor
- * @typedef {import("lexical").EditorConfig} EditorConfig
+ * @typedef {import('lexical').NodeKey} NodeKey
+ * @typedef {import('lexical').LexicalEditor} LexicalEditor
+ * @typedef {import('lexical').EditorConfig} EditorConfig
  */
 
 export class DiffLineBreakNode extends LineBreakNode {
@@ -25,8 +25,12 @@ export class DiffLineBreakNode extends LineBreakNode {
 		return 'diff-linebreak';
 	}
 
-	static importJSON() {
-		const node = new DiffLineBreakNode();
+	/**
+	 * @param {import('lexical').SerializedLineBreakNode} serializedNode
+	 */
+	static importJSON(serializedNode) {
+		const node = $createLineBreakNode().updateFromJSON(serializedNode);
+
 		return node;
 	}
 
