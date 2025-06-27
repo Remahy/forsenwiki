@@ -20,8 +20,8 @@
 	let currentWidth = $state(selectedImageNode.__width);
 	let currentHeight = $state(selectedImageNode.__height);
 
-	$: width = currentWidth;
-	$: height = currentHeight;
+	let width = $derived(currentWidth);
+	let height = $derived(currentHeight);
 
 	const onChange = () => {
 		editor.update(() => {
@@ -48,22 +48,17 @@
 
 						const { width, height, altText, src } = data;
 
-						if (
-							typeof width === 'number' &&
-							typeof height === 'number' &&
-							height >= IMAGE_MIN_HEIGHT &&
-							width >= IMAGE_MIN_WIDTH
-						) {
-							node.setWidthAndHeight({ width, height });
+						if (typeof width === 'number' && width >= IMAGE_MIN_WIDTH) {
+							node.setWidthAndHeight({ width, height: node.__height });
 						}
 
-						if (altText.length) {
-							node.setAltText(altText);
+						if (typeof height === 'number' && height >= IMAGE_MIN_HEIGHT) {
+							node.setWidthAndHeight({ height, width: node.__width });
 						}
 
-						if (src) {
-							node.setSrc(src);
-						}
+						node.setAltText(altText);
+
+						node.setSrc(src);
 					});
 				},
 				isOpen: true,

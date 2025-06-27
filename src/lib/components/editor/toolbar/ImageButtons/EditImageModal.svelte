@@ -173,7 +173,6 @@
 				type="file"
 				accept="image/*"
 				class="forsen-wiki-theme-border rounded-sm border p-2"
-				bind:value={src}
 				oninput={handleInputChange}
 				bind:this={inputElement}
 				onclick={() => inputElement?.dispatchEvent(new Event('change'))}
