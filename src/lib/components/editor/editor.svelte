@@ -77,7 +77,7 @@
 			<Toolbar />
 		</div>
 
-		<article class="editor-border flex grow flex-col">
+		<article class="editor-border flex grow flex-col min-h-96">
 			<div class="prose dark:prose-invert relative flex max-w-[unset] grow overflow-auto p-2">
 				<ContentEditable className="grow m-0 p-0 border-0 outline-0" />
 			</div>

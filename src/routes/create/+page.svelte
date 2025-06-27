@@ -87,6 +87,7 @@
 
 			if (res.status === 200) {
 				persistence.clearData();
+				title.value = '';
 
 				const json = await res.json();
 				const { title: serverUrlTitle /* postUpdate: { id } */ } = json;
