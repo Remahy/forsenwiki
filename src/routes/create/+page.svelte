@@ -167,7 +167,7 @@
 
 	{#if error}
 		<Box class="flex items-center !bg-red-200 p-2 dark:text-black">
-			<p>{error.message}</p>
+			<p>{JSON.stringify(error)}{error.message}</p>
 		</Box>
 	{/if}
 

@@ -36,11 +36,13 @@ export async function POST({ request, locals }) {
 		title = sanitizeTitle(rawTitle);
 
 		if (!title) {
+			// This throws.
 			return error(400, 'No title provided');
 		}
 
 		const foundTitle = await readYPostByTitle(title.sanitized);
 		if (foundTitle) {
+			// This throws.
 			return error(400, 'Article with that title already exists.');
 		}
 
@@ -57,6 +59,10 @@ export async function POST({ request, locals }) {
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidArticle(err);
+		}
+
+		if (err.status && err.body?.message) {
+			throw err;
 		}
 
 		console.error(err);
