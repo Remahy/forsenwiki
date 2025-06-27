@@ -16,13 +16,15 @@
 	import Container from '$lib/components/Container.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
 	import ResetCacheButton from '$lib/components/editor/footer/ResetCacheButton.svelte';
+	import { localStore } from '$lib/localStore.svelte';
 
 	const { initialUpdate } = $page.data;
 
 	/** @type {Error | null} */
 	let error = $state(null);
 
-	let title = $state('');
+	// svelte-ignore non_reactive_update
+	let title = localStore('lastTitle', '');
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
@@ -30,7 +32,7 @@
 	let editor = $derived(composer?.getEditor?.());
 	let canEdit = $derived(editor?.isEditable());
 
-	let titleError = $derived(title.length === 0 ? new Error('No title set!') : null);
+	let titleError = $derived(title.value.length === 0 ? new Error('No title set!') : null);
 
 	const y = getContext('YDOC');
 	let yjsDocMap = $derived($y);
@@ -68,11 +70,11 @@
 			try {
 				await validateArticle(editor);
 
-				if (!title) {
+				if (!title.value) {
 					throw new Error('No title set.');
 				}
 
-				res = await createArticle(title, yjsDocMap);
+				res = await createArticle(title.value, yjsDocMap);
 			} catch (err) {
 				error = new Error(err?.toString());
 			} finally {
@@ -87,9 +89,9 @@
 				persistence.clearData();
 
 				const json = await res.json();
-				const { title /* postUpdate: { id } */ } = json;
+				const { title: serverUrlTitle /* postUpdate: { id } */ } = json;
 
-				goto(`/w/${title}`);
+				goto(`/w/${serverUrlTitle}`);
 			} else if (res.status >= 400) {
 				const json = await res.json();
 				error = json;
@@ -102,6 +104,7 @@
 
 		try {
 			await resetIndexedDb('new');
+			title.value = '';
 			isUploading = false;
 			window.location.reload();
 		} catch (err) {
@@ -148,7 +151,7 @@
 			oninput={unsetError}
 			required
 			class="w-full rounded-sm p-2 {titleError && '!bg-red-200'} input-color"
-			bind:value={title}
+			bind:value={title.value}
 		/>
 		{#if titleError}
 			<strong class="text-red-600 dark:text-red-500">{titleError.message}</strong>
