@@ -19,10 +19,15 @@
 	import Button from '$lib/components/Button.svelte';
 	import EditorButton from '../EditorButton.svelte';
 
-	/** @type {import("@lexical/table").TableNode | null} */
-	export let selectedTable = null;
+	/**
+	 * @typedef Props
+	 * @property {import('@lexical/table').TableNode | null} selectedTable
+	 */
 
-	$: isRowHeader = false;
+	/** @type {Props} */
+	let {selectedTable} = $props();
+
+	let isRowHeader = $state(false);
 
 	const editor = getEditor();
 

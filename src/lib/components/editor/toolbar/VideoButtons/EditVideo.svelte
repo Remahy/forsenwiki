@@ -11,7 +11,7 @@
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {import("$lib/lexical/custom").VideoEmbedNode} selectedVideoEmbedNode
+	 * @property {import('$lib/lexical/custom').VideoEmbedNode} selectedVideoEmbedNode
 	 */
 
 	/** @type {Props} */
@@ -28,14 +28,11 @@
 	let currentWidth = $state(selectedVideoEmbedNode.__width);
 	let currentHeight = $state(selectedVideoEmbedNode.__height);
 
-	$: url = currentURL;
+	let url = $derived(currentURL);
 
-	$: width = currentWidth;
-	$: height = currentHeight;
+	let width = $derived(currentWidth);
+	let height = $derived(currentHeight);
 
-	/**
-	 * @type {{[x: string]: import('svelte').Component<any>}}
-	 */
 	const platformIcons = {
 		youtube: YoutubeIcon,
 		twitch: TwitchGlitch,
@@ -64,11 +61,11 @@
 
 	const setURL = () => {
 		editor.update(() => {
-			selectedVideoEmbedNode.setSrc(getURLAndTitle(currentPlatform, url, DOMAIN).url || url);
+			selectedVideoEmbedNode.setSrc(getURLAndTitle(currentPlatform, url, DOMAIN).url || url || '');
 		});
 	};
 
-	const SvelteComponent = $derived(platformIcons[currentPlatform] || platformIcons.default);
+	const SvelteComponent = $derived(currentPlatform ? platformIcons[currentPlatform] : platformIcons.default);
 </script>
 
 <div class="flex min-h-[42px] items-center gap-2 pl-2">
@@ -110,7 +107,7 @@
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
 		placeholder={width === 'inherit' ? "Inherit" : ""}
 		bind:value={width}
-		on:change={onChange}
+		onchange={onChange}
 		min={IMAGE_MIN_WIDTH}
 		type="number"
 	/>
@@ -123,9 +120,9 @@
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
 		placeholder={height === 'inherit' ? "Inherit" : ""}
-		bind:value={height}
-		on:change={onChange}
+		onchange={onChange}
 		min={IMAGE_MIN_HEIGHT}
 		type="number"
+		bind:value={height}
 	/>
 </label>

@@ -10,21 +10,26 @@
 	} from 'lucide-svelte';
 	import Select from '$lib/components/Select.svelte';
 
-	/** @type {import("$lib/lexical/custom").FloatBlockNode} */
-	export let selectedFloatBlockNode;
+	/**
+	 * @typedef {Object} Props
+	 * @property {import('$lib/lexical/custom').FloatBlockNode} selectedFloatBlockNode
+	 */
 
-	$: currentWidth = selectedFloatBlockNode.__width;
-	$: currentHeight = selectedFloatBlockNode.__height;
+	/** @type {Props & { [key: string]: any }} */
+	let { selectedFloatBlockNode } = $props();
 
-	$: width = currentWidth;
-	$: height = currentHeight;
+	let currentWidth = $derived(selectedFloatBlockNode.__width);
+	let currentHeight = $derived(selectedFloatBlockNode.__height);
 
-	$: currentFloatValue = selectedFloatBlockNode.__float;
+	let width = $derived(currentWidth);
+	let height = $derived(currentHeight);
 
-	$: floatValue = currentFloatValue === null ? 'none' : currentFloatValue;
+	let currentFloatValue = $derived(selectedFloatBlockNode.__float);
 
-	/** @type {HTMLSelectElement} */
-	let floatValueElement;
+	let floatValue = $derived(currentFloatValue === null ? 'none' : currentFloatValue);
+
+	/** @type {HTMLSelectElement | null} */
+	let floatValueElement = $state(null);
 
 	/**
 	 * @type {{[x: string]: typeof import('svelte').SvelteComponent<any>}}
@@ -37,6 +42,8 @@
 		'none': ChevronsLeftRightEllipsisIcon,
 		default: FileQuestionIcon,
 	};
+
+	const FloatIconComponent = $derived(floatValueIcons[floatValue || 'default'] || floatValueIcons.default);
 
 	const editor = getEditor();
 
@@ -61,9 +68,7 @@
 </script>
 
 <div class="flex min-h-[42px] items-center gap-2 pl-2">
-	<svelte:component
-		this={floatValueIcons[floatValue || 'default'] || floatValueIcons.default}
-	/>
+	<FloatIconComponent />
 
 	<Select
 		title="Float"
@@ -90,7 +95,7 @@
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
 		placeholder={floatValue === 'none' ? "Fill" : "Auto"}
 		bind:value={width}
-		on:change={onChange}
+		onchange={onChange}
 	/>
 </label>
 
@@ -102,6 +107,6 @@
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
 		placeholder={"Auto"}
 		bind:value={height}
-		on:change={onChange}
+		onchange={onChange}
 	/>
 </label>

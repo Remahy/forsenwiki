@@ -5,15 +5,20 @@
 	import Button from '$lib/components/Button.svelte';
 	import { modal } from '$lib/stores/modal';
 
-	export let rows = '3';
-	export let columns = '3';
-	export let includeHeaders = true;
-	/** @type {(data: import('../../plugins/Table/Table').TablePayload) => void} */
-	export let onSubmit = () => {};
+	/**
+	 * @typedef Props
+	 * @property {string} rows
+	 * @property {string} columns
+	 * @property {boolean} includeHeaders
+	 * @property {(data: import('../../plugins/Table/Table').TablePayload) => void} onSubmit
+	 */
 
-	let isDisabled = true;
+	/** @type {Props} */
+	let { rows = '3', columns = '3', includeHeaders = true, onSubmit } = $props();
 
-	$: {
+	let isDisabled = $state(true);
+
+	$effect(() => {
 		const row = Number(rows);
 		const column = Number(columns);
 
@@ -22,14 +27,14 @@
 		} else {
 			isDisabled = true;
 		}
-	}
+	});
 
 	const cancel = () => {
 		$modal.isOpen = false;
 	};
 
 	const handleSubmit = () => {
-		onSubmit({ columns, rows, includeHeaders });
+		onSubmit({ columns: String(columns), rows: String(rows), includeHeaders });
 		$modal.isOpen = false;
 	};
 </script>
