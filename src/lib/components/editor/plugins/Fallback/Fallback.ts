@@ -1,3 +1,4 @@
+import type { ComponentProps } from 'svelte';
 import {
 	$applyNodeReplacement,
 	type DOMExportOutput,
@@ -8,6 +9,11 @@ import {
 } from 'lexical';
 import { DecoratorBlockNode } from '../VideoEmbed/DecoratorBlockNode';
 import FallbackComponent from './FallbackComponent.svelte';
+
+type FallbackNodeType = {
+	componentClass: typeof FallbackComponent;
+  updateProps: (props: ComponentProps<typeof FallbackComponent>) => void;
+};
 
 export class FallbackNode extends DecoratorBlockNode {
 	__data: string;
@@ -62,7 +68,6 @@ export class FallbackNode extends DecoratorBlockNode {
 			...super.exportJSON(),
 			type: FallbackNode.getType(),
 			data: this.__data,
-			version: 1,
 		};
 	}
 
@@ -81,28 +86,26 @@ export class FallbackNode extends DecoratorBlockNode {
 		return this.__data;
 	}
 
-	decorate(editor: LexicalEditor) {
+	decorate(editor: LexicalEditor): FallbackNodeType {
 		return {
-			component: FallbackComponent,
-			props: {
-				node: this,
-				nodeKey: this.__key,
-				data: this.__data,
-				editor: editor,
+			componentClass: FallbackComponent,
+			updateProps: (props) => {
+				props.node = this;
+				props.nodeKey = this.__key;
+				props.data = this.__data;
+				props.editor = editor;
 			},
 		};
 	}
 }
 
-export function $createFallbackNode({
-	data,
-	key,
-	format,
-}: {
+export function $createFallbackNode(node?: {
 	data: string;
 	format?: ElementFormatType;
 	key?: NodeKey;
 }): FallbackNode {
+	const { data = '', key, format } = node || {};
+
 	return $applyNodeReplacement(new FallbackNode({ data, format, key }));
 }
 
