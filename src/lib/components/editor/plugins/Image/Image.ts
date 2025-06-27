@@ -205,11 +205,11 @@ export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
 				props.node = this;
 				props.src = this.__src;
 				props.altText = this.__altText;
+				props.nodeKey = this.__key;
 				props.width = this.__width;
 				props.height = this.__height;
 				props.resizable = true;
 				props.editor = editor;
-
 			},
 		};
 	}

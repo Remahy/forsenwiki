@@ -282,7 +282,7 @@
 						node.setWidthAndHeight({ width, height });
 					}
 
-					if (altText.length) {
+					if (altText?.length) {
 						node.setAltText(altText);
 					}
 
@@ -324,11 +324,16 @@
 
 						const src = node.getSrc();
 
-						if (src.startsWith('data:')) {
+						if (!src) {
+							console.warn('ImagePlugin: src is undefined')
 							continue;
 						}
 
-						if (src.startsWith(cacheServiceBaseURLWithStatic)) {
+						if (src?.startsWith('data:')) {
+							continue;
+						}
+
+						if (src?.startsWith(cacheServiceBaseURLWithStatic)) {
 							continue;
 						}
 

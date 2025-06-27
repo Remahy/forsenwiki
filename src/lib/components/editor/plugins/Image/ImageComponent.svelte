@@ -135,6 +135,7 @@
 		if (isResizing) {
 			return true;
 		}
+
 		if (event.target === imageRef) {
 			if (event.shiftKey) {
 				$isSelected = !$isSelected;
@@ -234,7 +235,7 @@
 	{#await promise}
 		<figure
 			style="height:{heightCss};px;width:{widthCss};"
-			class="element-placeholder-color m-0 flex animate-pulse items-center justify-center p-0"
+			class="element-placeholder-color !m-0 flex animate-pulse items-center justify-center p-0"
 			class:focused={isFocused}
 			class:draggable={isFocused && isNodeSelection(selection)}
 			title="Loading image..."
@@ -242,7 +243,7 @@
 			draggable="false"
 		>
 			<img
-				class="pointer-events-none m-0 animate-spin rounded-full"
+				class="pointer-events-none !m-0 animate-spin rounded-full"
 				src={LUCIDE_ICON_LOADER}
 				alt={altText}
 			/>
