@@ -54,7 +54,7 @@
 </script>
 
 <Composer {initialConfig} bind:this={composer}>
-	<div class="editor-shell flex grow flex-col overflow-hidden">
+	<div class="editor-shell">
 		<RichTextPlugin />
 
 		<ListPlugin />
@@ -78,7 +78,7 @@
 		</div>
 
 		<article class="editor-border flex grow flex-col">
-			<div class="prose relative flex max-w-[unset] grow overflow-auto p-2 dark:prose-invert">
+			<div class="prose dark:prose-invert relative flex max-w-[unset] grow overflow-auto p-2">
 				<ContentEditable className="grow m-0 p-0 border-0 outline-0" />
 			</div>
 		</article>
