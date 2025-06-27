@@ -47,7 +47,7 @@
 			hasLink,
 			/**
 			 * @param {string | null} dUrl
-			 * @param {import("@lexical/link").LinkAttributes} [dAttrs]
+			 * @param {import('@lexical/link').LinkAttributes} [dAttrs]
 			 */
 			onSubmit: (dUrl, dAttrs) => {
 				editor.update(() => {

@@ -7,7 +7,7 @@
  */
 
 /**
- * @typedef {import("lexical").ElementFormatType} ElementFormatType
+ * @typedef {import('lexical').ElementFormatType} ElementFormatType
  */
 
 // Element node formatting

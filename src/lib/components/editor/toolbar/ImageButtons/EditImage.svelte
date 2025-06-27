@@ -9,7 +9,7 @@
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {import("$lib/lexical/custom").ImageNode} selectedImageNode
+	 * @property {import('$lib/lexical/custom').ImageNode} selectedImageNode
 	 */
 
 	/** @type {Props} */

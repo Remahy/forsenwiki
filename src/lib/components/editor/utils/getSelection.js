@@ -61,7 +61,7 @@ export function getSelectedElements() {
 
 // from svelte-lexical
 /**
- * @param {import("lexical").RangeSelection} selection
+ * @param {import('lexical').RangeSelection} selection
  */
 export function getSelectedNode(selection) {
 	const anchor = selection.anchor;

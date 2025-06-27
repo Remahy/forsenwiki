@@ -1,6 +1,6 @@
 /**
  * @param {HTMLElement} element
- * @param {import("./Types").JSONDiffType} changeType
+ * @param {import('./Types').JSONDiffType} changeType
  */
 export const applyCSSColorDiff = (element, changeType) => {
 	switch (changeType) {
@@ -24,7 +24,7 @@ export const applyCSSColorDiff = (element, changeType) => {
 /**
  *
  * @param {string} key
- * @param {import("./Types").___ChangeObject} change
+ * @param {import('./Types').___ChangeObject} change
  */
 function getChangeText(key, change) {
 	if (typeof change !== 'object') {
@@ -55,7 +55,7 @@ function getChangeText(key, change) {
 
 /**
  * @param {HTMLElement} element
- * @param {import("./Types").___Change} ___change
+ * @param {import('./Types').___Change} ___change
  */
 export const addInformationHover = (element, ___change) => {
 	const entries = Object.entries(___change).filter(([key]) => key !== '___type');

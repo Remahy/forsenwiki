@@ -64,7 +64,7 @@
 	};
 
 	/**
-	 * @param {import("@lexical/rich-text").HeadingTagType} headingSize
+	 * @param {import('@lexical/rich-text').HeadingTagType} headingSize
 	 */
 	const formatHeading = (headingSize) => {
 		if (currentElementType !== headingSize) {
