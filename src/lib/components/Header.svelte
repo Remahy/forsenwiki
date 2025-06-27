@@ -1,7 +1,7 @@
 <script>
 	import { LogOutIcon } from 'lucide-svelte';
 	import { signIn, signOut } from '@auth/sveltekit/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Logo from '$lib/components/Logo.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
@@ -38,8 +38,8 @@
 	/** @type {ReturnType<CachedImage> | undefined} */
 	let cachedImage = $state(CachedImage());
 
-	if ($page.data.session?.user?.image) {
-		cachedImage.setImg($page.data.session?.user?.image);
+	if (page.data.session?.user?.image) {
+		cachedImage.setImg(page.data.session?.user?.image);
 	}
 
 	// const hasSeenPrivacyUpdateNotice = globalThis?.localStorage
@@ -67,7 +67,7 @@
 
 		<div class="mt-auto flex items-end overflow-hidden">
 			<div class="flex items-center justify-end overflow-hidden">
-				{#if $page.data.session?.user}
+				{#if page.data.session?.user}
 					<div class="violet flex max-w-20 gap-2 overflow-hidden p-2 lg:max-w-40">
 						{#if cachedImage}
 							<img
@@ -78,7 +78,7 @@
 						{/if}
 						<span
 							class="overflow-hidden text-ellipsis font-medium"
-							title={$page.data.session.user.name}>{$page.data.session.user.name}</span
+							title={page.data.session.user.name}>{page.data.session.user.name}</span
 						>
 					</div>
 
