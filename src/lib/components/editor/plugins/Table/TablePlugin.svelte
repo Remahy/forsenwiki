@@ -36,13 +36,13 @@
 
 	/**
 	 * @typedef Props
-	 * @property {boolean} hasCellMerge
-	 * @property {boolean} hasCellBackgroundColor
-	 * @property {boolean} hasTabHandler
+	 * @property {boolean} [hasCellMerge]
+	 * @property {boolean} [hasCellBackgroundColor]
+	 * @property {boolean} [hasTabHandler]
 	 */
 
 	/** @type {Props} */
-	let { hasCellMerge, hasCellBackgroundColor, hasTabHandler } = $props();
+	let { hasCellMerge = false, hasCellBackgroundColor = false, hasTabHandler = false } = $props();
 
 	/**
 	 * @typedef {import('lexical').NodeKey} NodeKey
