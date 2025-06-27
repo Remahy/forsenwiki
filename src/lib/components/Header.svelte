@@ -21,7 +21,7 @@
 		signOut({ redirect: true });
 	};
 
-	function CachedImage () {
+	function CachedImage() {
 		const image = new URL('', 'https://wsrv.nl');
 
 		return {
@@ -32,7 +32,7 @@
 				image.searchParams.set('url', url);
 			},
 			image,
-		}
+		};
 	}
 
 	/** @type {ReturnType<CachedImage> | undefined} */
@@ -54,7 +54,7 @@
 				<Logo width="64" height="64" />
 				<div class="flex flex-col justify-end">
 					<small>Community</small>
-					<h1 class="font-semibold leading-none">Forsen<br />Wiki</h1>
+					<h1 class="leading-none font-semibold">Forsen<br />Wiki</h1>
 				</div>
 			</div>
 		</a>
@@ -77,7 +77,7 @@
 							/>
 						{/if}
 						<span
-							class="overflow-hidden text-ellipsis font-medium"
+							class="overflow-hidden font-medium text-ellipsis"
 							title={page.data.session.user.name}>{page.data.session.user.name}</span
 						>
 					</div>
