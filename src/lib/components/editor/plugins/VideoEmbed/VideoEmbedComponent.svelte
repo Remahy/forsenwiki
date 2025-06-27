@@ -1,4 +1,4 @@
-<script module>
+<script>
 	/** @type {import('lexical').LexicalCommand<MouseEvent>} */
 	export const RIGHT_CLICK_VIDEOEMBED_COMMAND = createCommand('RIGHT_CLICK_VIDEOEMBED_COMMAND');
 
@@ -61,8 +61,8 @@
 		editor
 	} = $props();
 
-	$: heightCss = height === 'inherit' ? 'inherit' : height + 'px';
-	$: widthCss = width === 'inherit' ? 'inherit' : width + 'px';
+	let heightCss = $derived(height === 'inherit' ? 'inherit' : height + 'px');
+	let widthCss = $derived(width === 'inherit' ? 'inherit' : width + 'px');
 
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);
@@ -71,7 +71,7 @@
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
 	let isResizing = $state(false);
 
-	let isFocused = $derived($isSelected || isResizing);
+	let isFocused = $derived(isSelected || isResizing);
 	let parsedSrc = $derived(getURLAndTitle(platform, src, DOMAIN));
 	let url = $derived(parsedSrc.url);
 	let title = $derived(parsedSrc.title);
@@ -96,7 +96,7 @@
 
 	/** @param {KeyboardEvent} payload */
 	const onDelete = (payload) => {
-		if ($isSelected && isNodeSelection(getSelection())) {
+		if (isSelected && isNodeSelection(getSelection())) {
 			/** @type {KeyboardEvent} */
 			const event = payload;
 			event.preventDefault();
@@ -109,20 +109,20 @@
 		return false;
 	};
 
-	const onEnter = () => {
-		const latestSelection = getSelection();
-		if (
-			$isSelected &&
-			isNodeSelection(latestSelection) &&
-			latestSelection.getNodes().length === 1
-		) {
-		}
-		return false;
-	};
+	// const onEnter = () => {
+	// 	const latestSelection = getSelection();
+	// 	if (
+	// 		isSelected &&
+	// 		isNodeSelection(latestSelection) &&
+	// 		latestSelection.getNodes().length === 1
+	// 	) {
+	// 	}
+	// 	return false;
+	// };
 
 	const onEscape = () => {
 		clearSelection(editor);
-		$isSelected = false;
+		isSelected.set(false);
 		editor.update(() => node.selectNext());
 		return false;
 	};
@@ -182,7 +182,7 @@
 			editor.registerCommand(RIGHT_CLICK_VIDEOEMBED_COMMAND, onClick, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
-			editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
+			// editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_ESCAPE_COMMAND, onEscape, COMMAND_PRIORITY_LOW)
 		);
 
@@ -219,7 +219,7 @@
 				allowFullScreen={true}
 				{title}
 				style={getIframeStyle(width, height, format)}
-			/>
+			></iframe>
 		</div>
 		{#if resizable && isNodeSelection(selection) && isFocused}
 			<ImageResizer
