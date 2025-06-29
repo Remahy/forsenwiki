@@ -24,12 +24,11 @@
 
 	const validValues = Object.keys(ALIGNMENT);
 
-	/** @type {HTMLSelectElement} */
-	let alignmentElement;
+	/** @type {HTMLSelectElement | null} */
+	let alignmentElement = $state(null);
+	let currentAlignment = $state('');
 
-	let currentAlignment = '';
-
-	const editor = getEditor();
+	let editor = $derived(getEditor?.());
 
 	/** @param {Event} e */
 	const alignment = (e) => {
@@ -82,11 +81,13 @@
 			)
 		);
 	});
+
+	const SvelteComponent = $derived(alignmentIcons[currentAlignment] || alignmentIcons.default);
 </script>
 
 <div class="flex items-center gap-2 pl-2">
 	<div>
-		<svelte:component this={alignmentIcons[currentAlignment] || alignmentIcons.default} />
+		<SvelteComponent />
 	</div>
 
 	<Select
@@ -94,7 +95,7 @@
 		bind:ref={alignmentElement}
 		on:change={alignment}
 		bind:value={currentAlignment}
-		on:click={() => alignmentElement.dispatchEvent(new Event('change'))}
+		on:click={() => alignmentElement?.dispatchEvent(new Event('change'))}
 		class="!-ml-10 !px-10"
 	>
 		<option value="mixed" hidden>Mixed</option>

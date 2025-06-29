@@ -11,7 +11,7 @@ const SUPPORTED_URL_PROTOCOLS = new Set([
 /**
  * @param {string} url
  */
-export function sanitizeUrl(url) {
+export function sanitizeUrl(url = '') {
     try {
         const parsedUrl = new URL(url);
 

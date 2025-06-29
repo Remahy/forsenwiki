@@ -13,10 +13,11 @@
 	import EditorButton from '../EditorButton.svelte';
 	import EditLinkButton from './EditLinkButton.svelte';
 
-	$: isBold = false;
-	$: isItalic = false;
+	let isBold = $state(false);
+	
+	let isItalic = $state(false);
 
-	const editor = getEditor();
+	let editor = $derived(getEditor?.());
 
 	const updateToolbar = () => {
 		editor.read(() => {

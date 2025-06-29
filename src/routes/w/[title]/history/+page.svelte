@@ -7,15 +7,14 @@
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 
-	export let data;
+	let { data } = $props();
 
 	const { title, rawTitle, postUpdates, totalByteLength } = data;
 
-	let to = 1;
-	let from = 0;
+	let to = $state(1);
+	let from = $state(0);
 
-	$: link =
-		postUpdates.length > 1 ? `history/${postUpdates[to].id}..${postUpdates[from].id}` : null;
+	let link = $derived(postUpdates.length > 1 ? `history/${postUpdates[to].id}..${postUpdates[from].id}` : null);
 </script>
 
 <svelte:head>

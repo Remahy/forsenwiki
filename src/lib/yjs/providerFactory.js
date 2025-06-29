@@ -2,7 +2,7 @@ import { getContext } from 'svelte';
 import { base64ToUint8Array } from 'uint8array-extras';
 import { IndexeddbPersistence } from 'y-indexeddb';
 
-import { Y } from './index.mjs';
+import { Y } from './index.js';
 
 const noop = () => {};
 

@@ -1,7 +1,13 @@
 <script>
 	const aspectRatio = 2400 / 2800;
 
-	export let size = '24';
+	/**
+	 * @typedef {Object} Props
+	 * @property {string} [size]
+	 */
+
+	/** @type {Props} */
+	let { size = '24' } = $props();
 
 	const height = Number(size) / aspectRatio;
 </script>

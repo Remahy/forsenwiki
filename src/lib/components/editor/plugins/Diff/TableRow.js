@@ -1,4 +1,4 @@
-import { TableRowNode } from '@lexical/table';
+import { $createTableRowNode, TableRowNode } from '@lexical/table';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
@@ -15,11 +15,6 @@ export class DiffTableRowNode extends TableRowNode {
 	 */
 	constructor(node, key) {
 		super(node.getHeight(), key);
-
-		this.setDirection(node.getDirection());
-		this.setFormat(node.getFormatType());
-		this.setIndent(node.getIndent());
-		this.setStyle(node.getStyle());
 
 		// @ts-ignore
 		this.___change = node.___change;
@@ -40,12 +35,10 @@ export class DiffTableRowNode extends TableRowNode {
 	 * @param {import('@lexical/table').SerializedTableRowNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const tableRow = TableRowNode.importJSON(serializedNode);
+		const node = $createTableRowNode().updateFromJSON(serializedNode);
 
 		// @ts-ignore
-		tableRow.___change = serializedNode.___change;
-
-		const node = new DiffTableRowNode(tableRow);
+		node.___change = serializedNode.___change;
 
 		return node;
 	}

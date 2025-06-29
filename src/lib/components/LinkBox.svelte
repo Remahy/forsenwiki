@@ -1,17 +1,19 @@
 <script>
 	import Box from './Box.svelte';
 
-	/** @type {string} */
-	export let href;
+	/**
+	 * @typedef {Object} Props
+	 * @property {string} href
+	 * @property {string} [class]
+	 * @property {import('svelte').Snippet} [children]
+	 */
 
-	/** @type {string} */
-	let className = '';
-
-	export { className as class };
+	/** @type {Props} */
+	let { href, class: className = '', children } = $props();
 </script>
 
 <a {href}>
 	<Box class="link-box {className}">
-		<slot />
+		{@render children?.()}
 	</Box>
 </a>

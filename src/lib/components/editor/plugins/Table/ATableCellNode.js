@@ -67,8 +67,8 @@ export class ATableCellNode extends TableCellNode {
 }
 
 /**
- * @param {TableCellHeaderStates} headerState
- * @param {number} colSpan
+ * @param {TableCellHeaderStates} [headerState]
+ * @param {number} [colSpan]
  * @param {number} [width]
  * @param {string} [key]
  */

@@ -5,7 +5,7 @@
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 
-	$: randomIsSpinning = false;
+	let randomIsSpinning = $derived(false);
 
 	const hasRandomParameter = $page.url.searchParams.has('random');
 </script>

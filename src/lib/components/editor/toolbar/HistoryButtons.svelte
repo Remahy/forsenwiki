@@ -14,10 +14,10 @@
 	import { ctrlKey } from '$lib/environment/environment';
 	import EditorButton from './EditorButton.svelte';
 
-	let canUndo = false;
-	let canRedo = false;
+	let canUndo = $state(false);
+	let canRedo = $state(false);
 
-	const editor = getEditor();
+	let editor = $derived(getEditor?.());
 
 	const undo = () => {
 		editor.dispatchCommand(UNDO_COMMAND, undefined);

@@ -1,9 +1,7 @@
-<script context="module">
+<script>
 	/** @type {import('lexical').LexicalCommand<MouseEvent>} */
 	export const RIGHT_CLICK_VIDEOEMBED_COMMAND = createCommand('RIGHT_CLICK_VIDEOEMBED_COMMAND');
-</script>
 
-<script>
 	// Based on umaranis' svelte-lexical
 	import '../Image/Image.css';
 
@@ -37,39 +35,46 @@
 		VideoEmbedNode,
 	} from './VideoEmbed';
 
-	/** @type {VideoEmbedNode} */
-	export let node;
-	/** @type {string} */
-	export let src;
-	/** @type {import('./VideoEmbed').SupportedPlatforms} */
-	export let platform;
-	/** @type {import('lexical').NodeKey} */
-	export let nodeKey;
-	/** @type {'inherit' | number} */
-	export let height;
-	/** @type {'inherit' | number} */
-	export let width;
-	/** @type {boolean} */
-	export let resizable;
-	/** @type {import('lexical').ElementFormatType} */
-	export let format;
-	/** @type {import('lexical').LexicalEditor} */
-	export let editor;
+	/**
+	 * @typedef {Object} Props
+	 * @property {VideoEmbedNode} node
+	 * @property {string} src
+	 * @property {import('./VideoEmbed').SupportedPlatforms} platform
+	 * @property {import('lexical').NodeKey} nodeKey
+	 * @property {'inherit' | number} height
+	 * @property {'inherit' | number} width
+	 * @property {boolean} resizable
+	 * @property {import('lexical').ElementFormatType} format
+	 * @property {import('lexical').LexicalEditor} editor
+	 */
 
-	$: heightCss = height === 'inherit' ? 'inherit' : height + 'px';
-	$: widthCss = width === 'inherit' ? 'inherit' : width + 'px';
+	/** @type {Props} */
+	let {
+		node,
+		src,
+		platform,
+		nodeKey,
+		height,
+		width,
+		resizable,
+		format,
+		editor
+	} = $props();
+
+	let heightCss = $derived(height === 'inherit' ? 'inherit' : height + 'px');
+	let widthCss = $derived(width === 'inherit' ? 'inherit' : width + 'px');
 
 	/** @type {BaseSelection | null} */
-	let selection = null;
+	let selection = $state(null);
 	/** @type {HTMLDivElement | null} */
-	let embedRef;
+	let embedRef = $state(null);
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
-	let isResizing = false;
+	let isResizing = $state(false);
 
-	$: isFocused = $isSelected || isResizing;
-	$: parsedSrc = getURLAndTitle(platform, src, DOMAIN);
-	$: url = parsedSrc.url;
-	$: title = parsedSrc.title;
+	let isFocused = $derived(isSelected || isResizing);
+	let parsedSrc = $derived(getURLAndTitle(platform, src, DOMAIN));
+	let url = $derived(parsedSrc.url);
+	let title = $derived(parsedSrc.title);
 
 	/**
 	 * @param {MouseEvent} event
@@ -91,7 +96,7 @@
 
 	/** @param {KeyboardEvent} payload */
 	const onDelete = (payload) => {
-		if ($isSelected && isNodeSelection(getSelection())) {
+		if (isSelected && isNodeSelection(getSelection())) {
 			/** @type {KeyboardEvent} */
 			const event = payload;
 			event.preventDefault();
@@ -104,20 +109,20 @@
 		return false;
 	};
 
-	const onEnter = () => {
-		const latestSelection = getSelection();
-		if (
-			$isSelected &&
-			isNodeSelection(latestSelection) &&
-			latestSelection.getNodes().length === 1
-		) {
-		}
-		return false;
-	};
+	// const onEnter = () => {
+	// 	const latestSelection = getSelection();
+	// 	if (
+	// 		isSelected &&
+	// 		isNodeSelection(latestSelection) &&
+	// 		latestSelection.getNodes().length === 1
+	// 	) {
+	// 	}
+	// 	return false;
+	// };
 
 	const onEscape = () => {
 		clearSelection(editor);
-		$isSelected = false;
+		isSelected.set(false);
 		editor.update(() => node.selectNext());
 		return false;
 	};
@@ -177,7 +182,7 @@
 			editor.registerCommand(RIGHT_CLICK_VIDEOEMBED_COMMAND, onClick, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
-			editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
+			// editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_ESCAPE_COMMAND, onEscape, COMMAND_PRIORITY_LOW)
 		);
 
@@ -214,7 +219,7 @@
 				allowFullScreen={true}
 				{title}
 				style={getIframeStyle(width, height, format)}
-			/>
+			></iframe>
 		</div>
 		{#if resizable && isNodeSelection(selection) && isFocused}
 			<ImageResizer

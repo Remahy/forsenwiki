@@ -1,7 +1,7 @@
 <script>
 	import { LogOutIcon } from 'lucide-svelte';
 	import { signIn, signOut } from '@auth/sveltekit/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Logo from '$lib/components/Logo.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
@@ -9,7 +9,7 @@
 	// import Box from './Box.svelte';
 	// import Link from './Link.svelte';
 
-	let isLoading = false;
+	let isLoading = $state(false);
 
 	const signInWrapper = () => {
 		isLoading = true;
@@ -21,12 +21,25 @@
 		signOut({ redirect: true });
 	};
 
-	/** @type {URL | undefined} */
-	let cachedImage;
+	function CachedImage() {
+		const image = new URL('', 'https://wsrv.nl');
 
-	if ($page.data.session?.user?.image) {
-		cachedImage = new URL('', 'https://wsrv.nl/');
-		cachedImage.searchParams.set('url', $page.data.session?.user?.image);
+		return {
+			/**
+			 * @param {string} url
+			 */
+			setImg: (url) => {
+				image.searchParams.set('url', url);
+			},
+			image,
+		};
+	}
+
+	/** @type {ReturnType<CachedImage> | undefined} */
+	let cachedImage = $state(CachedImage());
+
+	if (page.data.session?.user?.image) {
+		cachedImage.setImg(page.data.session?.user?.image);
 	}
 
 	// const hasSeenPrivacyUpdateNotice = globalThis?.localStorage
@@ -41,7 +54,7 @@
 				<Logo width="64" height="64" />
 				<div class="flex flex-col justify-end">
 					<small>Community</small>
-					<h1 class="font-semibold leading-none">Forsen<br />Wiki</h1>
+					<h1 class="leading-none font-semibold">Forsen<br />Wiki</h1>
 				</div>
 			</div>
 		</a>
@@ -54,18 +67,18 @@
 
 		<div class="mt-auto flex items-end overflow-hidden">
 			<div class="flex items-center justify-end overflow-hidden">
-				{#if $page.data.session?.user}
+				{#if page.data.session?.user}
 					<div class="violet flex max-w-20 gap-2 overflow-hidden p-2 lg:max-w-40">
 						{#if cachedImage}
 							<img
-								src={cachedImage.toString()}
+								src={cachedImage.image.toString()}
 								class="-my-2 -ml-2 hidden h-10 w-auto lg:block"
 								alt="Twitch avatar"
 							/>
 						{/if}
 						<span
-							class="overflow-hidden text-ellipsis font-medium"
-							title={$page.data.session.user.name}>{$page.data.session.user.name}</span
+							class="overflow-hidden font-medium text-ellipsis"
+							title={page.data.session.user.name}>{page.data.session.user.name}</span
 						>
 					</div>
 
@@ -104,7 +117,7 @@
 	<!--
 	{#if !hasSeenPrivacyUpdateNotice}
 		<Box
-			class="!rounded-none !bg-yellow-900 !bg-opacity-20 dark:!bg-yellow-300 dark:!bg-opacity-20"
+			class="!rounded-none !bg-yellow-900/20 dark:!bg-yellow-300/20"
 		>
 			<div class="container mx-auto flex items-center gap-4 p-4">
 				<ScaleIcon class="w-8 h-8 hidden lg:block"/>

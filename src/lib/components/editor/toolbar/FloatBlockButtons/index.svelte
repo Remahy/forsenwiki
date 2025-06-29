@@ -8,7 +8,7 @@
 	import { $isFloatBlockNode as isFloatBlockNode } from '$lib/lexical/custom';
 	import EditFloatBlock from './EditFloatBlock.svelte';
 
-	/** @type {import("$lib/lexical/custom").FloatBlockNode | null} */
+	/** @type {import('$lib/lexical/custom').FloatBlockNode | null} */
 	let selectedFloatBlockNode = null;
 
 	const editor = getEditor();

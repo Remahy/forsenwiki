@@ -1,6 +1,6 @@
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
-import { Y } from './index.mjs';
+import { Y } from './index.js';
 
 /**
  * @param {YDoc} yDoc

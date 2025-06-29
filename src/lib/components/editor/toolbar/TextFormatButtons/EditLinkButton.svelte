@@ -19,12 +19,15 @@
 	import EditLinkButtonModal from './EditLinkButtonModal.svelte';
 	import { mergeRegister } from '@lexical/utils';
 
-	$: hasLink = false;
-	$: url = '';
-	$: attrs = {};
-	$: isInternal = false;
+	let hasLink = $state(false);
+	
+	let url = $state('');
+	
+	let attrs = $state({});
+	
+	let isInternal = $state(false);
 
-	const editor = getEditor();
+	let editor = $derived(getEditor?.());
 
 	const link = () => {
 		if (!hasLink) {
@@ -44,7 +47,7 @@
 			hasLink,
 			/**
 			 * @param {string | null} dUrl
-			 * @param {import("@lexical/link").LinkAttributes} [dAttrs]
+			 * @param {import('@lexical/link').LinkAttributes} [dAttrs]
 			 */
 			onSubmit: (dUrl, dAttrs) => {
 				editor.update(() => {

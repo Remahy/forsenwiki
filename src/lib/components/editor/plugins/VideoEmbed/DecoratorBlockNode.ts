@@ -10,13 +10,13 @@ import type {
 	EditorConfig,
 	ElementFormatType,
 	LexicalNode,
+	LexicalUpdateJSON,
 	NodeKey,
 	SerializedLexicalNode,
 	Spread,
 } from 'lexical';
 
 import { DecoratorNode } from 'lexical';
-import { SvelteComponent, type ComponentProps } from 'svelte';
 import { getFormat, getFormatType, ELEMENT_FORMAT_TO_TYPE } from '../../utils/elementUtils';
 
 export const decoratorFormatToMarginStyle = (type: ElementFormatType) => {
@@ -39,33 +39,25 @@ export const decoratorFormatToMarginStyle = (type: ElementFormatType) => {
 };
 
 export type SerializedDecoratorBlockNode = Spread<
-	{
-		format: ElementFormatType;
-		direction: null | 'ltr' | 'rtl';
-	},
+	{ format: ElementFormatType; direction: null | 'ltr' | 'rtl' },
 	SerializedLexicalNode
 >;
 
-type DecoratorType = {
-	componentClass: typeof SvelteComponent<any>;
-	props: ComponentProps<any>;
-};
-
-export class DecoratorBlockNode extends DecoratorNode<DecoratorType> {
+export class DecoratorBlockNode extends DecoratorNode<unknown> {
 	__format: keyof typeof ELEMENT_FORMAT_TO_TYPE = 0;
 	__dir: null | 'ltr' | 'rtl' = null;
 
 	constructor(format?: ElementFormatType, key?: NodeKey) {
 		super(key);
-
 		if (format) {
 			this.__format = getFormat(format);
 		}
 	}
 
-	setFormat(type: ElementFormatType): void {
+	setFormat(type: ElementFormatType) {
 		const self = this.getWritable();
 		self.__format = getFormat(type);
+		return self;
 	}
 
 	setDirection(direction: null | 'ltr' | 'rtl') {
@@ -90,16 +82,24 @@ export class DecoratorBlockNode extends DecoratorNode<DecoratorType> {
 	}
 
 	exportJSON(): SerializedDecoratorBlockNode {
-		return {
-			direction: this.getDirection(),
-			format: this.getFormatType(),
-			type: 'decorator-block',
-			version: 1,
-		};
+		return { ...super.exportJSON(), direction: this.getDirection(), format: this.getFormatType() };
+	}
+
+	updateFromJSON(serializedNode: LexicalUpdateJSON<SerializedDecoratorBlockNode>) {
+		return super
+			.updateFromJSON(serializedNode)
+			.setFormat(serializedNode.format || '')
+			.setDirection(serializedNode.direction);
 	}
 
 	canIndent(): false {
 		return false;
+	}
+
+	// This DOM is for the editor.
+	createDOM(_: EditorConfig): HTMLElement {
+		const div = document.createElement('div');
+		return div;
 	}
 
 	updateDOM(): false {
@@ -108,12 +108,6 @@ export class DecoratorBlockNode extends DecoratorNode<DecoratorType> {
 
 	isInline(): false {
 		return false;
-	}
-
-	// This DOM is for the editor.
-	createDOM(_: EditorConfig): HTMLElement {
-		const div = document.createElement('div');
-		return div;
 	}
 }
 

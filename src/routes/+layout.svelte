@@ -6,7 +6,15 @@
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 
-	import '../app.pcss';
+  import "../app.css";
+
+	/**
+	 * @typedef {Object} Props
+	 * @property {import('svelte').Snippet} [children]
+	 */
+
+	/** @type {Props} */
+	let { children } = $props();
 
 	/** @type {ComposerWritable} */
 	setContext('COMPOSER', writable(null));
@@ -17,7 +25,7 @@
 <div class="app flex min-h-screen flex-col">
 	<Header />
 
-	<slot></slot>
+	{@render children?.()}
 
 	<Footer />
 </div>

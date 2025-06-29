@@ -61,7 +61,7 @@ export function getSelectedElements() {
 
 // from svelte-lexical
 /**
- * @param {import("lexical").RangeSelection} selection
+ * @param {import('lexical').RangeSelection} selection
  */
 export function getSelectedNode(selection) {
 	const anchor = selection.anchor;
@@ -107,6 +107,7 @@ export function clearSelection(editor) {
 		}
 	});
 }
+
 /**
  * Stores `isSelected` state for a SvelteComponent node.
  * Rather than updating the component state directly, it updates the editor node selection and receives updates from the editor.
@@ -115,9 +116,11 @@ export function clearSelection(editor) {
  */
 export function createNodeSelectionStore(editor, nodeKey) {
 	const { subscribe, set /*, update*/ } = writable(false);
+
 	editor.registerUpdateListener(() => {
 		set(isNodeSelected(editor, nodeKey));
 	});
+
 	return {
 		subscribe,
 		/** @param {boolean} selected */

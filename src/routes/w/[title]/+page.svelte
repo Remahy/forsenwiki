@@ -13,7 +13,7 @@
 	import RandomButton from '$lib/components/RandomButton.svelte';
 	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
 
-	export let data;
+	let { data } = $props();
 
 	const {
 		post: { rawTitle, title, createdTimestamp, lastUpdated, outRelations, id },

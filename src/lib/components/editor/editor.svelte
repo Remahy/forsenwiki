@@ -1,4 +1,6 @@
 <script>
+	import { run } from 'svelte/legacy';
+
 	import { getContext, onMount } from 'svelte';
 	import isUrl from 'is-url';
 	import {
@@ -21,17 +23,25 @@
 	import TablePlugin from './plugins/Table/TablePlugin.svelte';
 	import FloatBlockPlugin from './plugins/FloatBlock/FloatBlockPlugin.svelte';
 
-	export let id;
-	export let update;
-	/** @type {string | undefined} */
-	export let initialUpdate = undefined;
+	/**
+	 * @typedef {Object} Props
+	 * @property {any} id
+	 * @property {any} update
+	 * @property {any} [initialUpdate]
+	 */
+
+	/** @type {Props} */
+	let { id, update, initialUpdate = null } = $props();
 
 	/** @type {any} */
 	const initialConfig = articleConfig(editableTheme, EDITOR_IS_EDITABLE, null);
 
 	/** @type {Composer | null} */
-	let composer = null;
-	$: getContext('COMPOSER').set(composer);
+	let composer = $state(null);
+
+	run(() => {
+		getContext('COMPOSER').set(composer);
+	});
 
 	const providerFactory = instantiateProvider(update, initialUpdate);
 
@@ -44,7 +54,7 @@
 </script>
 
 <Composer {initialConfig} bind:this={composer}>
-	<div class="editor-shell flex grow flex-col overflow-hidden">
+	<div class="editor-shell w-full">
 		<RichTextPlugin />
 
 		<ListPlugin />
@@ -67,8 +77,8 @@
 			<Toolbar />
 		</div>
 
-		<article class="editor-border flex grow flex-col">
-			<div class="prose relative flex max-w-[unset] grow overflow-auto p-2 dark:prose-invert">
+		<article class="editor-border flex grow flex-col min-h-96">
+			<div class="prose dark:prose-invert relative flex max-w-[unset] grow overflow-auto p-2">
 				<ContentEditable className="grow m-0 p-0 border-0 outline-0" />
 			</div>
 		</article>

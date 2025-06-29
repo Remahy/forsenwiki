@@ -1,10 +1,11 @@
 import { VideoEmbedNode } from '$lib/lexical/custom';
+import { $createVideoEmbedNode } from '../VideoEmbed/VideoEmbed';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
- * @typedef {import("lexical").NodeKey} NodeKey
- * @typedef {import("lexical").LexicalEditor} LexicalEditor
- * @typedef {import("lexical").EditorConfig} EditorConfig
+ * @typedef {import('lexical').NodeKey} NodeKey
+ * @typedef {import('lexical').LexicalEditor} LexicalEditor
+ * @typedef {import('lexical').EditorConfig} EditorConfig
  */
 
 export class DiffVideoEmbedNode extends VideoEmbedNode {
@@ -46,12 +47,11 @@ export class DiffVideoEmbedNode extends VideoEmbedNode {
 	 * @param {import('../VideoEmbed/VideoEmbed').SerializedVideoEmbedNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const VideoEmbed = VideoEmbedNode.importJSON(serializedNode);
+		const node = $createVideoEmbedNode().updateFromJSON(serializedNode);
 
 		// @ts-ignore
-		VideoEmbed.___change = serializedNode.___change;
+		node.___change = serializedNode.___change;
 
-		const node = new DiffVideoEmbedNode(VideoEmbed);
 		return node;
 	}
 

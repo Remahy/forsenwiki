@@ -16,30 +16,32 @@
 	import Container from '$lib/components/Container.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
 	import ResetCacheButton from '$lib/components/editor/footer/ResetCacheButton.svelte';
+	import { localStore } from '$lib/localStore.svelte';
 
 	const { initialUpdate } = $page.data;
 
 	/** @type {Error | null} */
-	let error = null;
+	let error = $state(null);
 
-	let title = '';
+	// svelte-ignore non_reactive_update
+	let title = localStore('lastTitle', '');
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
-	$: composer = $c;
-	$: editor = composer?.getEditor?.();
-	$: canEdit = editor?.isEditable();
+	let composer = $derived($c);
+	let editor = $derived(composer?.getEditor?.());
+	let canEdit = $derived(editor?.isEditable());
 
-	$: titleError = title.length === 0 ? new Error('No title set!') : null;
+	let titleError = $derived(title.value.length === 0 ? new Error('No title set!') : null);
 
 	const y = getContext('YDOC');
-	$: yjsDocMap = $y;
+	let yjsDocMap = $derived($y);
 
 	/** @type {Writable<YDOCPERSISTENCE>} */
 	const p = getContext('YDOCPERSISTENCE');
-	$: persistence = $p;
+	let persistence = $derived($p);
 
-	let isUploading = false;
+	let isUploading = $state(false);
 
 	const unsetError = () => {
 		error = null;
@@ -68,11 +70,11 @@
 			try {
 				await validateArticle(editor);
 
-				if (!title) {
+				if (!title.value) {
 					throw new Error('No title set.');
 				}
 
-				res = await createArticle(title, yjsDocMap);
+				res = await createArticle(title.value, yjsDocMap);
 			} catch (err) {
 				error = new Error(err?.toString());
 			} finally {
@@ -85,11 +87,12 @@
 
 			if (res.status === 200) {
 				persistence.clearData();
+				title.value = '';
 
 				const json = await res.json();
-				const { title /* postUpdate: { id } */ } = json;
+				const { title: serverUrlTitle /* postUpdate: { id } */ } = json;
 
-				goto(`/w/${title}`);
+				goto(`/w/${serverUrlTitle}`);
 			} else if (res.status >= 400) {
 				const json = await res.json();
 				error = json;
@@ -102,6 +105,7 @@
 
 		try {
 			await resetIndexedDb('new');
+			title.value = '';
 			isUploading = false;
 			window.location.reload();
 		} catch (err) {
@@ -145,10 +149,10 @@
 	<label>
 		<strong>Title <small>(Must be unique)</small></strong>
 		<input
-			on:input={unsetError}
+			oninput={unsetError}
 			required
-			class="w-full rounded p-2 {titleError && '!bg-red-200'} input-color"
-			bind:value={title}
+			class="w-full rounded-sm p-2 {titleError && '!bg-red-200'} input-color"
+			bind:value={title.value}
 		/>
 		{#if titleError}
 			<strong class="text-red-600 dark:text-red-500">{titleError.message}</strong>
@@ -163,7 +167,7 @@
 
 	{#if error}
 		<Box class="flex items-center !bg-red-200 p-2 dark:text-black">
-			<p>{error.message}</p>
+			<p>{JSON.stringify(error)}{error.message}</p>
 		</Box>
 	{/if}
 

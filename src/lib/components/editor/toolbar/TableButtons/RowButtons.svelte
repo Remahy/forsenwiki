@@ -19,10 +19,15 @@
 	import Button from '$lib/components/Button.svelte';
 	import EditorButton from '../EditorButton.svelte';
 
-	/** @type {import("@lexical/table").TableNode | null} */
-	export let selectedTable = null;
+	/**
+	 * @typedef Props
+	 * @property {import('@lexical/table').TableNode | null} selectedTable
+	 */
 
-	$: isRowHeader = false;
+	/** @type {Props} */
+	let {selectedTable} = $props();
+
+	let isRowHeader = $state(false);
 
 	const editor = getEditor();
 
@@ -132,7 +137,7 @@
 	</div>
 
 	<div
-		class="forsen-wiki-theme-border flex items-center rounded border bg-violet-900 text-sm text-white dark:bg-opacity-50"
+		class="forsen-wiki-theme-border flex items-center rounded-sm border bg-violet-900 dark:bg-violet-900/50 text-sm text-white"
 	>
 		<div class="flex items-center gap-2 p-2" title="Add row">
 			<PlusIcon size="16" />

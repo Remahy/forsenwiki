@@ -34,17 +34,23 @@
 	import { modal } from '$lib/stores/modal';
 	import InsertTableDialog from '../../toolbar/TableButtons/InsertTableDialog.svelte';
 
-	export let hasCellMerge = true;
-	export let hasCellBackgroundColor = true;
-	export let hasTabHandler = true;
+	/**
+	 * @typedef Props
+	 * @property {boolean} [hasCellMerge]
+	 * @property {boolean} [hasCellBackgroundColor]
+	 * @property {boolean} [hasTabHandler]
+	 */
+
+	/** @type {Props} */
+	let { hasCellMerge = false, hasCellBackgroundColor = false, hasTabHandler = false } = $props();
 
 	/**
-	 * @typedef {import("lexical").NodeKey} NodeKey
-	 * @typedef {import("lexical").LexicalEditor} LexicalEditor
+	 * @typedef {import('lexical').NodeKey} NodeKey
+	 * @typedef {import('lexical').LexicalEditor} LexicalEditor
 	 *
-	 * @typedef {import("@lexical/table").HTMLTableElementWithWithTableSelectionState} HTMLTableElementWithWithTableSelectionState
-	 * @typedef {import("@lexical/table").TableObserver} TableObserver
-	 * @typedef {import("@lexical/table").InsertTableCommandPayloadHeaders} InsertTableCommandPayloadHeaders
+	 * @typedef {import('@lexical/table').HTMLTableElementWithWithTableSelectionState} HTMLTableElementWithWithTableSelectionState
+	 * @typedef {import('@lexical/table').TableObserver} TableObserver
+	 * @typedef {import('@lexical/table').InsertTableCommandPayloadHeaders} InsertTableCommandPayloadHeaders
 	 */
 
 	/** @type {LexicalEditor} */

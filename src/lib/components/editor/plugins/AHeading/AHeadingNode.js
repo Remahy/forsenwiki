@@ -1,5 +1,6 @@
 import { $applyNodeReplacement } from 'lexical';
 import { HeadingNode } from '$lib/lexical/index';
+import { $createHeadingNode } from 'svelte-lexical';
 
 export class AHeadingNode extends HeadingNode {
 	/**
@@ -23,11 +24,7 @@ export class AHeadingNode extends HeadingNode {
 
 	/** @param {import('@lexical/rich-text').SerializedHeadingNode} serializedNode */
 	static importJSON(serializedNode) {
-		const node = new AHeadingNode(serializedNode.tag);
-
-		node.setDirection(serializedNode.direction);
-		node.setFormat(serializedNode.format);
-		node.setIndent(serializedNode.indent);
+		const node = $createHeadingNode().updateFromJSON(serializedNode);
 
 		return node;
 	}

@@ -15,11 +15,11 @@
 	const id = $page.params.id;
 
 	/** @type {string} */
-	let name = result.name;
+	let name = $state(result.name);
 
 	/** @type {Error | null} */
-	let error = null;
-	let isUpdating = false;
+	let error = $state(null);
+	let isUpdating = $state(false);
 
 	const updateName = async () => {
 		error = null;

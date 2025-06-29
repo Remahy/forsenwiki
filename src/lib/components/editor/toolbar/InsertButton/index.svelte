@@ -10,12 +10,12 @@
 	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 	import { INSERT_FLOATBLOCK_COMMAND } from '../../plugins/FloatBlock/FloatBlockPlugin.svelte';
 
-	/** @type {HTMLSelectElement} */
-	let insertElementTypeElement;
+	/** @type {HTMLSelectElement | null} */
+	let insertElementTypeElement = $state(null);
 
-	let currentInsertElementType = '';
+	let currentInsertElementType = $state('');
 
-	const editor = getEditor();
+	let editor = $derived(getEditor());
 
 	const insertImage = () => {
 		editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
@@ -80,14 +80,19 @@
 			const element = insertElementTypeOptions.find(({ value: v }) => v === value);
 
 			if (!element) {
-				insertElementTypeElement.value = '';
+				if (insertElementTypeElement) {
+					insertElementTypeElement.value = '';
+				}
+
 				return;
 			}
 
 			element.insertFunc();
 		}
 
-		insertElementTypeElement.value = '';
+		if (insertElementTypeElement) {
+			insertElementTypeElement.value = '';
+		}
 	};
 </script>
 

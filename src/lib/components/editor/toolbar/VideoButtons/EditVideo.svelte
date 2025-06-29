@@ -9,28 +9,30 @@
 	import { DOMAIN } from '$lib/environment/environment';
 	import { getURLAndTitle } from '../../plugins/VideoEmbed/VideoEmbed';
 
-	/** @type {import("$lib/lexical/custom").VideoEmbedNode} */
-	export let selectedVideoEmbedNode;
-
-	const editor = getEditor();
-
-	/** @type {HTMLSelectElement} */
-	let platformElement;
-
-	$: currentPlatform = selectedVideoEmbedNode.__platform;
-	$: currentURL = selectedVideoEmbedNode.__src;
-
-	$: currentWidth = selectedVideoEmbedNode.__width;
-	$: currentHeight = selectedVideoEmbedNode.__height;
-
-	$: url = currentURL;
-
-	$: width = currentWidth;
-	$: height = currentHeight;
-
 	/**
-	 * @type {{[x: string]: typeof import('svelte').SvelteComponent<any>}}
+	 * @typedef {Object} Props
+	 * @property {import('$lib/lexical/custom').VideoEmbedNode} selectedVideoEmbedNode
 	 */
+
+	/** @type {Props} */
+	let { selectedVideoEmbedNode = $bindable() } = $props();
+
+	let editor = $derived(getEditor?.());
+
+	/** @type {HTMLSelectElement | null} */
+	let platformElement = $state(null);
+
+	let currentPlatform = $state(selectedVideoEmbedNode.__platform);
+	let currentURL = $state(selectedVideoEmbedNode.__src);
+
+	let currentWidth = $state(selectedVideoEmbedNode.__width);
+	let currentHeight = $state(selectedVideoEmbedNode.__height);
+
+	let url = $derived(currentURL);
+
+	let width = $derived(currentWidth);
+	let height = $derived(currentHeight);
+
 	const platformIcons = {
 		youtube: YoutubeIcon,
 		twitch: TwitchGlitch,
@@ -59,13 +61,15 @@
 
 	const setURL = () => {
 		editor.update(() => {
-			selectedVideoEmbedNode.setSrc(getURLAndTitle(currentPlatform, url, DOMAIN).url || url);
+			selectedVideoEmbedNode.setSrc(getURLAndTitle(currentPlatform, url, DOMAIN).url || url || '');
 		});
 	};
+
+	const SvelteComponent = $derived(currentPlatform ? platformIcons[currentPlatform] : platformIcons.default);
 </script>
 
 <div class="flex min-h-[42px] items-center gap-2 pl-2">
-	<svelte:component this={platformIcons[currentPlatform] || platformIcons.default} />
+	<SvelteComponent />
 
 	<Select
 		title="Platform"
@@ -88,10 +92,10 @@
 
 	<input
 		class="input-color -ml-10 h-full w-auto py-1 pl-10 pr-0 text-sm lg:h-full"
-		bind:value={url}
-		on:change={setURL}
+		onchange={setURL}
 		placeholder="https://..."
 		type="url"
+		bind:value={currentURL}
 	/>
 </label>
 
@@ -103,7 +107,7 @@
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
 		placeholder={width === 'inherit' ? "Inherit" : ""}
 		bind:value={width}
-		on:change={onChange}
+		onchange={onChange}
 		min={IMAGE_MIN_WIDTH}
 		type="number"
 	/>
@@ -116,9 +120,9 @@
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
 		placeholder={height === 'inherit' ? "Inherit" : ""}
-		bind:value={height}
-		on:change={onChange}
+		onchange={onChange}
 		min={IMAGE_MIN_HEIGHT}
 		type="number"
+		bind:value={height}
 	/>
 </label>

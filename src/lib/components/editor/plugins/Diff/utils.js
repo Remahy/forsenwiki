@@ -1,22 +1,22 @@
 /**
  * @param {HTMLElement} element
- * @param {import("./Types").JSONDiffType} changeType
+ * @param {import('./Types').JSONDiffType} changeType
  */
 export const applyCSSColorDiff = (element, changeType) => {
 	switch (changeType) {
 		case '~':
 			// Modified.
 			element.style.outline = '1px rgba(255, 127.5, 0, 0.5) dotted';
-			element.classList.add('bg-orange-300', 'bg-opacity-10');
+			element.classList.add('bg-orange-300/10');
 			break;
 		case '+':
 			// Added.
 			element.style.outline = '1px rgba(0, 255, 0, 0.5) solid';
-			element.classList.add('bg-green-500', 'bg-opacity-10');
+			element.classList.add('bg-green-500/10');
 			break;
 		case '-':
 			element.style.outline = '1px rgba(255, 0, 0, 0.5) solid';
-			element.classList.add('bg-red-500', 'bg-opacity-10');
+			element.classList.add('bg-red-500/10');
 			break;
 	}
 };
@@ -24,7 +24,7 @@ export const applyCSSColorDiff = (element, changeType) => {
 /**
  *
  * @param {string} key
- * @param {import("./Types").___ChangeObject} change
+ * @param {import('./Types').___ChangeObject} change
  */
 function getChangeText(key, change) {
 	if (typeof change !== 'object') {
@@ -55,7 +55,7 @@ function getChangeText(key, change) {
 
 /**
  * @param {HTMLElement} element
- * @param {import("./Types").___Change} ___change
+ * @param {import('./Types').___Change} ___change
  */
 export const addInformationHover = (element, ___change) => {
 	const entries = Object.entries(___change).filter(([key]) => key !== '___type');
@@ -68,8 +68,7 @@ export const addInformationHover = (element, ___change) => {
 
 	const informationIconHover = document.createElement('span');
 	informationIconHover.classList.add(
-		'bg-blue-500',
-		'bg-opacity-50',
+		'bg-blue-500/50',
 		'rounded-full',
 		'absolute',
 		'top-0',

@@ -6,37 +6,40 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { MAX_IMAGE_SIZE_MIB, IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 
-	/** @type {string} */
-	export let src = '';
+	/**
+	 * @typedef {Object} Props
+	 * @property {string} [src]
+	 * @property {string} [altText]
+	 * @property {number} [width]
+	 * @property {number} [height]
+	 * @property {(data:import('../../plugins/Image/Image').ImagePayload) => void} onSubmit
+	 */
 
-	/** @type {string} */
-	export let altText = '';
+	/** @type {Props} */
+	let {
+		src = $bindable(''),
+		altText = $bindable(''),
+		width = $bindable(IMAGE_MIN_WIDTH),
+		height = $bindable(IMAGE_MIN_HEIGHT),
+		onSubmit
+	} = $props();
 
-	/** @type {number} */
-	export let width = IMAGE_MIN_WIDTH;
+	/** @type {HTMLSelectElement | null} */
+	let selectLinkTypeElement = $state(null);
 
-	/** @type {number} */
-	export let height = IMAGE_MIN_HEIGHT;
+	/** @type {HTMLInputElement | null} */
+	let inputElement = $state(null);
 
-	/** @type {(data:import('../../plugins/Image/Image').ImagePayload) => void} */
-	export let onSubmit = () => {};
+	let currentLinkType = $state('new');
 
-	/** @type {HTMLSelectElement} */
-	let selectLinkTypeElement;
+	let isLoading = $state(false);
 
-	/** @type {HTMLInputElement} */
-	let inputElement;
+	let isValidImage = $state(false);
 
-	let currentLinkType = 'new';
+	let error = $state('');
 
-	let isLoading = false;
-
-	let isValidImage = false;
-
-	let error = '';
-
-	let originalImageHeight = 0;
-	let originalImageWidth = 0;
+	let originalImageHeight = $state(0);
+	let originalImageWidth = $state(0);
 
 	/** @param {HTMLInputElement} target */
 	const handleNewImage = (target) => {
@@ -51,7 +54,11 @@
 				if (size > MAX_IMAGE_SIZE_MIB) {
 					isValidImage = false;
 					error = `File size too large: Max is 5 MiB. Uploaded file size: ~${size.toFixed(2)} MiB`;
-					inputElement.value = '';
+
+					if (inputElement) {
+						inputElement.value = '';
+					}
+
 					src = '';
 					reject(null);
 					return;
@@ -80,7 +87,11 @@
 
 				img.onerror = () => {
 					isValidImage = false;
-					inputElement.value = '';
+
+					if (inputElement) {
+						inputElement.value = '';
+					}
+
 					src = '';
 					error = 'Image is invalid.';
 					reject(null);
@@ -143,7 +154,7 @@
 				class="grow !p-2 text-base"
 				bind:ref={selectLinkTypeElement}
 				bind:value={currentLinkType}
-				on:click={() => selectLinkTypeElement.dispatchEvent(new Event('change'))}
+				on:click={() => selectLinkTypeElement?.dispatchEvent(new Event('change'))}
 			>
 				<option value="new" selected class="text-lg">New</option>
 				<option value="internal" hidden class="text-lg">Existing</option>
@@ -161,11 +172,10 @@
 			<input
 				type="file"
 				accept="image/*"
-				class="forsen-wiki-theme-border rounded border p-2"
-				bind:value={src}
-				on:input={handleInputChange}
+				class="forsen-wiki-theme-border rounded-sm border p-2"
+				oninput={handleInputChange}
 				bind:this={inputElement}
-				on:click={() => inputElement.dispatchEvent(new Event('change'))}
+				onclick={() => inputElement?.dispatchEvent(new Event('change'))}
 			/>
 
 			{#if isLoading}
@@ -182,7 +192,7 @@
 		{#if src.length}
 			<label class="flex flex-col gap-2">
 				<strong>Alt text</strong>
-				<input class="input-color rounded p-2" bind:value={altText} />
+				<input class="input-color rounded-sm p-2" bind:value={altText} />
 			</label>
 			<div class="flex gap-16">
 				<label class="inline-flex grow flex-col gap-2">
@@ -195,7 +205,7 @@
 					<input
 						type="number"
 						min={IMAGE_MIN_WIDTH}
-						class="input-color w-full rounded p-2"
+						class="input-color w-full rounded-sm p-2"
 						bind:value={width}
 					/>
 				</label>
@@ -209,7 +219,7 @@
 					<input
 						type="number"
 						min={IMAGE_MIN_HEIGHT}
-						class="input-color w-full rounded p-2"
+						class="input-color w-full rounded-sm p-2"
 						bind:value={height}
 					/>
 				</label>

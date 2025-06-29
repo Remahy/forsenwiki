@@ -5,19 +5,19 @@
 
 import { $applyNodeReplacement } from 'lexical';
 
-import { LinkNode } from '$lib/lexical/index';
+import { $createLinkNode, LinkNode } from '$lib/lexical/index';
 
 /**
- * @typedef {import("@lexical/link").LinkAttributes | undefined} LinkAttributes
+ * @typedef {import('@lexical/link').LinkAttributes} LinkAttributes
  */
 
 export class ALinkNode extends LinkNode {
 	__isInternal = false;
 
 	/**
-	 * @param {string} url
-	 * @param {LinkAttributes} attrs
-	 * @param {boolean} internal
+	 * @param {string} [url]
+	 * @param {LinkAttributes} [attrs]
+	 * @param {boolean} [internal]
 	 * @param {string} [key]
 	 */
 	constructor(url, attrs, internal = false, key) {
@@ -44,15 +44,7 @@ export class ALinkNode extends LinkNode {
 
 	/** @param {import('@lexical/link').SerializedLinkNode & { isInternal: boolean }} serializedNode */
 	static importJSON(serializedNode) {
-		const node = new ALinkNode(serializedNode.url, { ...serializedNode });
-
-		node.setIsInternal(serializedNode.isInternal);
-		node.setDirection(serializedNode.direction);
-		node.setFormat(serializedNode.format);
-		node.setIndent(serializedNode.indent);
-		if (serializedNode.rel) {
-			node.setRel(serializedNode.rel);
-		}
+		const node = $createLinkNode().updateFromJSON(serializedNode);
 
 		return node;
 	}
@@ -81,9 +73,9 @@ export class ALinkNode extends LinkNode {
 }
 
 /**
- * @param {string} url
- * @param {LinkAttributes} attrs
- * @param {boolean} internal
+ * @param {string} [url]
+ * @param {LinkAttributes} [attrs]
+ * @param {boolean} [internal]
  * @param {string} [key]
  */
 export function $createALinkNode(url, attrs, internal, key) {

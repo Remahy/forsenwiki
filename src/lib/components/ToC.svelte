@@ -80,7 +80,7 @@
 	/**
 	 * @type {string}
 	 */
-	$: toc = '';
+	let toc = $state('');
 </script>
 
 <div use:tocAction class="hidden lg:block lg:w-96 lg:min-w-96">

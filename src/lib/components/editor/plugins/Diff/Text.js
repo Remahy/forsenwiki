@@ -1,9 +1,9 @@
-import { TextNode } from 'lexical';
+import { $createTextNode, TextNode } from 'lexical';
 
 /**
- * @typedef {import("lexical").NodeKey} NodeKey
- * @typedef {import("lexical").LexicalEditor} LexicalEditor
- * @typedef {import("lexical").EditorConfig} EditorConfig
+ * @typedef {import('lexical').NodeKey} NodeKey
+ * @typedef {import('lexical').LexicalEditor} LexicalEditor
+ * @typedef {import('lexical').EditorConfig} EditorConfig
  */
 
 export class DiffTextNode extends TextNode {
@@ -44,8 +44,7 @@ export class DiffTextNode extends TextNode {
 	 * @param {import('lexical').SerializedTextNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const textNode = TextNode.importJSON(serializedNode);
-		const node = new DiffTextNode(textNode);
+		const node = $createTextNode().updateFromJSON(serializedNode);
 
 		// @ts-ignore
 		node.___change = serializedNode.___change;

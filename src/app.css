@@ -1,0 +1,12 @@
+@import "@fontsource/opendyslexic";
+
+@import "tailwindcss";
+
+@theme {
+  --font-dyslexic: 'OpenDyslexic, \'Comic Sans MS\', arial, helvetica, sans-serif'
+}
+
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+
+@import "./style/wiki.css";

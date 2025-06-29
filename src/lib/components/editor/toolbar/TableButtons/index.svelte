@@ -9,7 +9,7 @@
 	import RowButtons from './RowButtons.svelte';
 	import ColumnButtons from './ColumnButtons.svelte';
 
-	/** @type {import("@lexical/table").TableNode | null} */
+	/** @type {import('@lexical/table').TableNode | null} */
 	let selectedTable = null;
 
 	const editor = getEditor();

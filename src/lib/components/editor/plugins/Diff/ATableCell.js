@@ -1,5 +1,5 @@
 import { addInformationHover, applyCSSColorDiff } from './utils';
-import { ATableCellNode } from '../Table/ATableCellNode';
+import { $createATableCellNode, ATableCellNode } from '../Table/ATableCellNode';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey
@@ -15,12 +15,6 @@ export class DiffATableCellNode extends ATableCellNode {
 	 */
 	constructor(node, key) {
 		super(node.getHeaderStyles(), node.getColSpan(), node.getWidth(), key);
-
-		this.setBackgroundColor(node.getBackgroundColor());
-		this.setDirection(node.getDirection());
-		this.setFormat(node.getFormatType());
-		this.setIndent(node.getIndent());
-		this.setStyle(node.getStyle());
 
 		// @ts-ignore
 		this.___change = node.___change;
@@ -41,12 +35,10 @@ export class DiffATableCellNode extends ATableCellNode {
 	 * @param {import('@lexical/table').SerializedTableCellNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const tableCell = ATableCellNode.importJSON(serializedNode);
+		const node = $createATableCellNode().updateFromJSON(serializedNode);
 
 		// @ts-ignore
-		tableCell.___change = serializedNode.___change;
-
-		const node = new DiffATableCellNode(tableCell);
+		node.___change = serializedNode.___change;
 
 		return node;
 	}

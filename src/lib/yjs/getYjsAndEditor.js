@@ -2,7 +2,7 @@
 import { createHeadlessEditor } from '@lexical/headless';
 import { createBinding, syncLexicalUpdateToYjs, syncYjsChangesToLexical } from '@lexical/yjs';
 
-import { Y } from './index.mjs';
+import { Y } from './index.js';
 
 // https://github.com/facebook/lexical/discussions/4442
 

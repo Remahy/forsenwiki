@@ -1,12 +1,13 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import path from 'path';
+import tailwindcss from '@tailwindcss/vite';
 
 // vite needs to work on proper support for Node.js worker_threads...
 import modulePathPlugin from './modulePathPlugin';
 
 export default defineConfig({
-	plugins: [modulePathPlugin(), sveltekit()],
+	plugins: [tailwindcss(), modulePathPlugin(), sveltekit()],
 	server: {
 		proxy: {
 			'/usercontent': {
@@ -20,7 +21,7 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			yjs: path.resolve('./node_modules/yjs/dist/yjs.mjs'),
+			yjs: path.resolve('./node_modules/yjs/src/index.js'),
 			'@lexical/yjs': path.resolve('./node_modules/@lexical/yjs/LexicalYjs.mjs'),
 			'@lexical/clipboard': path.resolve('./node_modules/@lexical/clipboard/LexicalClipboard.mjs'),
 			'@lexical/code': path.resolve('./node_modules/@lexical/code/LexicalCode.mjs'),

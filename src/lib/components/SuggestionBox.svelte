@@ -1,10 +1,14 @@
 <script>
-	/** @type {string} */
-	let className = '';
+	/**
+	 * @typedef {Object} Props
+	 * @property {string} [class]
+	 * @property {import('svelte').Snippet} [children]
+	 */
 
-	export { className as class };
+	/** @type {Props & { [key: string]: any }} */
+	let { class: className = '', children, ...rest } = $props();
 </script>
 
-<div {...$$restProps} class="suggestion-box mb-4 w-full {className}">
-	<slot />
+<div {...rest} class="suggestion-box mb-4 w-full {className}">
+	{@render children?.()}
 </div>

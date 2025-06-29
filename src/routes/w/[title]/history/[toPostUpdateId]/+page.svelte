@@ -5,7 +5,7 @@
 
 	import '$lib/components/editor/plugins/Image/Image.css';
 
-	export let data;
+	let { data } = $props();
 
 	const {
 		title,

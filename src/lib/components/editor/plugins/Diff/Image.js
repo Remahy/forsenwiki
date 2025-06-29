@@ -1,10 +1,11 @@
 import { ImageNode } from '$lib/lexical/custom';
+import { $createImageNode } from '../Image/Image';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
- * @typedef {import("lexical").NodeKey} NodeKey
- * @typedef {import("lexical").LexicalEditor} LexicalEditor
- * @typedef {import("lexical").EditorConfig} EditorConfig
+ * @typedef {import('lexical').NodeKey} NodeKey
+ * @typedef {import('lexical').LexicalEditor} LexicalEditor
+ * @typedef {import('lexical').EditorConfig} EditorConfig
  */
 
 export class DiffImageNode extends ImageNode {
@@ -17,10 +18,6 @@ export class DiffImageNode extends ImageNode {
 	 */
 	constructor(node, key) {
 		super(node.__src, node.__altText, node.__width, node.__height, key);
-
-		this.setAltText(node.getAltText());
-		this.setSrc(node.getSrc());
-		this.setWidthAndHeight(node.getWidthAndHeight());
 
 		// @ts-ignore
 		this.___change = node.___change;
@@ -41,12 +38,11 @@ export class DiffImageNode extends ImageNode {
 	 * @param {import('../Image/Image').SerializedImageNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const image = ImageNode.importJSON(serializedNode);
+		const node = $createImageNode().updateFromJSON(serializedNode);
 
 		// @ts-ignore
-		image.___change = serializedNode.___change;
+		node.___change = serializedNode.___change;
 
-		const node = new DiffImageNode(image);
 		return node;
 	}
 

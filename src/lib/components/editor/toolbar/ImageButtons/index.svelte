@@ -9,7 +9,7 @@
 	import EditImage from './EditImage.svelte';
 
 	/** @type {import('$lib/lexical/custom').ImageNode | null} */
-	let selectedImageNode = null;
+	let selectedImageNode = $state(null);
 
 	const editor = getEditor();
 

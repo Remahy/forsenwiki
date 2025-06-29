@@ -6,6 +6,7 @@
  *
  */
 
+import type { ComponentProps } from 'svelte';
 import {
 	$applyNodeReplacement,
 	type DOMConversionMap,
@@ -29,6 +30,7 @@ import {
 	type SerializedDecoratorBlockNode,
 } from './DecoratorBlockNode';
 import { sanitizeUrl } from '../../utils/sanitizeUrl';
+import { getFormatType } from '../../utils/elementUtils';
 
 export type SupportedPlatforms = 'twitch' | 'youtube';
 
@@ -44,13 +46,18 @@ export type VideoEmbedComponentProps = Readonly<{
 }>;
 
 export type VideoEmbedPayload = {
-	platform: SupportedPlatforms;
-	src: string;
-	width: number | 'inherit';
-	height: number | 'inherit';
+	platform?: SupportedPlatforms;
+	src?: string;
+	width?: number | 'inherit';
+	height?: number | 'inherit';
 };
 
 export type SerializedVideoEmbedNode = Spread<VideoEmbedPayload, SerializedDecoratorBlockNode>;
+
+type DecoratorVideoEmbedNodeType = {
+	componentClass: typeof VideoEmbedComponent;
+  updateProps: (props: ComponentProps<typeof VideoEmbedComponent>) => void;
+};
 
 const platforms = Object.keys(VIDEO_CONSTANTS.PLATFORMS);
 
@@ -68,17 +75,14 @@ export const getIframeStyle = (
 };
 
 export const getURLAndTitle = (
-	platform: SupportedPlatforms,
-	src: string,
-	parentUrl: string
+	platform?: SupportedPlatforms,
+	src?: string,
+	parentUrl?: string
 ): { url: string; title: string } => {
 	try {
 		new URL('', src);
 	} catch {
-		return {
-			url: '',
-			title: 'Unknown source',
-		};
+		return { url: '', title: 'Unknown source' };
 	}
 
 	if (platform === 'youtube') {
@@ -96,10 +100,7 @@ export const getURLAndTitle = (
 				youtubeEmbedURL.searchParams.set('clipt', clipTId);
 			}
 
-			return {
-				url: youtubeEmbedURL.toString(),
-				title: 'YouTube clip',
-			};
+			return { url: youtubeEmbedURL.toString(), title: 'YouTube clip' };
 		}
 
 		const v = url.searchParams.get('v');
@@ -109,10 +110,7 @@ export const getURLAndTitle = (
 			: null;
 
 		if ((v || youtuBE || vPathname) === null) {
-			return {
-				url: '',
-				title: 'Unknown source',
-			};
+			return { url: '', title: 'Unknown source' };
 		}
 
 		return {
@@ -137,10 +135,7 @@ export const getURLAndTitle = (
 				clipsTwitchURL.searchParams.set('clip', clipSlug);
 				clipsTwitchURL.searchParams.set('parent', parent);
 
-				return {
-					url: clipsTwitchURL.toString(),
-					title: 'Twitch clip',
-				};
+				return { url: clipsTwitchURL.toString(), title: 'Twitch clip' };
 			}
 		}
 
@@ -156,10 +151,7 @@ export const getURLAndTitle = (
 				clipsTwitchURL.searchParams.set('clip', clipSlug);
 				clipsTwitchURL.searchParams.set('parent', parent);
 
-				return {
-					url: clipsTwitchURL.toString(),
-					title: 'Twitch clip',
-				};
+				return { url: clipsTwitchURL.toString(), title: 'Twitch clip' };
 			}
 		}
 
@@ -178,17 +170,11 @@ export const getURLAndTitle = (
 
 			playerTwitchURL.searchParams.set('parent', parent);
 
-			return {
-				url: playerTwitchURL.toString(),
-				title: 'Twitch video',
-			};
+			return { url: playerTwitchURL.toString(), title: 'Twitch video' };
 		}
 	}
 
-	return {
-		url: '',
-		title: 'Unknown source',
-	};
+	return { url: '', title: 'Unknown source' };
 };
 
 function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl: string) {
@@ -230,19 +216,25 @@ function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl:
 	return element;
 }
 
-const setFallbackElement = (element: HTMLIFrameElement, platform: string) => {
+const setFallbackElement = (element: HTMLIFrameElement, platform?: string) => {
 	element.setAttribute('class', 'element-placeholder-color');
-	element.srcdoc = `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform} embed.</strong></p>`;
+	element.srcdoc = `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform || 'Unknown platform'} embed.</strong></p>`;
 };
 
 function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
 	const { url } = getURLAndTitle(node.getPlatform(), node.getSrc(), parentUrl);
 
 	const element = createBoilerplateVideoIframeAttributes(node, parentUrl);
-	element.setAttribute('data-lexical-youtube', node.getSrc());
 
-	if (!url) {
-		setFallbackElement(element, node.getPlatform());
+	const src = node.getSrc();
+	if (src) {
+		element.setAttribute('data-lexical-youtube', src);
+	}
+
+	const platform = node.getPlatform();
+
+	if (!url && platform) {
+		setFallbackElement(element, platform);
 	}
 
 	return { element };
@@ -252,7 +244,7 @@ function generateTwitchIframe(node: VideoEmbedNode, parentUrl: string) {
 	const { url } = getURLAndTitle(node.getPlatform(), node.getSrc(), parentUrl);
 
 	const element = createBoilerplateVideoIframeAttributes(node, parentUrl);
-	element.setAttribute('data-lexical-twitch', node.getSrc());
+	element.setAttribute('data-lexical-twitch', node.getSrc()!);
 
 	if (!url) {
 		setFallbackElement(element, node.getPlatform());
@@ -280,12 +272,7 @@ function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput 
 
 	const twitchClipSrc = domNode.getAttribute('data-lexical-twitch');
 	if (twitchClipSrc) {
-		const node = $createVideoEmbedNode({
-			platform: 'twitch',
-			src: twitchClipSrc,
-			width,
-			height,
-		});
+		const node = $createVideoEmbedNode({ platform: 'twitch', src: twitchClipSrc, width, height });
 		return { node };
 	}
 
@@ -293,16 +280,16 @@ function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput 
 }
 
 export class VideoEmbedNode extends DecoratorBlockNode {
-	__platform: SupportedPlatforms;
-	__src: string;
-	__width: 'inherit' | number;
-	__height: 'inherit' | number;
+	__platform?: SupportedPlatforms;
+	__src?: string;
+	__width?: 'inherit' | number;
+	__height?: 'inherit' | number;
 
 	constructor(
-		platform: SupportedPlatforms,
-		src: string,
-		width: number | 'inherit',
-		height: number | 'inherit',
+		platform?: SupportedPlatforms,
+		src?: string,
+		width?: number | 'inherit',
+		height?: number | 'inherit',
 		format?: ElementFormatType,
 		key?: NodeKey
 	) {
@@ -353,10 +340,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 					return null;
 				}
 
-				return {
-					conversion: $convertVideoElement,
-					priority: 1,
-				};
+				return { conversion: $convertVideoElement, priority: 1 };
 			},
 		};
 	}
@@ -368,12 +352,12 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		return { width: self.__width, height: self.__height };
 	}
 
-	getSrc(): string {
+	getSrc(): string | undefined {
 		const self = this.getLatest();
 		return self.__src;
 	}
 
-	getPlatform(): SupportedPlatforms {
+	getPlatform(): SupportedPlatforms | undefined {
 		const self = this.getLatest();
 		return self.__platform;
 	}
@@ -383,7 +367,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		_includeDirectionless?: false | undefined
 	): string {
 		const self = this.getLatest();
-		return self.__src;
+		return self.__src || '';
 	}
 
 	// Setters
@@ -392,8 +376,8 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		width,
 		height,
 	}: {
-		width: 'inherit' | number;
-		height: 'inherit' | number;
+		width?: 'inherit' | number;
+		height?: 'inherit' | number;
 	}): void {
 		const self = this.getWritable();
 		self.__width =
@@ -422,7 +406,6 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 			src: this.getSrc(),
 			width: this.__width,
 			height: this.__height,
-			version: 1,
 		};
 	}
 
@@ -439,7 +422,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 
 		const element = document.createElement('a');
 		element.href = sanitizeUrl(this.__src);
-		element.textContent = `${VIDEO_CONSTANTS.PLATFORMS[this.__platform]} link`;
+		element.textContent = `${this.__platform ? VIDEO_CONSTANTS.PLATFORMS[this.__platform] : 'Unknown platform'} link`;
 
 		return { element };
 	}
@@ -452,7 +435,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		return false;
 	}
 
-	decorate(editor: LexicalEditor, _config: EditorConfig) {
+	decorate(editor: LexicalEditor, _config: EditorConfig): DecoratorVideoEmbedNodeType {
 		// const embedBlockTheme = config.theme.embedBlock || {};
 		// const className = {
 		// 	base: embedBlockTheme.base || '',
@@ -461,28 +444,26 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 
 		return {
 			componentClass: VideoEmbedComponent,
-			props: {
-				node: this,
-				platform: this.getPlatform(),
-				src: this.getSrc(),
-				format: this.getFormatType(),
-				nodeKey: this.__key,
-				...this.getWidthAndHeight(),
-				resizable: true,
-				editor: editor,
+			updateProps: (props) => {
+				props.node = this;
+				props.platform = this.__platform;
+				props.src = this.__src;
+				props.format = getFormatType(this.__format);
+				props.nodeKey = this.__key;
+				props.width = this.__width;
+				props.height = this.__height;
+				props.resizable = true;
+				props.editor = editor;
 			},
 		};
 	}
 }
 
-export function $createVideoEmbedNode({
-	platform,
-	src,
-	width,
-	height,
-	format,
-	key,
-}: VideoEmbedPayload & { format?: ElementFormatType; key?: NodeKey }): VideoEmbedNode {
+export function $createVideoEmbedNode(
+	payload?: VideoEmbedPayload & { format?: ElementFormatType; key?: NodeKey }
+): VideoEmbedNode {
+	const { platform, src, width, height, format, key } = payload || {};
+
 	return $applyNodeReplacement(new VideoEmbedNode(platform, src, width, height, format, key));
 }
 

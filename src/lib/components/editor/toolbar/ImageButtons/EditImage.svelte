@@ -7,16 +7,21 @@
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import EditImageModal from './EditImageModal.svelte';
 
-	/** @type {import("$lib/lexical/custom").ImageNode} */
-	export let selectedImageNode;
+	/**
+	 * @typedef {Object} Props
+	 * @property {import('$lib/lexical/custom').ImageNode} selectedImageNode
+	 */
 
-	const editor = getEditor();
+	/** @type {Props} */
+	let { selectedImageNode = $bindable() } = $props();
 
-	$: currentWidth = selectedImageNode.__width;
-	$: currentHeight = selectedImageNode.__height;
+	let editor = $derived(getEditor?.());
 
-	$: width = currentWidth;
-	$: height = currentHeight;
+	let currentWidth = $state(selectedImageNode.__width);
+	let currentHeight = $state(selectedImageNode.__height);
+
+	let width = $derived(currentWidth);
+	let height = $derived(currentHeight);
 
 	const onChange = () => {
 		editor.update(() => {
@@ -43,22 +48,17 @@
 
 						const { width, height, altText, src } = data;
 
-						if (
-							typeof width === 'number' &&
-							typeof height === 'number' &&
-							height >= IMAGE_MIN_HEIGHT &&
-							width >= IMAGE_MIN_WIDTH
-						) {
-							node.setWidthAndHeight({ width, height });
+						if (typeof width === 'number' && width >= IMAGE_MIN_WIDTH) {
+							node.setWidthAndHeight({ width, height: node.__height });
 						}
 
-						if (altText.length) {
-							node.setAltText(altText);
+						if (typeof height === 'number' && height >= IMAGE_MIN_HEIGHT) {
+							node.setWidthAndHeight({ height, width: node.__width });
 						}
 
-						if (src) {
-							node.setSrc(src);
-						}
+						node.setAltText(altText);
+
+						node.setSrc(src);
 					});
 				},
 				isOpen: true,
@@ -76,10 +76,10 @@
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
 		placeholder={height === 'inherit' ? "Inherit" : ""}
-		bind:value={width}
-		on:change={onChange}
+		onchange={onChange}
 		min="{IMAGE_MIN_WIDTH}"
 		type="number"
+		bind:value={width}
 	/>
 </label>
 
@@ -90,9 +90,9 @@
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
 		placeholder={height === 'inherit' ? "Inherit" : ""}
-		bind:value={height}
-		on:change={onChange}
+		onchange={onChange}
 		min="{IMAGE_MIN_HEIGHT}"
 		type="number"
+		bind:value={height}
 	/>
 </label>

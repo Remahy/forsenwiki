@@ -11,15 +11,15 @@ import type {
 } from 'lexical';
 
 import { $applyNodeReplacement, DecoratorNode } from 'lexical';
-import { SvelteComponent, type ComponentProps } from 'svelte';
+import type { ComponentProps } from 'svelte';
 
 import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 
 import ImageComponent from './ImageComponent.svelte';
 
 export interface ImagePayload {
-	src: string;
-	altText: string;
+	src?: string;
+	altText?: string;
 	width?: number | 'inherit';
 	height?: number | 'inherit';
 	key?: NodeKey;
@@ -37,28 +37,28 @@ function convertImageElement(domNode: Node): null | DOMConversionOutput {
 
 export type SerializedImageNode = Spread<
 	{
-		src: string;
-		altText: string;
+		src?: string;
+		altText?: string;
 		width?: number | 'inherit';
 		height?: number | 'inherit';
 	},
 	SerializedLexicalNode
 >;
 
-type DecoratorImageType = {
-	componentClass: typeof SvelteComponent<any>;
-	props: ComponentProps<ImageComponent> & { node: ImageNode };
+type DecoratorImageNodeType = {
+	componentClass: typeof ImageComponent;
+  updateProps: (props: ComponentProps<typeof ImageComponent>) => void;
 };
 
-export class ImageNode extends DecoratorNode<DecoratorImageType> {
-	__src: string;
-	__altText: string;
+export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
+	__src: string | undefined;
+	__altText: string | undefined;
 	__width: 'inherit' | number;
 	__height: 'inherit' | number;
 
 	constructor(
-		src: string,
-		altText: string,
+		src?: string,
+		altText?: string,
 		width?: 'inherit' | number,
 		height?: 'inherit' | number,
 		key?: NodeKey
@@ -107,12 +107,12 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 		return { width: self.__width, height: self.__height };
 	}
 
-	getSrc(): string {
+	getSrc(): string | undefined {
 		const self = this.getLatest();
 		return self.__src;
 	}
 
-	getAltText(): string {
+	getAltText(): string | undefined {
 		const self = this.getLatest();
 		return self.__altText;
 	}
@@ -123,31 +123,33 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 		width,
 		height,
 	}: {
-		width: 'inherit' | number;
-		height: 'inherit' | number;
+		width?: 'inherit' | number;
+		height?: 'inherit' | number;
 	}): void {
 		const self = this.getWritable();
-		self.__width = typeof width === 'number' ? Math.max(IMAGE_MIN_WIDTH, Math.round(width)) : 'inherit';
-		self.__height = typeof height === 'number' ? Math.max(IMAGE_MIN_HEIGHT, Math.round(height)) : 'inherit';
+		self.__width =
+			typeof width === 'number' ? Math.max(IMAGE_MIN_WIDTH, Math.round(width)) : 'inherit';
+		self.__height =
+			typeof height === 'number' ? Math.max(IMAGE_MIN_HEIGHT, Math.round(height)) : 'inherit';
 	}
 
-	setSrc(src: string): void {
+	setSrc(src?: string): void {
 		const self = this.getWritable();
 		self.__src = src;
 	}
 
-	setAltText(altText: string): void {
+	setAltText(altText?: string): void {
 		const self = this.getWritable();
 		self.__altText = altText;
 	}
 
 	exportJSON(): SerializedImageNode {
 		return {
+			...super.exportJSON(),
 			src: this.getSrc(),
 			altText: this.getAltText(),
-				...this.getWidthAndHeight(),
+			...this.getWidthAndHeight(),
 			type: ImageNode.getType(),
-			version: 1,
 		};
 	}
 
@@ -164,10 +166,18 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 
 		const { width, height } = this.getWidthAndHeight();
 
-		element.setAttribute('src', this.getSrc());
-		element.setAttribute('alt', this.getAltText());
 		element.setAttribute('width', width.toString());
 		element.setAttribute('height', height.toString());
+
+		const src = this.getSrc();
+		if (src) {
+			element.setAttribute('src', src);
+		}
+
+		const altText = this.getAltText();
+		if (altText) {
+			element.setAttribute('alt', altText);
+		}
 
 		return { element };
 	}
@@ -188,23 +198,26 @@ export class ImageNode extends DecoratorNode<DecoratorImageType> {
 		return false;
 	}
 
-	decorate(editor: LexicalEditor, _config: EditorConfig): DecoratorImageType {
+	decorate(editor: LexicalEditor, _config: EditorConfig): DecoratorImageNodeType {
 		return {
 			componentClass: ImageComponent,
-			props: {
-				node: this,
-				src: this.getSrc(),
-				altText: this.getAltText(),
-				...this.getWidthAndHeight(),
-				nodeKey: this.__key,
-				resizable: true,
-				editor: editor,
+			updateProps: (props: any) => {
+				props.node = this;
+				props.src = this.__src;
+				props.altText = this.__altText;
+				props.nodeKey = this.__key;
+				props.width = this.__width;
+				props.height = this.__height;
+				props.resizable = true;
+				props.editor = editor;
 			},
 		};
 	}
 }
 
-export function $createImageNode({ src, altText, width, height, key }: ImagePayload): ImageNode {
+export function $createImageNode(payload?: ImagePayload): ImageNode {
+	const { src, altText, width, height, key } = payload || {};
+
 	return $applyNodeReplacement(new ImageNode(src, altText, width, height, key));
 }
 

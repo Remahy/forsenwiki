@@ -1,6 +1,7 @@
 <script>
-	export let size = undefined;
 	import { Loader2Icon } from 'lucide-svelte';
+
+	let { size = undefined } = $props();
 </script>
 
 <div role="status" class="inline-block animate-spin">

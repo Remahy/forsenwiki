@@ -1,11 +1,9 @@
-<script context="module">
+<script>
 	const imageCache = new Set();
 
 	/** @type {import('lexical').LexicalCommand<MouseEvent>} */
 	export const RIGHT_CLICK_IMAGE_COMMAND = createCommand('RIGHT_CLICK_IMAGE_COMMAND');
-</script>
 
-<script>
 	import {
 		$getSelection as getSelection,
 		$isNodeSelection as isNodeSelection,
@@ -19,10 +17,6 @@
 		KEY_BACKSPACE_COMMAND,
 		KEY_ESCAPE_COMMAND,
 		KEY_ENTER_COMMAND,
-		DELETE_CHARACTER_COMMAND,
-		$isParagraphNode as isParagraphNode,
-		$isElementNode as isElementNode,
-		$isTextNode as isTextNode,
 	} from 'lexical';
 	import { onMount } from 'svelte';
 	import { mergeRegister } from '@lexical/utils';
@@ -31,7 +25,6 @@
 		createNodeSelectionStore,
 	} from '$lib/components/editor/utils/getSelection';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
-	import { mergeElements } from '../../utils/elementUtils';
 	import ImageResizer from './ImageResizer.svelte';
 	import {
 		IMAGE_OFF,
@@ -41,36 +34,43 @@
 		$isImageNode as isImageNode,
 	} from './Image';
 
-	/** @type {ImageNode} */
-	export let node;
-	/** @type {string} */
-	export let src;
-	/** @type {string} */
-	export let altText;
-	/** @type {string} */
-	export let nodeKey;
-	/** @type {'inherit' | number} */
-	export let width;
-	/** @type {'inherit' | number} */
-	export let height;
-	/** @type {boolean} */
-	export let resizable;
-	/** @type {import('lexical').LexicalEditor} */
-	export let editor;
+	/**
+	 * @typedef {Object} Props
+	 * @property {ImageNode} node
+	 * @property {string} src
+	 * @property {string} altText
+	 * @property {string} nodeKey
+	 * @property {'inherit' | number} width
+	 * @property {'inherit' | number} height
+	 * @property {boolean} resizable
+	 * @property {import('lexical').LexicalEditor} editor
+	 */
 
-	$: heightCss = height === 'inherit' ? 'inherit' : height + 'px';
-	$: widthCss = width === 'inherit' ? 'inherit' : width + 'px';
+	/** @type {Props} */
+	let {
+		node,
+		src,
+		altText,
+		nodeKey,
+		width,
+		height,
+		resizable,
+		editor
+	} = $props();
+
+	let heightCss = $derived(height === 'inherit' ? 'inherit' : height + 'px');
+	let widthCss = $derived(width === 'inherit' ? 'inherit' : width + 'px');
 
 	/** @type {BaseSelection | null} */
-	let selection = null;
+	let selection = $state(null);
 
 	/** @type {HTMLElement | HTMLImageElement | null} */
-	let imageRef;
+	let imageRef = $state(null);
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
-	let isResizing = false;
+	let isResizing = $state(false);
 
-	$: draggable = $isSelected && isNodeSelection(selection) && !isResizing;
-	$: isFocused = $isSelected || isResizing;
+	let draggable = $derived($isSelected && isNodeSelection(selection) && !isResizing);
+	let isFocused = $derived($isSelected || isResizing);
 
 	let promise = new Promise((resolve) => {
 		if (imageCache.has(src)) {
@@ -84,116 +84,6 @@
 			};
 		}
 	});
-
-	/**
-	 * Bug fix to prevent character deletion from accidentally removing image.
-	 * @param {RangeSelection} selection
-	 * @param {LexicalNode} currentNode
-	 */
-	const onDeleteCharacterDecorationBug = (selection, currentNode) => {
-		const currentNodeParent = currentNode.getParent();
-
-		if (!currentNodeParent) {
-			return false;
-		}
-
-		/**
-		 * @type {ElementNode | null}
-		 */
-		const prevSibling = currentNodeParent.getPreviousSibling();
-
-		if (!prevSibling || !isElementNode(prevSibling)) {
-			return false;
-		}
-
-		const prevNode = prevSibling.getLastChild();
-
-		if (!isImageNode(prevNode)) {
-			return false;
-		}
-
-		if (currentNodeParent === prevSibling) {
-			return false;
-		}
-
-		if (!isParagraphNode(currentNodeParent) || !isParagraphNode(prevSibling)) {
-			return false;
-		}
-
-		const start = currentNodeParent.getFirstChild();
-
-		if (currentNode !== start || selection.anchor.offset !== 0) {
-			return false;
-		}
-
-		mergeElements(editor, currentNodeParent, prevSibling);
-
-		return true;
-	};
-
-	/**
-	 * @param {LexicalNode} currentNode
-	 */
-	const onDeleteCharacterNextToImage = (currentNode) => {
-		if (currentNode !== node) {
-			return false;
-		}
-
-		if (isImageNode(currentNode) && !$isSelected) {
-			imageRef?.click();
-			return true;
-		}
-	};
-
-	/**
-	 * @param {boolean} payload
-	 */
-	const onDeleteCharacter = (payload) => {
-		if (!payload) {
-			return false;
-		}
-
-		const selection = /** @type {RangeSelection | undefined} */ (getSelection()?.clone());
-
-		if (!selection?.isCollapsed()) {
-			return false;
-		}
-
-		const currentNode = selection.getNodes()[0];
-
-		if (onDeleteCharacterDecorationBug(selection, currentNode)) {
-			return true;
-		}
-
-		if (onDeleteCharacterNextToImage(currentNode)) {
-			return true;
-		}
-
-		const prevSibling = currentNode.getPreviousSibling();
-
-		if (prevSibling && isImageNode(prevSibling) && node === prevSibling && !isTextNode(currentNode)) {
-			imageRef?.click();
-			return true;
-		}
-
-		if (!prevSibling || (prevSibling && !isElementNode(prevSibling))) {
-			return false;
-		}
-
-		if (isParagraphNode(currentNode) && isParagraphNode(prevSibling)) {
-			mergeElements(editor, currentNode, prevSibling);
-			return true;
-		}
-
-		const prevSiblingLastChild = prevSibling.getLastChild();
-
-		if (prevSibling && isImageNode(prevSiblingLastChild) && node === prevSiblingLastChild) {
-			imageRef?.click();
-			return true;
-		}
-
-		return false;
-	};
 
 	/** @param {KeyboardEvent} payload */
 	const onDelete = (payload) => {
@@ -245,6 +135,7 @@
 		if (isResizing) {
 			return true;
 		}
+
 		if (event.target === imageRef) {
 			if (event.shiftKey) {
 				$isSelected = !$isSelected;
@@ -304,7 +195,6 @@
 			),
 			editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
-			editor.registerCommand(DELETE_CHARACTER_COMMAND, onDeleteCharacter, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_ESCAPE_COMMAND, onEscape, COMMAND_PRIORITY_LOW)
 		);
@@ -345,7 +235,7 @@
 	{#await promise}
 		<figure
 			style="height:{heightCss};px;width:{widthCss};"
-			class="element-placeholder-color m-0 flex animate-pulse items-center justify-center p-0"
+			class="element-placeholder-color !m-0 flex animate-pulse items-center justify-center p-0"
 			class:focused={isFocused}
 			class:draggable={isFocused && isNodeSelection(selection)}
 			title="Loading image..."
@@ -353,7 +243,7 @@
 			draggable="false"
 		>
 			<img
-				class="pointer-events-none m-0 animate-spin rounded-full"
+				class="pointer-events-none !m-0 animate-spin rounded-full"
 				src={LUCIDE_ICON_LOADER}
 				alt={altText}
 			/>
