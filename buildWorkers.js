@@ -40,7 +40,7 @@ async function buildToHTMLWorker() {
 	writeFileSync('src/lib/worker/toHTML/worker.js', result.outputFiles[0].contents);
 }
 
-async function buildYoutubeClipURL() {
+async function buildYoutubeClipURLWorker() {
 	const result = await esbuild.build({
 		entryPoints: ['worker/youtubeClipURL.js'],
 		bundle: true,
@@ -59,4 +59,4 @@ async function buildYoutubeClipURL() {
 
 buildInitialUpdateWorker().catch(() => process.exit(1));
 buildToHTMLWorker().catch(() => process.exit(1));
-buildYoutubeClipURL().catch(() => process.exit(1));
+buildYoutubeClipURLWorker().catch(() => process.exit(1));
