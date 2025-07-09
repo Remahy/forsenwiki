@@ -1,6 +1,6 @@
 <script context="module">
 	/**
-	 * @typedef {Readonly<import('./FloatBlockNode').FloatBlockNodePayload>} FloatBlockNodePayload
+	 * @typedef {Readonly<import('./FloatBlock').FloatBlockNodePayload>} FloatBlockNodePayload
 	 */
 
 	/** @type {import('lexical').LexicalCommand<FloatBlockNodePayload>} */
@@ -19,7 +19,7 @@
 	import { getEditor } from 'svelte-lexical';
 	import { $insertNodeToNearestRoot as insertNodeToNearestRoot, mergeRegister } from '@lexical/utils';
 
-	import { $createFloatBlockNode as createFloatBlockNode, FloatBlockNode } from './FloatBlockNode';
+	import { $createFloatBlockNode as createFloatBlockNode, FloatBlockNode } from './FloatBlock';
 
 	/** @type {import('lexical').LexicalEditor} */
 	const editor = getEditor();

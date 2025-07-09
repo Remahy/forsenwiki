@@ -7,7 +7,7 @@ export {
 	$isVideoEmbedNode,
 	VideoEmbedNode,
 } from '../components/editor/plugins/VideoEmbed/VideoEmbed';
-export { $isFloatBlockNode, FloatBlockNode } from '../components/editor/plugins/FloatBlock/FloatBlockNode';
+export { $isFloatBlockNode, FloatBlockNode } from '../components/editor/plugins/FloatBlock/FloatBlock';
 
 export { DiffAHeadingNode } from '../components/editor/plugins/Diff/AHeading';
 export { DiffListNode } from '../components/editor/plugins/Diff/List';
@@ -23,6 +23,7 @@ export { DiffTabNode } from '../components/editor/plugins/Diff/Tab';
 export { DiffTableNode } from '../components/editor/plugins/Diff/Table';
 export { DiffTableRowNode } from '../components/editor/plugins/Diff/TableRow';
 export { DiffATableCellNode } from '../components/editor/plugins/Diff/ATableCell';
+export { DiffFloatBlock } from '../components/editor/plugins/Diff/FloatBlock';
 
 export { DeprecatedVideoEmbedNode } from '../components/editor/plugins/Deprecated/DeprecatedVideoEmbedNode';
 export { FallbackNode } from '../components/editor/plugins/Fallback/Fallback';
