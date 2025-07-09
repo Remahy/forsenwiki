@@ -51,6 +51,63 @@ const onErrorDefault = (error) => {
 	throw error;
 };
 
+export const articleNodes = [
+	ALinkNode,
+	{
+		replace: LinkNode,
+		/**
+		 * @param {LinkNode} node
+		 */
+		with: (node) => {
+			return $createALinkNode(
+				node.__url,
+				{ rel: node.__rel, target: node.__target, title: node.__title },
+				false
+			);
+		},
+		withKlass: ALinkNode,
+	},
+
+	ListNode,
+	ListItemNode,
+
+	AHeadingNode,
+	{
+		replace: HeadingNode,
+		/**
+		 * @param {HeadingNode} node
+		 */
+		with: (node) => {
+			return $createAHeadingNode(node.__tag);
+		},
+		withKlass: AHeadingNode,
+	},
+
+	QuoteNode,
+	ImageNode,
+	VideoEmbedNode,
+	TableNode,
+
+	ATableCellNode,
+	{
+		replace: TableCellNode,
+		/**
+		 * @param {TableCellNode} node
+		 */
+		with: (node) => {
+			return $createATableCellNode(node.__headerState, node.__colSpan, node.__width);
+		},
+		withKlass: ATableCellNode,
+	},
+
+	TableRowNode,
+	FloatBlockNode,
+
+	// Old nodes / Migration nodes
+	FallbackNode,
+	DeprecatedVideoEmbedNode,
+];
+
 /**
  * @param {any} theme
  * @param {boolean} editable
@@ -62,59 +119,7 @@ export const articleConfig = (theme, editable, editorState, onError = onErrorDef
 	theme: theme || articleTheme,
 	namespace: 'editor',
 	editable,
-	nodes: [
-		ALinkNode,
-		{
-			replace: LinkNode,
-			/**
-			 * @param {LinkNode} node
-			 */
-			with: (node) => {
-				return $createALinkNode(
-					node.__url,
-					{ rel: node.__rel, target: node.__target, title: node.__title },
-					false
-				);
-			},
-			withKlass: ALinkNode,
-		},
-		ListNode,
-		ListItemNode,
-		AHeadingNode,
-		{
-			replace: HeadingNode,
-			/**
-			 * @param {HeadingNode} node
-			 */
-			with: (node) => {
-				return $createAHeadingNode(node.__tag);
-			},
-			withKlass: AHeadingNode,
-		},
-		QuoteNode,
-		ImageNode,
-		VideoEmbedNode,
-
-		TableNode,
-		ATableCellNode,
-		{
-			replace: TableCellNode,
-			/**
-			 * @param {TableCellNode} node
-			 */
-			with: (node) => {
-				return $createATableCellNode(node.__headerState, node.__colSpan, node.__width);
-			},
-			withKlass: ATableCellNode,
-		},
-		TableRowNode,
-
-		FloatBlockNode,
-
-		// Old nodes / Migration nodes
-		FallbackNode,
-		DeprecatedVideoEmbedNode,
-	],
+	nodes,
 	/** @param {Error} error */
 	onError,
 	editorState,
