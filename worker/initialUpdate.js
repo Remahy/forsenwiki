@@ -3,7 +3,7 @@ import { workerData, parentPort } from 'node:worker_threads';
 import { uint8ArrayToBase64 } from 'uint8array-extras';
 import { $createTextNode, $getRoot, $createParagraphNode } from 'lexical';
 
-import { Y } from '$lib/yjs/index.mjs';
+import { Y } from '$lib/yjs/index.js';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
