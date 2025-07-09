@@ -119,7 +119,7 @@ export const articleConfig = (theme, editable, editorState, onError = onErrorDef
 	theme: theme || articleTheme,
 	namespace: 'editor',
 	editable,
-	nodes,
+	nodes: articleNodes,
 	/** @param {Error} error */
 	onError,
 	editorState,
