@@ -1,18 +1,18 @@
 import { $applyNodeReplacement, ElementNode } from 'lexical';
 import { FLOATBLOCK_MIN_HEIGHT, FLOATBLOCK_MIN_WIDTH, floatValues } from '$lib/constants/floatBlock';
 
-const startValues = ['left', 'inline-start', null, 'none'];
+const startValues = ['left', 'inline-start', 'none', undefined];
 // const endValues = ['right', 'inline-end'];
 
 /**
  * @param {any} number
  * @param {number} min
  */
-const setNumberOrNull = (number, min) => {
+const setNumberOrUndefined = (number, min) => {
 	const value =
-		typeof number !== 'number' ? (Number.isNaN(Number(number)) ? null : Number(number)) : number;
+		typeof number !== 'number' ? (Number.isNaN(Number(number)) ? undefined : Number(number)) : number;
 
-	return typeof value === 'number' ? Math.max(min, value) : null;
+	return typeof value === 'number' ? Math.max(min, value) : undefined;
 };
 
 /**
@@ -20,28 +20,28 @@ const setNumberOrNull = (number, min) => {
  * @typedef {import('lexical').SerializedElementNode} SerializedElementNode
  * @typedef {import('lexical').EditorConfig} EditorConfig
  *
- * @typedef {('none' | 'left' | 'right' | 'inline-start' | 'inline-end')?} FloatValue
- * @typedef {SerializedElementNode & { float: FloatValue, width: number | null, height: number | null, type: ReturnType<FloatBlockNode.getType> }} SerializedFloatBlockNode
+ * @typedef {('none' | 'left' | 'right' | 'inline-start' | 'inline-end'| undefined)} FloatValue
+ * @typedef {SerializedElementNode & { float: FloatValue, width?: number, height?: number, type: ReturnType<FloatBlockNode.getType> }} SerializedFloatBlockNode
  */
 
 /**
- * @typedef {{ float: FloatValue, width: number?, height: number? }} FloatBlockNodePayload
+ * @typedef {{ float?: FloatValue, width?: number, height?: number }} FloatBlockNodePayload
  */
 
 export class FloatBlockNode extends ElementNode {
 	/** @type {FloatValue} */
 	__float;
 
-	/** @type {number?} */
-	__width = null;
+	/** @type {number | undefined} */
+	__width;;
 
-	/** @type {number?} */
-	__height = null;
+	/** @type {number | undefined} */
+	__height;;
 
 	/**
 	 * @param {FloatValue} float
-	 * @param {number?} width
-	 * @param {number?} height
+	 * @param {number} [width]
+	 * @param {number} [height]
 	 * @param {NodeKey} [key]
 	 */
 	constructor(float, width, height, key) {
@@ -83,13 +83,13 @@ export class FloatBlockNode extends ElementNode {
 	 */
 	setFloat(float) {
 		const self = this.getWritable();
-		self.__float = floatValues.includes(float) ? float : null;
+		self.__float = float && floatValues.includes(float) ? float : undefined;
 	}
 
 	getFloat() {
 		const self = this.getLatest();
 		const float = self.__float;
-		return floatValues.includes(float) ? float : null;
+		return float && floatValues.includes(float) ? float : undefined;
 	}
 
 	/**
@@ -97,7 +97,7 @@ export class FloatBlockNode extends ElementNode {
 	 */
 	setWidth(width) {
 		const self = this.getWritable();
-		self.__width = width != null ? setNumberOrNull(width, FLOATBLOCK_MIN_WIDTH) : null;
+		self.__width = width != null ? setNumberOrUndefined(width, FLOATBLOCK_MIN_WIDTH) : undefined;
 	}
 
 	getWidth() {
@@ -111,7 +111,7 @@ export class FloatBlockNode extends ElementNode {
 	 */
 	setHeight(height) {
 		const self = this.getWritable();
-		self.__height = height != null ? setNumberOrNull(height, FLOATBLOCK_MIN_HEIGHT) : null;
+		self.__height = height != null ? setNumberOrUndefined(height, FLOATBLOCK_MIN_HEIGHT) : undefined;
 	}
 
 	getHeight() {
@@ -193,8 +193,9 @@ export class FloatBlockNode extends ElementNode {
 	}
 }
 
-/** @param {FloatBlockNodePayload & { key?: NodeKey }} arg1 */
-export function $createFloatBlockNode({ float, width, height, key }) {
+/** @param {FloatBlockNodePayload & { key?: NodeKey }} [payload] */
+export function $createFloatBlockNode(payload) {
+	const { float, width, height, key } = payload || {};
 	return $applyNodeReplacement(new FloatBlockNode(float, width, height, key));
 }
 
