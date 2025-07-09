@@ -36,6 +36,7 @@ export class DiffATableCellNode extends ATableCellNode {
 	 */
 	static importJSON(serializedNode) {
 		const node = $createATableCellNode().updateFromJSON(serializedNode);
+		node.__type = DiffATableCellNode.getType();
 
 		// @ts-ignore
 		node.___change = serializedNode.___change;

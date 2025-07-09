@@ -38,6 +38,7 @@ export class DiffListItemNode extends ListItemNode {
 	 */
 	static importJSON(serializedNode) {
 		const node = $createListItemNode().updateFromJSON(serializedNode);
+		node.__type = DiffListItemNode.getType();
 
 		// @ts-ignore
 		node.___change = serializedNode.___change;

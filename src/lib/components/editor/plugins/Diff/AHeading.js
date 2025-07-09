@@ -1,5 +1,6 @@
-import { $createHeadingNode, HeadingNode } from '@lexical/rich-text';
+import { HeadingNode } from '@lexical/rich-text';
 import { addInformationHover, applyCSSColorDiff } from './utils';
+import { $createAHeadingNode } from '../AHeading/AHeadingNode';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey
@@ -37,7 +38,8 @@ export class DiffAHeadingNode extends HeadingNode {
 	 * @param {import('@lexical/rich-text').SerializedHeadingNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const node = $createHeadingNode().updateFromJSON(serializedNode);
+		const node = $createAHeadingNode(serializedNode.tag).updateFromJSON(serializedNode);
+		node.__type = DiffAHeadingNode.getType();
 
 		// @ts-ignore
 		node.___change = serializedNode.___change;

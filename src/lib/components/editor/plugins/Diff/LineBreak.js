@@ -30,6 +30,7 @@ export class DiffLineBreakNode extends LineBreakNode {
 	 */
 	static importJSON(serializedNode) {
 		const node = $createLineBreakNode().updateFromJSON(serializedNode);
+		node.__type = DiffLineBreakNode.getType();
 
 		return node;
 	}

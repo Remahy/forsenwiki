@@ -48,6 +48,7 @@ export class DiffVideoEmbedNode extends VideoEmbedNode {
 	 */
 	static importJSON(serializedNode) {
 		const node = $createVideoEmbedNode().updateFromJSON(serializedNode);
+		node.__type = DiffVideoEmbedNode.getType();
 
 		// @ts-ignore
 		node.___change = serializedNode.___change;

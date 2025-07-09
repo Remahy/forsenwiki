@@ -38,6 +38,7 @@ export class DiffParagraphNode extends ParagraphNode {
 	 */
 	static importJSON(serializedNode) {
 		const node = $createParagraphNode().updateFromJSON(serializedNode);
+		node.__type = DiffParagraphNode.getType();
 
 		// @ts-ignore
 		node.___change = serializedNode.___change;

@@ -39,6 +39,7 @@ export class DiffImageNode extends ImageNode {
 	 */
 	static importJSON(serializedNode) {
 		const node = $createImageNode().updateFromJSON(serializedNode);
+		node.__type = DiffImageNode.getType();
 
 		// @ts-ignore
 		node.___change = serializedNode.___change;

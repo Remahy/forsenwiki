@@ -45,6 +45,7 @@ export class DiffTextNode extends TextNode {
 	 */
 	static importJSON(serializedNode) {
 		const node = $createTextNode().updateFromJSON(serializedNode);
+		node.__type = DiffTextNode.getType();
 
 		// @ts-ignore
 		node.___change = serializedNode.___change;

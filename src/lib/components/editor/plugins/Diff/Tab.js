@@ -30,6 +30,7 @@ export class DiffTabNode extends TabNode {
 	 */
 	static importJSON(serializedNode) {
 		const node = $createTabNode().updateFromJSON(serializedNode);
+		node.__type = DiffTabNode.getType();
 
 		// @ts-ignore
 		node.___change = serializedNode.___change;

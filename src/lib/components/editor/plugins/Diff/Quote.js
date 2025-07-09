@@ -38,6 +38,7 @@ export class DiffQuoteNode extends QuoteNode {
 	 */
 	static importJSON(serializedNode) {
 		const node = $createQuoteNode().updateFromJSON(serializedNode);
+		node.__type = DiffQuoteNode.getType();
 
 		// @ts-ignore
 		node.___change = serializedNode.___change;

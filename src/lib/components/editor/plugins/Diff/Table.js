@@ -36,6 +36,7 @@ export class DiffTableNode extends TableNode {
 	 */
 	static importJSON(serializedNode) {
 		const node = $createTableNode().updateFromJSON(serializedNode);
+		node.__type = DiffTableNode.getType();
 
 		// @ts-ignore
 		node.___change = serializedNode.___change;

@@ -44,6 +44,7 @@ export class DiffALinkNode extends ALinkNode {
 	 */
 	static importJSON(serializedNode) {
 		const node = $createALinkNode().updateFromJSON(serializedNode);
+		node.__type = DiffALinkNode.getType();
 
 		// @ts-ignore
 		node.___change = serializedNode.___change;
