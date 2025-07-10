@@ -1,10 +1,12 @@
-import { $createListItemNode, ListItemNode } from '@lexical/list';
+import { ListItemNode } from '@lexical/list';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey
  * @typedef {import('lexical').LexicalEditor} LexicalEditor
  * @typedef {import('lexical').EditorConfig} EditorConfig
+ *
+ * @typedef {import('@lexical/list').SerializedListItemNode} SerializedListItemNode
  */
 
 export class DiffListItemNode extends ListItemNode {
@@ -12,11 +14,12 @@ export class DiffListItemNode extends ListItemNode {
 	___change;
 
 	/**
-	 * @param {ListItemNode} node
+	 * @param {SerializedListItemNode | ListItemNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
-		super(node.__value, node.__checked, key);
+		// @ts-ignore
+		super(node.value ?? node.__value, node.checked ?? node.__checked, key);
 
 		// @ts-ignore
 		this.___change = node.___change;
@@ -34,15 +37,10 @@ export class DiffListItemNode extends ListItemNode {
 	}
 
 	/**
-	 * @param {import('@lexical/list').SerializedListItemNode} serializedNode
+	 * @param {SerializedListItemNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const node = $createListItemNode().updateFromJSON(serializedNode);
-		node.__type = DiffListItemNode.getType();
-
-		// @ts-ignore
-		node.___change = serializedNode.___change;
-
+		const node = $createDiffListItemNode(serializedNode).updateFromJSON(serializedNode);
 		return node;
 	}
 
@@ -77,13 +75,13 @@ export class DiffListItemNode extends ListItemNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: DiffListItemNode.getType() };
+		return { ...super.exportJSON(), ___change: this.___change, type: DiffListItemNode.getType() };
 	}
 }
 
-// /**
-//  * @param {ListItemNode} node
-//  */
-// export function $createDiffListItemNode(node) {
-// 	return new DiffListItemNode(node);
-// }
+/**
+ * @param {SerializedListItemNode} node
+ */
+export function $createDiffListItemNode(node) {
+	return new DiffListItemNode(node);
+}

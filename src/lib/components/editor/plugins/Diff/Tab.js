@@ -1,24 +1,33 @@
-import { $createTabNode, TabNode } from 'lexical';
+import { TabNode } from 'lexical';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey
  * @typedef {import('lexical').LexicalEditor} LexicalEditor
  * @typedef {import('lexical').EditorConfig} EditorConfig
+ *
+ * @typedef {import('lexical').SerializedTabNode} SerializedTabNode
  */
 
 export class DiffTabNode extends TabNode {
+	/** @type {import('./Types').___Change} */
+	___change;
+
 	/**
+	 * @param {SerializedTabNode | DiffTabNode} node
 	 * @param {NodeKey} [key]
 	 */
-	constructor(key) {
+	constructor(node, key) {
 		super(key);
+
+		// @ts-ignore
+		this.___change = node.___change;
 	}
 
 	/**
 	 * @param {DiffTabNode} node
 	 */
 	static clone(node) {
-		return new DiffTabNode(node.__key);
+		return new DiffTabNode(node, node.__key);
 	}
 
 	static getType() {
@@ -26,10 +35,10 @@ export class DiffTabNode extends TabNode {
 	}
 
 	/**
-	 * @param {import('lexical').SerializedTabNode} serializedNode
+	 * @param {SerializedTabNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const node = $createTabNode().updateFromJSON(serializedNode);
+		const node = $createDiffTabNode(serializedNode).updateFromJSON(serializedNode);
 		node.__type = DiffTabNode.getType();
 
 		// @ts-ignore
@@ -50,6 +59,13 @@ export class DiffTabNode extends TabNode {
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), type: DiffTabNode.getType() };
+		return { ...super.exportJSON(), ___change: this.___change, type: DiffTabNode.getType() };
 	}
+}
+
+/**
+ * @param {SerializedTabNode} node
+ */
+export function $createDiffTabNode(node) {
+	return new DiffTabNode(node);
 }
