@@ -91,6 +91,12 @@ export class DiffTextNode extends TextNode {
 
 				dom.element.appendChild(span);
 			}
+		} else if (
+			typeof this.___change === 'object' &&
+			dom.element instanceof HTMLElement &&
+			this.___change.___type
+		) {
+			applyCSSColorDiff(dom.element, this.___change.___type);
 		}
 
 		return dom;
