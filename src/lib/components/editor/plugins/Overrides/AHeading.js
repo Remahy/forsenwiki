@@ -2,31 +2,9 @@ import { $applyNodeReplacement } from 'lexical';
 import { HeadingNode } from '$lib/lexical/index';
 
 export class AHeadingNode extends HeadingNode {
-	/**
-	 * @param {import('@lexical/rich-text').HeadingTagType} tag
-	 * @param {string} [key]
-	 */
-	constructor(tag, key) {
-		super(tag, key);
-	}
-
-	static getType() {
-		return 'a-heading';
-	}
-
-	/**
-	 * @param {AHeadingNode} node
-	 */
-	static clone(node) {
-		return new AHeadingNode(node.__tag, node.__key);
-	}
-
-	/** @param {import('@lexical/rich-text').SerializedHeadingNode} serializedNode */
-	static importJSON(serializedNode) {
-		const node = $createAHeadingNode(serializedNode.tag).updateFromJSON(serializedNode);
-
-		return node;
-	}
+  $config() {
+    return this.config('a-heading', { extends: HeadingNode });
+  }
 
 	/**
 	 * @param {LexicalEditor} editor
@@ -44,6 +22,10 @@ export class AHeadingNode extends HeadingNode {
 		}
 
 		return dom;
+	}
+
+	static importDOM() {
+		return HeadingNode.importDOM();
 	}
 
 	exportJSON() {

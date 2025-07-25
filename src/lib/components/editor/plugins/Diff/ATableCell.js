@@ -1,4 +1,4 @@
-import { ATableCellNode } from '../Table/ATableCellNode';
+import { ATableCellNode } from '../Overrides/Table/ATableCell';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**

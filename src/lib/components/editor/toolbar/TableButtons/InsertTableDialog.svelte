@@ -10,7 +10,7 @@
 	 * @property {string} rows
 	 * @property {string} columns
 	 * @property {boolean} includeHeaders
-	 * @property {(data: import('../../plugins/Table/Table').TablePayload) => void} onSubmit
+	 * @property {(data: import('../../plugins/Overrides/Table/Table').TablePayload) => void} onSubmit
 	 */
 
 	/** @type {Props} */

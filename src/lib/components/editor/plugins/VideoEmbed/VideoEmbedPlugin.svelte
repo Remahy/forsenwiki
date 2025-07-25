@@ -42,7 +42,7 @@
 	 * @param {VideoEmbedNode} node
 	 */
 	const fixYouTubeClipURL = async (editor, node) => {
-		const url = node.getSrc();
+		const url = /** @type {string} */ (node.getSrc());
 
 		let res;
 
@@ -125,7 +125,7 @@
 							node.insertAfter(p, false);
 						}
 
-						if (node.getPlatform() === 'youtube' && node.getSrc().includes('youtube.com/clip/')) {
+						if (node.getPlatform() === 'youtube' && node.getSrc()?.includes('youtube.com/clip/')) {
 							fixYouTubeClipURL(editor, node);
 						}
 					}
