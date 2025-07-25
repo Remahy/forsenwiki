@@ -79,6 +79,10 @@ export class DiffVideoEmbedNode extends VideoEmbedNode {
 		return dom;
 	}
 
+	static importDOM() {
+		return VideoEmbedNode.importDOM();
+	}
+
 	exportJSON() {
 		return { ...super.exportJSON(), ___change: this.___change, type: DiffVideoEmbedNode.getType() };
 	}

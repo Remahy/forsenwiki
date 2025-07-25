@@ -102,6 +102,10 @@ export class DiffTextNode extends TextNode {
 		return dom;
 	}
 
+	static importDOM() {
+		return TextNode.importDOM();
+	}
+
 	exportJSON() {
 		return { ...super.exportJSON(), ___change: this.___change, type: DiffTextNode.getType() };
 	}

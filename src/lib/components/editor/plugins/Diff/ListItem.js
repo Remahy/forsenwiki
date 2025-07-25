@@ -74,6 +74,10 @@ export class DiffListItemNode extends ListItemNode {
 		return dom;
 	}
 
+	static importDOM() {
+		return ListItemNode.importDOM ? ListItemNode.importDOM() : null;
+	}
+
 	exportJSON() {
 		return { ...super.exportJSON(), ___change: this.___change, type: DiffListItemNode.getType() };
 	}

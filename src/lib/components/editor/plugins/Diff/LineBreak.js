@@ -53,6 +53,10 @@ export class DiffLineBreakNode extends LineBreakNode {
 		return dom;
 	}
 
+		static importDOM() {
+			return LineBreakNode.importDOM();
+		}
+
 	exportJSON() {
 		return { ...super.exportJSON(), ___change: this.___change, type: DiffLineBreakNode.getType() };
 	}

@@ -62,6 +62,10 @@ export class DiffAHeadingNode extends HeadingNode {
 		return dom;
 	}
 
+	static importDOM() {
+		return AHeadingNode.importDOM();
+	}
+
 	exportJSON() {
 		return { ...super.exportJSON(), ___change: this.___change, type: DiffAHeadingNode.getType() };
 	}

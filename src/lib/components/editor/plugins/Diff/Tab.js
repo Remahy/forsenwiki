@@ -58,6 +58,10 @@ export class DiffTabNode extends TabNode {
 		return dom;
 	}
 
+	static importDOM() {
+		return TabNode.importDOM();
+	}
+
 	exportJSON() {
 		return { ...super.exportJSON(), ___change: this.___change, type: DiffTabNode.getType() };
 	}

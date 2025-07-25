@@ -21,8 +21,14 @@ export class DiffALinkNode extends ALinkNode {
 		super(
 			// @ts-ignore
 			node.url || node.__url,
-			// @ts-ignore
-			{ rel: node.rel || node.__rel, target: node.target || node.__target, title: node.title || node.__title },
+			{
+				// @ts-ignore
+				rel: node.rel || node.__rel,
+				// @ts-ignore
+				target: node.target || node.__target,
+				// @ts-ignore
+				title: node.title || node.__title,
+			},
 			// @ts-ignore
 			node.isInternal ?? node.__isInternal,
 			key
@@ -67,6 +73,10 @@ export class DiffALinkNode extends ALinkNode {
 		}
 
 		return dom;
+	}
+
+	static importDOM() {
+		return ALinkNode.importDOM();
 	}
 
 	exportJSON() {

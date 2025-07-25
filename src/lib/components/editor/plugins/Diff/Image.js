@@ -76,6 +76,10 @@ export class DiffImageNode extends ImageNode {
 		return dom;
 	}
 
+	static importDOM() {
+		return ImageNode.importDOM();
+	}
+
 	exportJSON() {
 		return { ...super.exportJSON(), ___change: this.___change, type: DiffImageNode.getType() };
 	}
