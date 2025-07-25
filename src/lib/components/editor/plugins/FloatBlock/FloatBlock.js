@@ -28,7 +28,7 @@ const setNumberOrUndefined = (number, min) => {
  * @typedef {import('lexical').SerializedElementNode} SerializedElementNode
  * @typedef {import('lexical').EditorConfig} EditorConfig
  *
- * @typedef {('none' | 'left' | 'right' | 'inline-start' | 'inline-end'| undefined)} FloatValue
+ * @typedef {('none' | 'left' | 'right' | 'inline-start' | 'inline-end' | undefined)} FloatValue
  * @typedef {SerializedElementNode & { float: FloatValue, width?: number, height?: number, type: string }} SerializedFloatBlockNode
  */
 
@@ -69,13 +69,24 @@ export class FloatBlockNode extends ElementNode {
 	 */
 	setFloat(float) {
 		const self = this.getWritable();
-		self.__float = float && floatValues.includes(float) ? float : undefined;
+
+		if (!float || !floatValues.includes(float)) {
+			self.__float = 'none';
+			return;
+		}
+
+		self.__float = float;
 	}
 
 	getFloat() {
 		const self = this.getLatest();
 		const float = self.__float;
-		return float && floatValues.includes(float) ? float : undefined;
+
+		if (!float || !floatValues.includes(float)) {
+			return 'none';
+		}
+
+		return float;
 	}
 
 	/**

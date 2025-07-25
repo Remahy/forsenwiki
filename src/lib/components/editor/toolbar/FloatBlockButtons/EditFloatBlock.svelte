@@ -39,11 +39,11 @@
 		right: ArrowRightToLineIcon,
 		'inline-start': ArrowLeftToLineIcon,
 		'inline-end': ArrowRightToLineIcon,
-		'none': ChevronsLeftRightEllipsisIcon,
+		none: ChevronsLeftRightEllipsisIcon,
 		default: FileQuestionIcon,
 	};
 
-	const FloatIconComponent = $derived(floatValueIcons[floatValue || 'default'] || floatValueIcons.default);
+	const FloatIconComponent = $derived(floatValueIcons[floatValue || 'none'] || floatValueIcons.default);
 
 	const editor = getEditor();
 
