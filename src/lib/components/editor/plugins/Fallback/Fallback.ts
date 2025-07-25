@@ -55,6 +55,10 @@ export class FallbackNode extends DecoratorBlockNode {
 		return { element };
 	}
 
+	static importDOM() {
+		return DecoratorBlockNode.importDOM ? DecoratorBlockNode.importDOM() : null;
+	}
+
 	static importJSON(serializedNode: any): FallbackNode {
 		const node = new FallbackNode(serializedNode);
 

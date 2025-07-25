@@ -10,17 +10,17 @@ import {
 } from '$lib/lexical/index';
 import {
 	ALinkNode,
+	$createALinkNode,
 	AHeadingNode,
+	$createAHeadingNode,
 	ATableCellNode,
 	DeprecatedVideoEmbedNode,
 	FallbackNode,
 	ImageNode,
 	VideoEmbedNode,
 	FloatBlockNode,
+	$createATableCellNode,
 } from '$lib/lexical/custom';
-import { $createALinkNode } from '../plugins/ALink/ALinkNode';
-import { $createAHeadingNode } from '../plugins/AHeading/AHeadingNode';
-import { $createATableCellNode } from '../plugins/Table/ATableCellNode';
 
 export const articleTheme = {
 	image: 'image',

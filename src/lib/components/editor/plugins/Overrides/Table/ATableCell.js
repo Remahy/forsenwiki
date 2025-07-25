@@ -58,6 +58,10 @@ export class ATableCellNode extends TableCellNode {
 		return output;
 	}
 
+	static importDOM() {
+		return TableCellNode.importDOM();
+	}
+
 	exportJSON() {
 		return {
 			...super.exportJSON(),

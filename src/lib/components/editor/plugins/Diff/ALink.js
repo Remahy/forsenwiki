@@ -1,11 +1,12 @@
 import { ALinkNode } from '$lib/lexical/custom';
-import { $createALinkNode } from '../ALink/ALinkNode';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey
  * @typedef {import('lexical').LexicalEditor} LexicalEditor
  * @typedef {import('lexical').EditorConfig} EditorConfig
+ *
+ * @typedef {import('@lexical/link').SerializedLinkNode} SerializedLinkNode
  */
 
 export class DiffALinkNode extends ALinkNode {
@@ -13,14 +14,23 @@ export class DiffALinkNode extends ALinkNode {
 	___change;
 
 	/**
-	 * @param {ALinkNode} node
+	 * @param {SerializedLinkNode | ALinkNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
 		super(
-			node.__url,
-			{ rel: node.__rel, target: node.__target, title: node.__title },
-			node.__isInternal,
+			// @ts-ignore
+			node.url || node.__url,
+			{
+				// @ts-ignore
+				rel: node.rel || node.__rel,
+				// @ts-ignore
+				target: node.target || node.__target,
+				// @ts-ignore
+				title: node.title || node.__title,
+			},
+			// @ts-ignore
+			node.isInternal ?? node.__isInternal,
 			key
 		);
 
@@ -40,14 +50,10 @@ export class DiffALinkNode extends ALinkNode {
 	}
 
 	/**
-	 * @param {import('@lexical/link').SerializedLinkNode & { isInternal: boolean }} serializedNode
+	 * @param {SerializedLinkNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const node = $createALinkNode().updateFromJSON(serializedNode);
-
-		// @ts-ignore
-		node.___change = serializedNode.___change;
-
+		const node = $createDiffALinkNode(serializedNode).updateFromJSON(serializedNode);
 		return node;
 	}
 
@@ -69,14 +75,18 @@ export class DiffALinkNode extends ALinkNode {
 		return dom;
 	}
 
+	static importDOM() {
+		return ALinkNode.importDOM();
+	}
+
 	exportJSON() {
-		return { ...super.exportJSON(), type: DiffALinkNode.getType() };
+		return { ...super.exportJSON(), ___change: this.___change, type: DiffALinkNode.getType() };
 	}
 }
 
-// /**
-//  * @param {ALinkNode} node
-//  */
-// export function $createDiffALinkNode(node) {
-// 	return new DiffALinkNode(node);
-// }
+/**
+ * @param {SerializedLinkNode} node
+ */
+export function $createDiffALinkNode(node) {
+	return new DiffALinkNode(node);
+}

@@ -20,7 +20,7 @@
 	import ImagePlugin from './plugins/Image/ImagePlugin.svelte';
 	import AutoFocus from './plugins/AutoFocus.svelte';
 	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
-	import TablePlugin from './plugins/Table/TablePlugin.svelte';
+	import TablePlugin from './plugins/Overrides/Table/TablePlugin.svelte';
 	import FloatBlockPlugin from './plugins/FloatBlock/FloatBlockPlugin.svelte';
 
 	/**

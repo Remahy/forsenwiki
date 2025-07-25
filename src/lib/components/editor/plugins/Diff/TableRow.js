@@ -1,8 +1,10 @@
-import { $createTableRowNode, TableRowNode } from '@lexical/table';
+import { TableRowNode } from '@lexical/table';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey
+ *
+ * @typedef {import('@lexical/table').SerializedTableRowNode} SerializedTableRowNode
  */
 
 export class DiffTableRowNode extends TableRowNode {
@@ -10,11 +12,12 @@ export class DiffTableRowNode extends TableRowNode {
 	___change;
 
 	/**
-	 * @param {TableRowNode} node
+	 * @param {SerializedTableRowNode | TableRowNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
-		super(node.getHeight(), key);
+		// @ts-ignore
+		super(node.height ?? node.___height, key);
 
 		// @ts-ignore
 		this.___change = node.___change;
@@ -32,14 +35,10 @@ export class DiffTableRowNode extends TableRowNode {
 	}
 
 	/**
-	 * @param {import('@lexical/table').SerializedTableRowNode} serializedNode
+	 * @param {SerializedTableRowNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const node = $createTableRowNode().updateFromJSON(serializedNode);
-
-		// @ts-ignore
-		node.___change = serializedNode.___change;
-
+		const node = $createDiffTableRowNode(serializedNode).updateFromJSON(serializedNode);
 		return node;
 	}
 
@@ -61,7 +60,18 @@ export class DiffTableRowNode extends TableRowNode {
 		return dom;
 	}
 
-	exportJSON() {
-		return { ...super.exportJSON(), type: DiffTableRowNode.getType() };
+	static importDOM() {
+		return TableRowNode.importDOM();
 	}
+
+	exportJSON() {
+		return { ...super.exportJSON(), ___change: this.___change, type: DiffTableRowNode.getType() };
+	}
+}
+
+/**
+ * @param {SerializedTableRowNode} node
+ */
+export function $createDiffTableRowNode(node) {
+	return new DiffTableRowNode(node);
 }

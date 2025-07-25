@@ -1,22 +1,25 @@
-import { $createHeadingNode, HeadingNode } from '@lexical/rich-text';
+import { AHeadingNode } from '../Overrides/AHeading';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey
  * @typedef {import('lexical').LexicalEditor} LexicalEditor
  * @typedef {import('lexical').EditorConfig} EditorConfig
+ *
+ * @typedef {import('@lexical/rich-text').SerializedHeadingNode} SerializedHeadingNode
  */
 
-export class DiffAHeadingNode extends HeadingNode {
+export class DiffAHeadingNode extends AHeadingNode {
 	/** @type {import('./Types').___Change} */
 	___change;
 
 	/**
-	 * @param {HeadingNode} node
+	 * @param {SerializedHeadingNode | AHeadingNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
-		super(node.__tag, key);
+		// @ts-ignore
+		super(node.tag || node.__tag, key);
 
 		// @ts-ignore
 		this.___change = node.___change;
@@ -34,14 +37,10 @@ export class DiffAHeadingNode extends HeadingNode {
 	}
 
 	/**
-	 * @param {import('@lexical/rich-text').SerializedHeadingNode} serializedNode
+	 * @param {SerializedHeadingNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const node = $createHeadingNode().updateFromJSON(serializedNode);
-
-		// @ts-ignore
-		node.___change = serializedNode.___change;
-
+		const node = $createDiffAHeadingNode(serializedNode).updateFromJSON(serializedNode);
 		return node;
 	}
 
@@ -63,14 +62,18 @@ export class DiffAHeadingNode extends HeadingNode {
 		return dom;
 	}
 
+	static importDOM() {
+		return AHeadingNode.importDOM();
+	}
+
 	exportJSON() {
-		return { ...super.exportJSON(), type: DiffAHeadingNode.getType() };
+		return { ...super.exportJSON(), ___change: this.___change, type: DiffAHeadingNode.getType() };
 	}
 }
 
-// /**
-//  * @param {HeadingNode} node
-//  */
-// export function $createDiffAHeadingNode(node) {
-// 	return new DiffAHeadingNode(node);
-// }
+/**
+ * @param {SerializedHeadingNode} node
+ */
+export function $createDiffAHeadingNode(node) {
+	return new DiffAHeadingNode(node);
+}

@@ -1,8 +1,10 @@
+import { ATableCellNode } from '../Overrides/Table/ATableCell';
 import { addInformationHover, applyCSSColorDiff } from './utils';
-import { $createATableCellNode, ATableCellNode } from '../Table/ATableCellNode';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey
+ *
+ * @typedef {import('@lexical/table').SerializedTableCellNode} SerializedTableCellNode
  */
 
 export class DiffATableCellNode extends ATableCellNode {
@@ -10,11 +12,19 @@ export class DiffATableCellNode extends ATableCellNode {
 	___change;
 
 	/**
-	 * @param {ATableCellNode} node
+	 * @param {SerializedTableCellNode | ATableCellNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
-		super(node.getHeaderStyles(), node.getColSpan(), node.getWidth(), key);
+		super(
+			// @ts-ignore
+			node.headerState ?? node.__headerState,
+			// @ts-ignore
+			node.colSpan ?? node.__colSpan,
+			// @ts-ignore
+			node.width ?? node.__width,
+			key
+		);
 
 		// @ts-ignore
 		this.___change = node.___change;
@@ -32,14 +42,10 @@ export class DiffATableCellNode extends ATableCellNode {
 	}
 
 	/**
-	 * @param {import('@lexical/table').SerializedTableCellNode} serializedNode
+	 * @param {SerializedTableCellNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const node = $createATableCellNode().updateFromJSON(serializedNode);
-
-		// @ts-ignore
-		node.___change = serializedNode.___change;
-
+		const node = $createDiffATableCellNode(serializedNode).updateFromJSON(serializedNode);
 		return node;
 	}
 
@@ -61,7 +67,18 @@ export class DiffATableCellNode extends ATableCellNode {
 		return dom;
 	}
 
-	exportJSON() {
-		return { ...super.exportJSON(), type: DiffATableCellNode.getType() };
+	static importDOM() {
+		return ATableCellNode.importDOM();
 	}
+
+	exportJSON() {
+		return { ...super.exportJSON(), ___change: this.___change, type: DiffATableCellNode.getType() };
+	}
+}
+
+/**
+ * @param {SerializedTableCellNode} node
+ */
+export function $createDiffATableCellNode(node) {
+	return new DiffATableCellNode(node);
 }

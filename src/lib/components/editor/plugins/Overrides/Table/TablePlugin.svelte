@@ -32,7 +32,7 @@
 	} from '@lexical/utils';
 
 	import { modal } from '$lib/stores/modal';
-	import InsertTableDialog from '../../toolbar/TableButtons/InsertTableDialog.svelte';
+	import InsertTableDialog from '$lib/components/editor/toolbar/TableButtons/InsertTableDialog.svelte';
 
 	/**
 	 * @typedef Props

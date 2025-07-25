@@ -5,7 +5,7 @@
 
 import { $applyNodeReplacement } from 'lexical';
 
-import { $createLinkNode, LinkNode } from '$lib/lexical/index';
+import { LinkNode } from '$lib/lexical/index';
 
 /**
  * @typedef {import('@lexical/link').LinkAttributes} LinkAttributes
@@ -44,7 +44,7 @@ export class ALinkNode extends LinkNode {
 
 	/** @param {import('@lexical/link').SerializedLinkNode & { isInternal: boolean }} serializedNode */
 	static importJSON(serializedNode) {
-		const node = $createLinkNode().updateFromJSON(serializedNode);
+		const node = $createALinkNode().updateFromJSON(serializedNode);
 
 		return node;
 	}

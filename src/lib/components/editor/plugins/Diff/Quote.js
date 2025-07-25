@@ -1,10 +1,12 @@
-import { $createQuoteNode, QuoteNode } from '@lexical/rich-text';
+import { QuoteNode } from '@lexical/rich-text';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey
  * @typedef {import('lexical').LexicalEditor} LexicalEditor
  * @typedef {import('lexical').EditorConfig} EditorConfig
+ *
+ * @typedef {import('@lexical/rich-text').SerializedQuoteNode} SerializedQuoteNode
  */
 
 export class DiffQuoteNode extends QuoteNode {
@@ -12,7 +14,7 @@ export class DiffQuoteNode extends QuoteNode {
 	___change;
 
 	/**
-	 * @param {QuoteNode} node
+	 * @param {SerializedQuoteNode | QuoteNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
@@ -34,14 +36,10 @@ export class DiffQuoteNode extends QuoteNode {
 	}
 
 	/**
-	 * @param {import('@lexical/rich-text').SerializedQuoteNode} serializedNode
+	 * @param {SerializedQuoteNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const node = $createQuoteNode().updateFromJSON(serializedNode);
-
-		// @ts-ignore
-		node.___change = serializedNode.___change;
-
+		const node = $createDiffQuoteNode(serializedNode).updateFromJSON(serializedNode);
 		return node;
 	}
 
@@ -63,14 +61,18 @@ export class DiffQuoteNode extends QuoteNode {
 		return dom;
 	}
 
+	static importDOM() {
+		return QuoteNode.importDOM();
+	}
+
 	exportJSON() {
-		return { ...super.exportJSON(), type: DiffQuoteNode.getType() };
+		return { ...super.exportJSON(), ___change: this.___change, type: DiffQuoteNode.getType() };
 	}
 }
 
-// /**
-//  * @param {QuoteNode} node
-//  */
-// export function $createDiffQuoteNode(node) {
-// 	return new DiffQuoteNode(node);
-// }
+/**
+ * @param {SerializedQuoteNode} node
+ */
+export function $createDiffQuoteNode(node) {
+	return new DiffQuoteNode(node);
+}

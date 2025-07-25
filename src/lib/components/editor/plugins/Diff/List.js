@@ -1,10 +1,12 @@
-import { $createListNode, ListNode } from '@lexical/list';
+import { ListNode } from '@lexical/list';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey
  * @typedef {import('lexical').LexicalEditor} LexicalEditor
  * @typedef {import('lexical').EditorConfig} EditorConfig
+ *
+ * @typedef {import('@lexical/list').SerializedListNode} SerializedListNode
  */
 
 export class DiffListNode extends ListNode {
@@ -12,11 +14,12 @@ export class DiffListNode extends ListNode {
 	___change;
 
 	/**
-	 * @param {ListNode} node
+	 * @param {SerializedListNode | ListNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
-		super(node.__listType, node.__start, key);
+		// @ts-ignore
+		super(node.listType || node.__listType, node.start ?? node.__start, key);
 
 		// @ts-ignore
 		this.___change = node.___change;
@@ -34,14 +37,10 @@ export class DiffListNode extends ListNode {
 	}
 
 	/**
-	 * @param {import('@lexical/list').SerializedListNode} serializedNode
+	 * @param {SerializedListNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const node = $createListNode().updateFromJSON(serializedNode);
-
-		// @ts-ignore
-		node.___change = serializedNode.___change;
-
+		const node = $createDiffListNode(serializedNode).updateFromJSON(serializedNode);
 		return node;
 	}
 
@@ -63,14 +62,18 @@ export class DiffListNode extends ListNode {
 		return dom;
 	}
 
+	static importDOM() {
+		return ListNode.importDOM ? ListNode.importDOM() : null;
+	}
+
 	exportJSON() {
-		return { ...super.exportJSON(), type: DiffListNode.getType() };
+		return { ...super.exportJSON(), ___change: this.___change, type: DiffListNode.getType() };
 	}
 }
 
-// /**
-//  * @param {ListNode} node
-//  */
-// export function $createDiffListNode(node) {
-// 	return new DiffListNode(node);
-// }
+/**
+ * @param {SerializedListNode} node
+ */
+export function $createDiffListNode(node) {
+	return new DiffListNode(node);
+}

@@ -1,9 +1,13 @@
-import { $createTextNode, TextNode } from 'lexical';
+// @ts-ignore
+import { TextNode } from 'lexical';
+import { applyCSSColorDiff } from './utils';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey
  * @typedef {import('lexical').LexicalEditor} LexicalEditor
  * @typedef {import('lexical').EditorConfig} EditorConfig
+ *
+ * @typedef {import('lexical').SerializedTextNode} SerializedTextNode
  */
 
 export class DiffTextNode extends TextNode {
@@ -12,17 +16,12 @@ export class DiffTextNode extends TextNode {
 
 	/**
 	 *
-	 * @param {TextNode} node
+	 * @param {SerializedTextNode | DiffTextNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
-		super(node.__text, key);
-
-		this.setTextContent(node.__text);
-		this.setFormat(node.getFormat());
-		this.setDetail(node.getDetail());
-		this.setMode(node.getMode());
-		this.setStyle(node.getStyle());
+		// @ts-ignore
+		super(node.text || node.__text, key);
 
 		// @ts-ignore
 		this.___change = node.___change;
@@ -41,14 +40,10 @@ export class DiffTextNode extends TextNode {
 	}
 
 	/**
-	 * @param {import('lexical').SerializedTextNode} serializedNode
+	 * @param {SerializedTextNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const node = $createTextNode().updateFromJSON(serializedNode);
-
-		// @ts-ignore
-		node.___change = serializedNode.___change;
-
+		const node = $createDiffTextNode(serializedNode).updateFromJSON(serializedNode);
 		return node;
 	}
 
@@ -91,19 +86,29 @@ export class DiffTextNode extends TextNode {
 
 				dom.element.appendChild(span);
 			}
+		} else if (
+			typeof this.___change === 'object' &&
+			dom.element instanceof HTMLElement &&
+			this.___change.___type
+		) {
+			applyCSSColorDiff(dom.element, this.___change.___type);
 		}
 
 		return dom;
 	}
 
+	static importDOM() {
+		return TextNode.importDOM();
+	}
+
 	exportJSON() {
-		return { ...super.exportJSON(), type: DiffTextNode.getType() };
+		return { ...super.exportJSON(), ___change: this.___change, type: DiffTextNode.getType() };
 	}
 }
 
-// /**
-//  * @param {TextNode} node
-//  */
-// export function $createDiffTextNode(node) {
-// 	return new DiffTextNode(node);
-// }
+/**
+ * @param {SerializedTextNode} node
+ */
+export function $createDiffTextNode(node) {
+	return new DiffTextNode(node);
+}

@@ -1,5 +1,9 @@
 import { $applyNodeReplacement, ElementNode } from 'lexical';
-import { FLOATBLOCK_MIN_HEIGHT, FLOATBLOCK_MIN_WIDTH, floatValues } from '$lib/constants/floatBlock';
+import {
+	FLOATBLOCK_MIN_HEIGHT,
+	FLOATBLOCK_MIN_WIDTH,
+	floatValues,
+} from '$lib/constants/floatBlock';
 
 const startValues = ['left', 'inline-start', 'none', undefined];
 // const endValues = ['right', 'inline-end'];
@@ -10,7 +14,11 @@ const startValues = ['left', 'inline-start', 'none', undefined];
  */
 const setNumberOrUndefined = (number, min) => {
 	const value =
-		typeof number !== 'number' ? (Number.isNaN(Number(number)) ? undefined : Number(number)) : number;
+		typeof number !== 'number'
+			? Number.isNaN(Number(number))
+				? undefined
+				: Number(number)
+			: number;
 
 	return typeof value === 'number' ? Math.max(min, value) : undefined;
 };
@@ -20,8 +28,8 @@ const setNumberOrUndefined = (number, min) => {
  * @typedef {import('lexical').SerializedElementNode} SerializedElementNode
  * @typedef {import('lexical').EditorConfig} EditorConfig
  *
- * @typedef {('none' | 'left' | 'right' | 'inline-start' | 'inline-end'| undefined)} FloatValue
- * @typedef {SerializedElementNode & { float: FloatValue, width?: number, height?: number, type: ReturnType<FloatBlockNode.getType> }} SerializedFloatBlockNode
+ * @typedef {('none' | 'left' | 'right' | 'inline-start' | 'inline-end' | undefined)} FloatValue
+ * @typedef {SerializedElementNode & { float: FloatValue, width?: number, height?: number, type: string }} SerializedFloatBlockNode
  */
 
 /**
@@ -33,18 +41,18 @@ export class FloatBlockNode extends ElementNode {
 	__float;
 
 	/** @type {number | undefined} */
-	__width;;
+	__width;
 
 	/** @type {number | undefined} */
-	__height;;
+	__height;
 
 	/**
-	 * @param {FloatValue} float
+	 * @param {FloatValue} [float]
 	 * @param {number} [width]
 	 * @param {number} [height]
 	 * @param {NodeKey} [key]
 	 */
-	constructor(float, width, height, key) {
+	constructor(float = 'none', width, height, key) {
 		super(key);
 
 		this.__float = float;
@@ -52,30 +60,8 @@ export class FloatBlockNode extends ElementNode {
 		this.__height = height;
 	}
 
-	static getType() {
-		return 'float-block';
-	}
-
-	/**
-	 * @param {FloatBlockNode} node
-	 */
-	static clone(node) {
-		return new FloatBlockNode(node.__float, node.__width, node.__height, node.__key);
-	}
-
-	/** @param {SerializedFloatBlockNode} serializedNode */
-	static importJSON(serializedNode) {
-		const node = new FloatBlockNode(
-			serializedNode.float,
-			serializedNode.width,
-			serializedNode.height
-		);
-
-		node.setDirection(serializedNode.direction);
-		node.setFormat(serializedNode.format);
-		node.setIndent(serializedNode.indent);
-
-		return node;
+	$config() {
+		return this.config('float-block', { extends: ElementNode });
 	}
 
 	/**
@@ -83,13 +69,24 @@ export class FloatBlockNode extends ElementNode {
 	 */
 	setFloat(float) {
 		const self = this.getWritable();
-		self.__float = float && floatValues.includes(float) ? float : undefined;
+
+		if (!float || !floatValues.includes(float)) {
+			self.__float = 'none';
+			return;
+		}
+
+		self.__float = float;
 	}
 
 	getFloat() {
 		const self = this.getLatest();
 		const float = self.__float;
-		return float && floatValues.includes(float) ? float : undefined;
+
+		if (!float || !floatValues.includes(float)) {
+			return 'none';
+		}
+
+		return float;
 	}
 
 	/**
@@ -111,26 +108,14 @@ export class FloatBlockNode extends ElementNode {
 	 */
 	setHeight(height) {
 		const self = this.getWritable();
-		self.__height = height != null ? setNumberOrUndefined(height, FLOATBLOCK_MIN_HEIGHT) : undefined;
+		self.__height =
+			height != null ? setNumberOrUndefined(height, FLOATBLOCK_MIN_HEIGHT) : undefined;
 	}
 
 	getHeight() {
 		const self = this.getLatest();
 		const value = self.__height;
 		return value;
-	}
-
-	/**
-	 * @returns {SerializedFloatBlockNode}
-	 */
-	exportJSON() {
-		return {
-			...super.exportJSON(),
-			float: this.getFloat(),
-			width: this.getWidth(),
-			height: this.getHeight(),
-			type: FloatBlockNode.getType(),
-		};
 	}
 
 	/**

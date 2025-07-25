@@ -40,6 +40,7 @@
 	import { cacheServiceBaseURLWithStatic } from '$lib/utils/getCacheURL';
 	import { modal } from '$lib/stores/modal';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
+
 	import EditImageModal from '../../toolbar/ImageButtons/EditImageModal.svelte';
 	import {
 		$createImageNode as createImageNode,
@@ -47,6 +48,7 @@
 		ImageNode,
 		TRANSPARENT_IMAGE,
 	} from './Image';
+
 	/**
 	 * @typedef {Object} Props
 	 * @property {import('svelte').Snippet} [children]

@@ -1,11 +1,12 @@
 import { ImageNode } from '$lib/lexical/custom';
-import { $createImageNode } from '../Image/Image';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey
  * @typedef {import('lexical').LexicalEditor} LexicalEditor
  * @typedef {import('lexical').EditorConfig} EditorConfig
+ *
+ * @typedef {import('../Image/Image').SerializedImageNode} SerializedImageNode
  */
 
 export class DiffImageNode extends ImageNode {
@@ -13,11 +14,21 @@ export class DiffImageNode extends ImageNode {
 	___change;
 
 	/**
-	 * @param {ImageNode} node
+	 * @param {SerializedImageNode | ImageNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
-		super(node.__src, node.__altText, node.__width, node.__height, key);
+		super(
+			// @ts-ignore
+			node.src || node.__src,
+			// @ts-ignore
+			node.altText || node.__altText,
+			// @ts-ignore
+			node.width ?? node.__width,
+			// @ts-ignore
+			node.height ?? node.__height,
+			key
+		);
 
 		// @ts-ignore
 		this.___change = node.___change;
@@ -35,14 +46,10 @@ export class DiffImageNode extends ImageNode {
 	}
 
 	/**
-	 * @param {import('../Image/Image').SerializedImageNode} serializedNode
+	 * @param {SerializedImageNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const node = $createImageNode().updateFromJSON(serializedNode);
-
-		// @ts-ignore
-		node.___change = serializedNode.___change;
-
+		const node = $createDiffImageNode(serializedNode).updateFromJSON(serializedNode);
 		return node;
 	}
 
@@ -69,8 +76,12 @@ export class DiffImageNode extends ImageNode {
 		return dom;
 	}
 
+	static importDOM() {
+		return ImageNode.importDOM();
+	}
+
 	exportJSON() {
-		return { ...super.exportJSON(), type: DiffImageNode.getType() };
+		return { ...super.exportJSON(), ___change: this.___change, type: DiffImageNode.getType() };
 	}
 
 	/**
@@ -82,9 +93,9 @@ export class DiffImageNode extends ImageNode {
 	}
 }
 
-// /**
-//  * @param {ImageNode} node
-//  */
-// export function $createDiffImageNode(node) {
-// 	return new DiffImageNode(node);
-// }
+/**
+ * @param {SerializedImageNode} node
+ */
+export function $createDiffImageNode(node) {
+	return new DiffImageNode(node);
+}

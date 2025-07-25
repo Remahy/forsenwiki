@@ -1,11 +1,12 @@
 import { VideoEmbedNode } from '$lib/lexical/custom';
-import { $createVideoEmbedNode } from '../VideoEmbed/VideoEmbed';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey
  * @typedef {import('lexical').LexicalEditor} LexicalEditor
  * @typedef {import('lexical').EditorConfig} EditorConfig
+ *
+ * @typedef {import('../VideoEmbed/VideoEmbed').SerializedVideoEmbedNode} SerializedVideoEmbedNode
  */
 
 export class DiffVideoEmbedNode extends VideoEmbedNode {
@@ -16,18 +17,23 @@ export class DiffVideoEmbedNode extends VideoEmbedNode {
 	__format = 0;
 
 	/**
-	 * @param {VideoEmbedNode} node
+	 * @param {SerializedVideoEmbedNode | VideoEmbedNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
-		super(node.__platform, node.__src, node.__width, node.__height, node.getFormatType(), key);
-
-		this.__format = node.getFormat() || 0;
-		this.__platform = node.getPlatform();
-		this.__src = node.getSrc();
-		this.__width = node.getWidthAndHeight().width;
-		this.__height = node.getWidthAndHeight().height;
-
+		super(
+			// @ts-ignore
+			node.platform || node.__platform,
+			// @ts-ignore
+			node.src || node.__src,
+			// @ts-ignore
+			node.width ?? node.__width,
+			// @ts-ignore
+			node.height ?? node.__height,
+			// @ts-ignore
+			node.format ?? node.__format,
+			key
+		);
 		// @ts-ignore
 		this.___change = node.___change;
 	}
@@ -44,14 +50,10 @@ export class DiffVideoEmbedNode extends VideoEmbedNode {
 	}
 
 	/**
-	 * @param {import('../VideoEmbed/VideoEmbed').SerializedVideoEmbedNode} serializedNode
+	 * @param {SerializedVideoEmbedNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const node = $createVideoEmbedNode().updateFromJSON(serializedNode);
-
-		// @ts-ignore
-		node.___change = serializedNode.___change;
-
+		const node = $createDiffVideoEmbedNode(serializedNode).updateFromJSON(serializedNode);
 		return node;
 	}
 
@@ -77,8 +79,12 @@ export class DiffVideoEmbedNode extends VideoEmbedNode {
 		return dom;
 	}
 
+	static importDOM() {
+		return VideoEmbedNode.importDOM();
+	}
+
 	exportJSON() {
-		return { ...super.exportJSON(), type: DiffVideoEmbedNode.getType() };
+		return { ...super.exportJSON(), ___change: this.___change, type: DiffVideoEmbedNode.getType() };
 	}
 
 	/**
@@ -90,9 +96,9 @@ export class DiffVideoEmbedNode extends VideoEmbedNode {
 	}
 }
 
-// /**
-//  * @param {VideoEmbedNode} node
-//  */
-// export function $createDiffVideoEmbedNode(node) {
-// 	return new DiffVideoEmbedNode(node);
-// }
+/**
+ * @param {SerializedVideoEmbedNode} node
+ */
+export function $createDiffVideoEmbedNode(node) {
+	return new DiffVideoEmbedNode(node);
+}
