@@ -41,6 +41,10 @@ export const editableTheme = {
 	tableCellResizer: 'tableCellResizer',
 	tableCellSelected: 'tableCellSelected',
 	floatBlockNodeBoxShadow: '#696969 0px 0px 0px 1px',
+	text: {
+		bold: 'font-semibold',
+		italic: 'italic',
+	}
 };
 
 /**
