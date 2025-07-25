@@ -1,4 +1,4 @@
-import { HeadingNode } from '@lexical/rich-text';
+import { AHeadingNode } from '../Overrides/AHeading';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
@@ -9,12 +9,12 @@ import { addInformationHover, applyCSSColorDiff } from './utils';
  * @typedef {import('@lexical/rich-text').SerializedHeadingNode} SerializedHeadingNode
  */
 
-export class DiffAHeadingNode extends HeadingNode {
+export class DiffAHeadingNode extends AHeadingNode {
 	/** @type {import('./Types').___Change} */
 	___change;
 
 	/**
-	 * @param {SerializedHeadingNode | HeadingNode} node
+	 * @param {SerializedHeadingNode | AHeadingNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
