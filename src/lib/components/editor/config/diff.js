@@ -13,6 +13,7 @@ import {
 	DiffTableNode,
 	DiffTableRowNode,
 	DiffATableCellNode,
+	DiffFloatBlockNode,
 } from '$lib/lexical/custom';
 
 import { articleTheme, articleNodes } from './article';
@@ -55,6 +56,7 @@ export const diffConfig = (theme, editable, editorState, onError = onErrorDefaul
 		DiffTableNode,
 		DiffTableRowNode,
 		DiffATableCellNode,
+		DiffFloatBlockNode,
 	],
 	/** @param {Error} error */
 	onError,
