@@ -1,8 +1,7 @@
 <script>
 	import License from '$lib/components/License.svelte';
 	import Link from '$lib/components/Link.svelte';
-
-	import version from '/version?raw';
+	import { version } from '$lib/utils/version';
 </script>
 
 <footer class="footer">

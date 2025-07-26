@@ -7,6 +7,7 @@ import prisma from '$lib/prisma';
 import { AccountTooYoung } from '$lib/errors/auth/AccountTooYoung';
 import { AccountIsSpecial } from '$lib/errors/auth/AccountIsSpecial';
 import { NoUser } from '$lib/errors/auth/NoUser';
+import { version } from '$lib/utils/version';
 
 if (!AUTH_TWITCH_ID || !AUTH_TWITCH_SECRET) {
 	console.warn(
@@ -15,9 +16,11 @@ if (!AUTH_TWITCH_ID || !AUTH_TWITCH_SECRET) {
 	process.exit(1);
 }
 
+const adapter = PrismaAdapter(prisma);
+
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	trustHost: AUTH_TRUST_HOST === 'true' ? true : false,
-	adapter: PrismaAdapter(prisma),
+	adapter,
 	callbacks: {
 		async session({ session, user }) {
 			if (session.user) {
@@ -34,6 +37,14 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 		async createUser() {
 			// TODO: Create user bio page.
 		},
+		async signIn(message) {
+			const { user: { id, name } } = message;
+			const newName = message.profile?.name;
+
+			if (id && newName && newName !== name) {
+				await adapter.updateUser?.({ id, name: newName });
+			}
+		}
 	},
 	providers: [
 		(config) => {
@@ -64,7 +75,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 							headers: {
 								Authorization: `Bearer ${tokens.access_token}`,
 								'Client-Id': provider.clientId,
-								'User-Agent': 'authjs',
+								'User-Agent': `forsenwiki/${version}`,
 							},
 						}).then(async (res) => await res.json());
 
