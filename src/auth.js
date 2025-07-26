@@ -15,9 +15,11 @@ if (!AUTH_TWITCH_ID || !AUTH_TWITCH_SECRET) {
 	process.exit(1);
 }
 
+const adapter = PrismaAdapter(prisma);
+
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	trustHost: AUTH_TRUST_HOST === 'true' ? true : false,
-	adapter: PrismaAdapter(prisma),
+	adapter,
 	callbacks: {
 		async session({ session, user }) {
 			if (session.user) {
@@ -34,6 +36,14 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 		async createUser() {
 			// TODO: Create user bio page.
 		},
+		async signIn(message) {
+			const { user: { id, name } } = message;
+			const newName = message.profile?.name;
+
+			if (id && newName && newName !== name) {
+				await adapter.updateUser?.({ id, name: newName });
+			}
+		}
 	},
 	providers: [
 		(config) => {
