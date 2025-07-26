@@ -7,6 +7,7 @@ import prisma from '$lib/prisma';
 import { AccountTooYoung } from '$lib/errors/auth/AccountTooYoung';
 import { AccountIsSpecial } from '$lib/errors/auth/AccountIsSpecial';
 import { NoUser } from '$lib/errors/auth/NoUser';
+import { version } from '$lib/utils/version';
 
 if (!AUTH_TWITCH_ID || !AUTH_TWITCH_SECRET) {
 	console.warn(
@@ -74,7 +75,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 							headers: {
 								Authorization: `Bearer ${tokens.access_token}`,
 								'Client-Id': provider.clientId,
-								'User-Agent': 'authjs',
+								'User-Agent': `forsenwiki/${version}`,
 							},
 						}).then(async (res) => await res.json());
 
