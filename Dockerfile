@@ -1,4 +1,4 @@
-FROM node:20 AS build
+FROM node:22-alpine AS build
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ RUN npm run prisma:generate
 RUN npm run build
 RUN npm prune --production
 
-FROM node:22 AS run
+FROM node:22-alpine AS run
 
 ENV NODE_ENV=production
 
