@@ -16,8 +16,9 @@ services:
     volumes:
       - ${DEV_STATIC_DIR}:/usercontent
     depends_on:
-      - db
       - caddy
+    networks:
+      - prisma-network
 
   db:
     image: postgres
@@ -28,6 +29,13 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - 5432:5432
+    networks:
+      - prisma-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
 
   caddy:
     build: 
@@ -45,9 +53,14 @@ services:
       - caddy_config:/config
       - ./forsen-wiki-logs:/var/log
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+networks:
+  prisma-network:
+    name: prisma-network
 
 volumes:
   pgdata:
