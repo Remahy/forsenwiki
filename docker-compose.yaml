@@ -41,6 +41,8 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile-caddy
+    environment:
+      DOMAIN: ${DOMAIN}
     restart: unless-stopped
     ports:
       - "80:80"

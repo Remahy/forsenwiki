@@ -6,7 +6,7 @@
 	}
 }
 
-forsen.wiki {
+{$DOMAIN:forsen.wiki} {
 	@wsrv {
 		client_ip 46.4.13.221
 		client_ip 51.15.191.75
@@ -40,7 +40,7 @@ forsen.wiki {
 	}
 }
 
-stats.forsen.wiki {
+stats.{$DOMAIN:forsen.wiki} {
 	handle {
 		reverse_proxy host.docker.internal:8081
 	}
