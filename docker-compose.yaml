@@ -7,7 +7,6 @@ services:
       dockerfile: Dockerfile
     environment:
       - NODE_ENV=production
-      - PRISMA_CLI_BINARY_TARGETS=debian-openssl-3.0.x
     env_file:
       - .env
     restart: unless-stopped
@@ -45,9 +44,11 @@ services:
       DOMAIN: ${DOMAIN}
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
+      - "${HTTP_PORT:-80}:80"
+      - "${PORT:-443}:443"
+      - "${PORT:-443}:443/udp"
+    networks:
+      - prisma-network
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ${DEV_STATIC_DIR}:/srv
