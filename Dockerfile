@@ -23,7 +23,6 @@ COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/src/lib/constants/constants.js ./src/lib/constants/constants.js
 COPY --from=build /app/.env ./env
 
-COPY --chmod=0755 --from=build /app/start.sh ./start.sh
+COPY --chmod=0755 ./start.sh ./start.sh
 
-RUN echo "hello"
-ENTRYPOINT ["./start.sh"]
+ENTRYPOINT ["sh", "./start.sh"]
