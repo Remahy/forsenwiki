@@ -5,7 +5,7 @@
 	"scripts": {
 		"add-version-file": "node -p \"require('./package.json').version\" > version && git rev-parse --short HEAD >> version",
 		"copy-worker-files": "cp -a ./.svelte-kit/output/server/chunks/worker.js ./build/server/chunks/ && cp -a ./.svelte-kit/output/server/chunks/worker2.js ./build/server/chunks/ && cp -a ./.svelte-kit/output/server/chunks/worker3.js ./build/server/chunks/",
-		"build": "npm run add-version-file && svelte-kit sync && npm run build:workers && vite build && npm run copy-worker-files",
+		"build": "npm run prisma:generate && npm run add-version-file && svelte-kit sync && npm run build:workers && vite build && npm run copy-worker-files",
 		"build:workers": "node buildWorkers.js",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --ignore \"src/lib/worker/**/worker.js\"",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
