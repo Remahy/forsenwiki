@@ -1,17 +1,15 @@
 services:
   sveltekit:
-    container_name: sveltekit
     build:
       context: .
       dockerfile: Dockerfile
     environment:
-      - NODE_ENV=production
       - PORT=80
     env_file:
       - .env
     restart: unless-stopped
     volumes:
-      - ${DEV_STATIC_DIR}:/usercontent
+      - ${DEV_STATIC_DIR}:/usercontent/
     depends_on:
       - caddy
     networks:
@@ -40,14 +38,14 @@ services:
       DOMAIN: ${DOMAIN}
     restart: unless-stopped
     ports:
-      - "${CADDY_HTTP_PORT:-80}:80"
-      - "${CADDY_PORT:-443}:443"
-      - "${CADDY_PORT:-443}:443/udp"
+      - "${CADDY_HTTP_PORT}:80"
+      - "${CADDY_HTTPS_PORT}:443"
+      - "${CADDY_HTTPS_PORT}:443/udp"
     networks:
       - prisma-network
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
-      - ${DEV_STATIC_DIR}:/srv
+      - ${DEV_STATIC_DIR}:/srv/
       - caddy_data:/data
       - caddy_config:/config
       - ./forsen-wiki-logs:/var/log
