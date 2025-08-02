@@ -15,7 +15,7 @@ services:
     networks:
       - prisma-network
 
-  db:
+  postgres:
     image: postgres
     restart: always
     environment:
@@ -50,7 +50,7 @@ services:
       - caddy_config:/config
       - ./forsen-wiki-logs:/var/log
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
