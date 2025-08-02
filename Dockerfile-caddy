@@ -4,6 +4,6 @@ RUN xcaddy build \
     --with github.com/WeidiDeng/caddy-cloudflare-ip \
     --with github.com/caddyserver/transform-encoder
 
-FROM caddy:latest-alpine
+FROM caddy:alpine
 
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy

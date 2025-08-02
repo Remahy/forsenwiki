@@ -1,4 +1,5 @@
 FROM node:22-alpine AS build
+RUN apk --no-cache add git
 
 WORKDIR /app
 
@@ -8,15 +9,11 @@ RUN npm ci
 
 COPY . .
 
-ENV NODE_ENV=production
-
 RUN npm run prisma:generate
 RUN npm run build
 RUN npm prune --production
 
 FROM node:22-alpine AS run
-
-ENV NODE_ENV=production
 
 WORKDIR /app
 COPY --from=build /app/build ./build
@@ -26,7 +23,7 @@ COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/src/lib/constants/constants.js ./src/lib/constants/constants.js
 COPY --from=build /app/.env ./env
 
-COPY ./start.sh ./start.sh
+COPY --chmod=0755 --from=build /app/start.sh ./start.sh
 
-RUN ["chmod", "+x", "./start.sh"]
-ENTRYPOINT exec ./start.sh
+RUN echo "hello"
+ENTRYPOINT ["./start.sh"]
