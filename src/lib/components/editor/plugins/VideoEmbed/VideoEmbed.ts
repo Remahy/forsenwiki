@@ -68,10 +68,10 @@ export const getIframeStyle = (
 ) => {
 	const widthStyle = width === 'inherit' ? 'width:100%;' : '';
 	const heightStyle = height === 'inherit' ? 'height:auto;' : '';
-	// It's an iframe, they have silly values.
-	const aspectRatio = width === 'inherit' && height === 'inherit' ? 'aspect-ratio:16/9;' : '';
 
-	return `max-width:100%;${widthStyle}${heightStyle}${aspectRatio}${formatType ? decoratorFormatToMarginStyle(formatType) : ''}`;
+	const responsive = 'max-width:100%;max-height:fit-content;aspect-ratio:16/9;'
+
+	return `${responsive}${widthStyle}${heightStyle}${formatType ? decoratorFormatToMarginStyle(formatType) : ''}`;
 };
 
 export const getURLAndTitle = (
