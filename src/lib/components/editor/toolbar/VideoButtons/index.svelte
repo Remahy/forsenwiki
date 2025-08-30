@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import { $getSelection as getSelection, $isNodeSelection as isNodeSelection } from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 	import { mergeRegister } from '@lexical/utils';
@@ -32,7 +31,7 @@
 		});
 	};
 
-	onMount(() => {
+	$effect(() => {
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
 				updateToolbar();

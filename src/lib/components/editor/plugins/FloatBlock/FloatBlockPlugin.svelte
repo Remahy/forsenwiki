@@ -1,4 +1,4 @@
-<script context="module">
+<script module>
 	/**
 	 * @typedef {Readonly<import('./FloatBlock').FloatBlockNodePayload>} FloatBlockNodePayload
 	 */
@@ -8,7 +8,6 @@
 </script>
 
 <script>
-	import { onMount } from 'svelte';
 	import {
 		createCommand,
 		$createParagraphNode as createParagraphNode,
@@ -41,7 +40,7 @@
 		});
 	};
 
-	onMount(() => {
+	$effect(() => {
 		if (!editor.hasNodes([FloatBlockNode])) {
 			throw new Error('FloatNodePlugin: FloatBlockNode not registered on editor');
 		}

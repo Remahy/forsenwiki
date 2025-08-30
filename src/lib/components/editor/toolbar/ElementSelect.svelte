@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import {
 		FileQuestionIcon,
 		Heading1Icon,
@@ -229,7 +228,7 @@
 		});
 	};
 
-	onMount(() => {
+	$effect(() => {
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
 				updateToolbar();

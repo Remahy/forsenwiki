@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import {
 		$isRangeSelection as isRangeSelection,
 		FORMAT_TEXT_COMMAND,
@@ -40,7 +39,7 @@
 		editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
 	};
 
-	onMount(() => {
+	$effect(() => {
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
 				updateToolbar();

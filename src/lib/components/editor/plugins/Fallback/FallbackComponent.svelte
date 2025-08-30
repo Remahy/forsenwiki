@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import {
 		$getSelection as getSelection,
 		$isNodeSelection as isNodeSelection,
@@ -93,7 +92,7 @@
 		return false;
 	};
 
-	onMount(() => {
+	$effect(() => {
 		let isMounted = true;
 		const unregister = mergeRegister(
 			editor.registerUpdateListener(({ editorState }) => {

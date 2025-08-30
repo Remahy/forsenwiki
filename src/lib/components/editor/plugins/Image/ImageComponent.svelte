@@ -18,7 +18,6 @@
 		KEY_ESCAPE_COMMAND,
 		KEY_ENTER_COMMAND,
 	} from 'lexical';
-	import { onMount } from 'svelte';
 	import { mergeRegister } from '@lexical/utils';
 	import {
 		clearSelection,
@@ -168,8 +167,7 @@
 			}
 		});
 	};
-
-	onMount(() => {
+	$effect(() => {
 		let isMounted = true;
 		const rootElement = editor.getRootElement();
 		const unregister = mergeRegister(

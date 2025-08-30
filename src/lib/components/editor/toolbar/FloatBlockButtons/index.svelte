@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import { $getSelection as getSelection } from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 	import { mergeRegister } from '@lexical/utils';
@@ -9,7 +8,7 @@
 	import EditFloatBlock from './EditFloatBlock.svelte';
 
 	/** @type {import('$lib/lexical/custom').FloatBlockNode | null} */
-	let selectedFloatBlockNode = null;
+	let selectedFloatBlockNode = $state(null);
 
 	const editor = getEditor();
 
@@ -40,7 +39,7 @@
 		});
 	};
 
-	onMount(() => {
+	$effect(() => {
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
 				updateToolbar();

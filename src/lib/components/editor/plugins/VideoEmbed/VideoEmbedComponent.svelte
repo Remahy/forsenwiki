@@ -5,7 +5,6 @@
 	// Based on umaranis' svelte-lexical
 	import '../Image/Image.css';
 
-	import { onMount } from 'svelte';
 	import {
 		$getSelection as getSelection,
 		$isNodeSelection as isNodeSelection,
@@ -169,7 +168,7 @@
 		isResizing = true;
 	};
 
-	onMount(() => {
+	$effect(() => {
 		let isMounted = true;
 		const rootElement = editor.getRootElement();
 		const unregister = mergeRegister(

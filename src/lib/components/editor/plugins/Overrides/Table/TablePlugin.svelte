@@ -2,7 +2,6 @@
 	// Based on umaranis' svelte-lexical
 	import './table.css';
 
-	import { onMount } from 'svelte';
 	import { getEditor } from 'svelte-lexical';
 	import {
 		$createParagraphNode as createParagraphNode,
@@ -219,7 +218,7 @@
 		});
 	}
 
-	onMount(() => {
+	$effect(() => {
 		if (!editor.hasNodes([TableNode, TableCellNode, TableRowNode])) {
 			throw new Error(
 				'TablePlugin: TableNode, TableCellNode or TableRowNode not registered on editor'

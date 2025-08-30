@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import { COMMAND_PRIORITY_CRITICAL, FORMAT_ELEMENT_COMMAND } from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 	import { mergeRegister } from '@lexical/utils';
@@ -60,7 +59,7 @@
 		});
 	};
 
-	onMount(() => {
+	$effect(() => {
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
 				updateToolbar();

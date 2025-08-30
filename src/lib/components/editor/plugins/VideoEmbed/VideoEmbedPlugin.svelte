@@ -10,7 +10,6 @@
 <script>
 	// Based on umaranis' svelte-lexical
 
-	import { onMount } from 'svelte';
 	import {
 		$insertNodes as insertNodes,
 		createCommand,
@@ -88,7 +87,7 @@
 		});
 	};
 
-	onMount(() => {
+	$effect(() => {
 		if (!editor.hasNodes([VideoEmbedNode])) {
 			throw new Error('VideoEmbedPlugin: VideoEmbedNode not registered on editor');
 		}

@@ -1,11 +1,10 @@
 <script>
 	import { Trash2Icon, XIcon } from 'lucide-svelte';
+	import isUrl from 'is-url';
 
 	import { modal } from '$lib/stores/modal';
 	import Button from '$lib/components/Button.svelte';
 	import Select from '$lib/components/Select.svelte';
-	import isUrl from 'is-url';
-	import { onMount } from 'svelte';
 	import { sanitizeUrl } from '../../utils/sanitizeUrl';
 
 	/** @typedef {import('@lexical/link').LinkAttributes} LinkAttributes */
@@ -100,7 +99,7 @@
 		$modal.isOpen = false;
 	};
 
-	onMount(() => {
+	$effect(() => {
 		// Trigger handleInputChange if we're, for example, provided an URL through a selection + copy & paste action.
 		if (url) {
 			handleInputChange(/** @type {any} */ ({ target: { value: url } }));
