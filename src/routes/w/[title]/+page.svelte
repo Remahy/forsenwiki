@@ -34,7 +34,7 @@
 			name: author.name?.replace(/[^\w]/g, ''),
 		})),
 	});
-	const authorsHTML = `<script type="application/ld+json">{${authorsScriptContent}}<\/script>`;
+	const authorsHTML = `<script type="application/ld+json">${authorsScriptContent}<\/script>`;
 </script>
 
 <svelte:head>
