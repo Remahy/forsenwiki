@@ -1,9 +1,8 @@
 <script>
-	import { onMount } from 'svelte';
 	import {
 		COMMAND_PRIORITY_HIGH,
 		COMMAND_PRIORITY_NORMAL,
-		KEY_MODIFIER_COMMAND,
+		KEY_DOWN_COMMAND,
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,
 	} from 'lexical';
@@ -110,14 +109,14 @@
 		});
 	};
 
-	onMount(() => {
+	$effect(() => {
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
 				updateToolbar();
 			}),
 
 			editor.registerCommand(
-				KEY_MODIFIER_COMMAND,
+				KEY_DOWN_COMMAND,
 				// @ts-ignore
 				(payload) => {
 					const event = payload;

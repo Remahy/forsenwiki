@@ -1,7 +1,6 @@
 <script>
 	// Based on umaranis' svelte-lexical
 
-	import { onMount } from 'svelte';
 	import { PlusIcon, MinusIcon, ArrowLeftIcon, ArrowRightIcon, Columns3Icon } from 'lucide-svelte';
 	import { $isRangeSelection as isRangeSelection, $getSelection as getSelection } from 'lexical';
 	import { getEditor } from 'svelte-lexical';
@@ -130,7 +129,7 @@
 		});
 	};
 
-	onMount(() => {
+	$effect(() => {
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
 				updateToolbar();

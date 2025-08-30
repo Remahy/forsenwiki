@@ -1,5 +1,5 @@
 <script>
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 	import { FileUpIcon } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -118,7 +118,7 @@
 		}
 	};
 
-	onMount(() => {
+	$effect(() => {
 		c.subscribe((composer) => {
 			if (composer === null) {
 				return;

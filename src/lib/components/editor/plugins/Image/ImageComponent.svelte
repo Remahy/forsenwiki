@@ -2,7 +2,7 @@
 	const imageCache = new Set();
 
 	/** @type {import('lexical').LexicalCommand<MouseEvent>} */
-	export const RIGHT_CLICK_IMAGE_COMMAND = createCommand('RIGHT_CLICK_IMAGE_COMMAND');
+	const RIGHT_CLICK_IMAGE_COMMAND = createCommand('RIGHT_CLICK_IMAGE_COMMAND');
 
 	import {
 		$getSelection as getSelection,
@@ -12,13 +12,11 @@
 		createCommand,
 		COMMAND_PRIORITY_LOW,
 		CLICK_COMMAND,
-		DRAGSTART_COMMAND,
 		KEY_DELETE_COMMAND,
 		KEY_BACKSPACE_COMMAND,
 		KEY_ESCAPE_COMMAND,
-		KEY_ENTER_COMMAND,
+		// KEY_ENTER_COMMAND,
 	} from 'lexical';
-	import { onMount } from 'svelte';
 	import { mergeRegister } from '@lexical/utils';
 	import {
 		clearSelection,
@@ -47,29 +45,18 @@
 	 */
 
 	/** @type {Props} */
-	let {
-		node,
-		src,
-		altText,
-		nodeKey,
-		width,
-		height,
-		resizable,
-		editor
-	} = $props();
+	let { node, src, altText, nodeKey, width, height, resizable, editor } = $props();
 
 	let heightCss = $derived(height === 'inherit' ? 'inherit' : height + 'px');
 	let widthCss = $derived(width === 'inherit' ? 'inherit' : width + 'px');
 
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);
-
 	/** @type {HTMLElement | HTMLImageElement | null} */
 	let imageRef = $state(null);
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
 	let isResizing = $state(false);
 
-	let draggable = $derived($isSelected && isNodeSelection(selection) && !isResizing);
 	let isFocused = $derived($isSelected || isResizing);
 
 	let promise = new Promise((resolve) => {
@@ -100,16 +87,16 @@
 		return false;
 	};
 
-	const onEnter = () => {
-		const latestSelection = getSelection();
-		if (
-			$isSelected &&
-			isNodeSelection(latestSelection) &&
-			latestSelection.getNodes().length === 1
-		) {
-		}
-		return false;
-	};
+	// const onEnter = () => {
+	// 	const latestSelection = getSelection();
+	// 	if (
+	// 		$isSelected &&
+	// 		isNodeSelection(latestSelection) &&
+	// 		latestSelection.getNodes().length === 1
+	// 	) {
+	// 	}
+	// 	return false;
+	// };
 
 	const onEscape = () => {
 		clearSelection(editor);
@@ -169,45 +156,6 @@
 		});
 	};
 
-	onMount(() => {
-		let isMounted = true;
-		const rootElement = editor.getRootElement();
-		const unregister = mergeRegister(
-			editor.registerUpdateListener(({ editorState }) => {
-				if (isMounted) {
-					selection = editorState.read(() => getSelection());
-				}
-			}),
-			editor.registerCommand(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW),
-			editor.registerCommand(RIGHT_CLICK_IMAGE_COMMAND, onClick, COMMAND_PRIORITY_LOW),
-			editor.registerCommand(
-				DRAGSTART_COMMAND,
-				(event) => {
-					if (event.target === imageRef) {
-						// TODO This is just a temporary workaround for FF to behave like other browsers.
-						// Ideally, this handles drag & drop too (and all browsers).
-						event.preventDefault();
-						return true;
-					}
-					return false;
-				},
-				COMMAND_PRIORITY_LOW
-			),
-			editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
-			editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
-			editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
-			editor.registerCommand(KEY_ESCAPE_COMMAND, onEscape, COMMAND_PRIORITY_LOW)
-		);
-
-		rootElement?.addEventListener('contextmenu', onRightClick);
-
-		return () => {
-			isMounted = false;
-			unregister();
-			rootElement?.removeEventListener('contextmenu', onRightClick);
-		};
-	});
-
 	/**
 	 * @param {'inherit' | number} nextWidth
 	 * @param {'inherit' | number} nextHeight
@@ -229,18 +177,42 @@
 	const onResizeStart = () => {
 		isResizing = true;
 	};
+
+	$effect(() => {
+		let isMounted = true;
+		const rootElement = editor.getRootElement();
+		const unregister = mergeRegister(
+			editor.registerUpdateListener(({ editorState }) => {
+				if (isMounted) {
+					selection = editorState.read(() => getSelection());
+				}
+			}),
+			editor.registerCommand(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW),
+			editor.registerCommand(RIGHT_CLICK_IMAGE_COMMAND, onClick, COMMAND_PRIORITY_LOW),
+			editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
+			editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
+			// editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
+			editor.registerCommand(KEY_ESCAPE_COMMAND, onEscape, COMMAND_PRIORITY_LOW)
+		);
+
+		rootElement?.addEventListener('contextmenu', onRightClick);
+
+		return () => {
+			isMounted = false;
+			unregister();
+			rootElement?.removeEventListener('contextmenu', onRightClick);
+		};
+	});
 </script>
 
-<div {draggable}>
+<div>
 	{#await promise}
 		<figure
 			style="height:{heightCss};px;width:{widthCss};"
 			class="element-placeholder-color !m-0 flex animate-pulse items-center justify-center p-0"
 			class:focused={isFocused}
-			class:draggable={isFocused && isNodeSelection(selection)}
 			title="Loading image..."
 			bind:this={imageRef}
-			draggable="false"
 		>
 			<img
 				class="pointer-events-none !m-0 animate-spin rounded-full"
@@ -250,17 +222,22 @@
 		</figure>
 	{:then _}
 		<img
-			class:focused={isFocused}
-			class:draggable={isFocused && isNodeSelection(selection)}
+			style="height:{heightCss};width:{widthCss};"
 			class="m-0"
+			class:focused={isFocused}
 			src={src === TRANSPARENT_IMAGE ? IMAGE_OFF : src}
 			alt={altText}
 			bind:this={imageRef}
-			style="height:{heightCss};width:{widthCss};"
-			draggable="false"
 		/>
 	{/await}
 </div>
 {#if resizable && isNodeSelection(selection) && isFocused}
-	<ImageResizer {editor} {imageRef} {onResizeStart} {onResizeEnd} minWidth={IMAGE_MIN_WIDTH} minHeight={IMAGE_MIN_HEIGHT} />
+	<ImageResizer
+		{editor}
+		{imageRef}
+		{onResizeStart}
+		{onResizeEnd}
+		minWidth={IMAGE_MIN_WIDTH}
+		minHeight={IMAGE_MIN_HEIGHT}
+	/>
 {/if}

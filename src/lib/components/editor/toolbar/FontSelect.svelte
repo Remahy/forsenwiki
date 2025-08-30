@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import {
 		$isNodeSelection as isNodeSelection,
 		$getSelection as getSelection,
@@ -77,7 +76,7 @@
 		});
 	};
 
-	onMount(() => {
+	$effect(() => {
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
 				updateToolbar();
