@@ -1,7 +1,7 @@
 const FONTFAMILIES = Object.freeze({
 	default: '',
 	Monospace: 'monospace',
-	OpenDyslexic: 'OpenDyslexic',
+	ComicNeue: 'Comic Neue',
 });
 
 export const TEXT_CONSTANTS = {
