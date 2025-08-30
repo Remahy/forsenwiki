@@ -13,12 +13,12 @@
 	 */
 
 	/** @type {Props} */
-	let { selectedImageNode = $bindable() } = $props();
+	let { selectedImageNode } = $props();
 
 	let editor = $derived(getEditor?.());
 
-	let currentWidth = $state(selectedImageNode.__width);
-	let currentHeight = $state(selectedImageNode.__height);
+	let currentWidth = $derived(selectedImageNode.__width);
+	let currentHeight = $derived(selectedImageNode.__height);
 
 	let width = $derived(currentWidth);
 	let height = $derived(currentHeight);

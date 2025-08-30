@@ -18,6 +18,7 @@
 
 			if (isNodeSelection(selection)) {
 				const [node] = selection.getNodes();
+
 				if (!isVideoEmbedNode(node)) {
 					selectedVideoEmbedNode = null;
 					return;

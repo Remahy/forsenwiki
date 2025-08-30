@@ -35,7 +35,7 @@
 	/** @type {HTMLInputElement | null} */
 	let inputElement = $state(null);
 
-	let currentLinkType = $state(isInternal ? 'internal' : 'external');
+	let currentLinkType = $derived(isInternal ? 'internal' : 'external');
 
 	let isValidLink = $state(false);
 
