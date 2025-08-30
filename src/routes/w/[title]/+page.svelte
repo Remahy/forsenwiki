@@ -49,7 +49,7 @@
 		<meta name="description" content={`${text.substring(0, 64)}${text.length > 64 ? '...' : ''}`} />
 	{/if}
 	{#if image?.length}
-		<meta name="og:image" content={image} />
+		<meta property="og:image" content={image} />
 	{/if}
 
 	{@html authorsHTML}
