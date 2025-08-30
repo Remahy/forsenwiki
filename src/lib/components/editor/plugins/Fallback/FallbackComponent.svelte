@@ -118,10 +118,8 @@
 	bind:this={embedRef}
 	class="mb-1 overflow-hidden rounded-sm bg-red-500/50 p-4"
 	class:focused={isFocused}
-	class:draggable={isFocused && isNodeSelection(selection)}
 	class:outline={isFocused}
 	class:outline-blue-500={isFocused}
-	draggable="false"
 >
 	<div class="pointer-events-none text-xs">
 		<p class="m-0 h-[unset] leading-none">

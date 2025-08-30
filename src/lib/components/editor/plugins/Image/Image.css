@@ -21,14 +21,6 @@
 	user-select: none;
 }
 
-.editor-shell .editor-image *.focused.draggable {
-	cursor: grab;
-}
-
-.editor-shell .editor-image *.focused.draggable:active {
-	cursor: grabbing;
-}
-
 .editor-shell .editor-image .image-resizer {
 	display: block;
 	width: 7px;
