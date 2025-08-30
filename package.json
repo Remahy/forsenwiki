@@ -62,7 +62,7 @@
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.10.0",
 		"@auth/sveltekit": "^1.10.0",
-		"@fontsource/opendyslexic": "^5.2.5",
+		"@fontsource/comic-neue": "^5.2.6",
 		"@lexical/clipboard": "0.33.1",
 		"@lexical/code": "0.33.1",
 		"@lexical/file": "0.33.1",

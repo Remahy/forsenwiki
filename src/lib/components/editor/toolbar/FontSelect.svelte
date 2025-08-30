@@ -99,6 +99,6 @@
 		<option value="mixed" hidden>Mixed</option>
 		<option value="" class="font-sans text-lg">Default font</option>
 		<option value="monospace" class="font-mono text-lg">Monospace</option>
-		<option value="OpenDyslexic" class="font-dyslexic text-lg">OpenDyslexic</option>
+		<option value="Comic Neue" class="font-dyslexic text-lg">Comic Neue</option>
 	</Select>
 </div>
