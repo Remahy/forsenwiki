@@ -70,7 +70,7 @@
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
 	let isResizing = $state(false);
 
-	let isFocused = $derived(isSelected || isResizing);
+	let isFocused = $derived($isSelected || isResizing);
 	let parsedSrc = $derived(getURLAndTitle(platform, src, DOMAIN));
 	let url = $derived(parsedSrc.url);
 	let title = $derived(parsedSrc.title);
@@ -95,7 +95,7 @@
 
 	/** @param {KeyboardEvent} payload */
 	const onDelete = (payload) => {
-		if (isSelected && isNodeSelection(getSelection())) {
+		if ($isSelected && isNodeSelection(getSelection())) {
 			/** @type {KeyboardEvent} */
 			const event = payload;
 			event.preventDefault();
@@ -111,7 +111,7 @@
 	// const onEnter = () => {
 	// 	const latestSelection = getSelection();
 	// 	if (
-	// 		isSelected &&
+	// 		$isSelected &&
 	// 		isNodeSelection(latestSelection) &&
 	// 		latestSelection.getNodes().length === 1
 	// 	) {
