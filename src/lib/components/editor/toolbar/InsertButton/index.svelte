@@ -2,7 +2,7 @@
 	import { getEditor } from 'svelte-lexical';
 	import { INSERT_TABLE_COMMAND } from '@lexical/table';
 	import { PlusIcon } from 'lucide-svelte';
-	
+
 	import Select from '$lib/components/Select.svelte';
 
 	import { TRANSPARENT_IMAGE } from '../../plugins/Image/Image';
@@ -44,7 +44,11 @@
 	};
 
 	const insertFloatBlock = () => {
-		editor.dispatchCommand(INSERT_FLOATBLOCK_COMMAND, { float: 'inline-start', width: null, height: null });
+		editor.dispatchCommand(INSERT_FLOATBLOCK_COMMAND, {
+			float: 'inline-start',
+			width: undefined,
+			height: undefined,
+		});
 	};
 
 	const insertElementTypeOptions = [
