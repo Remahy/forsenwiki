@@ -177,4 +177,6 @@ model Html {
   postId String @unique
 
   content String
+  text String?
+  image String?
 }

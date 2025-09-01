@@ -33,7 +33,6 @@
 		DROP_COMMAND,
 	} from 'lexical';
 	import { $wrapNodeInElement as wrapNodeInElement, mergeRegister } from '@lexical/utils';
-	import { onMount } from 'svelte';
 	import { getEditor } from 'svelte-lexical';
 
 	import { CAN_USE_DOM } from '$lib/environment/utils';
@@ -302,7 +301,7 @@
 		});
 	}
 
-	onMount(() => {
+	$effect(() => {
 		if (!editor.hasNodes([ImageNode])) {
 			throw new Error('ImagePlugin: ImageNode not registered on editor');
 		}

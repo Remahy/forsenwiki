@@ -109,6 +109,8 @@ export async function readYPostByTitle(title) {
 			html: {
 				select: {
 					content: true,
+					text: true,
+					image: true,
 				},
 			},
 			outRelations: {

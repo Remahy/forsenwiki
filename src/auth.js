@@ -38,11 +38,22 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 			// TODO: Create user bio page.
 		},
 		async signIn(message) {
-			const { user: { id, name } } = message;
+			const { user: { id, name, image } } = message;
 			const newName = message.profile?.name;
+			const newPicture = message.profile?.picture;
 
-			if (id && newName && newName !== name) {
-				await adapter.updateUser?.({ id, name: newName });
+			const updateObj = {};
+
+			if (newName && newName !== name) {
+				updateObj.name = newName;
+			}
+
+			if (newPicture && newPicture !== image) {
+				updateObj.image = newPicture;
+			}
+
+			if (id && Object.keys(updateObj).length) {
+				await adapter.updateUser?.({ id, ...updateObj });
 			}
 		}
 	},

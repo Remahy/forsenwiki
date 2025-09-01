@@ -128,10 +128,12 @@ export async function POST({ request, locals, params }) {
 
 	const updatedArticle = await updateArticleYPost(body, metadata);
 
-	await upsertHTML(
-		post.id,
-		await toHTML({ config: 'article', content: JSON.stringify(editor.getEditorState().toJSON()) })
-	);
+	const { html, text, image } = await toHTML({
+		config: 'article',
+		content: JSON.stringify(editor.getEditorState().toJSON()),
+	});
+
+	await upsertHTML(post.id, { content: html, text, image });
 
 	await invalidateArticleCache(post.title);
 

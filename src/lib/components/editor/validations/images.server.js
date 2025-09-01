@@ -72,7 +72,7 @@ export const adjustAndUploadImages = (editor, title, author) => {
 
 					const src = image.getSrc();
 
-					if (src.startsWith('data:') && calculateOriginalFileSizeInMiB(src) > MAX_IMAGE_SIZE_MIB) {
+					if (src?.startsWith('data:') && calculateOriginalFileSizeInMiB(src) > MAX_IMAGE_SIZE_MIB) {
 						image.setSrc(IMAGE_OFF);
 						return reject(`Image too large: {${image.getKey()}}`);
 					}
@@ -92,7 +92,7 @@ export const adjustAndUploadImages = (editor, title, author) => {
 					// const width = image.__width;
 					// image.setWidthAndHeight({ width: typeof width === 'number' ? Math.min(width, 500) : 500, height: typeof height === 'number' ? Math.min(height, 500) : 500 });
 
-					if (src.startsWith('data:')) {
+					if (src?.startsWith('data:')) {
 						const hash = sha256FromBase64(src);
 						// Upload image to static folder.
 						const newTitle = `${title}-${index}`;
@@ -106,7 +106,7 @@ export const adjustAndUploadImages = (editor, title, author) => {
 						continue;
 					}
 
-					if (src.startsWith(cacheServiceBaseURLWithStatic)) {
+					if (src?.startsWith(cacheServiceBaseURLWithStatic)) {
 						const url = new URL(src);
 
 						// Resize image if user has changed it.
@@ -124,7 +124,7 @@ export const adjustAndUploadImages = (editor, title, author) => {
 					}
 
 					// Unset any images that aren't base64.
-					if (!src.startsWith(cacheServiceBaseURLWithStatic)) {
+					if (!src?.startsWith(cacheServiceBaseURLWithStatic)) {
 						image.setSrc(IMAGE_OFF);
 					}
 				}

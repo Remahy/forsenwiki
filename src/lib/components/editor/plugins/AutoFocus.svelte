@@ -1,12 +1,12 @@
 <script>
   // Based on umaranis' svelte-lexical
 	import { $setSelection as setSelection, $getRoot as getRoot } from 'lexical';
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
 
-	onMount(() => {
+	$effect(() => {
 		c.subscribe((composer) => {
 			if (!composer) {
 				return;

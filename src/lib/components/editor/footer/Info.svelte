@@ -4,7 +4,7 @@
 		SELECTION_CHANGE_COMMAND,
 		$getSelection as getSelection,
 	} from 'lexical';
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 
 	import Divider from '$lib/components/Divider.svelte';
 	import { isDefined } from '$lib/utils/index';
@@ -42,7 +42,7 @@
 		types = null;
 	};
 
-	onMount(() => {
+	$effect(() => {
 		c.subscribe((composer) => {
 			if (composer === null) {
 				return;

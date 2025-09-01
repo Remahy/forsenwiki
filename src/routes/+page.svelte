@@ -1,6 +1,5 @@
 <script>
 	import { Dice4Icon, NewspaperIcon, SearchIcon, SquarePenIcon } from 'lucide-svelte';
-	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
 	import { formatRelative } from 'date-fns';
@@ -30,7 +29,7 @@
 	const value2 = source('/adonis/frontpage').select('article:update');
 	const value3 = source('/adonis/frontpage').select('user:create');
 
-	onMount(() => {
+	$effect(() => {
 		value.subscribe((v) => {
 			if (v) {
 				const values = $latestArticles;
@@ -123,9 +122,11 @@
 					<div class="p-2 pl-0">
 						<Link href="/w/{article.title}">
 							<span>
-								<strong>{article.rawTitle}</strong> - {new Date(
-									article.createdTimestamp
-								).toDateString()} - By {article.author}
+								<strong>{article.rawTitle}</strong> -
+								<span title={new Date(article.createdTimestamp).toUTCString()}
+									>{new Date(article.createdTimestamp).toDateString()}</span
+								>
+								- By {article.author}
 							</span>
 						</Link>
 					</div>

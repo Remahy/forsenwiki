@@ -15,18 +15,18 @@
 	 */
 
 	/** @type {Props} */
-	let { selectedVideoEmbedNode = $bindable() } = $props();
+	let { selectedVideoEmbedNode } = $props();
 
 	let editor = $derived(getEditor?.());
 
 	/** @type {HTMLSelectElement | null} */
 	let platformElement = $state(null);
 
-	let currentPlatform = $state(selectedVideoEmbedNode.__platform);
-	let currentURL = $state(selectedVideoEmbedNode.__src);
+	let currentPlatform = $derived(selectedVideoEmbedNode.__platform);
+	let currentURL = $derived(selectedVideoEmbedNode.__src);
 
-	let currentWidth = $state(selectedVideoEmbedNode.__width);
-	let currentHeight = $state(selectedVideoEmbedNode.__height);
+	let currentWidth = $derived(selectedVideoEmbedNode.__width);
+	let currentHeight = $derived(selectedVideoEmbedNode.__height);
 
 	let url = $derived(currentURL);
 

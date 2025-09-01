@@ -14,7 +14,9 @@
 	let to = $state(1);
 	let from = $state(0);
 
-	let link = $derived(postUpdates.length > 1 ? `history/${postUpdates[to].id}..${postUpdates[from].id}` : null);
+	let link = $derived(
+		postUpdates.length > 1 ? `history/${postUpdates[to].id}..${postUpdates[from].id}` : null
+	);
 </script>
 
 <svelte:head>
@@ -57,7 +59,7 @@
 			</div>
 		{/if}
 
-		<div class="prose mt-3 max-w-[unset] dark:prose-invert">
+		<div class="prose dark:prose-invert mt-3 max-w-[unset]">
 			<ul>
 				{#each postUpdates as postUpdate, index}
 					<li
@@ -80,7 +82,11 @@
 							{/if}
 
 							<span>
-								<Link href="/w/{title}/history/{postUpdate.id}" class="ml-2">
+								<Link
+									href="/w/{title}/history/{postUpdate.id}"
+									class="ml-2"
+									title={new Date(postUpdate.createdTimestamp).toUTCString()}
+								>
 									{new Date(postUpdate.createdTimestamp).toLocaleString()}
 								</Link>
 

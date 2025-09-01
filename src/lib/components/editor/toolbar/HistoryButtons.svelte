@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import {
 		CAN_UNDO_COMMAND,
 		UNDO_COMMAND,
@@ -27,7 +26,7 @@
 		editor.dispatchCommand(REDO_COMMAND, undefined);
 	};
 
-	onMount(() => {
+	$effect(() => {
 		return mergeRegister(
 			editor.registerCommand(
 				CAN_REDO_COMMAND,

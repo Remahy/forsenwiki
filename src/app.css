@@ -1,9 +1,9 @@
-@import "@fontsource/opendyslexic";
+@import "@fontsource/comic-neue";
 
 @import "tailwindcss";
 
 @theme {
-  --font-dyslexic: 'OpenDyslexic, \'Comic Sans MS\', arial, helvetica, sans-serif'
+  --font-dyslexic: '\'Comic Neue\', \'Comic Sans MS\', arial, helvetica, sans-serif'
 }
 
 @plugin "@tailwindcss/forms";

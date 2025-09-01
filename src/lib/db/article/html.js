@@ -2,9 +2,9 @@ import prisma from '$lib/prisma';
 
 /**
  * @param {string} postId
- * @param {string} content
+ * @param {{ content: string, text: string, image: string }} arg2
  */
-export const upsertHTML = (postId, content) => {
+export const upsertHTML = (postId, { content, text, image }) => {
 	return prisma.html.upsert({
 		where: {
 			postId,
@@ -14,7 +14,9 @@ export const upsertHTML = (postId, content) => {
 			content
 		},
 		update:{
-			content
+			content,
+			text,
+			image,
 		}
 	});
 };
