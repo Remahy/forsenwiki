@@ -122,9 +122,11 @@
 					<div class="p-2 pl-0">
 						<Link href="/w/{article.title}">
 							<span>
-								<strong>{article.rawTitle}</strong> - {new Date(
-									article.createdTimestamp
-								).toDateString()} - By {article.author}
+								<strong>{article.rawTitle}</strong> -
+								<span title={new Date(article.createdTimestamp).toUTCString()}
+									>{new Date(article.createdTimestamp).toDateString()}</span
+								>
+								- By {article.author}
 							</span>
 						</Link>
 					</div>

@@ -111,12 +111,12 @@
 
 		<footer class="article-footer-color p-4">
 			<p>
-				<span title={createdTimestamp.toString()}>
+				<span title={createdTimestamp.toUTCString()}>
 					<strong>Created:</strong>
 					{createdTimestamp.toDateString()}
 				</span>
 				{#if lastUpdated.getTime() !== createdTimestamp.getTime()}
-					<span title={lastUpdated.toString()}>
+					<span title={lastUpdated.toUTCString()}>
 						<strong>Updated:</strong>
 						{formatRelative(lastUpdated, Date.now(), { locale: enGB })}
 					</span>
