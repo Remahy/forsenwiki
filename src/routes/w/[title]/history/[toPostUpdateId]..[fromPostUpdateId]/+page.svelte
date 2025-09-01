@@ -15,7 +15,7 @@
 		toAuthor,
 		fromDate,
 		fromAuthor,
-		diffHTML,
+		diffHTML: { html: diffHTML },
 		diffJSON,
 		editorJSON,
 	} = data;
@@ -83,24 +83,23 @@
 			<p>
 				<strong>Legend:</strong>
 			</p>
-			<p class="p-1 text-red-500 outline outline-1">
+			<p class="p-1 text-red-500 outline">
 				<span><strong>Red:</strong> Deleted &#40;-&#41;</span>
 			</p>
-			<p class="p-1 text-orange-500 outline-dashed outline-1 dark:text-orange-300">
+			<p class="p-1 text-orange-500 outline outline-dashed dark:text-orange-300">
 				<span><strong>Orange:</strong> Modified &#40;~&#41;</span>
 			</p>
-			<p class="p-1 text-green-500 outline outline-1">
+			<p class="p-1 text-green-500 outline">
 				<span><strong>Green:</strong> Added &#40;+&#41;</span>
 			</p>
 			<p>
 				When available, hover over the question mark <span
-					class="mx-1 rounded-full bg-blue-500/50 px-2 py-1 font-bold outline outline-1 outline-white"
-					>?</span
+					class="mx-1 rounded-full bg-blue-500/50 px-2 py-1 font-bold outline outline-white">?</span
 				> to read what fields were modified.
 			</p>
 		</div>
 
-		<main class="article-root prose max-w-[unset] grow dark:prose-invert">
+		<main class="article-root prose dark:prose-invert max-w-[unset] grow">
 			<h1>{rawTitle}</h1>
 
 			{@html diffHTML}
