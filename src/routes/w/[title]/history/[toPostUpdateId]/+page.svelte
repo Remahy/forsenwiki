@@ -19,9 +19,9 @@
 		html: { html },
 	} = data;
 
-	const date = new Date(createdTimestamp).toLocaleString();
+	const date = new Date(createdTimestamp);
 
-	const displayTitle = `"${date}" version for "${rawTitle}" article`;
+	const displayTitle = `"${date.toLocaleString()}" version for "${rawTitle}" article`;
 
 	const authorName = author?.name || '?';
 </script>
@@ -37,7 +37,7 @@
 			<div class="flex w-full gap-2">
 				<div class="flex grow items-center overflow-hidden">
 					<p>
-						<strong>{displayTitle}</strong>
+						<strong title={date.toUTCString()}>{displayTitle}</strong>
 					</p>
 				</div>
 

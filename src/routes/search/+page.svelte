@@ -32,14 +32,18 @@
 			<LinkBox href={!result.type ? `/w/${result.title}` : `/content/${result.id}`} class="flex">
 				<div class="flex grow flex-col gap-2">
 					<strong class="break-words">{result.rawTitle}</strong>
-					<p>Last updated: {new Date(result.lastUpdated).toLocaleString()}</p>
+					<p>
+						Last updated: <span title={new Date(result.lastUpdated).toUTCString()}
+							>{new Date(result.lastUpdated).toLocaleString()}</span
+						>
+					</p>
 					{#if result.type === 'content'}
 						<img src={result.title} alt={result.rawTitle} class="w-fit max-w-full" />
 					{/if}
 				</div>
 				{#if result.type === 'content'}
 					<div>
-						<LinkButton href="{result.title}">Open</LinkButton>
+						<LinkButton href={result.title}>Open</LinkButton>
 					</div>
 				{/if}
 			</LinkBox>

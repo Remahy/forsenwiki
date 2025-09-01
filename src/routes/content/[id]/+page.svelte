@@ -81,7 +81,7 @@
 
 	<div class="items-start gap-8 xl:flex">
 		<div class="mb-4 xl:mb-0 xl:w-fit">
-			<Box class="xl:min-h-96 xl:min-w-96 xl:max-w-3xl">
+			<Box class="xl:min-h-96 xl:max-w-3xl xl:min-w-96">
 				<img {src} alt={result.name} class="w-fit max-w-full" />
 			</Box>
 		</div>
@@ -115,7 +115,9 @@
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Created at</strong></td>
-							<td class="p-4">{new Date(result.createdTimestamp)}</td>
+							<td class="p-4" title={new Date(result.createdTimestamp).toUTCString()}
+								>{new Date(result.createdTimestamp)}</td
+							>
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Hash</strong></td>
@@ -127,7 +129,7 @@
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Used in</strong></td>
-							<td class="break-words p-4"><small><i>// TODO: Not implemented yet.</i></small></td>
+							<td class="p-4 break-words"><small><i>// TODO: Not implemented yet.</i></small></td>
 						</tr>
 					</tbody>
 				</table>
