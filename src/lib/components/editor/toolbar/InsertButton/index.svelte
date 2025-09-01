@@ -30,8 +30,8 @@
 		editor.dispatchCommand(INSERT_VIDEOEMBED_COMMAND, {
 			platform: 'youtube',
 			src: '',
-			width: 1280,
-			height: 720,
+			width: 'inherit',
+			height: 'inherit',
 		});
 	};
 
