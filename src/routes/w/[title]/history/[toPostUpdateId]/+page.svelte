@@ -16,7 +16,7 @@
 		byteLength,
 		toPostUpdateId,
 		recentPostUpdateId,
-		html,
+		html: { html },
 	} = data;
 
 	const date = new Date(createdTimestamp).toLocaleString();
@@ -89,7 +89,7 @@
 			</div>
 		</header>
 
-		<main class="article-root prose max-w-[unset] grow dark:prose-invert">
+		<main class="article-root prose dark:prose-invert max-w-[unset] grow">
 			<h1>{rawTitle}</h1>
 
 			{@html html}

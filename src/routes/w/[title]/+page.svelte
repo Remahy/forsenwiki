@@ -125,7 +125,7 @@
 
 			{#if authors.length}
 				<p>
-					<span><strong>Authors:</strong></span>
+					<span><strong>Author{authors.length > 1 ? 's' : ''}:</strong></span>
 					<span>
 						{#each authors as author, index}
 							{author.name}{index < authors.length - 1 ? ', ' : ''}
