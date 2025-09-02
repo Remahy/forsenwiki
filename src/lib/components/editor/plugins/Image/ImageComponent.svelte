@@ -4,6 +4,7 @@
 	/** @type {import('lexical').LexicalCommand<MouseEvent>} */
 	const RIGHT_CLICK_IMAGE_COMMAND = createCommand('RIGHT_CLICK_IMAGE_COMMAND');
 
+	import { onMount } from 'svelte';
 	import {
 		$getSelection as getSelection,
 		$isNodeSelection as isNodeSelection,
@@ -18,6 +19,7 @@
 		// KEY_ENTER_COMMAND,
 	} from 'lexical';
 	import { mergeRegister } from '@lexical/utils';
+
 	import {
 		clearSelection,
 		createNodeSelectionStore,
@@ -123,7 +125,11 @@
 			return true;
 		}
 
-		if (event.target === imageRef) {
+		if (event.target instanceof HTMLElement === false) {
+			return false;
+		}
+
+		if (event.target.parentElement === imageRef) {
 			if (event.shiftKey) {
 				$isSelected = !$isSelected;
 				editor.update(() => node.selectEnd());
@@ -188,7 +194,7 @@
 		isResizing = true;
 	};
 
-	$effect(() => {
+	onMount(() => {
 		let isMounted = true;
 		const rootElement = editor.getRootElement();
 		const unregister = mergeRegister(
@@ -215,14 +221,14 @@
 	});
 </script>
 
-<div>
+<!-- Div wrapper is required to make resizer work properly -->
+<div bind:this={imageRef} class="overflow-hidden" class:focused={isFocused}>
 	{#await promise}
 		<figure
-			style="height:{heightCss};px;width:{widthCss};"
+			style:width={widthCss}
+			style:height={heightCss}
 			class="element-placeholder-color !m-0 flex animate-pulse items-center justify-center p-0"
-			class:focused={isFocused}
 			title="Loading image..."
-			bind:this={imageRef}
 		>
 			<img
 				class="pointer-events-none !m-0 animate-spin rounded-full"
@@ -232,15 +238,15 @@
 		</figure>
 	{:then _}
 		<img
-			style="height:{heightCss};width:{widthCss};"
+			style:width={widthCss}
+			style:height={heightCss}
 			class="m-0"
-			class:focused={isFocused}
 			src={src === TRANSPARENT_IMAGE ? IMAGE_OFF : src}
 			alt={altText}
-			bind:this={imageRef}
 		/>
 	{/await}
 </div>
+
 {#if resizable && isNodeSelection(selection) && isFocused}
 	<ImageResizer
 		{editor}

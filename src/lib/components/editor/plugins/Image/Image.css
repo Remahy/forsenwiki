@@ -17,6 +17,7 @@
 
 .editor-shell .editor-image *.focused {
 	outline: 2px solid rgb(60, 132, 244);
+	outline-offset: -2px;
 	-webkit-user-select: none;
 	user-select: none;
 }
@@ -31,26 +32,26 @@
 }
 
 .editor-shell .editor-image .image-resizer.image-resizer-n {
-	top: -6px;
+	top: -2px;
 	left: 48%;
 	cursor: n-resize;
 }
 
 .editor-shell .editor-image .image-resizer.image-resizer-ne {
-	top: -6px;
-	right: -6px;
+	top: -2px;
+	right: -2px;
 	cursor: ne-resize;
 }
 
 .editor-shell .editor-image .image-resizer.image-resizer-e {
 	bottom: 48%;
-	right: -6px;
+	right: -2px;
 	cursor: e-resize;
 }
 
 .editor-shell .editor-image .image-resizer.image-resizer-se {
 	bottom: -2px;
-	right: -6px;
+	right: -2px;
 	cursor: nwse-resize;
 }
 
@@ -62,19 +63,19 @@
 
 .editor-shell .editor-image .image-resizer.image-resizer-sw {
 	bottom: -2px;
-	left: -6px;
+	left: -2px;
 	cursor: sw-resize;
 }
 
 .editor-shell .editor-image .image-resizer.image-resizer-w {
 	bottom: 48%;
-	left: -6px;
+	left: -2px;
 	cursor: w-resize;
 }
 
 .editor-shell .editor-image .image-resizer.image-resizer-nw {
-	top: -6px;
-	left: -6px;
+	top: -2px;
+	left: -2px;
 	cursor: nw-resize;
 }
 
