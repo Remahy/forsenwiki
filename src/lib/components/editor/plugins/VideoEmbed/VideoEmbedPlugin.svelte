@@ -10,6 +10,7 @@
 <script>
 	// Based on umaranis' svelte-lexical
 
+	import { onMount } from 'svelte';
 	import {
 		$insertNodes as insertNodes,
 		createCommand,
@@ -19,8 +20,8 @@
 		$getSelection as getSelection,
 		RootNode,
 	} from 'lexical';
-	import { getEditor } from 'svelte-lexical';
 	import { mergeRegister } from '@lexical/utils';
+	import { getEditor } from 'svelte-lexical';
 
 	import { getYouTubeClipURL } from '$lib/api/utils';
 	import { $createVideoEmbedNode as createVideoEmbedNode, VideoEmbedNode } from './VideoEmbed';
@@ -87,7 +88,7 @@
 		});
 	};
 
-	$effect(() => {
+	onMount(() => {
 		if (!editor.hasNodes([VideoEmbedNode])) {
 			throw new Error('VideoEmbedPlugin: VideoEmbedNode not registered on editor');
 		}

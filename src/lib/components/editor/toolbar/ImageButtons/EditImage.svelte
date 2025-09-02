@@ -2,6 +2,7 @@
 	import { $getNodeByKey as getNodeByKey } from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 	import { RectangleHorizontalIcon, RectangleVerticalIcon } from 'lucide-svelte';
+
 	import Button from '$lib/components/Button.svelte';
 	import { modal } from '$lib/stores/modal';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';

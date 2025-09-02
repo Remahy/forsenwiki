@@ -15,8 +15,8 @@
 		$isTextNode as isTextNode,
 		$createTextNode as createTextNode,
 	} from 'lexical';
-	import { getEditor } from 'svelte-lexical';
 	import { $insertNodeToNearestRoot as insertNodeToNearestRoot, mergeRegister } from '@lexical/utils';
+	import { getEditor } from 'svelte-lexical';
 
 	import { $createFloatBlockNode as createFloatBlockNode, FloatBlockNode } from './FloatBlock';
 

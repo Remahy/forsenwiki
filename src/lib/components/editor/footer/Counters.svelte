@@ -1,6 +1,6 @@
 <script>
+	import { getContext, onMount } from 'svelte';
 	import { ChevronRightIcon, XIcon } from 'lucide-svelte';
-	import { getContext } from 'svelte';
 	import Divider from '$lib/components/Divider.svelte';
 
 	/** @type {ComposerWritable} */
@@ -29,7 +29,7 @@
 		return text?.match(/\b\S+\b/g)?.length || 0;
 	};
 
-	$effect(() => {
+	onMount(() => {
 		c.subscribe((composer) => {
 			if (composer === null) {
 				return;

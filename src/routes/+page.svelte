@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import { Dice4Icon, NewspaperIcon, SearchIcon, SquarePenIcon } from 'lucide-svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
@@ -29,7 +30,7 @@
 	const value2 = source('/adonis/frontpage').select('article:update');
 	const value3 = source('/adonis/frontpage').select('user:create');
 
-	$effect(() => {
+	onMount(() => {
 		value.subscribe((v) => {
 			if (v) {
 				const values = $latestArticles;

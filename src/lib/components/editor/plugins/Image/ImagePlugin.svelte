@@ -15,6 +15,7 @@
 	// Based on umaranis' svelte-lexical
 	import './Image.css';
 
+	import { onMount } from 'svelte';
 	import {
 		$createParagraphNode as createParagraphNode,
 		$createRangeSelection as createRangeSelection,
@@ -301,7 +302,7 @@
 		});
 	}
 
-	$effect(() => {
+	onMount(() => {
 		if (!editor.hasNodes([ImageNode])) {
 			throw new Error('ImagePlugin: ImageNode not registered on editor');
 		}
