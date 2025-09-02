@@ -6,24 +6,16 @@
 	 * @property {number} minWidth
 	 * @property {number} minHeight
 	 * @property {() => void} onResizeStart
-	 * @property {(width: 'inherit' | number, height: 'inherit' | number) => void} onResizeEnd
+	 * @property {(width: 'inherit' | number, height: 'inherit' | number, startWidth: number, startHeight: number) => void} onResizeEnd
 	 * @property {HTMLElement | null} imageRef
 	 * @property {import('lexical').LexicalEditor} editor
 	 */
 
 	/** @type {Props} */
-	let {
-		minWidth,
-		minHeight,
-		onResizeStart,
-		onResizeEnd,
-		imageRef,
-		editor
-	} = $props();
+	let { minWidth, minHeight, onResizeStart, onResizeEnd, imageRef, editor } = $props();
 
 	/** @type {HTMLDivElement | null} */
 	let controlWrapperRef = $state(null);
-
 
 	/**
 	 * @param {number} value
@@ -32,7 +24,7 @@
 	 */
 	const clamp = (value, min, max) => {
 		return Math.min(Math.max(value, min), max);
-	}
+	};
 
 	const Direction = {
 		east: 1 << 0,
@@ -140,8 +132,6 @@
 			onResizeStart();
 
 			controlWrapper.classList.add('image-control-wrapper--resizing');
-			image.style.height = `${height}px`;
-			image.style.width = `${width}px`;
 
 			document.addEventListener('pointermove', handlePointerMove);
 			document.addEventListener('pointerup', handlePointerUp);
@@ -197,6 +187,10 @@
 		if (image !== null && controlWrapper !== null && positioning.isResizing) {
 			const width = positioning.currentWidth;
 			const height = positioning.currentHeight;
+
+			const startWidth = positioning.startWidth;
+			const startHeight = positioning.startHeight;
+
 			positioning.startWidth = 0;
 			positioning.startHeight = 0;
 			positioning.ratio = 0;
@@ -209,7 +203,10 @@
 			controlWrapper.classList.remove('image-control-wrapper--resizing');
 
 			setEndCursor();
-			onResizeEnd(width, height);
+			onResizeEnd(width, height, startWidth, startHeight);
+
+			image.style.removeProperty('height');
+			image.style.removeProperty('width');
 
 			document.removeEventListener('pointermove', handlePointerMove);
 			document.removeEventListener('pointerup', handlePointerUp);

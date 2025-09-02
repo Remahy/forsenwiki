@@ -72,7 +72,10 @@ export const adjustAndUploadImages = (editor, title, author) => {
 
 					const src = image.getSrc();
 
-					if (src?.startsWith('data:') && calculateOriginalFileSizeInMiB(src) > MAX_IMAGE_SIZE_MIB) {
+					if (
+						src?.startsWith('data:') &&
+						calculateOriginalFileSizeInMiB(src) > MAX_IMAGE_SIZE_MIB
+					) {
 						image.setSrc(IMAGE_OFF);
 						return reject(`Image too large: {${image.getKey()}}`);
 					}
@@ -80,8 +83,9 @@ export const adjustAndUploadImages = (editor, title, author) => {
 					let { width, height } = image.getWidthAndHeight();
 
 					// TODO: Revisit image sizes.
-					width = typeof width === 'number' ? Math.max(IMAGE_MIN_WIDTH, width) : width;
-					height = typeof height === 'number' ? Math.max(IMAGE_MIN_HEIGHT, height) : height;
+					width = typeof width === 'number' ? Math.max(IMAGE_MIN_WIDTH, Math.round(width)) : width;
+					height =
+						typeof height === 'number' ? Math.max(IMAGE_MIN_HEIGHT, Math.round(height)) : height;
 
 					image.setWidthAndHeight({
 						width,

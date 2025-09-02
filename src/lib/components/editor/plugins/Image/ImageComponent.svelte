@@ -159,8 +159,10 @@
 	/**
 	 * @param {'inherit' | number} nextWidth
 	 * @param {'inherit' | number} nextHeight
+	 * @param {'inherit' | number} startWidth
+	 * @param {'inherit' | number} startHeight
 	 */
-	const onResizeEnd = (nextWidth, nextHeight) => {
+	const onResizeEnd = (nextWidth, nextHeight, startWidth, startHeight) => {
 		// Delay hiding the resize bars for click case
 		setTimeout(() => {
 			isResizing = false;
@@ -169,7 +171,15 @@
 		editor.update(() => {
 			const node = getNodeByKey(nodeKey);
 			if (isImageNode(node)) {
-				node.setWidthAndHeight({ width: nextWidth, height: nextHeight });
+				const { width: currentWidth, height: currentHeight } = node.getWidthAndHeight();
+
+				const sameWidth = startWidth === nextWidth;
+				const sameHeight = startHeight === nextHeight;
+
+				node.setWidthAndHeight({
+					width: sameWidth ? currentWidth : nextWidth,
+					height: sameHeight ? currentHeight : nextHeight,
+				});
 			}
 		});
 	};

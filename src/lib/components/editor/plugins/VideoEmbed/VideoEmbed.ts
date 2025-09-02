@@ -21,7 +21,12 @@ import {
 } from 'lexical';
 
 import { DOMAIN } from '$lib/environment/environment';
-import { VIDEO_CONSTANTS, VIDEO_MIN_HEIGHT, VIDEO_MIN_WIDTH } from '$lib/constants/video';
+import {
+	VIDEO_CONSTANTS,
+	VIDEO_MIN_HEIGHT,
+	VIDEO_MIN_WIDTH,
+	VIDEO_MAX_HEIGHT,
+} from '$lib/constants/video';
 
 import VideoEmbedComponent from './VideoEmbedComponent.svelte';
 import {
@@ -56,7 +61,7 @@ export type SerializedVideoEmbedNode = Spread<VideoEmbedPayload, SerializedDecor
 
 type DecoratorVideoEmbedNodeType = {
 	componentClass: typeof VideoEmbedComponent;
-  updateProps: (props: ComponentProps<typeof VideoEmbedComponent>) => void;
+	updateProps: (props: ComponentProps<typeof VideoEmbedComponent>) => void;
 };
 
 const platforms = Object.keys(VIDEO_CONSTANTS.PLATFORMS);
@@ -66,12 +71,13 @@ export const getIframeStyle = (
 	height: VideoEmbedPayload['height'],
 	formatType?: ElementFormatType
 ) => {
-	const widthStyle = width === 'inherit' ? 'width:100%;' : '';
+	const widthStyle = width === 'inherit' ? 'width:auto;' : '';
 	const heightStyle = height === 'inherit' ? 'height:auto;' : '';
-	// It's an iframe, they have silly values.
-	const aspectRatio = width === 'inherit' && height === 'inherit' ? 'aspect-ratio:16/9;' : '';
 
-	return `max-width:100%;${widthStyle}${heightStyle}${aspectRatio}${formatType ? decoratorFormatToMarginStyle(formatType) : ''}`;
+	const responsive = 'max-width:100%;max-height:100vh;';
+	const aspectRatio = width === 'inherit' || height === 'inherit' ? 'aspect-ratio:16/9;' : '';
+
+	return `${responsive}${aspectRatio}${widthStyle}${heightStyle}${formatType ? decoratorFormatToMarginStyle(formatType) : ''}`;
 };
 
 export const getURLAndTitle = (
@@ -183,14 +189,8 @@ function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl:
 	const { url, title } = getURLAndTitle(node.getPlatform(), node.getSrc(), parentUrl);
 	const { width: rawWidth, height: rawHeight } = node.getWidthAndHeight();
 
-	const width =
-		typeof rawWidth === 'number'
-			? Math.max(VIDEO_MIN_WIDTH, Math.round(rawWidth)).toString()
-			: 'inherit';
-	const height =
-		typeof rawHeight === 'number'
-			? Math.max(VIDEO_MIN_HEIGHT, Math.round(rawHeight)).toString()
-			: 'inherit';
+	const width = typeof rawWidth === 'number' ? rawWidth.toString() : 'inherit';
+	const height = typeof rawHeight === 'number' ? rawHeight.toString() : 'inherit';
 
 	element.setAttribute('width', width);
 	element.setAttribute('height', height);
@@ -383,7 +383,9 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		self.__width =
 			typeof width === 'number' ? Math.max(VIDEO_MIN_WIDTH, Math.round(width)) : 'inherit';
 		self.__height =
-			typeof height === 'number' ? Math.max(VIDEO_MIN_HEIGHT, Math.round(height)) : 'inherit';
+			typeof height === 'number'
+				? Math.min(Math.max(VIDEO_MIN_HEIGHT, Math.round(height)), VIDEO_MAX_HEIGHT)
+				: 'inherit';
 	}
 
 	setSrc(src: string): void {
