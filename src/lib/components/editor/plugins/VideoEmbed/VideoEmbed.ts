@@ -7,18 +7,18 @@
  */
 
 import type { ComponentProps } from 'svelte';
-import {
-	$applyNodeReplacement,
-	type DOMConversionMap,
-	type DOMConversionOutput,
-	type DOMExportOutput,
-	type EditorConfig,
-	type ElementFormatType,
-	type LexicalEditor,
-	type LexicalNode,
-	type NodeKey,
-	type Spread,
+import type {
+	DOMConversionMap,
+	DOMConversionOutput,
+	DOMExportOutput,
+	EditorConfig,
+	ElementFormatType,
+	LexicalEditor,
+	LexicalNode,
+	NodeKey,
+	Spread,
 } from 'lexical';
+import { $applyNodeReplacement } from 'lexical';
 
 import { DOMAIN } from '$lib/environment/environment';
 import {
@@ -429,8 +429,8 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		return { element };
 	}
 
-	createDOM(config: EditorConfig): HTMLElement {
-		return super.createDOM(config);
+	createDOM(config: EditorConfig, editor: LexicalEditor): HTMLElement {
+		return super.createDOM(config, editor);
 	}
 
 	updateDOM(): false {

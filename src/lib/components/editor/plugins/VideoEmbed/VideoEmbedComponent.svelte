@@ -31,6 +31,7 @@
 		$isVideoEmbedNode as isVideoEmbedNode,
 		VideoEmbedNode,
 	} from './VideoEmbed';
+	import { decoratorFormatToMarginStyle } from './DecoratorBlockNode';
 
 	/**
 	 * @typedef {Object} Props
@@ -48,13 +49,12 @@
 	/** @type {Props} */
 	let { node, src, platform, nodeKey, height, width, resizable, format, editor } = $props();
 
-	let heightCss = $derived(height === 'inherit' ? 'inherit' : height + 'px');
-	let widthCss = $derived(width === 'inherit' ? 'inherit' : width + 'px');
-
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);
 	/** @type {HTMLDivElement | null} */
 	let embedRef = $state(null);
+	/** @type {HTMLDivElement | null} */
+	let nodeRef = $state(null);
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
 	let isResizing = $state(false);
 
@@ -168,6 +168,13 @@
 		isResizing = true;
 	};
 
+	$effect(() => {
+		if (nodeRef?.parentElement) {
+			nodeRef.parentElement.style = decoratorFormatToMarginStyle(format);
+			nodeRef.parentElement.style.width = 'fit-content';
+		}
+	});
+
 	onMount(() => {
 		let isMounted = true;
 		const rootElement = editor.getRootElement();
@@ -195,12 +202,11 @@
 	});
 </script>
 
-<div class="editor-image editor-video">
+<div class="editor-image editor-video" bind:this={nodeRef}>
 	<div
 		bind:this={embedRef}
 		class="element-placeholder-color overflow-hidden text-black"
 		class:focused={isFocused}
-		style={getIframeStyle(width, height, format)}
 	>
 		<iframe
 			class="pointer-events-none"
@@ -214,9 +220,10 @@
 			allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 			allowFullScreen={true}
 			{title}
-			style={getIframeStyle(width, height, format)}
+			style={getIframeStyle(width, height)}
 		></iframe>
 	</div>
+
 	{#if resizable && isNodeSelection(selection) && isFocused}
 		<ImageResizer
 			{editor}
