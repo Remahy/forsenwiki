@@ -141,8 +141,10 @@
 	/**
 	 * @param {'inherit' | number} nextWidth
 	 * @param {'inherit' | number} nextHeight
+	 * @param {number} startWidth
+	 * @param {number} startHeight
 	 */
-	const onResizeEnd = (nextWidth, nextHeight) => {
+	const onResizeEnd = (nextWidth, nextHeight, startWidth, startHeight) => {
 		// Delay hiding the resize bars for click case
 		setTimeout(() => {
 			isResizing = false;
@@ -151,7 +153,15 @@
 		editor.update(() => {
 			const node = getNodeByKey(nodeKey);
 			if (isVideoEmbedNode(node)) {
-				node.setWidthAndHeight({ width: nextWidth, height: nextHeight });
+				const { width: currentWidth, height: currentHeight } = node.getWidthAndHeight();
+
+				const sameWidth = startWidth === nextWidth;
+				const sameHeight = startHeight === nextHeight;
+
+				node.setWidthAndHeight({
+					width: sameWidth ? currentWidth : nextWidth,
+					height: sameHeight ? currentHeight : nextHeight,
+				});
 			}
 		});
 	};
@@ -187,12 +197,12 @@
 	});
 </script>
 
-<div class="editor-image editor-video" style={getIframeStyle(width, height)}>
+<div class="editor-image editor-video">
 	<div
 		bind:this={embedRef}
 		class="element-placeholder-color overflow-hidden text-black"
 		class:focused={isFocused}
-		style={`height:${heightCss};width:${widthCss}`}
+		style={getIframeStyle(width, height, format)}
 	>
 		<iframe
 			class="pointer-events-none"
