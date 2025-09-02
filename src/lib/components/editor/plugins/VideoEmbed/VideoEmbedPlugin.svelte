@@ -10,6 +10,8 @@
 <script>
 	// Based on umaranis' svelte-lexical
 
+	import '../Image/EditorImage.css';
+
 	import { onMount } from 'svelte';
 	import {
 		$insertNodes as insertNodes,

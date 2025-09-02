@@ -2,9 +2,6 @@
 	/** @type {import('lexical').LexicalCommand<MouseEvent>} */
 	const RIGHT_CLICK_VIDEOEMBED_COMMAND = createCommand('RIGHT_CLICK_VIDEOEMBED_COMMAND');
 
-	// Based on umaranis' svelte-lexical
-	import '../Image/Image.css';
-
 	import { onMount } from 'svelte';
 	import {
 		$getSelection as getSelection,

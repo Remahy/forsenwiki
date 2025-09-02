@@ -13,7 +13,7 @@
 
 <script>
 	// Based on umaranis' svelte-lexical
-	import './Image.css';
+	import './EditorImage.css';
 
 	import { onMount } from 'svelte';
 	import {
