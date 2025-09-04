@@ -62,7 +62,7 @@ function providerFactory({ update, id = 'new', yjsDocMap, initialUpdate }) {
 	persistence.once('synced', () => {
 		let useInitialUpdate = false;
 
-		if (doc.get('root', Y.XmlText).length === 0) {
+		if (doc.store.clients.size === 0) {
 			useInitialUpdate = true;
 		}
 
@@ -75,12 +75,11 @@ function providerFactory({ update, id = 'new', yjsDocMap, initialUpdate }) {
 
 			// Incoming update
 			const uint8ArrayContent = base64ToUint8Array(update);
-			const convertedUpdate = Y.convertUpdateFormatV2ToV1(uint8ArrayContent);
 
 			// Diff the updates
-			const diff = Y.diffUpdate(convertedUpdate, stateVector);
+			const diff = Y.diffUpdateV2(uint8ArrayContent, stateVector);
 
-			Y.applyUpdate(doc, diff);
+			Y.applyUpdateV2(doc, diff);
 		}
 
 		if (!update && useInitialUpdate && initialUpdate) {
