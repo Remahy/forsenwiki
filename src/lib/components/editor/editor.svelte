@@ -39,7 +39,7 @@
 	/** @type {Composer | null} */
 	let composer = $state(null);
 
-	run(() => {
+	$effect(() => {
 		getContext('COMPOSER').set(composer);
 	});
 
