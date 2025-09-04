@@ -25,6 +25,10 @@ export class ALinkNode extends LinkNode {
 
 		this.setIsInternal(internal);
 	}
+	
+	$config() {
+		return this.config('a-link', { extends: LinkNode });
+	}
 
 	static getType() {
 		return 'a-link';
@@ -53,14 +57,20 @@ export class ALinkNode extends LinkNode {
 
 	/** @returns {boolean} */
 	getIsInternal() {
-		return this.__isInternal;
+		const self = this.getLatest();
+		const value = self.__isInternal;
+		return value;
 	}
 
 	// Setters
 
 	/** @param {boolean} bool */
 	setIsInternal(bool) {
-		this.__isInternal = bool;
+		const self = this.getWritable();
+
+		self.__isInternal = bool;
+
+		return this;
 	}
 
 	exportJSON() {
