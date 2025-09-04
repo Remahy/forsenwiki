@@ -29,6 +29,7 @@ export const articleTheme = {
 		h4: 'break-words',
 		h5: 'break-words',
 	},
+	floatResponsive: 'max-sm:!float-none',
 };
 
 export const editableTheme = {
@@ -39,10 +40,11 @@ export const editableTheme = {
 	tableCellResizer: 'tableCellResizer',
 	tableCellSelected: 'tableCellSelected',
 	floatBlockNodeBoxShadow: '#696969 0px 0px 0px 1px',
+	floatResponsive: null,
 	text: {
 		bold: 'font-semibold',
 		italic: 'italic',
-	}
+	},
 };
 
 export const htmlExport =  new Map([HeadingNodeDOMExport, TableCellNodeDOMExport]);
