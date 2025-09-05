@@ -2,68 +2,107 @@
 import { createHeadlessEditor } from '@lexical/headless';
 import { createBinding, syncLexicalUpdateToYjs, syncYjsChangesToLexical } from '@lexical/yjs';
 
-import { Y } from './index.js';
+import { applyDiffToYDoc, createNewYDoc } from './utils';
 
-// https://github.com/facebook/lexical/discussions/4442
+// https://lexical.dev/docs/collaboration/faq#initializing-editorstate-from-yjs-document
+
+/** @returns {import('@lexical/yjs').Provider} */
+function createNoOpProvider()  {
+  const emptyFunction = () => {};
+
+  return {
+    awareness: {
+      getLocalState: () => null,
+      getStates: () => new Map(),
+      off: emptyFunction,
+      on: emptyFunction,
+      setLocalState: emptyFunction,
+			setLocalStateField: emptyFunction,
+    },
+    connect: emptyFunction,
+    disconnect: emptyFunction,
+    off: emptyFunction,
+    on: emptyFunction,
+  };
+}
+
+/**
+ * 
+ * @param {LexicalEditor} editor 
+ * @param {import('@lexical/yjs').Provider} provider 
+ * @param {import('@lexical/yjs').Binding} binding 
+ */
+function registerCollaborationListeners(
+  editor,
+  provider,
+  binding,
+) {
+  const unsubscribeUpdateListener = editor.registerUpdateListener(
+    ({
+      dirtyElements,
+      dirtyLeaves,
+      editorState,
+      normalizedNodes,
+      prevEditorState,
+      tags,
+    }) => {
+      if (tags.has('skip-collab') === false) {
+        syncLexicalUpdateToYjs(
+          binding,
+          provider,
+          prevEditorState,
+          editorState,
+          dirtyElements,
+          dirtyLeaves,
+          normalizedNodes,
+          tags,
+        );
+      }
+    },
+  );
+
+	/** @param {import('yjs').YEvent<any>[]} events @param {import('yjs').Transaction} transaction */
+  const observer = (events, transaction) => {
+    if (transaction.origin !== binding) {
+      syncYjsChangesToLexical(binding, provider, events, false);
+    }
+  };
+
+  binding.root.getSharedType().observeDeep(observer);
+
+  return () => {
+    unsubscribeUpdateListener();
+    binding.root.getSharedType().unobserveDeep(observer);
+  };
+}
 
 /**
  * @param {any} config
  * @param {Uint8Array} update
- * @returns {{editor: LexicalEditor, doc: Y.Doc}}
+ * @returns {{editor: LexicalEditor, doc: YDoc}}
  */
 export function getYjsAndEditor(config, update) {
 	const editor = createHeadlessEditor(config);
 
 	const dummyId = 'dummy-id';
-	/** @type {import('@lexical/yjs').Provider} */
-	const dummyProvider = {
-		awareness: {
-			setLocalState: () => {},
-			// @ts-ignore
-			getStates: () => [],
-			getLocalState: () => null,
-			on: () => {},
-			off: () => {},
-		},
-	};
-	const copyTarget = new Y.Doc();
-	const copyBinding = createBinding(
+  const doc = createNewYDoc();
+  const docMap = new Map([[dummyId, doc]]);
+  const provider = createNoOpProvider();
+	const binding = createBinding(
 		editor,
-		dummyProvider,
+		provider,
 		dummyId,
-		copyTarget,
-		new Map([[dummyId, copyTarget]])
+		doc,
+		docMap
 	);
 
-	// this syncs yjs changes to the lexical editor
-	/** @param {Y.YEvent<any>[]} events */
-	const onYjsTreeChanges = (events) => {
-		syncYjsChangesToLexical(copyBinding, dummyProvider, events, false);
-	};
-	copyBinding.root.getSharedType().observeDeep(onYjsTreeChanges);
+  const unsubscribe = registerCollaborationListeners(editor, provider, binding);
 
 	// copy the original document to the copy to trigger the observer which updates the editor
-	Y.applyUpdateV2(copyTarget, update);
-
+	applyDiffToYDoc(doc, update, { isUpdateRemote: true });
 	editor.update(() => {}, { discrete: true });
 
-	// Enables "copyTarget"/Y.Doc to be updated when Lexical changes happen.
-	editor.registerUpdateListener(
-		({ dirtyElements, dirtyLeaves, editorState, normalizedNodes, prevEditorState, tags }) => {
-			if (tags.has('skip-collab') === false) {
-				syncLexicalUpdateToYjs(
-					copyBinding,
-					dummyProvider,
-					prevEditorState,
-					editorState,
-					dirtyElements,
-					dirtyLeaves,
-					normalizedNodes,
-					tags
-				);
-			}
-		}
-	);
+	unsubscribe();
 
-	return { editor, doc: copyTarget };
+	return { editor, doc };
 }

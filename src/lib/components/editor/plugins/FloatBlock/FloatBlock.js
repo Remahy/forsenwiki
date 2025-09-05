@@ -60,8 +60,40 @@ export class FloatBlockNode extends ElementNode {
 		this.__height = height;
 	}
 
+	static getType() {
+		return 'float-block';
+	}
+
 	$config() {
 		return this.config('float-block', { extends: ElementNode });
+	}
+
+	/**
+	 * @param {FloatBlockNode} node
+	 */
+	static clone(node) {
+		return new FloatBlockNode(node.__float, node.__width, node.__height, node.__key);
+	}
+
+	/** @param {SerializedFloatBlockNode} serializedNode */
+	static importJSON(serializedNode) {
+		const node = $createFloatBlockNode(serializedNode).updateFromJSON(serializedNode);
+
+		return node;
+	}
+
+	/**
+	 *
+	 * @returns {SerializedFloatBlockNode}
+	 */
+	exportJSON() {
+		return {
+			...super.exportJSON(),
+			float: this.getFloat(),
+			type: FloatBlockNode.getType(),
+			width: this.getWidth(),
+			height: this.getHeight(),
+		};
 	}
 
 	/**
@@ -72,10 +104,12 @@ export class FloatBlockNode extends ElementNode {
 
 		if (!float || !floatValues.includes(float)) {
 			self.__float = 'none';
-			return;
+			return this;
 		}
 
 		self.__float = float;
+
+		return this;
 	}
 
 	getFloat() {
@@ -90,11 +124,13 @@ export class FloatBlockNode extends ElementNode {
 	}
 
 	/**
-	 * @param {number?} width
+	 * @param {number | undefined} width
 	 */
 	setWidth(width) {
 		const self = this.getWritable();
 		self.__width = width != null ? setNumberOrUndefined(width, FLOATBLOCK_MIN_WIDTH) : undefined;
+
+		return this;
 	}
 
 	getWidth() {
@@ -104,12 +140,14 @@ export class FloatBlockNode extends ElementNode {
 	}
 
 	/**
-	 * @param {number?} height
+	 * @param {number | undefined} height
 	 */
 	setHeight(height) {
 		const self = this.getWritable();
 		self.__height =
 			height != null ? setNumberOrUndefined(height, FLOATBLOCK_MIN_HEIGHT) : undefined;
+
+		return this;
 	}
 
 	getHeight() {
@@ -147,9 +185,12 @@ export class FloatBlockNode extends ElementNode {
 			dom.style.marginInlineStart = '8px';
 		}
 
-		const { floatBlockNodeBoxShadow = null } = config?.theme || {};
+		const { floatBlockNodeBoxShadow = null, floatResponsive = null } = config?.theme || {};
 		if (floatBlockNodeBoxShadow) {
 			dom.style.boxShadow = floatBlockNodeBoxShadow;
+		}
+		if (floatResponsive) {
+			dom.classList.add(floatResponsive);
 		}
 
 		dom.style.overflow = 'hidden';

@@ -39,14 +39,12 @@
 	/** @type {Composer | null} */
 	let composer = $state(null);
 
-	run(() => {
-		getContext('COMPOSER').set(composer);
-	});
-
 	const providerFactory = instantiateProvider(update, initialUpdate);
 
 	// This reloads pages when we leave editor.
 	$effect(() => {
+		getContext('COMPOSER').set(composer);
+
 		return () => {
 			window.location.reload();
 		};

@@ -41,6 +41,10 @@ export class DiffFloatBlockNode extends FloatBlockNode {
 		const node = $createDiffFloatBlockNode(serializedNode).updateFromJSON(serializedNode);
 		return node;
 	}
+	
+	exportJSON() {
+		return { ...super.exportJSON(), ___change: this.___change, type: DiffFloatBlockNode.getType() };
+	}
 
 	/**
 	 * @param {LexicalEditor} editor

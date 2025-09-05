@@ -11,16 +11,14 @@ import {
 import {
 	ALinkNode,
 	$createALinkNode,
-	AHeadingNode,
-	$createAHeadingNode,
-	ATableCellNode,
 	DeprecatedVideoEmbedNode,
 	FallbackNode,
 	ImageNode,
 	VideoEmbedNode,
 	FloatBlockNode,
-	$createATableCellNode,
 } from '$lib/lexical/custom';
+import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
+import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
 
 export const articleTheme = {
 	image: 'image',
@@ -31,6 +29,7 @@ export const articleTheme = {
 		h4: 'break-words',
 		h5: 'break-words',
 	},
+	floatResponsive: 'max-sm:!float-none',
 };
 
 export const editableTheme = {
@@ -41,11 +40,14 @@ export const editableTheme = {
 	tableCellResizer: 'tableCellResizer',
 	tableCellSelected: 'tableCellSelected',
 	floatBlockNodeBoxShadow: '#696969 0px 0px 0px 1px',
+	floatResponsive: null,
 	text: {
 		bold: 'font-semibold',
 		italic: 'italic',
-	}
+	},
 };
+
+export const htmlExport =  new Map([HeadingNodeDOMExport, TableCellNodeDOMExport]);
 
 /**
  * @param {Error} error
@@ -75,35 +77,12 @@ export const articleNodes = [
 	ListNode,
 	ListItemNode,
 
-	AHeadingNode,
-	{
-		replace: HeadingNode,
-		/**
-		 * @param {HeadingNode} node
-		 */
-		with: (node) => {
-			return $createAHeadingNode(node.__tag);
-		},
-		withKlass: AHeadingNode,
-	},
-
+	HeadingNode,
 	QuoteNode,
 	ImageNode,
 	VideoEmbedNode,
 	TableNode,
-
-	ATableCellNode,
-	{
-		replace: TableCellNode,
-		/**
-		 * @param {TableCellNode} node
-		 */
-		with: (node) => {
-			return $createATableCellNode(node.__headerState, node.__colSpan, node.__width);
-		},
-		withKlass: ATableCellNode,
-	},
-
+	TableCellNode,
 	TableRowNode,
 	FloatBlockNode,
 
@@ -127,4 +106,7 @@ export const articleConfig = (theme, editable, editorState, onError = onErrorDef
 	/** @param {Error} error */
 	onError,
 	editorState,
+	html: {
+		export: htmlExport,
+	},
 });

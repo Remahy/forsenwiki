@@ -49,8 +49,8 @@
 
 	const onChange = () => {
 		editor.update(() => {
-			selectedFloatBlockNode.setWidth(width || null);
-			selectedFloatBlockNode.setHeight(height || null);
+			selectedFloatBlockNode.setWidth(width || undefined);
+			selectedFloatBlockNode.setHeight(height || undefined);
 		});
 	};
 

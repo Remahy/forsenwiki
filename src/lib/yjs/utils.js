@@ -1,6 +1,6 @@
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
-import { Y } from './index.js';
+import { Y } from './index.mjs';
 
 /**
  * @param {YDoc} yDoc
@@ -51,6 +51,15 @@ export function diffUpdateUsingStateVector(newUpdate, existingStateVector) {
 }
 
 /**
+ * @param {YDoc} doc
+ * @param {Uint8Array} diff
+ * @param {any} [transactionOrigin]
+ */
+export function applyDiffToYDoc(doc, diff, transactionOrigin) {
+	return Y.applyUpdateV2(doc, diff, transactionOrigin);
+}
+
+/**
  * @param {Array<Pick<Prisma.YPostUpdate, 'content'>>} postUpdates
  */
 export function yPostUpdatesToBase64(postUpdates) {
@@ -60,3 +69,9 @@ export function yPostUpdatesToBase64(postUpdates) {
 
 	return base64String;
 }
+
+export function createNewYDoc() {
+	return new Y.Doc();
+}
+
+export const YXmlText = Y.XmlText;
