@@ -16,7 +16,6 @@ const noop = () => {};
  * @returns {import('@lexical/yjs').Provider}
  */
 function providerFactory({ update, id = 'new', yjsDocMap, initialUpdate }) {
-
 	// https://github.com/facebook/lexical/issues/3085#issuecomment-1498064163
 
 	let doc = yjsDocMap.get(id);
@@ -37,9 +36,10 @@ function providerFactory({ update, id = 'new', yjsDocMap, initialUpdate }) {
 	idbPersistence.connect = noop;
 	idbPersistence.disconnect = idbPersistence.destroy;
 	idbPersistence.awareness = {
-		setLocalState: noop,
-		getStates: () => [],
 		getLocalState: () => null,
+		getStates: () => new Map(),
+		setLocalState: noop,
+		setLocalStateField: noop,
 		on: noop,
 		off: noop,
 	};

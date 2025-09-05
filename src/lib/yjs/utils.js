@@ -53,9 +53,10 @@ export function diffUpdateUsingStateVector(newUpdate, existingStateVector) {
 /**
  * @param {YDoc} doc
  * @param {Uint8Array} diff
+ * @param {any} [transactionOrigin]
  */
-export function applyDiffToYDoc(doc, diff) {
-	return Y.applyUpdateV2(doc, diff);
+export function applyDiffToYDoc(doc, diff, transactionOrigin) {
+	return Y.applyUpdateV2(doc, diff, transactionOrigin);
 }
 
 /**
