@@ -1,22 +1,29 @@
 import { workerData, parentPort } from 'node:worker_threads';
 
-import { uint8ArrayToBase64 } from 'uint8array-extras';
 import { $createTextNode, $getRoot, $createParagraphNode } from 'lexical';
 
-import { Y } from '$lib/yjs/index.js';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
+import {
+	encodeYDocToUpdateV2ToBase64,
+	encodeYDocToUpdateV2,
+	createNewYDoc,
+	YXmlText,
+} from '$lib/yjs/utils';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 
 export const initialUpdateWorker = () => {
 	let emptyUpdate;
 	{
-		const yDoc = new Y.Doc();
-		yDoc.get('root', Y.XmlText);
-		emptyUpdate = Y.encodeStateAsUpdateV2(yDoc);
+		const yDoc = createNewYDoc();
+		yDoc.get('root', YXmlText);
+		emptyUpdate = encodeYDocToUpdateV2(yDoc);
 	}
 
-	const { doc, editor } = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), emptyUpdate);
+	const { doc, editor } = getYjsAndEditor(
+		articleConfig(null, EDITOR_IS_READONLY, null),
+		emptyUpdate
+	);
 
 	editor.update(
 		() => {
@@ -32,11 +39,11 @@ export const initialUpdateWorker = () => {
 		{ discrete: true }
 	);
 
-	const base64 = uint8ArrayToBase64(Y.encodeStateAsUpdateV2(doc));
+	const encodedContent = encodeYDocToUpdateV2ToBase64(doc);
 
-	parentPort?.postMessage(base64);
+	parentPort?.postMessage(encodedContent);
 
-	return base64;
+	return encodedContent;
 };
 
 if (workerData) {

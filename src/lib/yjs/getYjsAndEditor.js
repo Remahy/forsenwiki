@@ -2,14 +2,14 @@
 import { createHeadlessEditor } from '@lexical/headless';
 import { createBinding, syncLexicalUpdateToYjs, syncYjsChangesToLexical } from '@lexical/yjs';
 
-import { Y } from './index.js';
+import { applyDiffToYDoc, createNewYDoc } from './utils';
 
 // https://github.com/facebook/lexical/discussions/4442
 
 /**
  * @param {any} config
  * @param {Uint8Array} update
- * @returns {{editor: LexicalEditor, doc: Y.Doc}}
+ * @returns {{editor: LexicalEditor, doc: YDoc}}
  */
 export function getYjsAndEditor(config, update) {
 	const editor = createHeadlessEditor(config);
@@ -26,7 +26,7 @@ export function getYjsAndEditor(config, update) {
 			off: () => {},
 		},
 	};
-	const copyTarget = new Y.Doc();
+	const copyTarget = createNewYDoc();
 	const copyBinding = createBinding(
 		editor,
 		dummyProvider,
@@ -36,14 +36,14 @@ export function getYjsAndEditor(config, update) {
 	);
 
 	// this syncs yjs changes to the lexical editor
-	/** @param {Y.YEvent<any>[]} events */
+	/** @param {import('yjs').YEvent<any>[]} events */
 	const onYjsTreeChanges = (events) => {
 		syncYjsChangesToLexical(copyBinding, dummyProvider, events, false);
 	};
 	copyBinding.root.getSharedType().observeDeep(onYjsTreeChanges);
 
 	// copy the original document to the copy to trigger the observer which updates the editor
-	Y.applyUpdateV2(copyTarget, update);
+	applyDiffToYDoc(copyTarget, update);
 
 	editor.update(() => {}, { discrete: true });
 
