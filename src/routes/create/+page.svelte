@@ -62,7 +62,7 @@
 			return;
 		}
 
-		editor.update(async () => {
+		editor.read(async () => {
 			isUploading = true;
 
 			let res;

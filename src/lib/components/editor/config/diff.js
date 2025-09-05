@@ -1,5 +1,5 @@
 import {
-	DiffAHeadingNode,
+	DiffHeadingNode,
 	DiffImageNode,
 	DiffListItemNode,
 	DiffListNode,
@@ -12,11 +12,11 @@ import {
 	DiffTabNode,
 	DiffTableNode,
 	DiffTableRowNode,
-	DiffATableCellNode,
+	DiffTableCellNode,
 	DiffFloatBlockNode,
 } from '$lib/lexical/custom';
 
-import { articleTheme, articleNodes } from './article';
+import { articleTheme, articleNodes, htmlExport } from './article';
 
 /**
  * @param {Error} error
@@ -45,7 +45,7 @@ export const diffConfig = (theme, editable, editorState, onError = onErrorDefaul
 		DiffTextNode,
 		DiffParagraphNode,
 		DiffQuoteNode,
-		DiffAHeadingNode,
+		DiffHeadingNode,
 		DiffListNode,
 		DiffListItemNode,
 		DiffImageNode,
@@ -55,10 +55,13 @@ export const diffConfig = (theme, editable, editorState, onError = onErrorDefaul
 		DiffTabNode,
 		DiffTableNode,
 		DiffTableRowNode,
-		DiffATableCellNode,
+		DiffTableCellNode,
 		DiffFloatBlockNode,
 	],
 	/** @param {Error} error */
 	onError,
 	editorState,
+	html: {
+		export: htmlExport,
+	},
 });

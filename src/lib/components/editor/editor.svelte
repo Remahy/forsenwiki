@@ -39,12 +39,12 @@
 	/** @type {Composer | null} */
 	let composer = $state(null);
 
-	run(() => {
-		getContext('COMPOSER').set(composer);
-	});
-
 	const providerFactory = instantiateProvider(update, initialUpdate);
 
+  $effect(() => {
+    getContext('COMPOSER').set(composer);
+  });
+  
 	// This reloads pages when we leave editor.
 	onMount(() => {
 		return () => {

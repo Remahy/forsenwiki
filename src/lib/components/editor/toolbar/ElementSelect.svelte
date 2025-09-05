@@ -67,37 +67,25 @@
 	 * @param {import('@lexical/rich-text').HeadingTagType} headingSize
 	 */
 	const formatHeading = (headingSize) => {
-		if (currentElementType !== headingSize) {
-			editor.update(() => {
-				const selection = getSelection();
-				setBlocksType(selection, () => createHeadingNode(headingSize));
-			});
-		}
+		editor.update(() => {
+			const selection = getSelection();
+			setBlocksType(selection, () => createHeadingNode(headingSize));
+		});
 	};
 
 	const formatBulletList = () => {
-		if (currentElementType !== 'bullet') {
-			editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
-		} else {
-			formatParagraph();
-		}
+		editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
 	};
 
 	const formatNumberedList = () => {
-		if (currentElementType !== 'number') {
-			editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
-		} else {
-			formatParagraph();
-		}
+		editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
 	};
 
 	const formatQuote = () => {
-		if (currentElementType !== 'quote') {
-			editor.update(() => {
-				const selection = getSelection();
-				setBlocksType(selection, () => createQuoteNode());
-			});
-		}
+		editor.update(() => {
+			const selection = getSelection();
+			setBlocksType(selection, () => createQuoteNode());
+		});
 	};
 
 	/**
