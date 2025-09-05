@@ -1,8 +1,9 @@
 <script>
+	import { onMount } from 'svelte';
 	import { $getSelection as getSelection } from 'lexical';
-	import { getEditor } from 'svelte-lexical';
 	import { mergeRegister } from '@lexical/utils';
 	import { $isTableNode as isTableNode } from '@lexical/table';
+	import { getEditor } from 'svelte-lexical';
 
 	import Divider from '$lib/components/Divider.svelte';
 	import RowButtons from './RowButtons.svelte';
@@ -40,7 +41,7 @@
 		});
 	};
 
-	$effect(() => {
+	onMount(() => {
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
 				updateToolbar();

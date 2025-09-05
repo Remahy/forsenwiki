@@ -137,7 +137,7 @@
 	</article>
 
 	<details class="-mt-4">
-		<summary></summary>
+		<summary class="cursor-pointer">Tools</summary>
 
 		<CacheBustButton />
 	</details>

@@ -47,7 +47,7 @@ export type SerializedImageNode = Spread<
 
 type DecoratorImageNodeType = {
 	componentClass: typeof ImageComponent;
-  updateProps: (props: ComponentProps<typeof ImageComponent>) => void;
+	updateProps: (props: ComponentProps<typeof ImageComponent>) => void;
 };
 
 export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
@@ -194,7 +194,7 @@ export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
 		return span;
 	}
 
-	updateDOM(): false {
+	updateDOM(): boolean {
 		return false;
 	}
 

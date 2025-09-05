@@ -1,7 +1,8 @@
 <script>
 	import { SearchIcon } from 'lucide-svelte';
-	import Button from './Button.svelte';
 	import { page } from '$app/stores';
+
+	import Button from './Button.svelte';
 
 	let query = $state($page.url.pathname === '/search' ? $page.url.searchParams.get('query') : '');
 

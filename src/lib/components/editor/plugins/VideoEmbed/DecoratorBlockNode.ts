@@ -14,6 +14,7 @@ import type {
 	NodeKey,
 	SerializedLexicalNode,
 	Spread,
+	LexicalEditor,
 } from 'lexical';
 
 import { DecoratorNode } from 'lexical';
@@ -97,9 +98,13 @@ export class DecoratorBlockNode extends DecoratorNode<unknown> {
 	}
 
 	// This DOM is for the editor.
-	createDOM(_: EditorConfig): HTMLElement {
-		const div = document.createElement('div');
-		return div;
+	createDOM(_: EditorConfig, __: LexicalEditor): HTMLElement {
+		const element = document.createElement('div');
+
+		element.style.width = 'fit-content';
+		// element.style.lineHeight = '1'; In editor we like to add a little bit of "space" to decorator blocks.
+
+		return element;
 	}
 
 	updateDOM(): false {

@@ -1,5 +1,4 @@
 <script>
-	import { getEditor } from 'svelte-lexical';
 	import {
 		FileQuestionIcon,
 		LinkIcon,
@@ -7,6 +6,7 @@
 		RectangleVerticalIcon,
 		YoutubeIcon,
 	} from 'lucide-svelte';
+	import { getEditor } from 'svelte-lexical';
 
 	import Select from '$lib/components/Select.svelte';
 	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';

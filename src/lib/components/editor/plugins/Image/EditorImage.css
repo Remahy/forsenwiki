@@ -1,0 +1,89 @@
+.editor-shell span.editor-image {
+	cursor: default;
+	position: relative;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.editor-shell .editor-image * {
+	max-width: unset;
+	cursor: default;
+}
+
+.editor-shell .editor-image *.focused {
+	outline: 2px solid rgb(60, 132, 244);
+	outline-offset: -2px;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.editor-shell .editor-image .image-resizer {
+	display: block;
+	width: 7px;
+	height: 7px;
+	position: absolute;
+	background-color: rgb(60, 132, 244);
+	border: 1px solid #fff;
+}
+
+.editor-shell .editor-image .image-resizer.image-resizer-n {
+	top: -2px;
+	left: 48%;
+	cursor: n-resize;
+}
+
+.editor-shell .editor-image .image-resizer.image-resizer-ne {
+	top: -2px;
+	right: -2px;
+	cursor: ne-resize;
+}
+
+.editor-shell .editor-image .image-resizer.image-resizer-e {
+	bottom: 48%;
+	right: -2px;
+	cursor: e-resize;
+}
+
+.editor-shell .editor-image .image-resizer.image-resizer-se {
+	bottom: -2px;
+	right: -2px;
+	cursor: nwse-resize;
+}
+
+.editor-shell .editor-image .image-resizer.image-resizer-s {
+	bottom: -2px;
+	left: 48%;
+	cursor: s-resize;
+}
+
+.editor-shell .editor-image .image-resizer.image-resizer-sw {
+	bottom: -2px;
+	left: -2px;
+	cursor: sw-resize;
+}
+
+.editor-shell .editor-image .image-resizer.image-resizer-w {
+	bottom: 48%;
+	left: -2px;
+	cursor: w-resize;
+}
+
+.editor-shell .editor-image .image-resizer.image-resizer-nw {
+	top: -2px;
+	left: -2px;
+	cursor: nw-resize;
+}
+
+.image-control-wrapper--resizing {
+	touch-action: none;
+}
+
+/**/
+
+.editor-shell *.editor-image {
+	display: inline-block;
+	position: relative;
+	white-space: nowrap;
+	max-width: 100%;
+	vertical-align: baseline;
+}

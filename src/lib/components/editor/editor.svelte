@@ -1,7 +1,7 @@
 <script>
 	import { run } from 'svelte/legacy';
 
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import isUrl from 'is-url';
 	import {
 		CollaborationPlugin,
@@ -41,10 +41,12 @@
 
 	const providerFactory = instantiateProvider(update, initialUpdate);
 
+  $effect(() => {
+    getContext('COMPOSER').set(composer);
+  });
+  
 	// This reloads pages when we leave editor.
-	$effect(() => {
-		getContext('COMPOSER').set(composer);
-
+	onMount(() => {
 		return () => {
 			window.location.reload();
 		};

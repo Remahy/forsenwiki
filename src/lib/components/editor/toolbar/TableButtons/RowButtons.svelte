@@ -1,9 +1,9 @@
 <script>
 	// Based on umaranis' svelte-lexical
 
+	import { onMount } from 'svelte';
 	import { PlusIcon, MinusIcon, ArrowUpIcon, ArrowDownIcon, Rows3Icon } from 'lucide-svelte';
 	import { $isRangeSelection as isRangeSelection, $getSelection as getSelection } from 'lexical';
-	import { getEditor } from 'svelte-lexical';
 	import { mergeRegister } from '@lexical/utils';
 	import {
 		$insertTableRow__EXPERIMENTAL as insertTableRow__EXPERIMENTAL,
@@ -14,6 +14,7 @@
 		$isTableCellNode as isTableCellNode,
 		TableCellHeaderStates,
 	} from '@lexical/table';
+	import { getEditor } from 'svelte-lexical';
 
 	import Button from '$lib/components/Button.svelte';
 	import EditorButton from '../EditorButton.svelte';
@@ -119,7 +120,7 @@
 		});
 	};
 
-	$effect(() => {
+	onMount(() => {
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
 				updateToolbar();

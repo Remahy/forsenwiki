@@ -1,8 +1,9 @@
 <script>
-	import { COMMAND_PRIORITY_CRITICAL, FORMAT_ELEMENT_COMMAND } from 'lexical';
-	import { getEditor } from 'svelte-lexical';
-	import { mergeRegister } from '@lexical/utils';
+	import { onMount } from 'svelte';
 	import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from 'lucide-svelte';
+	import { COMMAND_PRIORITY_CRITICAL, FORMAT_ELEMENT_COMMAND } from 'lexical';
+	import { mergeRegister } from '@lexical/utils';
+	import { getEditor } from 'svelte-lexical';
 
 	import Select from '$lib/components/Select.svelte';
 	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
@@ -59,7 +60,7 @@
 		});
 	};
 
-	$effect(() => {
+	onMount(() => {
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
 				updateToolbar();

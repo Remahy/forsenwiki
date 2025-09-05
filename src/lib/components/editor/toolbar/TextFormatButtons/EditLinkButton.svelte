@@ -1,4 +1,6 @@
 <script>
+	import { onMount } from 'svelte';
+	import { Link2Icon, SettingsIcon } from 'lucide-svelte';
 	import {
 		COMMAND_PRIORITY_HIGH,
 		COMMAND_PRIORITY_NORMAL,
@@ -6,9 +8,8 @@
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,
 	} from 'lexical';
-	import { getEditor } from 'svelte-lexical';
 	import { TOGGLE_LINK_COMMAND, $toggleLink as toggleLink } from '@lexical/link';
-	import { Link2Icon, SettingsIcon } from 'lucide-svelte';
+	import { getEditor } from 'svelte-lexical';
 
 	import { ctrlKey } from '$lib/environment/environment';
 	import { getSelectedNode } from '$lib/components/editor/utils/getSelection';
@@ -109,7 +110,7 @@
 		});
 	};
 
-	$effect(() => {
+	onMount(() => {
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
 				updateToolbar();

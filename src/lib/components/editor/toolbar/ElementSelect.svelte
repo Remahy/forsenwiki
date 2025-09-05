@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import {
 		FileQuestionIcon,
 		Heading1Icon,
@@ -11,7 +12,6 @@
 		PilcrowIcon,
 		QuoteIcon,
 	} from 'lucide-svelte';
-	import { getEditor } from 'svelte-lexical';
 	import {
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,
@@ -35,6 +35,7 @@
 		mergeRegister,
 	} from '@lexical/utils';
 	import { $setBlocksType as setBlocksType } from '@lexical/selection';
+	import { getEditor } from 'svelte-lexical';
 
 	import Select from '$lib/components/Select.svelte';
 	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
@@ -216,7 +217,7 @@
 		});
 	};
 
-	$effect(() => {
+	onMount(() => {
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
 				updateToolbar();
