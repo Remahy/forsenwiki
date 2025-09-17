@@ -16,6 +16,8 @@ import {
 	ImageNode,
 	VideoEmbedNode,
 	FloatBlockNode,
+	AHeadingNode,
+	ATableCellNode,
 } from '$lib/lexical/custom';
 import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
@@ -89,6 +91,8 @@ export const articleNodes = [
 	// Old nodes / Migration nodes
 	FallbackNode,
 	DeprecatedVideoEmbedNode,
+	AHeadingNode,
+	ATableCellNode
 ];
 
 /**
