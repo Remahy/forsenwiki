@@ -24,5 +24,7 @@ export { DiffTableRowNode } from '../components/editor/plugins/Diff/TableRow';
 export { DiffTableCellNode } from '../components/editor/plugins/Diff/TableCell';
 export { DiffFloatBlockNode } from '../components/editor/plugins/Diff/FloatBlock';
 
-export { DeprecatedVideoEmbedNode } from '../components/editor/plugins/Deprecated/DeprecatedVideoEmbedNode';
 export { FallbackNode } from '../components/editor/plugins/Fallback/Fallback';
+export { DeprecatedVideoEmbedNode } from '../components/editor/plugins/Deprecated/DeprecatedVideoEmbedNode';
+export { AHeadingNode } from '../components/editor/plugins/Deprecated/AHeading';
+export { ATableCellNode } from '../components/editor/plugins/Deprecated/ATableCell';

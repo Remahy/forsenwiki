@@ -65,16 +65,10 @@ export const toHTMLWorker = async (data) => {
 		const text = $$getTextInEditor();
 		const image = $$getFirstImage();
 
-		if (text.length > 0) {
-			const htmlString = $generateHtmlFromNodes(editor, null);
-			const response = { html: htmlString, text, image };
-			parentPort?.postMessage(response);
-			return response;
-		} else {
-			const response = { html: '', text: '', image: '' };
-			parentPort?.postMessage(response);
-			return response;
-		}
+		const htmlString = $generateHtmlFromNodes(editor, null);
+		const response = { html: htmlString, text, image };
+		parentPort?.postMessage(response);
+		return response;
 	});
 };
 

@@ -28,6 +28,7 @@
 	import {
 		getIframeStyle,
 		getURLAndTitle,
+		getWidthAndHeight,
 		$isVideoEmbedNode as isVideoEmbedNode,
 		VideoEmbedNode,
 	} from './VideoEmbed';
@@ -171,7 +172,9 @@
 	$effect(() => {
 		if (nodeRef?.parentElement) {
 			nodeRef.parentElement.style = decoratorFormatToMarginStyle(format);
-			nodeRef.parentElement.style.width = 'fit-content';
+			if (width !== 'inherit' || height !== 'inherit') {
+				nodeRef.parentElement.style.width = 'fit-content';
+			}
 		}
 	});
 
@@ -202,11 +205,12 @@
 	});
 </script>
 
-<div class="editor-image editor-video" bind:this={nodeRef}>
+<div class="editor-image editor-video" bind:this={nodeRef} style={getWidthAndHeight(width, height)}>
 	<div
 		bind:this={embedRef}
 		class="element-placeholder-color overflow-hidden text-black"
 		class:focused={isFocused}
+		style={getWidthAndHeight(width, height)}
 	>
 		<iframe
 			class="pointer-events-none"

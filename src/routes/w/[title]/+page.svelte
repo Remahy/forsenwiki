@@ -35,6 +35,11 @@
 		})),
 	});
 	const authorsHTML = `<script type="application/ld+json">${authorsScriptContent}<\/script>`;
+
+	// @ts-ignore
+	BigInt.prototype.toJSON = function () {
+		return { $bigint: this.toString() };
+	};
 </script>
 
 <svelte:head>

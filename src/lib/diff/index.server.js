@@ -6,6 +6,10 @@ const getReplacedType = (type) => {
 	switch (type) {
 		case 'link':
 			return 'a-link';
+		case 'a-heading':
+			return 'heading';
+		case 'a-tablecell':
+			return 'tablecell';
 		default:
 			return type;
 	}
