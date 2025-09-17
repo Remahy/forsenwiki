@@ -14,6 +14,15 @@ export function encodeYDocToUpdateV2(yDoc) {
 /**
  * @param {YDoc} yDoc
  */
+export function encodeYDocToUpdate(yDoc) {
+	const yjsUpdateState = Y.encodeStateAsUpdate(yDoc);
+
+	return yjsUpdateState;
+}
+
+/**
+ * @param {YDoc} yDoc
+ */
 export function encodeYDocToUpdateV2ToBase64(yDoc) {
 	const yjsUpdateState = encodeYDocToUpdateV2(yDoc);
 	const encodedContent = uint8ArrayToBase64(yjsUpdateState);
@@ -55,8 +64,8 @@ export function diffUpdateUsingStateVectorV2(newUpdate, existingStateVector) {
  * @param {Uint8Array} diff
  * @param {any} [transactionOrigin]
  */
-export function applyDiffToYDocV2(doc, diff, transactionOrigin) {
-	return Y.applyUpdateV2(doc, diff, transactionOrigin);
+export function applyDiffToYDoc(doc, diff, transactionOrigin) {
+	return Y.applyUpdate(doc, diff, transactionOrigin);
 }
 
 /**
@@ -75,3 +84,25 @@ export function createNewYDoc() {
 }
 
 export const YXmlText = Y.XmlText;
+
+/**
+ * @param {Uint8Array} uint8ArrayContent
+ */
+export function convertUpdateFormatV2ToV1(uint8ArrayContent) {
+	return Y.convertUpdateFormatV2ToV1(uint8ArrayContent);
+}
+
+/**
+ * @param {Uint8Array} newUpdate
+ * @param {Uint8Array} existingStateVector
+ */
+export function diffUpdateUsingStateVector(newUpdate, existingStateVector) {
+	return Y.diffUpdate(newUpdate, existingStateVector);
+}
+
+/**
+ * @param {Uint8Array} update
+ */
+export function getStateVectorFromUpdate(update) {
+	return Y.encodeStateVectorFromUpdate(update);
+}

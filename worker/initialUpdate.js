@@ -39,11 +39,12 @@ export const initialUpdateWorker = () => {
 		{ discrete: true }
 	);
 
-	const encodedContent = encodeYDocToUpdateV2ToBase64(doc);
+	return editor.read(() => {
+		const encodedContent = encodeYDocToUpdateV2ToBase64(doc);
 
-	parentPort?.postMessage(encodedContent);
-
-	return encodedContent;
+		parentPort?.postMessage(encodedContent);
+		return encodedContent;
+	});
 };
 
 if (workerData) {

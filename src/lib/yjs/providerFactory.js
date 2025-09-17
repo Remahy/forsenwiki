@@ -2,11 +2,12 @@ import { getContext } from 'svelte';
 import { base64ToUint8Array } from 'uint8array-extras';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import {
-	applyDiffToYDocV2,
+	applyDiffToYDoc,
+	convertUpdateFormatV2ToV1,
 	createNewYDoc,
-	diffUpdateUsingStateVectorV2,
-	encodeYDocToUpdateV2,
-	getStateVectorFromUpdateV2,
+	diffUpdateUsingStateVector,
+	encodeYDocToUpdate,
+	getStateVectorFromUpdate,
 } from './utils';
 
 const noop = () => {};
@@ -67,30 +68,32 @@ function providerFactory({ update, id = 'new', yjsDocMap, initialUpdate }) {
 			// https://github.com/yjs/yjs/blob/52b906898fee761a6223eeef6a33adc2a4041b80/README.md#example-syncing-clients-without-loading-the-ydoc
 
 			// Current
-			const currentStateUpdate = encodeYDocToUpdateV2(doc);
-			const stateVector = getStateVectorFromUpdateV2(currentStateUpdate);
+			const currentStateUpdate = encodeYDocToUpdate(doc);
+			const stateVector = getStateVectorFromUpdate(currentStateUpdate);
 
 			// Incoming update
 			const uint8ArrayContent = base64ToUint8Array(update);
+			const convertedUpdate = convertUpdateFormatV2ToV1(uint8ArrayContent);
 
 			// Diff the updates
-			const diff = diffUpdateUsingStateVectorV2(uint8ArrayContent, stateVector);
+			const diff = diffUpdateUsingStateVector(convertedUpdate, stateVector);
 
-			applyDiffToYDocV2(doc, diff, { isUpdateRemote: true });
+			applyDiffToYDoc(doc, diff, { isUpdateRemote: true });
 		}
 
 		if (!update && useInitialUpdate && initialUpdate) {
 			// Current
-			const currentStateUpdate = encodeYDocToUpdateV2(doc);
-			const stateVector = getStateVectorFromUpdateV2(currentStateUpdate);
+			const currentStateUpdate = encodeYDocToUpdate(doc);
+			const stateVector = getStateVectorFromUpdate(currentStateUpdate);
 
 			// Incoming update
 			const uint8ArrayContent = base64ToUint8Array(initialUpdate);
+			const convertedUpdate = convertUpdateFormatV2ToV1(uint8ArrayContent);
 
 			// Diff the updates
-			const diff = diffUpdateUsingStateVectorV2(uint8ArrayContent, stateVector);
+			const diff = diffUpdateUsingStateVector(convertedUpdate, stateVector);
 
-			applyDiffToYDocV2(doc, diff, { isUpdateRemote: true });
+			applyDiffToYDoc(doc, diff, { isUpdateRemote: true });
 		}
 	});
 
