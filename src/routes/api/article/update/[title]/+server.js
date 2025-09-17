@@ -2,10 +2,10 @@ import { error, json } from '@sveltejs/kit';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import {
-	diffUpdateUsingStateVector,
+	diffUpdateUsingStateVectorV2,
 	encodeYDocToUpdateV2,
-	getStateVectorFromUpdate,
-	mergePostUpdates,
+	getStateVectorFromUpdateV2,
+	mergePostUpdatesV2,
 	postUpdatesToUint8Arr,
 } from '$lib/yjs/utils';
 import { ForbiddenError } from '$lib/errors/Forbidden';
@@ -58,16 +58,16 @@ export async function POST({ request, locals, params }) {
 
 	// Current
 	const currentUpdate = base64ToUint8Array(post.update);
-	const stateVector = getStateVectorFromUpdate(currentUpdate);
+	const stateVector = getStateVectorFromUpdateV2(currentUpdate);
 
 	// Incoming update
 	const [incomingUpdate] = postUpdatesToUint8Arr([{ content }]);
 
 	// Diff the updates
-	const initialDiff = diffUpdateUsingStateVector(incomingUpdate, stateVector);
+	const initialDiff = diffUpdateUsingStateVectorV2(incomingUpdate, stateVector);
 
 	// We use this update to validate if the contents are valid.
-	const combinedInitialUpdate = mergePostUpdates([currentUpdate, initialDiff]);
+	const combinedInitialUpdate = mergePostUpdatesV2([currentUpdate, initialDiff]);
 
 	let e;
 	try {
@@ -95,14 +95,14 @@ export async function POST({ request, locals, params }) {
 
 	// Diff the updates
 	// This is also what we save as a postUpdate
-	const finalDiff = diffUpdateUsingStateVector(backendUpdate, stateVector);
+	const finalDiff = diffUpdateUsingStateVectorV2(backendUpdate, stateVector);
 
-	const combinedFinalDiff = mergePostUpdates([initialDiff, finalDiff]);
+	const combinedFinalDiff = mergePostUpdatesV2([initialDiff, finalDiff]);
 
 	const { byteLength } = combinedFinalDiff;
 
 	// Total size of the YDoc with the new update.
-	const { byteLength: totalByteLength } = mergePostUpdates([currentUpdate, combinedFinalDiff]);
+	const { byteLength: totalByteLength } = mergePostUpdatesV2([currentUpdate, combinedFinalDiff]);
 
 	const systemRelations = await readSystemYPostRelations(post.id);
 

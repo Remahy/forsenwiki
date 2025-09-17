@@ -1,6 +1,6 @@
 import { error, json } from '@sveltejs/kit';
 import { readYPostUpdatesWithIdByTitle } from '$lib/db/article/read';
-import { yPostUpdatesToBase64 } from '$lib/yjs/utils';
+import { yPostUpdatesV2ToBase64 } from '$lib/yjs/utils';
 import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
 import { replacer } from '$lib/utils/json';
 import { updateToHTML } from '$lib/lexical/updateToHTML';
@@ -34,7 +34,7 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 	} = res.postUpdates[toPostUpdateIdIndex];
 
 	const toPostUpdates = res.postUpdates.slice(0, toPostUpdateIdIndex + 1);
-	const base64String = yPostUpdatesToBase64(toPostUpdates);
+	const base64String = yPostUpdatesV2ToBase64(toPostUpdates);
 
 	const recentPostUpdateId = res.postUpdates[res.postUpdates.length - 1].id;
 

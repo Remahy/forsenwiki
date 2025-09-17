@@ -2,7 +2,7 @@
 import { createHeadlessEditor } from '@lexical/headless';
 import { createBinding, syncLexicalUpdateToYjs, syncYjsChangesToLexical } from '@lexical/yjs';
 
-import { applyDiffToYDoc, createNewYDoc } from './utils';
+import { applyDiffToYDocV2, createNewYDoc } from './utils';
 
 // https://lexical.dev/docs/collaboration/faq#initializing-editorstate-from-yjs-document
 
@@ -99,7 +99,7 @@ export function getYjsAndEditor(config, update) {
   const unsubscribe = registerCollaborationListeners(editor, provider, binding);
 
 	// copy the original document to the copy to trigger the observer which updates the editor
-	applyDiffToYDoc(doc, update, { isUpdateRemote: true });
+	applyDiffToYDocV2(doc, update, { isUpdateRemote: true });
 	editor.update(() => {}, { discrete: true });
 
 	unsubscribe();

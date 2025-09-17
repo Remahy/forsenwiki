@@ -1,6 +1,6 @@
 import { json, error } from '@sveltejs/kit';
 import { readYPostByTitle, readYPostUpdatesByTitle } from '$lib/db/article/read';
-import { yPostUpdatesToBase64 } from '$lib/yjs/utils';
+import { yPostUpdatesV2ToBase64 } from '$lib/yjs/utils';
 import { upsertHTML } from '$lib/db/article/html';
 import { updateToHTML } from '$lib/lexical/updateToHTML';
 
@@ -15,7 +15,7 @@ export const _getYPostByTitle = async (title) => {
 		throw 404;
 	}
 
-	const base64String = yPostUpdatesToBase64(post.postUpdates);
+	const base64String = yPostUpdatesV2ToBase64(post.postUpdates);
 
 	// Important: We're destructuring away postUpdates to make sure we don't return it.
 	// eslint-disable-next-line no-unused-vars

@@ -1,7 +1,13 @@
 import { getContext } from 'svelte';
 import { base64ToUint8Array } from 'uint8array-extras';
 import { IndexeddbPersistence } from 'y-indexeddb';
-import { applyDiffToYDoc, createNewYDoc, diffUpdateUsingStateVector, encodeYDocToUpdateV2, getStateVectorFromUpdate } from './utils';
+import {
+	applyDiffToYDocV2,
+	createNewYDoc,
+	diffUpdateUsingStateVectorV2,
+	encodeYDocToUpdateV2,
+	getStateVectorFromUpdateV2,
+} from './utils';
 
 const noop = () => {};
 
@@ -62,29 +68,29 @@ function providerFactory({ update, id = 'new', yjsDocMap, initialUpdate }) {
 
 			// Current
 			const currentStateUpdate = encodeYDocToUpdateV2(doc);
-			const stateVector = getStateVectorFromUpdate(currentStateUpdate);
+			const stateVector = getStateVectorFromUpdateV2(currentStateUpdate);
 
 			// Incoming update
 			const uint8ArrayContent = base64ToUint8Array(update);
 
 			// Diff the updates
-			const diff = diffUpdateUsingStateVector(uint8ArrayContent, stateVector);
+			const diff = diffUpdateUsingStateVectorV2(uint8ArrayContent, stateVector);
 
-			applyDiffToYDoc(doc, diff, { isUpdateRemote: true });
+			applyDiffToYDocV2(doc, diff, { isUpdateRemote: true });
 		}
 
 		if (!update && useInitialUpdate && initialUpdate) {
 			// Current
 			const currentStateUpdate = encodeYDocToUpdateV2(doc);
-			const stateVector = getStateVectorFromUpdate(currentStateUpdate);
+			const stateVector = getStateVectorFromUpdateV2(currentStateUpdate);
 
 			// Incoming update
 			const uint8ArrayContent = base64ToUint8Array(initialUpdate);
 
 			// Diff the updates
-			const diff = diffUpdateUsingStateVector(uint8ArrayContent, stateVector);
+			const diff = diffUpdateUsingStateVectorV2(uint8ArrayContent, stateVector);
 
-			applyDiffToYDoc(doc, diff, { isUpdateRemote: true });
+			applyDiffToYDocV2(doc, diff, { isUpdateRemote: true });
 		}
 	});
 
@@ -94,7 +100,6 @@ function providerFactory({ update, id = 'new', yjsDocMap, initialUpdate }) {
 
 	// This is for clearing persistence on create & update submit.
 	getContext('YDOCPERSISTENCE').set(persistence);
-
 
 	return persistence;
 }

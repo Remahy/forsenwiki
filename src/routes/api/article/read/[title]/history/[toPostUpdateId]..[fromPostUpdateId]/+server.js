@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit';
 import { createHeadlessEditor } from '@lexical/headless';
 
-import { mergePostUpdates, postUpdatesToUint8Arr } from '$lib/yjs/utils';
+import { mergePostUpdatesV2, postUpdatesToUint8Arr } from '$lib/yjs/utils';
 import { readYPostUpdatesWithIdByTitle } from '$lib/db/article/read';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
@@ -51,8 +51,8 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		res.postUpdates.slice(0, fromPostUpdateIdIndex + 1)
 	);
 
-	const updatesTo = mergePostUpdates(toPostUpdates);
-	const updatesFrom = mergePostUpdates(fromPostUpdates);
+	const updatesTo = mergePostUpdatesV2(toPostUpdates);
+	const updatesFrom = mergePostUpdatesV2(fromPostUpdates);
 
 	const { editor: tEditor } = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), updatesTo);
 	const toUpdate = tEditor.toJSON();
