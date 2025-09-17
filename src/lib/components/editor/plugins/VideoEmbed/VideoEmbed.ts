@@ -66,12 +66,30 @@ type DecoratorVideoEmbedNodeType = {
 
 const platforms = Object.keys(VIDEO_CONSTANTS.PLATFORMS);
 
+export const getWidthAndHeight = (
+	width: VideoEmbedPayload['width'],
+	height: VideoEmbedPayload['height']
+) => {
+	let widthStyle = width === 'inherit' ? 'width:auto;' : '';
+	if (height === 'inherit' && width === 'inherit') {
+		widthStyle = 'width:100%;';
+	}
+
+	const heightStyle = height === 'inherit' ? 'height:auto;' : '';
+
+	return `${widthStyle}${heightStyle}`;
+};
+
 export const getIframeStyle = (
 	width: VideoEmbedPayload['width'],
 	height: VideoEmbedPayload['height'],
 	formatType?: ElementFormatType
 ) => {
-	const widthStyle = width === 'inherit' ? 'width:auto;' : '';
+	let widthStyle = width === 'inherit' ? 'width:auto;' : '';
+	if (height === 'inherit' && width === 'inherit') {
+		widthStyle = 'width:100%;';
+	}
+
 	const heightStyle = height === 'inherit' ? 'height:auto;' : '';
 
 	const responsive = 'max-width:100%;max-height:100vh;';
