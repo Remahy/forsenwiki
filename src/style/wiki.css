@@ -115,7 +115,7 @@ html.forsen-wiki-theme {
 			@apply m-0;
 		}
 		table {
-			@apply forsen-wiki-theme-border m-0 table-fixed select-text;
+			@apply forsen-wiki-theme-border min-w-full m-0;
 
 			h1,
 			h2,

@@ -21,6 +21,7 @@ import {
 } from '$lib/lexical/custom';
 import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
+import TableNodeDOMExport from './htmlExport/TableNodeDOMExport';
 
 export const articleTheme = {
 	image: 'image',
@@ -49,7 +50,7 @@ export const editableTheme = {
 	},
 };
 
-export const htmlExport =  new Map([HeadingNodeDOMExport, TableCellNodeDOMExport]);
+export const htmlExport =  new Map([HeadingNodeDOMExport, TableCellNodeDOMExport, TableNodeDOMExport]);
 
 /**
  * @param {Error} error
