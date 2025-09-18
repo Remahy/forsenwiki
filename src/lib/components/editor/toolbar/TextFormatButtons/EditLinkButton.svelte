@@ -7,8 +7,11 @@
 		KEY_DOWN_COMMAND,
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,
+		$createRangeSelection as createRangeSelection,
+		$setSelection as setSelection,
 	} from 'lexical';
 	import { TOGGLE_LINK_COMMAND, $toggleLink as toggleLink } from '@lexical/link';
+	import { mergeRegister } from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
 
 	import { ctrlKey } from '$lib/environment/environment';
@@ -17,14 +20,13 @@
 	import { $isALinkNode as isALinkNode } from '$lib/lexical/custom';
 	import EditorButton from '../EditorButton.svelte';
 	import EditLinkButtonModal from './EditLinkButtonModal.svelte';
-	import { mergeRegister } from '@lexical/utils';
 
 	let hasLink = $state(false);
-	
+
 	let url = $state('');
-	
+
 	let attrs = $state({});
-	
+
 	let isInternal = $state(false);
 
 	let editor = $derived(getEditor?.());
@@ -53,17 +55,27 @@
 				editor.update(() => {
 					const selection = getSelection();
 
-					if (selection && dUrl && definedUrl === 'https://') {
-						const textLength = selection
-							.getNodes()
-							.map((node) => node.getTextContentSize())
-							.reduce((prev, curr) => prev + curr, 0);
+					if (selection && dUrl && definedUrl === 'https://' && selection.isCollapsed()) {
+						const [, anchor] =
+							/** @type {[import('lexical').PointType, import('lexical').PointType]}*/ (
+								selection.getStartEndPoints()
+							);
+						const anchorOffset = anchor.offset;
 
-						// Add as text if selection didn't have any.
-						if (textLength === 0) {
-							const title = dAttrs?.title;
-							selection.insertText(title || dUrl);
-						}
+						const text = dAttrs?.title || dUrl;
+						selection.insertText(text);
+
+						// Modify selection to only wrap the new text.
+						const [, newFocus] =
+							/** @type {[import('lexical').PointType, import('lexical').PointType]}*/ (
+								selection.getStartEndPoints()
+							);
+
+						const newSelection = createRangeSelection();
+						newSelection.anchor.set(anchor.key, anchorOffset, 'text');
+						newSelection.focus.set(anchor.key, newFocus.offset, 'text');
+
+						setSelection(newSelection);
 					}
 
 					toggleLink(dUrl, dAttrs);
@@ -154,7 +166,7 @@
 <EditorButton title="Insert link ({ctrlKey}K)" on:click={link} isActive={hasLink}>
 	{#if hasLink}
 		<Link2Icon />
-		<SettingsIcon size="16" class="absolute right-0 top-0" />
+		<SettingsIcon size="16" class="absolute top-0 right-0" />
 	{:else}
 		<Link2Icon />
 	{/if}
