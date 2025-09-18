@@ -50,6 +50,7 @@ export class DecoratorBlockNode extends DecoratorNode<unknown> {
 
 	constructor(format?: ElementFormatType, key?: NodeKey) {
 		super(key);
+
 		if (format) {
 			this.__format = getFormat(format);
 		}
