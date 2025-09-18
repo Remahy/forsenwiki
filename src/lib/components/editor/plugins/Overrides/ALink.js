@@ -23,7 +23,7 @@ export class ALinkNode extends LinkNode {
 	constructor(url, attrs, internal = false, key) {
 		super(url, { ...attrs, target: internal ? attrs?.target : '_blank' }, key);
 
-		this.setIsInternal(internal);
+		this.__isInternal = internal;
 	}
 	
 	$config() {
