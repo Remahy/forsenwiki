@@ -92,10 +92,11 @@ export const getIframeStyle = (
 
 	const heightStyle = height === 'inherit' ? 'height:auto;' : '';
 
-	const responsive = 'max-width:100%;max-height:100vh;';
+	const min = `min-width:${VIDEO_MIN_WIDTH}px;min-height:${VIDEO_MIN_HEIGHT};`;
+	const max = 'max-width:100vw;max-height:100vh;';
 	const aspectRatio = width === 'inherit' || height === 'inherit' ? 'aspect-ratio:16/9;' : '';
 
-	return `${responsive}${aspectRatio}${widthStyle}${heightStyle}${formatType ? decoratorFormatToMarginStyle(formatType) : ''}`;
+	return `${min}${max}${aspectRatio}${widthStyle}${heightStyle}${formatType ? decoratorFormatToMarginStyle(formatType) : ''}`;
 };
 
 export const getURLAndTitle = (
