@@ -88,7 +88,7 @@
 			</SuggestionBox>
 
 			<div class="flex grow flex-col gap-4 lg:flex-row">
-				<Box class="flex grow flex-col p-4 lg:mb-0">
+				<Box class="flex grow flex-col p-4 lg:mb-0 overflow-hidden">
 					<main class="article-root prose dark:prose-invert max-w-[unset] grow">
 						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>
