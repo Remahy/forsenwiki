@@ -21,6 +21,10 @@
 	import EditorButton from '../EditorButton.svelte';
 	import EditLinkButtonModal from './EditLinkButtonModal.svelte';
 
+	/**
+	 * @typedef {import('lexical').PointType} PointType
+	 */
+
 	let hasLink = $state(false);
 
 	let url = $state('');
@@ -57,7 +61,7 @@
 
 					if (selection && dUrl && definedUrl === 'https://' && selection.isCollapsed()) {
 						const [, anchor] =
-							/** @type {[import('lexical').PointType, import('lexical').PointType]}*/ (
+							/** @type {[PointType, PointType]}*/ (
 								selection.getStartEndPoints()
 							);
 						const anchorOffset = anchor.offset;
@@ -67,7 +71,7 @@
 
 						// Modify selection to only wrap the new text.
 						const [, newFocus] =
-							/** @type {[import('lexical').PointType, import('lexical').PointType]}*/ (
+							/** @type {[PointType, PointType]}*/ (
 								selection.getStartEndPoints()
 							);
 
