@@ -6,9 +6,8 @@
 	}
 }
 
-
 www.{$DOMAIN:forsen.wiki} {
-	redir https://{$DOMAIN:forsen.wiki}{uri}
+	redir {$DOMAIN:forsen.wiki}{uri}
 }
 
 {$DOMAIN:forsen.wiki} {
