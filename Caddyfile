@@ -6,11 +6,11 @@
 	}
 }
 
-www.forsen.wiki {
-	redir https://forsen.wiki{uri}
+www.{$DOMAIN:forsen.wiki} {
+	redir {$DOMAIN:forsen.wiki}{uri}
 }
 
-forsen.wiki {
+{$DOMAIN:forsen.wiki} {
 	@wsrv {
 		client_ip 46.4.13.221
 		client_ip 95.216.5.209
@@ -32,7 +32,7 @@ forsen.wiki {
 	}
 
 	handle {
-		reverse_proxy sveltekit:3000
+		reverse_proxy sveltekit
 	}
 
 	log {
@@ -46,7 +46,7 @@ forsen.wiki {
 	}
 }
 
-stats.forsen.wiki {
+stats.{$DOMAIN:forsen.wiki} {
 	handle {
 		reverse_proxy host.docker.internal:8081
 	}

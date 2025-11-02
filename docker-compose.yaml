@@ -1,53 +1,63 @@
 services:
   sveltekit:
-    container_name: sveltekit
-    image: sveltekit
     build:
       context: .
       dockerfile: Dockerfile
     environment:
-      - NODE_ENV=production
-      - PRISMA_CLI_BINARY_TARGETS=debian-openssl-3.0.x
+      - PORT=80
     env_file:
       - .env
     restart: unless-stopped
-    ports:
-      - 3000:3000
     volumes:
-      - ${DEV_STATIC_DIR}:/usercontent
+      - ${DEV_STATIC_DIR}:/usercontent/
     depends_on:
-      - db
       - caddy
+    networks:
+      - prisma-network
 
-  db:
+  postgres:
     image: postgres
     restart: always
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
+    networks:
+      - prisma-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
 
   caddy:
     build: 
       context: .
       dockerfile: Dockerfile-caddy
+    environment:
+      DOMAIN: ${DOMAIN}
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
+      - "${CADDY_HTTP_PORT}:80"
+      - "${CADDY_HTTPS_PORT}:443"
+      - "${CADDY_HTTPS_PORT}:443/udp"
+    networks:
+      - prisma-network
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
-      - ${DEV_STATIC_DIR}:/srv
+      - ${DEV_STATIC_DIR}:/srv/
       - caddy_data:/data
       - caddy_config:/config
       - ./forsen-wiki-logs:/var/log
     depends_on:
-      - db
+      postgres:
+        condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+networks:
+  prisma-network:
+    name: prisma-network
 
 volumes:
   pgdata:
