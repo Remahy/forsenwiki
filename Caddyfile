@@ -6,6 +6,10 @@
 	}
 }
 
+www.forsen.wiki {
+	redir https://forsen.wiki{uri}
+}
+
 forsen.wiki {
 	@wsrv {
 		client_ip 46.4.13.221
