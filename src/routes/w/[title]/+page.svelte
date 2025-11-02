@@ -19,20 +19,45 @@
 		post: { rawTitle, title, createdTimestamp, lastUpdated, outRelations, id },
 		authors,
 		html,
+		text,
+		image,
 	} = data;
 
 	const isSystem =
 		outRelations.find(({ isSystem, toPostId }) => isSystem && toPostId === 'system') ||
 		id === 'system';
+
+	const authorsScriptContent = JSON.stringify({
+		'@context': 'https://schema.org',
+		author: authors.map((author) => ({
+			'@type': 'Person',
+			name: author.name?.replace(/[^\w]/g, ''),
+		})),
+	});
+	const authorsHTML = `<script type="application/ld+json">${authorsScriptContent}<\/script>`;
+
+	// @ts-ignore
+	BigInt.prototype.toJSON = function () {
+		return { $bigint: this.toString() };
+	};
 </script>
 
 <svelte:head>
 	<title>{rawTitle || title} - Community Forsen Wiki</title>
 	<meta
-		name="description"
+		name="title"
 		content="Read about &quot;{rawTitle ||
 			title}&quot; on forsen.wiki - All things forsen, and more."
 	/>
+
+	{#if text?.length}
+		<meta name="description" content={`${text.substring(0, 64)}${text.length > 64 ? '...' : ''}`} />
+	{/if}
+	{#if image?.length}
+		<meta property="og:image" content={image} />
+	{/if}
+
+	{@html authorsHTML}
 </svelte:head>
 
 <Container>
@@ -63,8 +88,8 @@
 			</SuggestionBox>
 
 			<div class="flex grow flex-col gap-4 lg:flex-row">
-				<Box class="flex grow flex-col p-4 lg:mb-0">
-					<main class="article-root prose max-w-[unset] grow dark:prose-invert">
+				<Box class="flex grow flex-col p-4 lg:mb-0 overflow-hidden">
+					<main class="article-root prose dark:prose-invert max-w-[unset] grow">
 						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>
@@ -83,7 +108,7 @@
 				<p><small>System articles are used for creating backend relations.</small></p>
 			</Box>
 		{:else}
-			<div class="prose max-w-[unset] dark:prose-invert">
+			<div class="prose dark:prose-invert max-w-[unset]">
 				<p>This article does not have any HTML available.</p>
 				<pre>{JSON.stringify(data, null, 2)}</pre>
 			</div>
@@ -91,12 +116,12 @@
 
 		<footer class="article-footer-color p-4">
 			<p>
-				<span title={createdTimestamp.toString()}>
+				<span title={createdTimestamp.toUTCString()}>
 					<strong>Created:</strong>
 					{createdTimestamp.toDateString()}
 				</span>
 				{#if lastUpdated.getTime() !== createdTimestamp.getTime()}
-					<span title={lastUpdated.toString()}>
+					<span title={lastUpdated.toUTCString()}>
 						<strong>Updated:</strong>
 						{formatRelative(lastUpdated, Date.now(), { locale: enGB })}
 					</span>
@@ -105,7 +130,7 @@
 
 			{#if authors.length}
 				<p>
-					<span><strong>Authors:</strong></span>
+					<span><strong>Author{authors.length > 1 ? 's' : ''}:</strong></span>
 					<span>
 						{#each authors as author, index}
 							{author.name}{index < authors.length - 1 ? ', ' : ''}
@@ -117,7 +142,7 @@
 	</article>
 
 	<details class="-mt-4">
-		<summary></summary>
+		<summary class="cursor-pointer">Tools</summary>
 
 		<CacheBustButton />
 	</details>

@@ -1,6 +1,6 @@
 import { json, error } from '@sveltejs/kit';
 import { readYPostByTitle, readYPostUpdatesByTitle } from '$lib/db/article/read';
-import { yPostUpdatesToBase64 } from '$lib/yjs/utils';
+import { yPostUpdatesV2ToBase64 } from '$lib/yjs/utils';
 import { upsertHTML } from '$lib/db/article/html';
 import { updateToHTML } from '$lib/lexical/updateToHTML';
 
@@ -15,7 +15,7 @@ export const _getYPostByTitle = async (title) => {
 		throw 404;
 	}
 
-	const base64String = yPostUpdatesToBase64(post.postUpdates);
+	const base64String = yPostUpdatesV2ToBase64(post.postUpdates);
 
 	// Important: We're destructuring away postUpdates to make sure we don't return it.
 	// eslint-disable-next-line no-unused-vars
@@ -33,7 +33,12 @@ export const _getYPostHTML = async (title, shouldCacheBust) => {
 		const yPost = await readYPostByTitle(title);
 
 		if (yPost?.html?.content && !shouldCacheBust) {
-			return { post: { ...yPost, html: undefined }, html: yPost.html.content };
+			return {
+				post: { ...yPost, html: undefined },
+				html: yPost.html.content,
+				text: yPost.html.text,
+				image: yPost.html.image,
+			};
 		}
 	} catch (err) {
 		if (typeof err === 'number') {
@@ -46,14 +51,14 @@ export const _getYPostHTML = async (title, shouldCacheBust) => {
 	const { post, update } = await _getYPostUpdate(title);
 
 	if (!update) {
-		return { post, html: null };
+		return { post, html: null, text: null, image: null };
 	}
 
-	const html = await updateToHTML(update);
+	const { html, text, image } = await updateToHTML(update);
 
-	Promise.resolve(upsertHTML(post.id, html));
+	Promise.resolve(upsertHTML(post.id, { content: html, text, image }));
 
-	return { post, html };
+	return { post, html, text, image };
 };
 
 /**

@@ -1,11 +1,21 @@
 <script>
+	import {
+		FileQuestionIcon,
+		LinkIcon,
+		RectangleHorizontalIcon,
+		RectangleVerticalIcon,
+		YoutubeIcon,
+	} from 'lucide-svelte';
 	import { getEditor } from 'svelte-lexical';
-	import { FileQuestionIcon, LinkIcon, RectangleHorizontalIcon, RectangleVerticalIcon, YoutubeIcon } from 'lucide-svelte';
 
 	import Select from '$lib/components/Select.svelte';
 	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
-	import { VIDEO_CONSTANTS } from '$lib/constants/video';
-	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
+	import {
+		VIDEO_CONSTANTS,
+		VIDEO_MAX_HEIGHT,
+		VIDEO_MIN_HEIGHT,
+		VIDEO_MIN_WIDTH,
+	} from '$lib/constants/video';
 	import { DOMAIN } from '$lib/environment/environment';
 	import { getURLAndTitle } from '../../plugins/VideoEmbed/VideoEmbed';
 
@@ -15,18 +25,18 @@
 	 */
 
 	/** @type {Props} */
-	let { selectedVideoEmbedNode = $bindable() } = $props();
+	let { selectedVideoEmbedNode } = $props();
 
 	let editor = $derived(getEditor?.());
 
 	/** @type {HTMLSelectElement | null} */
 	let platformElement = $state(null);
 
-	let currentPlatform = $state(selectedVideoEmbedNode.__platform);
-	let currentURL = $state(selectedVideoEmbedNode.__src);
+	let currentPlatform = $derived(selectedVideoEmbedNode.__platform);
+	let currentURL = $derived(selectedVideoEmbedNode.__src);
 
-	let currentWidth = $state(selectedVideoEmbedNode.__width);
-	let currentHeight = $state(selectedVideoEmbedNode.__height);
+	let currentWidth = $derived(selectedVideoEmbedNode.__width);
+	let currentHeight = $derived(selectedVideoEmbedNode.__height);
 
 	let url = $derived(currentURL);
 
@@ -65,7 +75,9 @@
 		});
 	};
 
-	const SvelteComponent = $derived(currentPlatform ? platformIcons[currentPlatform] : platformIcons.default);
+	const SvelteComponent = $derived(
+		currentPlatform ? platformIcons[currentPlatform] : platformIcons.default
+	);
 </script>
 
 <div class="flex min-h-[42px] items-center gap-2 pl-2">
@@ -91,7 +103,7 @@
 	<LinkIcon />
 
 	<input
-		class="input-color -ml-10 h-full w-auto py-1 pl-10 pr-0 text-sm lg:h-full"
+		class="input-color -ml-10 h-full w-auto py-1 pr-0 pl-10 text-sm lg:h-full"
 		onchange={setURL}
 		placeholder="https://..."
 		type="url"
@@ -105,10 +117,10 @@
 
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		placeholder={width === 'inherit' ? "Inherit" : ""}
+		placeholder={width === 'inherit' ? 'Inherit' : ''}
 		bind:value={width}
 		onchange={onChange}
-		min={IMAGE_MIN_WIDTH}
+		min={VIDEO_MIN_WIDTH}
 		type="number"
 	/>
 </label>
@@ -119,9 +131,10 @@
 
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		placeholder={height === 'inherit' ? "Inherit" : ""}
+		placeholder={height === 'inherit' ? 'Inherit' : ''}
 		onchange={onChange}
-		min={IMAGE_MIN_HEIGHT}
+		min={VIDEO_MIN_HEIGHT}
+		max={VIDEO_MAX_HEIGHT}
 		type="number"
 		bind:value={height}
 	/>

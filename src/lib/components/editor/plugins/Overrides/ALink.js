@@ -23,7 +23,11 @@ export class ALinkNode extends LinkNode {
 	constructor(url, attrs, internal = false, key) {
 		super(url, { ...attrs, target: internal ? attrs?.target : '_blank' }, key);
 
-		this.setIsInternal(internal);
+		this.__isInternal = internal;
+	}
+	
+	$config() {
+		return this.config('a-link', { extends: LinkNode });
 	}
 
 	static getType() {
@@ -53,14 +57,20 @@ export class ALinkNode extends LinkNode {
 
 	/** @returns {boolean} */
 	getIsInternal() {
-		return this.__isInternal;
+		const self = this.getLatest();
+		const value = self.__isInternal;
+		return value;
 	}
 
 	// Setters
 
 	/** @param {boolean} bool */
 	setIsInternal(bool) {
-		this.__isInternal = bool;
+		const self = this.getWritable();
+
+		self.__isInternal = bool;
+
+		return this;
 	}
 
 	exportJSON() {

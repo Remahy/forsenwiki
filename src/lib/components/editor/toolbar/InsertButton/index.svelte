@@ -1,8 +1,8 @@
 <script>
-	import { getEditor } from 'svelte-lexical';
-	import { INSERT_TABLE_COMMAND } from '@lexical/table';
 	import { PlusIcon } from 'lucide-svelte';
-	
+	import { INSERT_TABLE_COMMAND } from '@lexical/table';
+	import { getEditor } from 'svelte-lexical';
+
 	import Select from '$lib/components/Select.svelte';
 
 	import { TRANSPARENT_IMAGE } from '../../plugins/Image/Image';
@@ -30,8 +30,8 @@
 		editor.dispatchCommand(INSERT_VIDEOEMBED_COMMAND, {
 			platform: 'youtube',
 			src: '',
-			width: 1280,
-			height: 720,
+			width: 'inherit',
+			height: 'inherit',
 		});
 	};
 
@@ -44,7 +44,11 @@
 	};
 
 	const insertFloatBlock = () => {
-		editor.dispatchCommand(INSERT_FLOATBLOCK_COMMAND, { float: 'inline-start', width: null, height: null });
+		editor.dispatchCommand(INSERT_FLOATBLOCK_COMMAND, {
+			float: 'inline-start',
+			width: undefined,
+			height: undefined,
+		});
 	};
 
 	const insertElementTypeOptions = [

@@ -2,6 +2,7 @@
 	import { $getNodeByKey as getNodeByKey } from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 	import { RectangleHorizontalIcon, RectangleVerticalIcon } from 'lucide-svelte';
+
 	import Button from '$lib/components/Button.svelte';
 	import { modal } from '$lib/stores/modal';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
@@ -13,12 +14,12 @@
 	 */
 
 	/** @type {Props} */
-	let { selectedImageNode = $bindable() } = $props();
+	let { selectedImageNode } = $props();
 
 	let editor = $derived(getEditor?.());
 
-	let currentWidth = $state(selectedImageNode.__width);
-	let currentHeight = $state(selectedImageNode.__height);
+	let currentWidth = $derived(selectedImageNode.__width);
+	let currentHeight = $derived(selectedImageNode.__height);
 
 	let width = $derived(currentWidth);
 	let height = $derived(currentHeight);

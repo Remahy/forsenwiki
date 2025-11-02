@@ -1,9 +1,6 @@
 <script>
 	/** @type {import('lexical').LexicalCommand<MouseEvent>} */
-	export const RIGHT_CLICK_VIDEOEMBED_COMMAND = createCommand('RIGHT_CLICK_VIDEOEMBED_COMMAND');
-
-	// Based on umaranis' svelte-lexical
-	import '../Image/Image.css';
+	const RIGHT_CLICK_VIDEOEMBED_COMMAND = createCommand('RIGHT_CLICK_VIDEOEMBED_COMMAND');
 
 	import { onMount } from 'svelte';
 	import {
@@ -16,7 +13,7 @@
 		CLICK_COMMAND,
 		KEY_DELETE_COMMAND,
 		KEY_BACKSPACE_COMMAND,
-		KEY_ENTER_COMMAND,
+		// KEY_ENTER_COMMAND,
 		KEY_ESCAPE_COMMAND,
 	} from 'lexical';
 	import { mergeRegister } from '@lexical/utils';
@@ -31,9 +28,11 @@
 	import {
 		getIframeStyle,
 		getURLAndTitle,
+		getWidthAndHeight,
 		$isVideoEmbedNode as isVideoEmbedNode,
 		VideoEmbedNode,
 	} from './VideoEmbed';
+	import { decoratorFormatToMarginStyle } from './DecoratorBlockNode';
 
 	/**
 	 * @typedef {Object} Props
@@ -49,29 +48,18 @@
 	 */
 
 	/** @type {Props} */
-	let {
-		node,
-		src,
-		platform,
-		nodeKey,
-		height,
-		width,
-		resizable,
-		format,
-		editor
-	} = $props();
-
-	let heightCss = $derived(height === 'inherit' ? 'inherit' : height + 'px');
-	let widthCss = $derived(width === 'inherit' ? 'inherit' : width + 'px');
+	let { node, src, platform, nodeKey, height, width, resizable, format, editor } = $props();
 
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);
 	/** @type {HTMLDivElement | null} */
 	let embedRef = $state(null);
+	/** @type {HTMLDivElement | null} */
+	let nodeRef = $state(null);
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
 	let isResizing = $state(false);
 
-	let isFocused = $derived(isSelected || isResizing);
+	let isFocused = $derived($isSelected || isResizing);
 	let parsedSrc = $derived(getURLAndTitle(platform, src, DOMAIN));
 	let url = $derived(parsedSrc.url);
 	let title = $derived(parsedSrc.title);
@@ -96,7 +84,7 @@
 
 	/** @param {KeyboardEvent} payload */
 	const onDelete = (payload) => {
-		if (isSelected && isNodeSelection(getSelection())) {
+		if ($isSelected && isNodeSelection(getSelection())) {
 			/** @type {KeyboardEvent} */
 			const event = payload;
 			event.preventDefault();
@@ -112,7 +100,7 @@
 	// const onEnter = () => {
 	// 	const latestSelection = getSelection();
 	// 	if (
-	// 		isSelected &&
+	// 		$isSelected &&
 	// 		isNodeSelection(latestSelection) &&
 	// 		latestSelection.getNodes().length === 1
 	// 	) {
@@ -131,9 +119,10 @@
 	const onClick = (payload) => {
 		const event = payload;
 
-		// if (isResizing) {
-		// 	return true;
-		// }
+		if (isResizing) {
+			return true;
+		}
+
 		if (event.target === embedRef) {
 			if (event.shiftKey) {
 				$isSelected = !$isSelected;
@@ -141,6 +130,7 @@
 				clearSelection(editor);
 				$isSelected = true;
 			}
+
 			return true;
 		}
 
@@ -150,8 +140,10 @@
 	/**
 	 * @param {'inherit' | number} nextWidth
 	 * @param {'inherit' | number} nextHeight
+	 * @param {number} startWidth
+	 * @param {number} startHeight
 	 */
-	const onResizeEnd = (nextWidth, nextHeight) => {
+	const onResizeEnd = (nextWidth, nextHeight, startWidth, startHeight) => {
 		// Delay hiding the resize bars for click case
 		setTimeout(() => {
 			isResizing = false;
@@ -160,7 +152,15 @@
 		editor.update(() => {
 			const node = getNodeByKey(nodeKey);
 			if (isVideoEmbedNode(node)) {
-				node.setWidthAndHeight({ width: nextWidth, height: nextHeight });
+				const { width: currentWidth, height: currentHeight } = node.getWidthAndHeight();
+
+				const sameWidth = startWidth === nextWidth;
+				const sameHeight = startHeight === nextHeight;
+
+				node.setWidthAndHeight({
+					width: sameWidth ? currentWidth : nextWidth,
+					height: sameHeight ? currentHeight : nextHeight,
+				});
 			}
 		});
 	};
@@ -168,6 +168,15 @@
 	const onResizeStart = () => {
 		isResizing = true;
 	};
+
+	$effect(() => {
+		if (nodeRef?.parentElement) {
+			nodeRef.parentElement.style = decoratorFormatToMarginStyle(format);
+			if (width !== 'inherit' || height !== 'inherit') {
+				nodeRef.parentElement.style.width = 'fit-content';
+			}
+		}
+	});
 
 	onMount(() => {
 		let isMounted = true;
@@ -196,40 +205,37 @@
 	});
 </script>
 
-<div style={getIframeStyle(width, height)}>
-	<div class="editor-image editor-video" style={getIframeStyle(width, height)}>
-		<div
-			bind:this={embedRef}
-			class="element-placeholder-color overflow-hidden text-black"
-			class:focused={isFocused}
-			class:draggable={isFocused && isNodeSelection(selection)}
-			draggable="false"
-			style={`height:${heightCss};width:${widthCss}`}
-		>
-			<iframe
-				class="pointer-events-none"
-				srcdoc={!url
-					? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform.toUpperCase()} embed.</strong></p>`
-					: undefined}
-				{width}
-				{height}
-				src={url}
-				frameBorder="0"
-				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-				allowFullScreen={true}
-				{title}
-				style={getIframeStyle(width, height, format)}
-			></iframe>
-		</div>
-		{#if resizable && isNodeSelection(selection) && isFocused}
-			<ImageResizer
-				{editor}
-				imageRef={embedRef}
-				{onResizeStart}
-				{onResizeEnd}
-				minWidth={VIDEO_MIN_WIDTH}
-				minHeight={VIDEO_MIN_HEIGHT}
-			/>
-		{/if}
+<div class="editor-image editor-video" bind:this={nodeRef} style={getWidthAndHeight(width, height)}>
+	<div
+		bind:this={embedRef}
+		class="element-placeholder-color overflow-hidden text-black"
+		class:focused={isFocused}
+		style={getWidthAndHeight(width, height)}
+	>
+		<iframe
+			class="pointer-events-none"
+			srcdoc={!url
+				? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform.toUpperCase()} embed.</strong></p>`
+				: undefined}
+			{width}
+			{height}
+			src={url}
+			frameBorder="0"
+			allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+			allowFullScreen={true}
+			{title}
+			style={getIframeStyle(width, height)}
+		></iframe>
 	</div>
+
+	{#if resizable && isNodeSelection(selection) && isFocused}
+		<ImageResizer
+			{editor}
+			imageRef={embedRef}
+			{onResizeStart}
+			{onResizeEnd}
+			minWidth={VIDEO_MIN_WIDTH}
+			minHeight={VIDEO_MIN_HEIGHT}
+		/>
+	{/if}
 </div>

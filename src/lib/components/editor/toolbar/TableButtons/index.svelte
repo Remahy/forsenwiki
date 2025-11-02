@@ -1,16 +1,16 @@
 <script>
 	import { onMount } from 'svelte';
 	import { $getSelection as getSelection } from 'lexical';
-	import { getEditor } from 'svelte-lexical';
 	import { mergeRegister } from '@lexical/utils';
 	import { $isTableNode as isTableNode } from '@lexical/table';
+	import { getEditor } from 'svelte-lexical';
 
 	import Divider from '$lib/components/Divider.svelte';
 	import RowButtons from './RowButtons.svelte';
 	import ColumnButtons from './ColumnButtons.svelte';
 
 	/** @type {import('@lexical/table').TableNode | null} */
-	let selectedTable = null;
+	let selectedTable = $state(null);
 
 	const editor = getEditor();
 

@@ -21,7 +21,7 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			yjs: path.resolve('./node_modules/yjs/src/index.js'),
+			yjs: path.resolve('./node_modules/yjs/dist/yjs.mjs'),
 			'@lexical/yjs': path.resolve('./node_modules/@lexical/yjs/LexicalYjs.mjs'),
 			'@lexical/clipboard': path.resolve('./node_modules/@lexical/clipboard/LexicalClipboard.mjs'),
 			'@lexical/code': path.resolve('./node_modules/@lexical/code/LexicalCode.mjs'),

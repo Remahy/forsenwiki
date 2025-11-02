@@ -4,7 +4,6 @@
 	import { onMount } from 'svelte';
 	import { PlusIcon, MinusIcon, ArrowLeftIcon, ArrowRightIcon, Columns3Icon } from 'lucide-svelte';
 	import { $isRangeSelection as isRangeSelection, $getSelection as getSelection } from 'lexical';
-	import { getEditor } from 'svelte-lexical';
 	import { mergeRegister } from '@lexical/utils';
 	import {
 		$insertTableColumn__EXPERIMENTAL as insertTableColumn__EXPERIMENTAL,
@@ -15,6 +14,7 @@
 		$isTableCellNode as isTableCellNode,
 		TableCellHeaderStates,
 	} from '@lexical/table';
+	import { getEditor } from 'svelte-lexical';
 
 	import Button from '$lib/components/Button.svelte';
 	import EditorButton from '../EditorButton.svelte';

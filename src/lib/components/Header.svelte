@@ -6,8 +6,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Search from './Search.svelte';
-	// import Box from './Box.svelte';
-	// import Link from './Link.svelte';
+	import Announcement from './Announcement.svelte';
 
 	let isLoading = $state(false);
 
@@ -41,10 +40,6 @@
 	if (page.data.session?.user?.image) {
 		cachedImage.setImg(page.data.session?.user?.image);
 	}
-
-	// const hasSeenPrivacyUpdateNotice = globalThis?.localStorage
-	// 	? localStorage.getItem('privacy-update-june-3-2024')
-	// 	: true;
 </script>
 
 <header class="header">
@@ -114,38 +109,5 @@
 		</div>
 	</nav>
 
-	<!--
-	{#if !hasSeenPrivacyUpdateNotice}
-		<Box
-			class="!rounded-none !bg-yellow-900/20 dark:!bg-yellow-300/20"
-		>
-			<div class="container mx-auto flex items-center gap-4 p-4">
-				<ScaleIcon class="w-8 h-8 hidden lg:block"/>
-				<div class="grow">
-					<p>
-						<Link href="/privacy"
-							>(June 3) Privacy policy has been updated. Please take a moment to read it.</Link
-						>
-					</p>
-
-					<p>
-						<strong>Changes:</strong> Removed section about tracking cookies, added section about collecting
-						statistics on an ongoing basis. Clarified purpose of Cloudflare.
-					</p>
-				</div>
-
-				<Button
-					class="m-auto"
-					on:click={() => {
-						localStorage.setItem('privacy-update-june-3-2024', 'true');
-						window.location.reload();
-					}}
-				>
-					<span class="hidden lg:inline">Close</span>
-					<XIcon class="inline lg:hidden" />
-				</Button>
-			</div>
-		</Box>
-	{/if}
-	-->
+	<Announcement />
 </header>

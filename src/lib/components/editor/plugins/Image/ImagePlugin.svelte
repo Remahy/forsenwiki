@@ -13,8 +13,9 @@
 
 <script>
 	// Based on umaranis' svelte-lexical
-	import './Image.css';
+	import './EditorImage.css';
 
+	import { onMount } from 'svelte';
 	import {
 		$createParagraphNode as createParagraphNode,
 		$createRangeSelection as createRangeSelection,
@@ -33,7 +34,6 @@
 		DROP_COMMAND,
 	} from 'lexical';
 	import { $wrapNodeInElement as wrapNodeInElement, mergeRegister } from '@lexical/utils';
-	import { onMount } from 'svelte';
 	import { getEditor } from 'svelte-lexical';
 
 	import { CAN_USE_DOM } from '$lib/environment/utils';

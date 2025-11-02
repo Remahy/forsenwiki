@@ -1,13 +1,13 @@
 <script>
 	import { onMount } from 'svelte';
+	import { BoldIcon, ItalicIcon } from 'lucide-svelte';
 	import {
 		$isRangeSelection as isRangeSelection,
 		FORMAT_TEXT_COMMAND,
 		$getSelection as getSelection,
 	} from 'lexical';
-	import { getEditor } from 'svelte-lexical';
 	import { mergeRegister } from '@lexical/utils';
-	import { BoldIcon, ItalicIcon } from 'lucide-svelte';
+	import { getEditor } from 'svelte-lexical';
 
 	import { ctrlKey } from '$lib/environment/environment';
 	import EditorButton from '../EditorButton.svelte';

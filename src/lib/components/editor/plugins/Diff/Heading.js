@@ -1,4 +1,4 @@
-import { AHeadingNode } from '../Overrides/AHeading';
+import { HeadingNode } from '$lib/lexical/index';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
@@ -9,12 +9,12 @@ import { addInformationHover, applyCSSColorDiff } from './utils';
  * @typedef {import('@lexical/rich-text').SerializedHeadingNode} SerializedHeadingNode
  */
 
-export class DiffAHeadingNode extends AHeadingNode {
+export class DiffHeadingNode extends HeadingNode {
 	/** @type {import('./Types').___Change} */
 	___change;
 
 	/**
-	 * @param {SerializedHeadingNode | AHeadingNode} node
+	 * @param {SerializedHeadingNode | HeadingNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
@@ -26,21 +26,21 @@ export class DiffAHeadingNode extends AHeadingNode {
 	}
 
 	/**
-	 * @param {DiffAHeadingNode} node
+	 * @param {DiffHeadingNode} node
 	 */
 	static clone(node) {
-		return new DiffAHeadingNode(node, node.__key);
+		return new DiffHeadingNode(node, node.__key);
 	}
 
 	static getType() {
-		return 'diff-a-heading';
+		return 'diff-heading';
 	}
 
 	/**
 	 * @param {SerializedHeadingNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const node = $createDiffAHeadingNode(serializedNode).updateFromJSON(serializedNode);
+		const node = $createDiffHeadingNode(serializedNode).updateFromJSON(serializedNode);
 		return node;
 	}
 
@@ -63,17 +63,17 @@ export class DiffAHeadingNode extends AHeadingNode {
 	}
 
 	static importDOM() {
-		return AHeadingNode.importDOM();
+		return HeadingNode.importDOM();
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), ___change: this.___change, type: DiffAHeadingNode.getType() };
+		return { ...super.exportJSON(), ___change: this.___change, type: DiffHeadingNode.getType() };
 	}
 }
 
 /**
  * @param {SerializedHeadingNode} node
  */
-export function $createDiffAHeadingNode(node) {
-	return new DiffAHeadingNode(node);
+export function $createDiffHeadingNode(node) {
+	return new DiffHeadingNode(node);
 }

@@ -2,8 +2,9 @@
 	const imageCache = new Set();
 
 	/** @type {import('lexical').LexicalCommand<MouseEvent>} */
-	export const RIGHT_CLICK_IMAGE_COMMAND = createCommand('RIGHT_CLICK_IMAGE_COMMAND');
+	const RIGHT_CLICK_IMAGE_COMMAND = createCommand('RIGHT_CLICK_IMAGE_COMMAND');
 
+	import { onMount } from 'svelte';
 	import {
 		$getSelection as getSelection,
 		$isNodeSelection as isNodeSelection,
@@ -12,14 +13,13 @@
 		createCommand,
 		COMMAND_PRIORITY_LOW,
 		CLICK_COMMAND,
-		DRAGSTART_COMMAND,
 		KEY_DELETE_COMMAND,
 		KEY_BACKSPACE_COMMAND,
 		KEY_ESCAPE_COMMAND,
-		KEY_ENTER_COMMAND,
+		// KEY_ENTER_COMMAND,
 	} from 'lexical';
-	import { onMount } from 'svelte';
 	import { mergeRegister } from '@lexical/utils';
+
 	import {
 		clearSelection,
 		createNodeSelectionStore,
@@ -47,29 +47,18 @@
 	 */
 
 	/** @type {Props} */
-	let {
-		node,
-		src,
-		altText,
-		nodeKey,
-		width,
-		height,
-		resizable,
-		editor
-	} = $props();
+	let { node, src, altText, nodeKey, width, height, resizable, editor } = $props();
 
 	let heightCss = $derived(height === 'inherit' ? 'inherit' : height + 'px');
 	let widthCss = $derived(width === 'inherit' ? 'inherit' : width + 'px');
 
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);
-
 	/** @type {HTMLElement | HTMLImageElement | null} */
 	let imageRef = $state(null);
 	let isSelected = createNodeSelectionStore(editor, nodeKey);
 	let isResizing = $state(false);
 
-	let draggable = $derived($isSelected && isNodeSelection(selection) && !isResizing);
 	let isFocused = $derived($isSelected || isResizing);
 
 	let promise = new Promise((resolve) => {
@@ -100,16 +89,16 @@
 		return false;
 	};
 
-	const onEnter = () => {
-		const latestSelection = getSelection();
-		if (
-			$isSelected &&
-			isNodeSelection(latestSelection) &&
-			latestSelection.getNodes().length === 1
-		) {
-		}
-		return false;
-	};
+	// const onEnter = () => {
+	// 	const latestSelection = getSelection();
+	// 	if (
+	// 		$isSelected &&
+	// 		isNodeSelection(latestSelection) &&
+	// 		latestSelection.getNodes().length === 1
+	// 	) {
+	// 	}
+	// 	return false;
+	// };
 
 	const onEscape = () => {
 		clearSelection(editor);
@@ -136,7 +125,11 @@
 			return true;
 		}
 
-		if (event.target === imageRef) {
+		if (event.target instanceof HTMLElement === false) {
+			return false;
+		}
+
+		if (event.target.parentElement === imageRef) {
 			if (event.shiftKey) {
 				$isSelected = !$isSelected;
 				editor.update(() => node.selectEnd());
@@ -169,6 +162,38 @@
 		});
 	};
 
+	/**
+	 * @param {'inherit' | number} nextWidth
+	 * @param {'inherit' | number} nextHeight
+	 * @param {'inherit' | number} startWidth
+	 * @param {'inherit' | number} startHeight
+	 */
+	const onResizeEnd = (nextWidth, nextHeight, startWidth, startHeight) => {
+		// Delay hiding the resize bars for click case
+		setTimeout(() => {
+			isResizing = false;
+		}, 200);
+
+		editor.update(() => {
+			const node = getNodeByKey(nodeKey);
+			if (isImageNode(node)) {
+				const { width: currentWidth, height: currentHeight } = node.getWidthAndHeight();
+
+				const sameWidth = startWidth === nextWidth;
+				const sameHeight = startHeight === nextHeight;
+
+				node.setWidthAndHeight({
+					width: sameWidth ? currentWidth : nextWidth,
+					height: sameHeight ? currentHeight : nextHeight,
+				});
+			}
+		});
+	};
+
+	const onResizeStart = () => {
+		isResizing = true;
+	};
+
 	onMount(() => {
 		let isMounted = true;
 		const rootElement = editor.getRootElement();
@@ -180,22 +205,9 @@
 			}),
 			editor.registerCommand(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(RIGHT_CLICK_IMAGE_COMMAND, onClick, COMMAND_PRIORITY_LOW),
-			editor.registerCommand(
-				DRAGSTART_COMMAND,
-				(event) => {
-					if (event.target === imageRef) {
-						// TODO This is just a temporary workaround for FF to behave like other browsers.
-						// Ideally, this handles drag & drop too (and all browsers).
-						event.preventDefault();
-						return true;
-					}
-					return false;
-				},
-				COMMAND_PRIORITY_LOW
-			),
 			editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
-			editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
+			// editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_ESCAPE_COMMAND, onEscape, COMMAND_PRIORITY_LOW)
 		);
 
@@ -207,40 +219,16 @@
 			rootElement?.removeEventListener('contextmenu', onRightClick);
 		};
 	});
-
-	/**
-	 * @param {'inherit' | number} nextWidth
-	 * @param {'inherit' | number} nextHeight
-	 */
-	const onResizeEnd = (nextWidth, nextHeight) => {
-		// Delay hiding the resize bars for click case
-		setTimeout(() => {
-			isResizing = false;
-		}, 200);
-
-		editor.update(() => {
-			const node = getNodeByKey(nodeKey);
-			if (isImageNode(node)) {
-				node.setWidthAndHeight({ width: nextWidth, height: nextHeight });
-			}
-		});
-	};
-
-	const onResizeStart = () => {
-		isResizing = true;
-	};
 </script>
 
-<div {draggable}>
+<!-- Div wrapper is required to make resizer work properly -->
+<div bind:this={imageRef} class="overflow-hidden" class:focused={isFocused}>
 	{#await promise}
 		<figure
-			style="height:{heightCss};px;width:{widthCss};"
+			style:width={widthCss}
+			style:height={heightCss}
 			class="element-placeholder-color !m-0 flex animate-pulse items-center justify-center p-0"
-			class:focused={isFocused}
-			class:draggable={isFocused && isNodeSelection(selection)}
 			title="Loading image..."
-			bind:this={imageRef}
-			draggable="false"
 		>
 			<img
 				class="pointer-events-none !m-0 animate-spin rounded-full"
@@ -250,17 +238,22 @@
 		</figure>
 	{:then _}
 		<img
-			class:focused={isFocused}
-			class:draggable={isFocused && isNodeSelection(selection)}
+			style:width={widthCss}
+			style:height={heightCss}
 			class="m-0"
 			src={src === TRANSPARENT_IMAGE ? IMAGE_OFF : src}
 			alt={altText}
-			bind:this={imageRef}
-			style="height:{heightCss};width:{widthCss};"
-			draggable="false"
 		/>
 	{/await}
 </div>
+
 {#if resizable && isNodeSelection(selection) && isFocused}
-	<ImageResizer {editor} {imageRef} {onResizeStart} {onResizeEnd} minWidth={IMAGE_MIN_WIDTH} minHeight={IMAGE_MIN_HEIGHT} />
+	<ImageResizer
+		{editor}
+		{imageRef}
+		{onResizeStart}
+		{onResizeEnd}
+		minWidth={IMAGE_MIN_WIDTH}
+		minHeight={IMAGE_MIN_HEIGHT}
+	/>
 {/if}

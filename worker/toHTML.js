@@ -2,7 +2,7 @@ import 'linkedom-global';
 
 import { workerData, parentPort } from 'node:worker_threads';
 
-import { $getRoot } from 'lexical';
+import { $getRoot, $nodesOfType } from 'lexical';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { createHeadlessEditor } from '@lexical/headless';
 import { base64ToUint8Array } from 'uint8array-extras';
@@ -11,6 +11,18 @@ import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { diffConfig } from '$lib/components/editor/config/diff';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
+import { ImageNode } from '$lib/lexical/custom';
+
+const $$getTextInEditor = () => {
+	return $getRoot().getTextContent().trim().replace(/\n+/gm, '\n');
+};
+
+const $$getFirstImage = () => {
+	const images = $nodesOfType(ImageNode);
+	const firstImage = images?.[0];
+
+	return firstImage?.getSrc() || '';
+};
 
 export const toHTMLWorker = async (data) => {
 	/**
@@ -50,16 +62,13 @@ export const toHTMLWorker = async (data) => {
 	}
 
 	return editor.read(() => {
-		const textInEditor = $getRoot().getTextContent().trim();
+		const text = $$getTextInEditor();
+		const image = $$getFirstImage();
 
-		if (textInEditor.length > 0) {
-			const htmlString = $generateHtmlFromNodes(editor, null);
-			parentPort?.postMessage(htmlString);
-			return htmlString;
-		} else {
-			parentPort?.postMessage('');
-			return '';
-		}
+		const htmlString = $generateHtmlFromNodes(editor, null);
+		const response = { html: htmlString, text, image };
+		parentPort?.postMessage(response);
+		return response;
 	});
 };
 

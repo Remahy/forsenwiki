@@ -1,6 +1,7 @@
 import { $nodesOfType as nodesOfType, $createParagraphNode as createParagraphNode } from 'lexical';
 
 import { VideoEmbedNode } from '$lib/lexical/custom';
+import { VIDEO_MIN_HEIGHT, VIDEO_MAX_HEIGHT, VIDEO_MIN_WIDTH } from '$lib/constants/video';
 
 /**
  * @param {LexicalEditor} editor
@@ -29,6 +30,19 @@ export const adjustVideoEmbedNodeSiblings = (editor) => {
 						const p = createParagraphNode();
 						node.insertAfter(p, false);
 					}
+
+					let { width, height } = node.getWidthAndHeight();
+
+					width = typeof width === 'number' ? Math.max(VIDEO_MIN_WIDTH, Math.round(width)) : width;
+					height =
+						typeof height === 'number'
+							? Math.min(Math.max(VIDEO_MIN_HEIGHT, Math.round(height)), VIDEO_MAX_HEIGHT)
+							: height;
+
+					node.setWidthAndHeight({
+						width,
+						height,
+					});
 				}
 			},
 			{ discrete: true }

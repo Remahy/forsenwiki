@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { Redo2Icon, Undo2Icon } from 'lucide-svelte';
 	import {
 		CAN_UNDO_COMMAND,
 		UNDO_COMMAND,
@@ -7,9 +8,8 @@
 		REDO_COMMAND,
 		COMMAND_PRIORITY_LOW,
 	} from 'lexical';
-	import { getEditor } from 'svelte-lexical';
 	import { mergeRegister } from '@lexical/utils';
-	import { Redo2Icon, Undo2Icon } from 'lucide-svelte';
+	import { getEditor } from 'svelte-lexical';
 
 	import { ctrlKey } from '$lib/environment/environment';
 	import EditorButton from './EditorButton.svelte';

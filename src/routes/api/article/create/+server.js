@@ -1,4 +1,4 @@
-import { json, error } from '@sveltejs/kit';
+import { json, error, isHttpError } from '@sveltejs/kit';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { ForbiddenError } from '$lib/errors/Forbidden';
@@ -61,7 +61,7 @@ export async function POST({ request, locals }) {
 			return InvalidArticle(err);
 		}
 
-		if (err.status && err.body?.message) {
+		if (isHttpError(err)) {
 			throw err;
 		}
 
@@ -83,7 +83,9 @@ export async function POST({ request, locals }) {
 
 	const createdArticle = await createArticle(body, metadata);
 
-	await upsertHTML(createdArticle.id, await toHTML({ config: 'article', update: backendContent }));
+	const { html, text, image } = await toHTML({ config: 'article', update: backendContent });
+
+	await upsertHTML(createdArticle.id, { content: html, text, image });
 
 	return json({
 		...createdArticle,

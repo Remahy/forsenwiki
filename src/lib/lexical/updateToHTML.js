@@ -5,9 +5,9 @@ import toHTML from "$lib/worker/toHTML";
  */
 export const updateToHTML = async (update) => {
 	try {
-		const html = await toHTML({ config: 'article', update });
+		const result = await toHTML({ config: 'article', update });
 
-		return html;
+		return result;
 	} catch (err) {
 		console.error(err);
 		throw 500;

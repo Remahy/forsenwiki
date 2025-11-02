@@ -4,12 +4,12 @@ import { diffChars as CharDiffer } from 'diff';
 /** @param {string} type */
 const getReplacedType = (type) => {
 	switch (type) {
-		case 'heading':
-			return 'a-heading';
 		case 'link':
 			return 'a-link';
-		case 'tablecell':
-			return 'a-tablecell';
+		case 'a-heading':
+			return 'heading';
+		case 'a-tablecell':
+			return 'tablecell';
 		default:
 			return type;
 	}

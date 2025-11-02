@@ -1,5 +1,4 @@
 <script>
-	import { getEditor } from 'svelte-lexical';
 	import {
 		ArrowLeftToLineIcon,
 		ArrowRightToLineIcon,
@@ -8,6 +7,7 @@
 		RectangleHorizontalIcon,
 		RectangleVerticalIcon,
 	} from 'lucide-svelte';
+	import { getEditor } from 'svelte-lexical';
 	import Select from '$lib/components/Select.svelte';
 
 	/**
@@ -49,8 +49,8 @@
 
 	const onChange = () => {
 		editor.update(() => {
-			selectedFloatBlockNode.setWidth(width || null);
-			selectedFloatBlockNode.setHeight(height || null);
+			selectedFloatBlockNode.setWidth(width || undefined);
+			selectedFloatBlockNode.setHeight(height || undefined);
 		});
 	};
 

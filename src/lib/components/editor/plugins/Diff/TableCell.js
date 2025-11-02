@@ -1,4 +1,4 @@
-import { ATableCellNode } from '../Overrides/Table/ATableCell';
+import { TableCellNode } from '$lib/lexical/index';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**
@@ -7,12 +7,12 @@ import { addInformationHover, applyCSSColorDiff } from './utils';
  * @typedef {import('@lexical/table').SerializedTableCellNode} SerializedTableCellNode
  */
 
-export class DiffATableCellNode extends ATableCellNode {
+export class DiffTableCellNode extends TableCellNode {
 	/** @type {import('./Types').___Change} */
 	___change;
 
 	/**
-	 * @param {SerializedTableCellNode | ATableCellNode} node
+	 * @param {SerializedTableCellNode | TableCellNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
@@ -31,21 +31,21 @@ export class DiffATableCellNode extends ATableCellNode {
 	}
 
 	/**
-	 * @param {DiffATableCellNode} node
+	 * @param {DiffTableCellNode} node
 	 */
 	static clone(node) {
-		return new DiffATableCellNode(node, node.__key);
+		return new DiffTableCellNode(node, node.__key);
 	}
 
 	static getType() {
-		return 'diff-a-tablecell';
+		return 'diff-tablecell';
 	}
 
 	/**
 	 * @param {SerializedTableCellNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const node = $createDiffATableCellNode(serializedNode).updateFromJSON(serializedNode);
+		const node = $createDiffTableCellNode(serializedNode).updateFromJSON(serializedNode);
 		return node;
 	}
 
@@ -68,17 +68,17 @@ export class DiffATableCellNode extends ATableCellNode {
 	}
 
 	static importDOM() {
-		return ATableCellNode.importDOM();
+		return TableCellNode.importDOM();
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), ___change: this.___change, type: DiffATableCellNode.getType() };
+		return { ...super.exportJSON(), ___change: this.___change, type: DiffTableCellNode.getType() };
 	}
 }
 
 /**
  * @param {SerializedTableCellNode} node
  */
-export function $createDiffATableCellNode(node) {
-	return new DiffATableCellNode(node);
+export function $createDiffTableCellNode(node) {
+	return new DiffTableCellNode(node);
 }

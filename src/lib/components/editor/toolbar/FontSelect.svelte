@@ -1,17 +1,17 @@
 <script>
 	import { onMount } from 'svelte';
+	import { TypeIcon } from 'lucide-svelte';
 	import {
 		$isNodeSelection as isNodeSelection,
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,
 	} from 'lexical';
-	import { getEditor } from 'svelte-lexical';
 	import {
 		$patchStyleText as patchStyleText,
 		$getSelectionStyleValueForProperty as getSelectionStyleValueForProperty,
 	} from '@lexical/selection';
 	import { mergeRegister } from '@lexical/utils';
-	import { TypeIcon } from 'lucide-svelte';
+	import { getEditor } from 'svelte-lexical';
 
 	import Select from '$lib/components/Select.svelte';
 	import { TEXT_CONSTANTS } from '$lib/constants/text';
@@ -100,6 +100,6 @@
 		<option value="mixed" hidden>Mixed</option>
 		<option value="" class="font-sans text-lg">Default font</option>
 		<option value="monospace" class="font-mono text-lg">Monospace</option>
-		<option value="OpenDyslexic" class="font-dyslexic text-lg">OpenDyslexic</option>
+		<option value="Comic Neue" class="font-dyslexic text-lg">Comic Neue</option>
 	</Select>
 </div>

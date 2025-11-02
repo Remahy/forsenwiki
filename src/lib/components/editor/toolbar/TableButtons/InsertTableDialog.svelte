@@ -1,5 +1,7 @@
 <script>
 	// Based on umaranis' svelte-lexical
+
+	import { onMount } from 'svelte';
 	import { XIcon } from 'lucide-svelte';
 
 	import Button from '$lib/components/Button.svelte';
@@ -18,7 +20,7 @@
 
 	let isDisabled = $state(true);
 
-	$effect(() => {
+	onMount(() => {
 		const row = Number(rows);
 		const column = Number(columns);
 

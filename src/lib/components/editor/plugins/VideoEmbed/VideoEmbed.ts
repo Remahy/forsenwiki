@@ -7,21 +7,26 @@
  */
 
 import type { ComponentProps } from 'svelte';
-import {
-	$applyNodeReplacement,
-	type DOMConversionMap,
-	type DOMConversionOutput,
-	type DOMExportOutput,
-	type EditorConfig,
-	type ElementFormatType,
-	type LexicalEditor,
-	type LexicalNode,
-	type NodeKey,
-	type Spread,
+import type {
+	DOMConversionMap,
+	DOMConversionOutput,
+	DOMExportOutput,
+	EditorConfig,
+	ElementFormatType,
+	LexicalEditor,
+	LexicalNode,
+	NodeKey,
+	Spread,
 } from 'lexical';
+import { $applyNodeReplacement } from 'lexical';
 
 import { DOMAIN } from '$lib/environment/environment';
-import { VIDEO_CONSTANTS, VIDEO_MIN_HEIGHT, VIDEO_MIN_WIDTH } from '$lib/constants/video';
+import {
+	VIDEO_CONSTANTS,
+	VIDEO_MIN_HEIGHT,
+	VIDEO_MIN_WIDTH,
+	VIDEO_MAX_HEIGHT,
+} from '$lib/constants/video';
 
 import VideoEmbedComponent from './VideoEmbedComponent.svelte';
 import {
@@ -56,22 +61,42 @@ export type SerializedVideoEmbedNode = Spread<VideoEmbedPayload, SerializedDecor
 
 type DecoratorVideoEmbedNodeType = {
 	componentClass: typeof VideoEmbedComponent;
-  updateProps: (props: ComponentProps<typeof VideoEmbedComponent>) => void;
+	updateProps: (props: ComponentProps<typeof VideoEmbedComponent>) => void;
 };
 
 const platforms = Object.keys(VIDEO_CONSTANTS.PLATFORMS);
+
+export const getWidthAndHeight = (
+	width: VideoEmbedPayload['width'],
+	height: VideoEmbedPayload['height']
+) => {
+	let widthStyle = width === 'inherit' ? 'width:auto;' : '';
+	if (height === 'inherit' && width === 'inherit') {
+		widthStyle = 'width:100%;';
+	}
+
+	const heightStyle = height === 'inherit' ? 'height:auto;' : '';
+
+	return `${widthStyle}${heightStyle}`;
+};
 
 export const getIframeStyle = (
 	width: VideoEmbedPayload['width'],
 	height: VideoEmbedPayload['height'],
 	formatType?: ElementFormatType
 ) => {
-	const widthStyle = width === 'inherit' ? 'width:100%;' : '';
-	const heightStyle = height === 'inherit' ? 'height:auto;' : '';
-	// It's an iframe, they have silly values.
-	const aspectRatio = width === 'inherit' && height === 'inherit' ? 'aspect-ratio:16/9;' : '';
+	let widthStyle = width === 'inherit' ? 'width:auto;' : '';
+	if (height === 'inherit' && width === 'inherit') {
+		widthStyle = 'width:100%;';
+	}
 
-	return `max-width:100%;${widthStyle}${heightStyle}${aspectRatio}${formatType ? decoratorFormatToMarginStyle(formatType) : ''}`;
+	const heightStyle = height === 'inherit' ? 'height:auto;' : '';
+
+	const min = `min-width:${VIDEO_MIN_WIDTH}px;min-height:${VIDEO_MIN_HEIGHT};`;
+	const max = 'max-width:100vw;max-height:100vh;';
+	const aspectRatio = width === 'inherit' || height === 'inherit' ? 'aspect-ratio:16/9;' : '';
+
+	return `${min}${max}${aspectRatio}${widthStyle}${heightStyle}${formatType ? decoratorFormatToMarginStyle(formatType) : ''}`;
 };
 
 export const getURLAndTitle = (
@@ -183,14 +208,8 @@ function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl:
 	const { url, title } = getURLAndTitle(node.getPlatform(), node.getSrc(), parentUrl);
 	const { width: rawWidth, height: rawHeight } = node.getWidthAndHeight();
 
-	const width =
-		typeof rawWidth === 'number'
-			? Math.max(VIDEO_MIN_WIDTH, Math.round(rawWidth)).toString()
-			: 'inherit';
-	const height =
-		typeof rawHeight === 'number'
-			? Math.max(VIDEO_MIN_HEIGHT, Math.round(rawHeight)).toString()
-			: 'inherit';
+	const width = typeof rawWidth === 'number' ? rawWidth.toString() : 'inherit';
+	const height = typeof rawHeight === 'number' ? rawHeight.toString() : 'inherit';
 
 	element.setAttribute('width', width);
 	element.setAttribute('height', height);
@@ -383,7 +402,9 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		self.__width =
 			typeof width === 'number' ? Math.max(VIDEO_MIN_WIDTH, Math.round(width)) : 'inherit';
 		self.__height =
-			typeof height === 'number' ? Math.max(VIDEO_MIN_HEIGHT, Math.round(height)) : 'inherit';
+			typeof height === 'number'
+				? Math.min(Math.max(VIDEO_MIN_HEIGHT, Math.round(height)), VIDEO_MAX_HEIGHT)
+				: 'inherit';
 	}
 
 	setSrc(src: string): void {
@@ -427,8 +448,8 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		return { element };
 	}
 
-	createDOM(config: EditorConfig): HTMLElement {
-		return super.createDOM(config);
+	createDOM(config: EditorConfig, editor: LexicalEditor): HTMLElement {
+		return super.createDOM(config, editor);
 	}
 
 	updateDOM(): false {

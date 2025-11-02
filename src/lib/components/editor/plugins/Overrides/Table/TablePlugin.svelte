@@ -3,7 +3,6 @@
 	import './table.css';
 
 	import { onMount } from 'svelte';
-	import { getEditor } from 'svelte-lexical';
 	import {
 		$createParagraphNode as createParagraphNode,
 		$getNodeByKey as getNodeByKey,
@@ -30,6 +29,7 @@
 		$insertNodeToNearestRoot as insertNodeToNearestRoot,
 		mergeRegister,
 	} from '@lexical/utils';
+	import { getEditor } from 'svelte-lexical';
 
 	import { modal } from '$lib/stores/modal';
 	import InsertTableDialog from '$lib/components/editor/toolbar/TableButtons/InsertTableDialog.svelte';

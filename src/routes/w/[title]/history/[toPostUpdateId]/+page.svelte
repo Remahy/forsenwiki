@@ -16,12 +16,12 @@
 		byteLength,
 		toPostUpdateId,
 		recentPostUpdateId,
-		html,
+		html: { html },
 	} = data;
 
-	const date = new Date(createdTimestamp).toLocaleString();
+	const date = new Date(createdTimestamp);
 
-	const displayTitle = `"${date}" version for "${rawTitle}" article`;
+	const displayTitle = `"${date.toLocaleString()}" version for "${rawTitle}" article`;
 
 	const authorName = author?.name || '?';
 </script>
@@ -37,7 +37,7 @@
 			<div class="flex w-full gap-2">
 				<div class="flex grow items-center overflow-hidden">
 					<p>
-						<strong>{displayTitle}</strong>
+						<strong title={date.toUTCString()}>{displayTitle}</strong>
 					</p>
 				</div>
 
@@ -89,7 +89,7 @@
 			</div>
 		</header>
 
-		<main class="article-root prose max-w-[unset] grow dark:prose-invert">
+		<main class="article-root prose dark:prose-invert max-w-[unset] grow">
 			<h1>{rawTitle}</h1>
 
 			{@html html}
