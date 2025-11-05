@@ -12,7 +12,7 @@ COPY . .
 RUN npm run build
 RUN npm prune --production
 
-FROM node:22-alpine AS run
+FROM node:22-alpine
 
 WORKDIR /app
 COPY --from=build /app/build ./build

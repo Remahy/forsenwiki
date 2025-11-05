@@ -10,7 +10,7 @@ www.{$DOMAIN:forsen.wiki} {
 	redir {$DOMAIN:forsen.wiki}{uri}
 }
 
-{$DOMAIN:forsen.wiki} {
+{$FULL_DOMAIN:forsen.wiki} {
 	@wsrv {
 		client_ip 46.4.13.221
 		client_ip 95.216.5.209
