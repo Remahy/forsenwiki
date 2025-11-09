@@ -16,12 +16,12 @@ services:
       - prisma-network
 
   postgres:
-    image: postgres
+    image: postgres:18-alpine3.22
     restart: always
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata-18:/var/lib/postgresql/18/docker
     networks:
       - prisma-network
     healthcheck:
@@ -62,5 +62,6 @@ networks:
 
 volumes:
   pgdata:
+  pgdata-18:
   caddy_data:
   caddy_config:
