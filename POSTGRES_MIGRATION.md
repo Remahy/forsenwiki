@@ -14,3 +14,4 @@
       - pgdata-[18]:/var/lib/postgresql/[18]/docker # Change [these].
 ```
 4. cat db_backup.sql | podman exec -i [postgres-container-id] psql -U postgres
+5. DELETE db_backup.sql.
