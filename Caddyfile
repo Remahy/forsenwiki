@@ -1,4 +1,6 @@
 {
+	admin off
+
 	servers {
 		trusted_proxies cloudflare
 		trusted_proxies_strict
@@ -36,7 +38,7 @@ www.{$DOMAIN:forsen.wiki} {
 	}
 
 	log {
-		output file /var/log/access-forsen-wiki.log {
+		output file {$CADDY_ACCESS_LOG:/var/log/access-forsen-wiki.log} {
 			roll_keep_for 1d
 			roll_size 10MiB
 		}

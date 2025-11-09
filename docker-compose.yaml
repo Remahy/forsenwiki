@@ -37,6 +37,7 @@ services:
     environment:
       DOMAIN: ${DOMAIN}
       FULL_DOMAIN: ${FULL_DOMAIN}
+      CADDY_ACCESS_LOG: ${CADDY_ACCESS_LOG}
     restart: unless-stopped
     ports:
       - "${CADDY_HTTP_PORT}:80"
