@@ -53,7 +53,7 @@ services:
     command:
     - "import"
     - "-follow"
-    - "-format=combined"
+    - "-format=caddy"
     - "-site=http://goatcounter:8080"
     - "-exclude=path:glob:**/_app/**"
     - "-exclude=path:glob:**/__data.json**"
@@ -61,7 +61,7 @@ services:
     - "-exclude=path:glob:**/auth/**"
     - "-exclude=status:404"
     - "-exclude=redirect"
-    - "/home/logs/access-forsen-wiki.log"
+    - "/home/logs/access-forsen-wiki.caddylog"
     volumes:
       - goatcounter-data:/home/goatcounter/goatcounter-data
       - ./forsen-wiki-logs:/home/logs:ro
