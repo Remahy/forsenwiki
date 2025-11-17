@@ -8,7 +8,7 @@ import { handle as authenticationHandle } from './auth';
 if (CLOUDFLARE_API_TOKEN && CLOUDFLARE_ZONE_ID) {
 	const result = await validateToken();
 	if (!result) {
-		console.error('Could not validate Cloudflare token!');
+		console.error(new Error('Could not validate Cloudflare token!'));
 		process.exit(1);
 	}
 
