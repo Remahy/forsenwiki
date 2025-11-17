@@ -1,9 +1,10 @@
 import prisma from '$lib/prisma';
+import { getPopularArticles } from '$lib/goatcounter.server';
 
 /**
  * @typedef {{ rawTitle: string, title: string, createdTimestamp: string, author: string | null }} LatestArticle
- * @typedef {{ id: string, rawTitle: string, title: string, lastUpdated: string, author: string | null }} LatestUpdate
  * @typedef {{ name: string | null }} LatestUser
+ * @typedef {import('$lib/goatcounter.server').GoatCounterHit} GoatCounterHit
  */
 
 /** @type {Prisma.Prisma.UserFindManyArgs} */
@@ -17,8 +18,12 @@ const usersQuery = {
 	take: 5,
 };
 
-/** @type {{ latestArticles: LatestArticle[], latestUpdates: LatestUpdate[], latestUsers: LatestUser[] }} */
-let cache = { latestArticles: [], latestUpdates: [], latestUsers: [] };
+/** @type {{
+ *	latestArticles: LatestArticle[],
+ *	latestUsers: LatestUser[],
+ *	popularArticles: GoatCounterHit[]
+ * }} */
+let cache = { latestArticles: [], latestUsers: [], popularArticles: [] };
 let lastCacheUpdate = Date.now() - 1_800_000;
 
 const getLatest = async () => {
@@ -55,39 +60,9 @@ const getLatest = async () => {
 		take: 5,
 	});
 
-	const yPostUpdates = prisma.yPostUpdate.findMany({
-		select: {
-			id: true,
-			createdTimestamp: true,
-			post: {
-				select: {
-					title: true,
-					rawTitle: true,
-				},
-			},
-			metadata: {
-				select: {
-					user: {
-						select: {
-							name: true,
-						},
-					},
-				},
-			},
-		},
-		orderBy: {
-			createdTimestamp: 'desc',
-		},
-		take: 5,
-	});
-
 	const users = prisma.user.findMany(usersQuery);
 
-	const [rawLatestArticles, rawLatestUpdates, latestUsers] = await Promise.all([
-		yPosts,
-		yPostUpdates,
-		users,
-	]);
+	const [rawLatestArticles, latestUsers] = await Promise.all([yPosts, users]);
 
 	const latestArticles = rawLatestArticles.map((post) => ({
 		rawTitle: post.rawTitle,
@@ -96,18 +71,12 @@ const getLatest = async () => {
 		author: post.postUpdates[0].metadata.user.name,
 	}));
 
-	const latestUpdates = rawLatestUpdates.map((update) => ({
-		...update.post,
-		id: update.id,
-		author: update.metadata.user.name,
-		// Not a typo, technically an update's "createdTimestamp" *is* a yPost's lastUpdated.
-		lastUpdated: update.createdTimestamp.toString(),
-	}));
+	const popularArticles = await getPopularArticles();
 
 	cache = {
 		latestArticles,
-		latestUpdates,
 		latestUsers,
+		popularArticles,
 	};
 	lastCacheUpdate = Date.now();
 
