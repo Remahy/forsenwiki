@@ -3,8 +3,6 @@
 	import { Dice4Icon, NewspaperIcon, SearchIcon, SquarePenIcon } from 'lucide-svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
-	import { formatRelative } from 'date-fns';
-	import { enGB } from 'date-fns/locale';
 
 	import { page } from '$app/stores';
 	import Box from '$lib/components/Box.svelte';
@@ -15,23 +13,23 @@
 
 	/**
 	 * @typedef {import('./+page.server').LatestArticle} LatestArticle
-	 * @typedef {import('./+page.server').LatestUpdate} LatestUpdate
 	 * @typedef {import('./+page.server').LatestUser} LatestUser
+	 * @typedef {import('./+page.server').GoatCounterHit} GoatCounterHit
 	 */
 
 	/** @type {Writable<LatestArticle[]>} */
 	const latestArticles = writable($page.data.latestArticles);
-	/** @type {Writable<LatestUpdate[]>} */
-	const latestUpdates = writable($page.data.latestUpdates);
 	/** @type {Writable<LatestUser[]>} */
 	const latestUsers = writable($page.data.latestUsers);
+	/** @type {Writable<GoatCounterHit[]>} */
+	const popularArticles = writable($page.data.popularArticles);
 
-	const value = source('/adonis/frontpage').select('article:create');
-	const value2 = source('/adonis/frontpage').select('article:update');
-	const value3 = source('/adonis/frontpage').select('user:create');
+	const sseArticleCreate = source('/adonis/frontpage').select('article:create');
+	const sseUserCreate = source('/adonis/frontpage').select('user:create');
+	const sseArticlesPopular = source('/adonis/frontpage').select('articles:popular');
 
 	onMount(() => {
-		value.subscribe((v) => {
+		sseArticleCreate.subscribe((v) => {
 			if (v) {
 				const values = $latestArticles;
 
@@ -52,27 +50,7 @@
 				latestArticles.set(values);
 			}
 		});
-		value2.subscribe((v) => {
-			if (v) {
-				const values = $latestUpdates;
-
-				/** @type {LatestUpdate} */
-				const input = JSON.parse(v);
-
-				if (new Date(values[0].lastUpdated).getTime() === new Date(input.lastUpdated).getTime()) {
-					return;
-				}
-
-				const newLength = values.unshift(input);
-
-				if (newLength > 5) {
-					values.pop();
-				}
-
-				latestUpdates.set(values);
-			}
-		});
-		value3.subscribe((v) => {
+		sseUserCreate.subscribe((v) => {
 			if (v) {
 				const values = $latestUsers;
 
@@ -89,6 +67,14 @@
 				}
 
 				latestUsers.set(values);
+			}
+		});
+		sseArticlesPopular.subscribe((v) => {
+			if (v) {
+				/** @type {GoatCounterHit[]} */
+				const input = JSON.parse(v);
+
+				popularArticles.set(input);
 			}
 		});
 	});
@@ -122,31 +108,27 @@
 				{#each $latestArticles as article}
 					<div class="p-2 pl-0">
 						<Link href="/w/{article.title}">
-							<span>
-								<strong>{article.rawTitle}</strong> -
-								<span title={new Date(article.createdTimestamp).toUTCString()}
-									>{new Date(article.createdTimestamp).toDateString()}</span
-								>
-								- By {article.author}
-							</span>
+							<strong>{article.rawTitle}</strong>
 						</Link>
+						<span>
+							- <span title={new Date(article.createdTimestamp).toUTCString()}
+								>{new Date(article.createdTimestamp).toDateString()}</span
+							>
+							- By {article.author}
+						</span>
 					</div>
 				{/each}
 			</Box>
 
 			<Box class="grow p-4">
 				<div class="box-heading-wrapper mb-2">
-					<h2 class="text-2xl">Recent updates</h2>
+					<h2 class="text-2xl">Popular articles</h2>
 				</div>
-				{#each $latestUpdates as update}
+				{#each $popularArticles as article}
 					<div class="p-2 pl-0">
-						<Link href="/w/{update.title}/history/{update.id}">
+						<Link href={article.path}>
 							<span>
-								<strong>{update.rawTitle}</strong> - {formatRelative(
-									update.lastUpdated,
-									Date.now(),
-									{ locale: enGB }
-								)} - By {update.author}
+								<strong>{article.title}</strong> - {article.max} hits
 							</span>
 						</Link>
 					</div>

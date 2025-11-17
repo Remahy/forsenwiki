@@ -16,12 +16,12 @@ services:
       - prisma-network
 
   postgres:
-    image: postgres
+    image: postgres:18-alpine3.22
     restart: always
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata-18:/var/lib/postgresql/18/docker
     networks:
       - prisma-network
     healthcheck:
@@ -30,6 +30,47 @@ services:
       timeout: 2s
       retries: 20
 
+  goatcounter:
+    image: arp242/goatcounter:2.6
+    restart: always
+    volumes:
+      - goatcounter-data:/home/goatcounter/goatcounter-data
+    depends_on:
+      - caddy
+    networks:
+      - prisma-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--tries=1", "http://localhost:8080/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  goatcounter-import:
+    image: arp242/goatcounter:2.6
+    restart: always
+    environment:
+      GOATCOUNTER_API_KEY: ${GOATCOUNTER_API_KEY}
+    command:
+    - "import"
+    - "-follow"
+    - "-format=caddy"
+    - "-site=http://goatcounter:8080"
+    - "-exclude=path:glob:**/_app/**"
+    - "-exclude=path:glob:**/__data.json**"
+    - "-exclude=path:glob:**/auth**"
+    - "-exclude=path:glob:**/auth/**"
+    - "-exclude=status:404"
+    - "-exclude=redirect"
+    - "/home/logs/access-forsen-wiki.caddylog"
+    volumes:
+      - goatcounter-data:/home/goatcounter/goatcounter-data
+      - ./forsen-wiki-logs:/home/logs:ro
+    depends_on:
+      goatcounter:
+        condition: service_healthy
+    networks:
+      - prisma-network
+
   caddy:
     build: 
       context: .
@@ -37,6 +78,8 @@ services:
     environment:
       DOMAIN: ${DOMAIN}
       FULL_DOMAIN: ${FULL_DOMAIN}
+      GOATCOUNTER_PREFIX: ${GOATCOUNTER_PREFIX}
+      CADDY_ACCESS_LOG: ${CADDY_ACCESS_LOG}
     restart: unless-stopped
     ports:
       - "${CADDY_HTTP_PORT}:80"
@@ -53,8 +96,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
 
 networks:
   prisma-network:
@@ -62,5 +103,7 @@ networks:
 
 volumes:
   pgdata:
+  pgdata-18:
   caddy_data:
   caddy_config:
+  goatcounter-data:

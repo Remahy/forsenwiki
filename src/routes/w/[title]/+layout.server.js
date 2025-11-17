@@ -26,7 +26,7 @@ const getShouldCacheBust = (title, url) => {
 	return cacheBust;
 };
 
-export async function load({ params, url }) {
+export async function load({ params, url, setHeaders }) {
 	const { title } = params;
 
 	const shouldCacheBust = getShouldCacheBust(title, url);
@@ -35,6 +35,10 @@ export async function load({ params, url }) {
 		const res = await _getYPostHTML(params.title, shouldCacheBust);
 
 		const authors = await readAuthorsForYPostByTitle(title);
+
+		setHeaders({
+			Title: encodeURIComponent(res.post.rawTitle),
+		});
 
 		if (res) {
 			return { ...res, authors };

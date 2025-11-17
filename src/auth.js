@@ -10,8 +10,10 @@ import { NoUser } from '$lib/errors/auth/NoUser';
 import { version } from '$lib/utils/version';
 
 if (!AUTH_TWITCH_ID || !AUTH_TWITCH_SECRET) {
-	console.warn(
-		'Make sure AUTH_TWITCH_ID and AUTH_TWITCH_SECRET are defined in your environment file.'
+	console.error(
+		new Error(
+			'Make sure AUTH_TWITCH_ID and AUTH_TWITCH_SECRET are defined in your environment file.'
+		)
 	);
 	process.exit(1);
 }
@@ -38,7 +40,9 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 			// TODO: Create user bio page.
 		},
 		async signIn(message) {
-			const { user: { id, name, image } } = message;
+			const {
+				user: { id, name, image },
+			} = message;
 			const newName = message.profile?.name;
 			const newPicture = message.profile?.picture;
 
@@ -55,7 +59,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 			if (id && Object.keys(updateObj).length) {
 				await adapter.updateUser?.({ id, ...updateObj });
 			}
-		}
+		},
 	},
 	providers: [
 		(config) => {
