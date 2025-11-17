@@ -61,7 +61,7 @@
 		</div>
 
 		<div class="mt-auto flex items-end overflow-hidden">
-			<div class="flex items-center justify-end overflow-hidden">
+			<div class="flex items-stretch justify-end overflow-hidden">
 				{#if page.data.session?.user}
 					<div class="violet flex max-w-20 gap-2 overflow-hidden p-2 lg:max-w-40">
 						{#if cachedImage}
@@ -72,7 +72,7 @@
 							/>
 						{/if}
 						<span
-							class="overflow-hidden font-medium text-ellipsis"
+							class="content-center overflow-hidden text-xs font-medium text-ellipsis"
 							title={page.data.session.user.name}>{page.data.session.user.name}</span
 						>
 					</div>
