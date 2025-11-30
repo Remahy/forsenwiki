@@ -1,5 +1,5 @@
 <script>
-	import { EditIcon, FileIcon } from 'lucide-svelte';
+	import { SquarePenIcon, FileIcon } from 'lucide-svelte';
 
 	import Box from '$lib/components/Box.svelte';
 	import Container from '$lib/components/Container.svelte';
@@ -42,7 +42,7 @@
 				</LinkButton>
 
 				<LinkButton href="/w/{title}/edit" reload class="flex items-center gap-2 text-sm">
-					<EditIcon size="16" /><span class="hidden md:inline">Edit article</span>
+					<SquarePenIcon size="16" /><span class="hidden md:inline">Edit article</span>
 				</LinkButton>
 			</div>
 		</div>
