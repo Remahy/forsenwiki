@@ -1,5 +1,5 @@
 import { building } from '$app/environment';
-import { GOATCOUNTER_API_KEY } from '$env/static/private';
+import { GOATCOUNTER_API_KEY, GOATCOUNTER_DISABLED } from '$env/static/private';
 import { _emit } from '../routes/adonis/frontpage/+server';
 import prisma from './prisma';
 
@@ -98,7 +98,7 @@ const getData = () =>
 		getData();
 	}, msToNextHour());
 
-if (GOATCOUNTER_API_KEY && GOATCOUNTER_DOMAIN && !building) {
+if (GOATCOUNTER_API_KEY && GOATCOUNTER_DOMAIN && !building && GOATCOUNTER_DISABLED) {
 	getData();
 } else {
 	console.warn('Environment value GOATCOUNTER_API_KEY not set. Popular articles disabled.');
