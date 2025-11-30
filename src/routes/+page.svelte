@@ -101,7 +101,7 @@
 
 	<div class="block grow gap-4 lg:flex">
 		<div class="mb-4 flex grow flex-col lg:mb-0">
-			<Box class="mb-4 grow p-4">
+			<Box class="grow p-4">
 				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">New articles</h2>
 				</div>
@@ -120,20 +120,22 @@
 				{/each}
 			</Box>
 
-			<Box class="grow p-4">
-				<div class="box-heading-wrapper mb-2">
-					<h2 class="text-2xl">Popular articles</h2>
-				</div>
-				{#each $popularArticles as article}
-					<div class="p-2 pl-0">
-						<Link href={article.path}>
-							<span>
-								<strong>{article.title}</strong> - {article.max} hits
-							</span>
-						</Link>
+			{#if $popularArticles.length}
+				<Box class="mt-4 grow p-4">
+					<div class="box-heading-wrapper mb-2">
+						<h2 class="text-2xl">Popular articles</h2>
 					</div>
-				{/each}
-			</Box>
+					{#each $popularArticles as article}
+						<div class="p-2 pl-0">
+							<Link href={article.path}>
+								<span>
+									<strong>{article.title}</strong> - {article.max} hits
+								</span>
+							</Link>
+						</div>
+					{/each}
+				</Box>
+			{/if}
 		</div>
 
 		<div class="block flex-col gap-4 lg:flex lg:w-96 lg:min-w-96">

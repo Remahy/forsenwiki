@@ -31,6 +31,16 @@ const getLatest = async () => {
 		return cache;
 	}
 
+	/** @type {GoatCounterHit[]} */
+	let popularArticles = [];
+
+	try {
+		popularArticles = await getPopularArticles();
+	} catch (error) {
+		// noop
+		console.error(error);
+	}
+
 	const yPosts = prisma.yPost.findMany({
 		select: {
 			rawTitle: true,
@@ -57,7 +67,7 @@ const getLatest = async () => {
 		orderBy: {
 			createdTimestamp: 'desc',
 		},
-		take: 5,
+		take: popularArticles.length ? 5 : 9,
 	});
 
 	const users = prisma.user.findMany(usersQuery);
@@ -70,8 +80,6 @@ const getLatest = async () => {
 		createdTimestamp: post.createdTimestamp.toString(),
 		author: post.postUpdates[0].metadata.user.name,
 	}));
-
-	const popularArticles = await getPopularArticles();
 
 	cache = {
 		latestArticles,
