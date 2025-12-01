@@ -14,12 +14,14 @@ import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 /**
  * @param {string} title
  * @param {string} toPostUpdateId
- * @param {string} fromPostUpdateId
+ * @param {string?} _fromPostUpdateId
+ * @param {boolean} onlyIds
  */
 export async function _getToYPostUpdateFromYPostUpdateByTitle(
 	title,
 	toPostUpdateId,
-	fromPostUpdateId
+	_fromPostUpdateId = null,
+	onlyIds = false
 ) {
 	const res = await readYPostUpdatesWithIdByTitle(title);
 
@@ -33,6 +35,15 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		throw 404;
 	}
 
+	let fromPostUpdateId = _fromPostUpdateId;
+	if (!_fromPostUpdateId) {
+		fromPostUpdateId = res.postUpdates[toPostUpdateIdIndex - 1].id;
+	}
+
+	if (!fromPostUpdateId) {
+		throw 404;
+	}
+
 	const fromPostUpdateIdIndex = res.postUpdates.findIndex(({ id }) => id === fromPostUpdateId);
 
 	if (fromPostUpdateIdIndex === -1) {
@@ -41,6 +52,10 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 
 	if (toPostUpdateIdIndex === fromPostUpdateIdIndex) {
 		throw 400;
+	}
+
+	if (onlyIds) {
+		return { toPostUpdateId, fromPostUpdateId };
 	}
 
 	const { createdTimestamp: toDate } = res.postUpdates[toPostUpdateIdIndex];
@@ -54,10 +69,16 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 	const updatesTo = mergePostUpdatesV2(toPostUpdates);
 	const updatesFrom = mergePostUpdatesV2(fromPostUpdates);
 
-	const { editor: tEditor } = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), updatesTo);
+	const { editor: tEditor } = getYjsAndEditor(
+		articleConfig(null, EDITOR_IS_READONLY, null),
+		updatesTo
+	);
 	const toUpdate = tEditor.toJSON();
 
-	const { editor: fEditor } = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), updatesFrom);
+	const { editor: fEditor } = getYjsAndEditor(
+		articleConfig(null, EDITOR_IS_READONLY, null),
+		updatesFrom
+	);
 	const fromUpdate = fEditor.toJSON();
 
 	const [toAuthor, fromAuthor] = await Promise.all([
