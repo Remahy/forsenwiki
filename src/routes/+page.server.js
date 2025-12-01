@@ -67,7 +67,7 @@ const getLatest = async () => {
 		orderBy: {
 			createdTimestamp: 'desc',
 		},
-		take: popularArticles.length ? 5 : 9,
+		take: popularArticles.length ? 5 : 10,
 	});
 
 	const users = prisma.user.findMany(usersQuery);
