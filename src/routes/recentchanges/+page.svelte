@@ -33,7 +33,7 @@
 	};
 
 	/**
-	 * @typedef {{ id: string, rawTitle: string, title: string, lastUpdated: string, author: string | null }} Update
+	 * @typedef {{ id: string, rawTitle: string, title: string, lastUpdated: string, author: string | null, byteLength: number }} Update
 	 */
 
 	/** @type {Writable<Update[]>} */
@@ -119,13 +119,13 @@
 	<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
 		{#each $latestUpdates as update}
 			<div class="p-2 pl-0">
-				<Link href="/w/{update.title}/history/{update.id}..">
-					<span>
+				<span>
+					<Link href="/w/{update.title}/history/{update.id}.." target="_blank">
 						<strong>{update.rawTitle}</strong> - {formatRelative(update.lastUpdated, Date.now(), {
 							locale: enGB,
-						})} - By {update.author}
-					</span>
-				</Link>
+						})}</Link
+					> - By {update.author} - Size: {update.byteLength}
+				</span>
 			</div>
 		{:else}
 			<span>Nothing found.</span>
