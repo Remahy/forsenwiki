@@ -10,6 +10,6 @@
 	let { href, class: className = '', children, ...rest } = $props();
 </script>
 
-<a {...rest} {href} class="link inline-flex gap-2 {className}">
+<a {...rest} {href} class="link {className}">
 	{@render children?.()}
 </a>

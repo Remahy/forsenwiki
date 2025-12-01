@@ -1,5 +1,5 @@
 <script>
-	import { EditIcon, HistoryIcon } from 'lucide-svelte';
+	import { SquarePenIcon, HistoryIcon } from 'lucide-svelte';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
 
@@ -80,7 +80,7 @@
 							</LinkButton>
 
 							<LinkButton href="/w/{title}/edit" reload class="flex items-center gap-2 text-sm">
-								<EditIcon size="16" /><span class="hidden md:inline">Edit article</span>
+								<SquarePenIcon size="16" /><span class="hidden md:inline">Edit article</span>
 							</LinkButton>
 						</div>
 					</div>

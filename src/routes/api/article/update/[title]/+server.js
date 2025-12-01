@@ -142,6 +142,7 @@ export async function POST({ request, locals, params }) {
 		rawTitle: post.rawTitle,
 		id: updatedArticle?.id,
 		lastUpdated: updatedArticle?.createdTimestamp.toString(),
+		byteLength,
 		author: session.user.name,
 	});
 

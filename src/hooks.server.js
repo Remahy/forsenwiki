@@ -5,10 +5,12 @@ import { validateToken } from '$lib/cloudflare.server';
 import '../static';
 import { handle as authenticationHandle } from './auth';
 
+import '$lib/goatcounter.server';
+
 if (CLOUDFLARE_API_TOKEN && CLOUDFLARE_ZONE_ID) {
 	const result = await validateToken();
 	if (!result) {
-		console.error('Could not validate Cloudflare token!');
+		console.error(new Error('Could not validate Cloudflare token!'));
 		process.exit(1);
 	}
 
