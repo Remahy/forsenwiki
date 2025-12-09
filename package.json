@@ -112,8 +112,10 @@
 		"@tailwindcss/forms": "^0.5.10",
 		"@tailwindcss/typography": "^0.5.16",
 		"@types/eslint": "^9.6.1",
-		"esbuild": "^0.25.9",
-		"esbuild-svelte": "^0.9.3",
+		"conventional-changelog": "^7.1.1",
+		"conventional-changelog-conventionalcommits": "^9.1.0",
+		"esbuild": "^0.27.1",
+		"esbuild-svelte": "^0.9.4",
 		"eslint": "^9.34.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.12.1",
@@ -127,7 +129,7 @@
 		"svelte": "^5.38.6",
 		"svelte-check": "^4.3.1",
 		"tailwindcss": "^4.1.13",
-		"typescript": "^5.9.2",
-		"vite": "^7.1.4"
+		"typescript": "^5.9.3",
+		"vite": "^7.2.7"
 	}
 }

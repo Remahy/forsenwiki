@@ -1,3 +1,42 @@
+## [1.0.0-beta.16](https://github.com/Remahy/forsenwiki/compare/v1.0.0-beta.13...v1.0.0-beta.16) (2025-12-09)
+
+### ⚠ BREAKING CHANGES
+
+* Svelte 5 migration (#108)
+
+### Features
+
+* Add description, first image and authors to head meta ([#122](https://github.com/Remahy/forsenwiki/issues/122)) ([906006e](https://github.com/Remahy/forsenwiki/commit/906006e275a66bc8fd1cc77abf2f6ce75d1c9f90))
+* Move goatcounter to container, add Popular articles box ([#136](https://github.com/Remahy/forsenwiki/issues/136)) ([1389214](https://github.com/Remahy/forsenwiki/commit/1389214a326f58ad5fb09b522d45dd2c84e82334))
+
+### Bug Fixes
+
+* Add classes to italic & bold for editor ([#114](https://github.com/Remahy/forsenwiki/issues/114)) ([43bcbf9](https://github.com/Remahy/forsenwiki/commit/43bcbf92ca58791d230bd9b5459a17b83c973962))
+* Add new WSRV ip & redirect www subdomain to non-www ([#134](https://github.com/Remahy/forsenwiki/issues/134)) ([1d45250](https://github.com/Remahy/forsenwiki/commit/1d45250d3b9120d8f61f218218296122291806d2))
+* Add scrollbar to overflowing tables ([#129](https://github.com/Remahy/forsenwiki/issues/129)) ([bfac3e9](https://github.com/Remahy/forsenwiki/commit/bfac3e91a67f0e7627293410bb2da970d9e5aed4))
+* **Auth:** Update user name on signIn ([#115](https://github.com/Remahy/forsenwiki/issues/115)) ([ed4d0f3](https://github.com/Remahy/forsenwiki/commit/ed4d0f3aa7a485d88d2de2cd94479a6a78f0230b))
+* Bug fix articleConfig & remove non-implemented diff node import ([#112](https://github.com/Remahy/forsenwiki/issues/112)) ([cac3b9b](https://github.com/Remahy/forsenwiki/commit/cac3b9b03214d9208ccaeb35086df839cb6ec243))
+* **FloatBlock:** Arrow left & right to insert paragraph ([#133](https://github.com/Remahy/forsenwiki/issues/133)) ([b7fff4c](https://github.com/Remahy/forsenwiki/commit/b7fff4c42cefb92e6b0bd9766758dce7ad20dd36))
+* Image vertical align, video alignment fix in editor, make all buttons cursor-pointer ([#127](https://github.com/Remahy/forsenwiki/issues/127)) ([e138f53](https://github.com/Remahy/forsenwiki/commit/e138f53f39255aa184dfb486798723eaafcd1767))
+* Insert link url when selection is collapsed ([#130](https://github.com/Remahy/forsenwiki/issues/130)) ([5869ecb](https://github.com/Remahy/forsenwiki/commit/5869ecbef18c2915c51e4401e827b3319a3500dc))
+* Make FloatBlock values conditional & various dev fixes ([#111](https://github.com/Remahy/forsenwiki/issues/111)) ([dcb3853](https://github.com/Remahy/forsenwiki/commit/dcb385342e55e63ad5c3df50ccd982fe7a4bb116))
+* Make sure FloatButton props are exported, use Lexical htmlExport for overrides ([#126](https://github.com/Remahy/forsenwiki/issues/126)) ([8dfb8dd](https://github.com/Remahy/forsenwiki/commit/8dfb8dd2c1bb0ac1aa978f7c544b7c51f53e48c8))
+* Migrate nodes to new lexical version ([#113](https://github.com/Remahy/forsenwiki/issues/113)) ([98ba1e5](https://github.com/Remahy/forsenwiki/commit/98ba1e59995b9e3990ae234936513d826faffcc7))
+* remove json.stringify from error output for user ([f6096f7](https://github.com/Remahy/forsenwiki/commit/f6096f761b853eff72d534713c1d44e53129d8b6))
+* Replace OpenDyslexic with Comic Neue ([#121](https://github.com/Remahy/forsenwiki/issues/121)) ([fee9de5](https://github.com/Remahy/forsenwiki/commit/fee9de5e8a5afd7cd242b7a3e60a0e528718cd06))
+* Responsive video sizing, resizer fixes ([#118](https://github.com/Remahy/forsenwiki/issues/118)) ([079221c](https://github.com/Remahy/forsenwiki/commit/079221c60cd8bd79769e34dceb8c843d950258e5))
+* Search button style ([#131](https://github.com/Remahy/forsenwiki/issues/131)) ([dc3e9fb](https://github.com/Remahy/forsenwiki/commit/dc3e9fbb5ae68b47510bcd1d1bf65c2a21fcf3c8))
+* Toolbar values updating, VideoEmbedNode selection fixes ([#120](https://github.com/Remahy/forsenwiki/issues/120)) ([02a19e6](https://github.com/Remahy/forsenwiki/commit/02a19e6b51686104904dfb318e2a4ed65044c978))
+* Update user profile image on user login ([#117](https://github.com/Remahy/forsenwiki/issues/117)) ([b575b0c](https://github.com/Remahy/forsenwiki/commit/b575b0ced6dd54ebc27d7d31e729d9c5a80e964e))
+* Use correct property for diff & html ([#124](https://github.com/Remahy/forsenwiki/issues/124)) ([0675d81](https://github.com/Remahy/forsenwiki/commit/0675d8141b55593c15fa49b165c3b11257e5ec60))
+* Use correct Y.js import for initialUpdate worker ([#110](https://github.com/Remahy/forsenwiki/issues/110)) ([0c33280](https://github.com/Remahy/forsenwiki/commit/0c332805ee58f9f56a0d61f3f4d3cf9376e33df7))
+* Use http:// for development environment ([#135](https://github.com/Remahy/forsenwiki/issues/135)) ([8295eae](https://github.com/Remahy/forsenwiki/commit/8295eaef0979493ad416508494abfcc09efcd01b))
+* Use toUTCString() on date hovers ([#125](https://github.com/Remahy/forsenwiki/issues/125)) ([0eeaf38](https://github.com/Remahy/forsenwiki/commit/0eeaf38df753567aae89c0b2ddeb028851314832))
+* Various regression fixes ([#128](https://github.com/Remahy/forsenwiki/issues/128)) ([b79fc0f](https://github.com/Remahy/forsenwiki/commit/b79fc0f220153df290b5ed48efc6729b48f31d21))
+
+### Code Refactoring
+
+* Svelte 5 migration ([#108](https://github.com/Remahy/forsenwiki/issues/108)) ([58b3ab5](https://github.com/Remahy/forsenwiki/commit/58b3ab52864a7c95b277f04db7433ff369f42248))
 ## 1.0.0-beta.13 (2025-01-06)
 
 ### Bug Fixes
