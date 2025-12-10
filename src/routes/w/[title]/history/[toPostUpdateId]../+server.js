@@ -7,6 +7,10 @@ export async function GET({ params }) {
 	try {
 		const res = await _getToYPostUpdateFromYPostUpdateByTitle(title, toPostUpdateId, null, true);
 
+		if (!res.fromPostUpdateId) {
+			return redirect(307, `/w/${title}/history/${toPostUpdateId}`);
+		}
+
 		return redirect(307, `/w/${title}/history/${toPostUpdateId}..${res.fromPostUpdateId}`);
 	} catch (err) {
 		if (typeof err === 'number') {

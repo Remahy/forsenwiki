@@ -37,7 +37,13 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 
 	let fromPostUpdateId = _fromPostUpdateId;
 	if (!_fromPostUpdateId) {
-		fromPostUpdateId = res.postUpdates[toPostUpdateIdIndex - 1].id;
+		const index = toPostUpdateIdIndex - 1;
+
+		fromPostUpdateId = index > -1 ? res.postUpdates[index].id : null;
+	}
+
+	if (onlyIds) {
+		return { toPostUpdateId, fromPostUpdateId };
 	}
 
 	if (!fromPostUpdateId) {
@@ -52,10 +58,6 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 
 	if (toPostUpdateIdIndex === fromPostUpdateIdIndex) {
 		throw 400;
-	}
-
-	if (onlyIds) {
-		return { toPostUpdateId, fromPostUpdateId };
 	}
 
 	const { createdTimestamp: toDate } = res.postUpdates[toPostUpdateIdIndex];
