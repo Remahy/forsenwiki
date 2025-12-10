@@ -11,7 +11,7 @@ export async function GET({ params }) {
 			return redirect(307, `/w/${title}/history/${toPostUpdateId}`);
 		}
 
-		return redirect(307, `/w/${title}/history/${toPostUpdateId}..${res.fromPostUpdateId}`);
+		return redirect(307, `/w/${title}/history/${res.fromPostUpdateId}..${toPostUpdateId}`);
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);
