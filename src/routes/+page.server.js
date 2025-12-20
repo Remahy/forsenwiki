@@ -1,5 +1,6 @@
 import prisma from '$lib/prisma';
 import { getPopularArticles } from '$lib/goatcounter.server';
+import { GOATCOUNTER_DISABLED } from '$env/static/private';
 
 /**
  * @typedef {{ rawTitle: string, title: string, createdTimestamp: string, author: string | null }} LatestArticle
@@ -37,8 +38,9 @@ const getLatest = async () => {
 	try {
 		popularArticles = await getPopularArticles();
 	} catch (error) {
-		// noop
-		console.error(error);
+		if (!GOATCOUNTER_DISABLED) {
+			console.error(error);
+		}
 	}
 
 	const yPosts = prisma.yPost.findMany({

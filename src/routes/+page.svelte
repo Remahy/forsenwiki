@@ -24,9 +24,9 @@
 	/** @type {Writable<GoatCounterHit[]>} */
 	const popularArticles = writable($page.data.popularArticles);
 
-	const sseArticleCreate = source('/adonis/frontpage').select('article:create');
-	const sseUserCreate = source('/adonis/frontpage').select('user:create');
-	const sseArticlesPopular = source('/adonis/frontpage').select('articles:popular');
+	const sseArticleCreate = source('/api/adonis/frontpage').select('article:create');
+	const sseUserCreate = source('/api/adonis/frontpage').select('user:create');
+	const sseArticlesPopular = source('/api/adonis/frontpage').select('articles:popular');
 
 	onMount(() => {
 		sseArticleCreate.subscribe((v) => {
