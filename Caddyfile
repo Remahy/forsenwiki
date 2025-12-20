@@ -13,23 +13,10 @@ www.{$DOMAIN:forsen.wiki} {
 }
 
 {$FULL_DOMAIN:forsen.wiki} {
-	@wsrv {
-		client_ip 46.4.13.221
-		client_ip 95.216.5.209
-		client_ip 51.15.191.75
-		client_ip 2a01:4f8:221:3d28::2
-		client_ip 2a01:4f9:2a:615::2
-		client_ip 2001:bc8:6005:122:ae1f:6bff:fe21:58f2
-	}
-
 	handle_path /usercontent* {
-		handle @wsrv {
+		handle {
 			root * /srv
 			file_server
-		}
-
-		handle {
-			respond "Only the cache provider can access this endpoint." 403
 		}
 	}
 

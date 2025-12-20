@@ -1,9 +1,9 @@
 import { STATIC_DOMAIN } from '$lib/environment/environment';
 
-const cacheServiceBaseURL = 'https://wsrv.nl';
-const csbURL = new URL('', cacheServiceBaseURL);
-csbURL.searchParams.append('url', STATIC_DOMAIN + '/');
-export const cacheServiceBaseURLWithStatic = csbURL.toString();
+// const cacheServiceBaseURL = 'https://wsrv.nl';
+// const csbURL = new URL('', cacheServiceBaseURL);
+// csbURL.searchParams.append('url', STATIC_DOMAIN + '/');
+export const cacheServiceBaseURLWithStatic = STATIC_DOMAIN;
 
 /**
  * @param {string} hash
@@ -11,23 +11,24 @@ export const cacheServiceBaseURLWithStatic = csbURL.toString();
  * @param {{ width?: 'inherit' | number, height?: 'inherit' | number }} opts
  */
 export const getCacheURL = (hash, name, opts = {}) => {
-	const url = new URL('', cacheServiceBaseURL);
+	// const url = new URL('', cacheServiceBaseURL);
 
 	const ourUrl = new URL(hash, STATIC_DOMAIN + '/');
 
-	url.searchParams.append('url', ourUrl.toString());
-	url.searchParams.append('filename', name);
-	url.searchParams.append('n', '-1');
+
+	// url.searchParams.append('url', ourUrl.toString());
+	ourUrl.searchParams.append('filename', name);
+	ourUrl.searchParams.append('n', '-1');
 
 	if (opts) {
 		if (typeof opts.width === 'number') {
-			url.searchParams.append('w', String(opts.width));
+			ourUrl.searchParams.append('w', String(opts.width));
 		}
 
 		if (typeof opts.height === 'number') {
-			url.searchParams.append('h', String(opts.height));
+			ourUrl.searchParams.append('h', String(opts.height));
 		}
 	}
 
-	return url;
+	return ourUrl;
 };
