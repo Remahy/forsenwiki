@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { SquarePenIcon, HistoryIcon } from 'lucide-svelte';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
@@ -30,10 +30,12 @@
 
 	const authorsScriptContent = JSON.stringify({
 		'@context': 'https://schema.org',
-		author: authors.map((author) => ({
-			'@type': 'Person',
-			name: author.name?.replace(/[^\w]/g, ''),
-		})),
+		author: authors
+			.filter((author) => author.name !== null)
+			.map((author) => ({
+				'@type': 'Person',
+				name: author.name!.replace(/[^\w]/g, ''),
+			})),
 	});
 	const authorsHTML = `<script type="application/ld+json">${authorsScriptContent}<\/script>`;
 
