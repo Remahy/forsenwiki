@@ -34,7 +34,6 @@
 		};
 	}
 
-	/** @type {ReturnType<CachedImage> | undefined} */
 	let cachedImage = $state(CachedImage());
 
 	if (page.data.session?.user?.image) {
