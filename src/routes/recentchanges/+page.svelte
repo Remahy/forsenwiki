@@ -67,7 +67,7 @@
 		}
 	};
 
-	const sseArticleUpdate = source('/adonis/frontpage').select('article:update');
+	const sseArticleUpdate = source('/api/adonis/frontpage').select('article:update');
 
 	onMount(() => {
 		sseArticleUpdate.subscribe((v) => {

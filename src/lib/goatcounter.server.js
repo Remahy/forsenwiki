@@ -1,6 +1,6 @@
 import { building } from '$app/environment';
 import { GOATCOUNTER_API_KEY, GOATCOUNTER_DISABLED } from '$env/static/private';
-import { _emit } from '../routes/adonis/frontpage/+server';
+import { _emit } from '../routes/api/adonis/frontpage/+server';
 import prisma from './prisma';
 
 const GOATCOUNTER_DOMAIN = 'http://goatcounter:8080';

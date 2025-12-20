@@ -59,6 +59,7 @@ services:
     - "-exclude=path:glob:**/__data.json**"
     - "-exclude=path:glob:**/auth**"
     - "-exclude=path:glob:**/auth/**"
+    - "-exclude=path:glob:/api/**"
     - "-exclude=status:404"
     - "-exclude=redirect"
     - "/home/logs/access-forsen-wiki.caddylog"
