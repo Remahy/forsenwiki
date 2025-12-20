@@ -16,6 +16,7 @@
 	} from '$lib/utils/recentChanges';
 	import Button from '$lib/components/Button.svelte';
 	import { getMoreRecentChanges } from '$lib/api/recentchanges';
+	import { reviver } from '$lib/utils/json';
 
 	const filters = $derived(getRecentChangesFilters($page.url.searchParams));
 
@@ -54,7 +55,8 @@
 			const cursor = $latestUpdates[$latestUpdates.length - 1].id;
 
 			const rawResponse = await getMoreRecentChanges({ authors, cursor, limit });
-			const response = await rawResponse.json();
+			const responseText = await rawResponse.text();
+			const response = JSON.parse(responseText, reviver);
 			$latestUpdates.push(...response);
 			$latestUpdates = $latestUpdates;
 			loading = false;
