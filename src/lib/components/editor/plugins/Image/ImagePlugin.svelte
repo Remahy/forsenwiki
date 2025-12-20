@@ -204,7 +204,7 @@
 			domSelection.collapse(event.rangeParent, event.rangeOffset || 0);
 			range = domSelection.getRangeAt(0);
 		} else {
-			throw Error(`Cannot get the selection when dragging`);
+			throw new Error(`Cannot get the selection when dragging`);
 		}
 
 		return range;

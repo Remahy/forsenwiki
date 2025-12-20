@@ -1,7 +1,8 @@
-<script>
+<script lang="ts">
 	import { SquarePenIcon, HistoryIcon } from 'lucide-svelte';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
+	import { page } from '$app/stores';
 
 	import '$lib/components/editor/plugins/Image/Image.css';
 
@@ -29,10 +30,12 @@
 
 	const authorsScriptContent = JSON.stringify({
 		'@context': 'https://schema.org',
-		author: authors.map((author) => ({
-			'@type': 'Person',
-			name: author.name?.replace(/[^\w]/g, ''),
-		})),
+		author: authors
+			.filter((author) => author.name !== null)
+			.map((author) => ({
+				'@type': 'Person',
+				name: author.name!.replace(/[^\w]/g, ''),
+			})),
 	});
 	const authorsHTML = `<script type="application/ld+json">${authorsScriptContent}<\/script>`;
 
@@ -44,20 +47,41 @@
 
 <svelte:head>
 	<title>{rawTitle || title} - Community Forsen Wiki</title>
-	<meta
-		name="title"
-		content="Read about &quot;{rawTitle ||
-			title}&quot; on forsen.wiki - All things forsen, and more."
-	/>
 
-	{#if text?.length}
-		<meta name="description" content={`${text.substring(0, 64)}${text.length > 64 ? '...' : ''}`} />
-	{/if}
-	{#if image?.length}
-		<meta property="og:image" content={image} />
-	{/if}
+	<meta property="og:site_name" content="Forsen Wiki" />
 
-	{@html authorsHTML}
+	{#if !isSystem}
+		<link rel="canonical" href="{$page.url.origin}/w/{title}" />
+		<meta property="og:url" content="{$page.url.origin}/w/{title}" />
+
+		<meta property="og:type" content="article" />
+
+		{#if text?.length}
+			<meta
+				name="description"
+				content={`${text.substring(0, 150)}${text.length > 150 ? '...' : ''}`}
+			/>
+			<meta
+				property="og:description"
+				content={`${text.substring(0, 150)}${text.length > 150 ? '...' : ''}`}
+			/>
+		{/if}
+
+		{#if image?.length}
+			<meta property="og:image" content={image} />
+		{/if}
+
+		<meta property="article:published_time" content={createdTimestamp.toISOString()} />
+		<meta property="article:modified_time" content={lastUpdated.toISOString()} />
+
+		{#each authors as author}
+			{#if author.name}
+				<meta property="article:author" content={author.name} />
+			{/if}
+		{/each}
+
+		{@html authorsHTML}
+	{/if}
 </svelte:head>
 
 <Container>
@@ -88,7 +112,7 @@
 			</SuggestionBox>
 
 			<div class="flex grow flex-col gap-4 lg:flex-row">
-				<Box class="flex grow flex-col p-4 lg:mb-0 overflow-hidden">
+				<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
 					<main class="article-root prose dark:prose-invert max-w-[unset] grow">
 						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>

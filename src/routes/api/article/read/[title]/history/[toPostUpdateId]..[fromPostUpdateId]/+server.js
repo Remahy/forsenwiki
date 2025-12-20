@@ -15,14 +15,8 @@ import { EDITOR_IS_READONLY } from '$lib/constants/constants';
  * @param {string} title
  * @param {string} toPostUpdateId
  * @param {string?} _fromPostUpdateId
- * @param {boolean} onlyIds
  */
-export async function _getToYPostUpdateFromYPostUpdateByTitle(
-	title,
-	toPostUpdateId,
-	_fromPostUpdateId = null,
-	onlyIds = false
-) {
+export async function _getYPostUpdateIds(title, toPostUpdateId, _fromPostUpdateId) {
 	const res = await readYPostUpdatesWithIdByTitle(title);
 
 	if (!res) {
@@ -42,22 +36,37 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		fromPostUpdateId = index > -1 ? res.postUpdates[index].id : null;
 	}
 
-	if (onlyIds) {
-		return { toPostUpdateId, fromPostUpdateId };
+	if (!fromPostUpdateId) {
+		return { res, toPostUpdateId, toPostUpdateIdIndex };
 	}
 
-	if (!fromPostUpdateId) {
-		throw 404;
+	if (toPostUpdateId === fromPostUpdateId) {
+		throw 400;
 	}
 
 	const fromPostUpdateIdIndex = res.postUpdates.findIndex(({ id }) => id === fromPostUpdateId);
 
-	if (fromPostUpdateIdIndex === -1) {
-		throw 404;
-	}
+	return { res, toPostUpdateId, toPostUpdateIdIndex, fromPostUpdateId, fromPostUpdateIdIndex };
+}
 
-	if (toPostUpdateIdIndex === fromPostUpdateIdIndex) {
-		throw 400;
+/**
+ * @param {string} title
+ * @param {string} _toPostUpdateId
+ * @param {string} _fromPostUpdateId
+ */
+export async function _getToYPostUpdateFromYPostUpdateByTitle(
+	title,
+	_toPostUpdateId,
+	_fromPostUpdateId
+) {
+	const { res, toPostUpdateId, toPostUpdateIdIndex, fromPostUpdateId, fromPostUpdateIdIndex } = await _getYPostUpdateIds(
+		title,
+		_toPostUpdateId,
+		_fromPostUpdateId
+	);
+
+	if (!fromPostUpdateId || fromPostUpdateIdIndex === -1 || !fromPostUpdateIdIndex) {
+		throw 404;
 	}
 
 	const { createdTimestamp: toDate } = res.postUpdates[toPostUpdateIdIndex];
