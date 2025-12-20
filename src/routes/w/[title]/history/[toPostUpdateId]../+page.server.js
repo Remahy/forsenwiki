@@ -1,11 +1,11 @@
 import { redirect, error } from '@sveltejs/kit';
-import { _getToYPostUpdateFromYPostUpdateByTitle } from '../../../../api/article/read/[title]/history/[toPostUpdateId]..[fromPostUpdateId]/+server';
+import { _getYPostUpdateIds } from '../../../../api/article/read/[title]/history/[toPostUpdateId]..[fromPostUpdateId]/+server';
 
 export async function load({ params }) {
 	const { title, toPostUpdateId } = params;
 
 	try {
-		const res = await _getToYPostUpdateFromYPostUpdateByTitle(title, toPostUpdateId, null, true);
+		const res = await _getYPostUpdateIds(title, toPostUpdateId, null);
 
 		if (!res.fromPostUpdateId) {
 			return redirect(307, `/w/${title}/history/${toPostUpdateId}`);
