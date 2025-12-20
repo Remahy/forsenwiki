@@ -6,7 +6,7 @@ function unluckyRedirect () {
 	return redirect(307, '/');
 }
 
-export async function GET() {
+export async function load() {
 	/**
 	 * @type {string}
 	 */
