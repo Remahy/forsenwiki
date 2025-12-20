@@ -1,5 +1,6 @@
 <script>
 	import { SquarePenIcon, FileIcon } from 'lucide-svelte';
+	import { page } from '$app/stores';
 
 	import Box from '$lib/components/Box.svelte';
 	import Container from '$lib/components/Container.svelte';
@@ -21,10 +22,11 @@
 
 <svelte:head>
 	<title>&quot;{rawTitle}&quot; history - Community Forsen Wiki</title>
-	<meta
-		name="description"
-		content="History for &quot;{rawTitle}&quot; on forsen.wiki - All things forsen, and more."
-	/>
+	<meta name="description" content="History for &quot;{rawTitle}&quot; on forsen.wiki" />
+	<meta property="og:description" content="History for &quot;{rawTitle}&quot; on forsen.wiki" />
+
+	<link rel="canonical" href="{$page.url.origin}/w/{title}" />
+	<meta property="og:url" content="{$page.url.origin}/w/{title}" />
 </svelte:head>
 
 <Container>

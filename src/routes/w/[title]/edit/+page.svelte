@@ -128,10 +128,14 @@
 
 <svelte:head>
 	<title>Editing &quot;{rawTitle}&quot; - Community Forsen Wiki</title>
+	<meta name="description" content="Edit the &quot;{rawTitle}&quot; article on forsen.wiki" />
 	<meta
-		name="description"
-		content="Edit the &quot;{rawTitle}&quot; on forsen.wiki - All things forsen, and more."
+		property="og:description"
+		content="Edit the &quot;{rawTitle}&quot; article on forsen.wiki"
 	/>
+
+	<link rel="canonical" href="{$page.url.origin}/w/{title}" />
+	<meta property="og:url" content="{$page.url.origin}/w/{title}" />
 </svelte:head>
 
 <Container>

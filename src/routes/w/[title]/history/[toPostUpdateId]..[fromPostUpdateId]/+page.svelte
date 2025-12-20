@@ -1,5 +1,6 @@
 <script>
 	import { FileIcon, HistoryIcon } from 'lucide-svelte';
+	import { page } from '$app/stores';
 
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import Container from '$lib/components/Container.svelte';
@@ -28,7 +29,11 @@
 
 <svelte:head>
 	<title>{displayTitle} - Community Forsen Wiki</title>
-	<meta name="description" content="{displayTitle} on forsen.wiki - All things forsen, and more." />
+	<meta name="description" content="{displayTitle} on forsen.wiki" />
+	<meta property="og:description" content="{displayTitle} on forsen.wiki" />
+
+	<link rel="canonical" href="{$page.url.origin}/w/{title}" />
+	<meta property="og:url" content="{$page.url.origin}/w/{title}" />
 </svelte:head>
 
 <Container>
