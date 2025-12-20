@@ -3,6 +3,7 @@ import { readYPostByTitle, readYPostUpdatesByTitle } from '$lib/db/article/read'
 import { yPostUpdatesV2ToBase64 } from '$lib/yjs/utils';
 import { upsertHTML } from '$lib/db/article/html';
 import { updateToHTML } from '$lib/lexical/updateToHTML';
+import { replacer } from '$lib/utils/json';
 
 /**
  * @param {string} title
@@ -89,7 +90,9 @@ export async function GET({ params }) {
 	try {
 		const res = await _getYPostHTML(params.title);
 
-		return json(res);
+		const safeJSON = JSON.parse(JSON.stringify(res, replacer));
+
+		return json(safeJSON);
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);

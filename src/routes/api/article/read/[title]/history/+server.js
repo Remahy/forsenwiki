@@ -9,7 +9,7 @@ export async function GET({ params }) {
 		throw 404;
 	}
 
-	const safeJSON = JSON.stringify(res, replacer);
+	const safeJSON = JSON.parse(JSON.stringify(res, replacer));
 
 	return json(safeJSON);
 }

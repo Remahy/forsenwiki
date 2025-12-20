@@ -60,7 +60,7 @@ export async function GET({ params }) {
 	try {
 		const res = await _getToYPostUpdateIdByTitle(title, toPostUpdateId);
 
-		const safeJSON = JSON.stringify(res, replacer);
+		const safeJSON = JSON.parse(JSON.stringify(res, replacer));
 
 		return json(safeJSON);
 	} catch (err) {
