@@ -1,7 +1,7 @@
 import { redirect, error } from '@sveltejs/kit';
 import { _getToYPostUpdateFromYPostUpdateByTitle } from '../../../../api/article/read/[title]/history/[toPostUpdateId]..[fromPostUpdateId]/+server';
 
-export async function GET({ params }) {
+export async function load({ params }) {
 	const { title, toPostUpdateId } = params;
 
 	try {
