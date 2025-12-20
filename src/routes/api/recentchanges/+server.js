@@ -68,7 +68,7 @@ export async function GET({ url }) {
 
 	const res = await _getRecentChanges(filters);
 
-	const safeJSON = JSON.stringify(res, replacer);
+	const safeJSON = JSON.parse(JSON.stringify(res, replacer));
 
 	return json(safeJSON);
 }

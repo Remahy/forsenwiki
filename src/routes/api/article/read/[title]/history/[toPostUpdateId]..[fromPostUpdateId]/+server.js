@@ -10,6 +10,7 @@ import { articleConfig } from '$lib/components/editor/config/article';
 import { diffConfig } from '$lib/components/editor/config/diff';
 import toHTML from '$lib/worker/toHTML';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
+import { replacer } from '$lib/utils/json';
 
 /**
  * @param {string} title
@@ -130,7 +131,9 @@ export async function GET({ params }) {
 			fromPostUpdateId
 		);
 
-		return json(res);
+		const safeJSON = JSON.parse(JSON.stringify(res, replacer));
+
+		return json(safeJSON);
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);
