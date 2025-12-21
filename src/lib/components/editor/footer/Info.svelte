@@ -62,7 +62,7 @@
 	});
 </script>
 
-<div class="flex items-center uppercase leading-none">
+<div class="flex items-center leading-none uppercase">
 	<div class="flex items-center gap-1">
 		{#if keys}
 			<small><strong>Key:</strong> {keys}</small>

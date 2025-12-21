@@ -14,7 +14,7 @@
 	import EditLinkButton from './EditLinkButton.svelte';
 
 	let isBold = $state(false);
-	
+
 	let isItalic = $state(false);
 
 	let editor = $derived(getEditor?.());

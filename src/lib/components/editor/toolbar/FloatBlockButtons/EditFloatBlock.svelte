@@ -43,7 +43,9 @@
 		default: FileQuestionIcon,
 	};
 
-	const FloatIconComponent = $derived(floatValueIcons[floatValue || 'none'] || floatValueIcons.default);
+	const FloatIconComponent = $derived(
+		floatValueIcons[floatValue || 'none'] || floatValueIcons.default
+	);
 
 	const editor = getEditor();
 
@@ -93,7 +95,7 @@
 
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		placeholder={floatValue === 'none' ? "Fill" : "Auto"}
+		placeholder={floatValue === 'none' ? 'Fill' : 'Auto'}
 		bind:value={width}
 		onchange={onChange}
 	/>
@@ -105,7 +107,7 @@
 
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		placeholder={"Auto"}
+		placeholder="Auto"
 		bind:value={height}
 		onchange={onChange}
 	/>

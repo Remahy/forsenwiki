@@ -24,12 +24,7 @@
 	 */
 
 	/** @type {Props} */
-	let {
-		node,
-		nodeKey,
-		data,
-		editor
-	} = $props();
+	let { node, nodeKey, data, editor } = $props();
 
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);

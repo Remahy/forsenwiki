@@ -1,5 +1,5 @@
 <script>
-  // Based on umaranis' svelte-lexical
+	// Based on umaranis' svelte-lexical
 	import { $setSelection as setSelection, $getRoot as getRoot } from 'lexical';
 	import { getContext, onMount } from 'svelte';
 

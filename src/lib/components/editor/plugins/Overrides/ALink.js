@@ -25,7 +25,7 @@ export class ALinkNode extends LinkNode {
 
 		this.__isInternal = internal;
 	}
-	
+
 	$config() {
 		return this.config('a-link', { extends: LinkNode });
 	}

@@ -10,7 +10,7 @@
 
 <div class="container mx-auto flex grow p-4 lg:py-12">
 	<Box class="bg-error-color grow p-4 py-12">
-		<section class="prose prose-lg w-full max-w-[unset] dark:prose-invert">
+		<section class="prose prose-lg dark:prose-invert w-full max-w-[unset]">
 			<h1>OOPSIE WOOPSIE!!</h1>
 
 			<p>Something went wrong.</p>

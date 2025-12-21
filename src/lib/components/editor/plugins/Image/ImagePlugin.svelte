@@ -327,7 +327,7 @@
 						const src = node.getSrc();
 
 						if (!src) {
-							console.warn('ImagePlugin: src is undefined')
+							console.warn('ImagePlugin: src is undefined');
 							continue;
 						}
 

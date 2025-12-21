@@ -10,7 +10,7 @@
 </svelte:head>
 
 <div class="container mx-auto p-8 lg:py-12">
-	<section class="prose prose-lg w-full max-w-[unset] dark:prose-invert">
+	<section class="prose prose-lg dark:prose-invert w-full max-w-[unset]">
 		<h1>About</h1>
 
 		<p>

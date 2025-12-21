@@ -157,7 +157,10 @@ const diffSemanticsFlat = (list) => {
  * @param {import('lexical').SerializedEditor} fromUpdate
  */
 export const getDiffJSON = (toUpdate, fromUpdate) => {
-	const diff = JSONDiffer.diff(structuredClone(toUpdate), structuredClone(fromUpdate), { full: true, raw: true });
+	const diff = JSONDiffer.diff(structuredClone(toUpdate), structuredClone(fromUpdate), {
+		full: true,
+		raw: true,
+	});
 
 	return {
 		...diff,

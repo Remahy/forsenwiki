@@ -56,7 +56,6 @@ async function buildYoutubeClipURLWorker() {
 	writeFileSync('src/lib/worker/youtubeClipURL/worker.js', result.outputFiles[0].contents);
 }
 
-
 buildInitialUpdateWorker().catch(() => process.exit(1));
 buildToHTMLWorker().catch(() => process.exit(1));
 buildYoutubeClipURLWorker().catch(() => process.exit(1));

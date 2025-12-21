@@ -101,5 +101,7 @@ const getData = () =>
 if (GOATCOUNTER_API_KEY && GOATCOUNTER_DOMAIN && !building && !GOATCOUNTER_DISABLED) {
 	getData();
 } else {
-	console.warn('Environment value GOATCOUNTER_API_KEY not set or disabled via GOATCOUNTER_DISABLED. Popular articles disabled.');
+	console.warn(
+		'Environment value GOATCOUNTER_API_KEY not set or disabled via GOATCOUNTER_DISABLED. Popular articles disabled.'
+	);
 }

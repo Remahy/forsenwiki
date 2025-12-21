@@ -11,20 +11,10 @@
 	 */
 
 	/** @type {Props} */
-	let {
-		disabled = false,
-		onClickReset = () => {},
-		isLoading = false,
-		children
-	} = $props();
+	let { disabled = false, onClickReset = () => {}, isLoading = false, children } = $props();
 </script>
 
-<Button
-	{disabled}
-	class="bg-error-color flex-col !font-bold"
-	title="Reset"
-	on:click={onClickReset}
->
+<Button {disabled} class="bg-error-color flex-col !font-bold" title="Reset" on:click={onClickReset}>
 	{#if isLoading}
 		<Spinner />
 	{/if}

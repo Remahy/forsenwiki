@@ -1,12 +1,12 @@
-@import "@fontsource/comic-neue";
+@import '@fontsource/comic-neue';
 
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-  --font-dyslexic: '\'Comic Neue\', \'Comic Sans MS\', arial, helvetica, sans-serif'
+	--font-dyslexic: "'Comic Neue', 'Comic Sans MS', arial, helvetica, sans-serif";
 }
 
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
 
-@import "./style/wiki.css";
+@import './style/wiki.css';

@@ -1,12 +1,24 @@
-export { $createALinkNode, $isALinkNode, ALinkNode } from '../components/editor/plugins/Overrides/ALink';
+export {
+	$createALinkNode,
+	$isALinkNode,
+	ALinkNode,
+} from '../components/editor/plugins/Overrides/ALink';
 
-export { $createImageNode, $isImageNode, ImageNode } from '../components/editor/plugins/Image/Image';
+export {
+	$createImageNode,
+	$isImageNode,
+	ImageNode,
+} from '../components/editor/plugins/Image/Image';
 export {
 	$createVideoEmbedNode,
 	$isVideoEmbedNode,
 	VideoEmbedNode,
 } from '../components/editor/plugins/VideoEmbed/VideoEmbed';
-export { $createFloatBlockNode, $isFloatBlockNode, FloatBlockNode } from '../components/editor/plugins/FloatBlock/FloatBlock';
+export {
+	$createFloatBlockNode,
+	$isFloatBlockNode,
+	FloatBlockNode,
+} from '../components/editor/plugins/FloatBlock/FloatBlock';
 
 export { DiffHeadingNode } from '../components/editor/plugins/Diff/Heading';
 export { DiffListNode } from '../components/editor/plugins/Diff/List';

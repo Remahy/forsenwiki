@@ -9,7 +9,7 @@
 </svelte:head>
 
 <Container class="p-8">
-	<section class="prose prose-sm w-full max-w-[unset] dark:prose-invert">
+	<section class="prose prose-sm dark:prose-invert w-full max-w-[unset]">
 		<h1>DMCA</h1>
 		<p>
 			For the purposes of this document, the term 'DMCA' is used as a general reference to copyright

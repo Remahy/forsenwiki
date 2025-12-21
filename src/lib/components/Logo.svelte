@@ -12,7 +12,7 @@
 		width = '112',
 		height = '112',
 		color1 = 'rgb(84 49 46)',
-		color2 = 'rgb(166 118 115)'
+		color2 = 'rgb(166 118 115)',
 	} = $props();
 </script>
 

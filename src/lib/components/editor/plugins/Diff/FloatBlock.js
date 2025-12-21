@@ -16,8 +16,15 @@ export class DiffFloatBlockNode extends FloatBlockNode {
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
-		// @ts-ignore
-		super(node.float || node.__float, node.width || node.__width, node.height || node.__height, key);
+		super(
+			// @ts-ignore
+			node.float || node.__float,
+			// @ts-ignore
+			node.width || node.__width,
+			// @ts-ignore
+			node.height || node.__height,
+			key
+		);
 
 		// @ts-ignore
 		this.___change = node.___change;
@@ -41,7 +48,7 @@ export class DiffFloatBlockNode extends FloatBlockNode {
 		const node = $createDiffFloatBlockNode(serializedNode).updateFromJSON(serializedNode);
 		return node;
 	}
-	
+
 	exportJSON() {
 		return { ...super.exportJSON(), ___change: this.___change, type: DiffFloatBlockNode.getType() };
 	}

@@ -85,7 +85,7 @@
 
 <div use:tocAction class="hidden lg:block lg:w-96 lg:min-w-96">
 	{#if toc}
-		<Box class="top-4 hidden flex-col overflow-hidden break-all p-4 lg:sticky lg:flex">
+		<Box class="top-4 hidden flex-col overflow-hidden p-4 break-all lg:sticky lg:flex">
 			<div class="box-heading-wrapper mb-2">
 				<h2 class="text-2xl">Table of Contents</h2>
 			</div>
@@ -93,6 +93,6 @@
 			{@html toc}
 		</Box>
 	{:else}
-		<img src="/favicon.png" alt="The face of Twitch" class="select-none opacity-[.04]" />
+		<img src="/favicon.png" alt="The face of Twitch" class="opacity-[.04] select-none" />
 	{/if}
 </div>

@@ -60,11 +60,8 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 	_toPostUpdateId,
 	_fromPostUpdateId
 ) {
-	const { res, toPostUpdateId, toPostUpdateIdIndex, fromPostUpdateId, fromPostUpdateIdIndex } = await _getYPostUpdateIds(
-		title,
-		_toPostUpdateId,
-		_fromPostUpdateId
-	);
+	const { res, toPostUpdateId, toPostUpdateIdIndex, fromPostUpdateId, fromPostUpdateIdIndex } =
+		await _getYPostUpdateIds(title, _toPostUpdateId, _fromPostUpdateId);
 
 	if (!fromPostUpdateId || fromPostUpdateIdIndex === -1 || !fromPostUpdateIdIndex) {
 		throw 404;

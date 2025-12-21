@@ -8,13 +8,7 @@
 	 */
 
 	/** @type {Props & { [key: string]: any }} */
-	let {
-		href,
-		reload = false,
-		class: className = '',
-		children,
-		...rest
-	} = $props();
+	let { href, reload = false, class: className = '', children, ...rest } = $props();
 </script>
 
 <a {href} data-sveltekit-reload={reload} class="link-button {className}" {...rest}>

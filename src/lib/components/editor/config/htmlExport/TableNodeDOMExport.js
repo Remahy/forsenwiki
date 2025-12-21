@@ -12,7 +12,8 @@ export default [
 		return {
 			...output,
 			after: (generatedElement) => {
-				const nesting = editor.read(() => getNodeByKey(node.getKey()))?.getParent()?.__type === 'root';
+				const nesting =
+					editor.read(() => getNodeByKey(node.getKey()))?.getParent()?.__type === 'root';
 
 				const table = output.after ? output.after(generatedElement) : generatedElement;
 
@@ -46,7 +47,6 @@ export default [
 				tds.forEach((td) => {
 					td.style.width = undefined;
 					td.style.minWidth = '75px';
-
 				});
 
 				wrapper3.append(clonedTable);
