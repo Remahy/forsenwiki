@@ -41,10 +41,10 @@
 
 	const providerFactory = instantiateProvider(update, initialUpdate);
 
-  $effect(() => {
-    getContext('COMPOSER').set(composer);
-  });
-  
+	$effect(() => {
+		getContext('COMPOSER').set(composer);
+	});
+
 	// This reloads pages when we leave editor.
 	onMount(() => {
 		return () => {
@@ -77,7 +77,7 @@
 			<Toolbar />
 		</div>
 
-		<article class="editor-border flex grow flex-col min-h-96">
+		<article class="editor-border flex min-h-96 grow flex-col">
 			<div class="prose dark:prose-invert relative flex max-w-[unset] grow overflow-auto p-2">
 				<ContentEditable className="grow m-0 p-0 border-0 outline-0" />
 			</div>

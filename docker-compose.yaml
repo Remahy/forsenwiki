@@ -25,7 +25,7 @@ services:
     networks:
       - prisma-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d postgres']
       interval: 5s
       timeout: 2s
       retries: 20
@@ -40,7 +40,7 @@ services:
     networks:
       - prisma-network
     healthcheck:
-      test: ["CMD", "wget", "--spider", "--tries=1", "http://localhost:8080/status"]
+      test: ['CMD', 'wget', '--spider', '--tries=1', 'http://localhost:8080/status']
       interval: 10s
       timeout: 5s
       retries: 3
@@ -51,18 +51,18 @@ services:
     environment:
       GOATCOUNTER_API_KEY: ${GOATCOUNTER_API_KEY}
     command:
-    - "import"
-    - "-follow"
-    - "-format=caddy"
-    - "-site=http://goatcounter:8080"
-    - "-exclude=path:glob:**/_app/**"
-    - "-exclude=path:glob:**/__data.json**"
-    - "-exclude=path:glob:**/auth**"
-    - "-exclude=path:glob:**/auth/**"
-    - "-exclude=path:glob:/api/**"
-    - "-exclude=status:404"
-    - "-exclude=redirect"
-    - "/home/logs/access-forsen-wiki.caddylog"
+      - 'import'
+      - '-follow'
+      - '-format=caddy'
+      - '-site=http://goatcounter:8080'
+      - '-exclude=path:glob:**/_app/**'
+      - '-exclude=path:glob:**/__data.json**'
+      - '-exclude=path:glob:**/auth**'
+      - '-exclude=path:glob:**/auth/**'
+      - '-exclude=path:glob:/api/**'
+      - '-exclude=status:404'
+      - '-exclude=redirect'
+      - '/home/logs/access-forsen-wiki.caddylog'
     volumes:
       - goatcounter-data:/home/goatcounter/goatcounter-data
       - ./forsen-wiki-logs:/home/logs:ro
@@ -73,7 +73,7 @@ services:
       - prisma-network
 
   caddy:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile-caddy
     environment:
@@ -83,9 +83,9 @@ services:
       CADDY_ACCESS_LOG: ${CADDY_ACCESS_LOG}
     restart: unless-stopped
     ports:
-      - "${CADDY_HTTP_PORT}:80"
-      - "${CADDY_HTTPS_PORT}:443"
-      - "${CADDY_HTTPS_PORT}:443/udp"
+      - '${CADDY_HTTP_PORT}:80'
+      - '${CADDY_HTTPS_PORT}:443'
+      - '${CADDY_HTTPS_PORT}:443/udp'
     networks:
       - prisma-network
     volumes:

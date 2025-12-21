@@ -6,7 +6,7 @@
 
 	const closeModal = () => {
 		$modal.isOpen = false;
-	}
+	};
 
 	modal.subscribe((modal) => {
 		if (!browser || !modal) {

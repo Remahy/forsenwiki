@@ -1,10 +1,9 @@
 {
-  "svelte.enable-ts-plugin": true,
-  
-  "[javascript]": {
-    "editor.insertSpaces": false
-  },
-  "[svelte]": {
-    "editor.insertSpaces": false
-  }
+	"svelte.enable-ts-plugin": true,
+	"[javascript]": {
+		"editor.insertSpaces": false
+	},
+	"[svelte]": {
+		"editor.insertSpaces": false
+	}
 }

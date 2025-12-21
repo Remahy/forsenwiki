@@ -11,12 +11,12 @@ export const upsertHTML = (postId, { content, text, image }) => {
 		},
 		create: {
 			postId,
-			content
+			content,
 		},
-		update:{
+		update: {
 			content,
 			text,
 			image,
-		}
+		},
 	});
 };

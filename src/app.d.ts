@@ -7,8 +7,8 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			isModerator: boolean
-			isBlocked: boolean
+			isModerator: boolean;
+			isBlocked: boolean;
 		}
 		// interface PageData {}
 		// interface PageState {}
@@ -17,27 +17,26 @@ declare global {
 }
 
 declare global {
-  export type LexicalEditor = import('lexical').LexicalEditor
-	export type LexicalNode = import('lexical').LexicalNode
+	export type LexicalEditor = import('lexical').LexicalEditor;
+	export type LexicalNode = import('lexical').LexicalNode;
 
-	export type Writable<T> = import('svelte/store').Writable<T>
+	export type Writable<T> = import('svelte/store').Writable<T>;
 
-	export type BaseSelection = import('lexical').BaseSelection
-	export type RangeSelection = import('lexical').RangeSelection
-	export type ElementNode = import('lexical').ElementNode
+	export type BaseSelection = import('lexical').BaseSelection;
+	export type RangeSelection = import('lexical').RangeSelection;
+	export type ElementNode = import('lexical').ElementNode;
 
-	export type ComposerWritable = Writable<{ getEditor: () => LexicalEditor} | null>
-	export type Composer = import('svelte-lexical').Composer
+	export type ComposerWritable = Writable<{ getEditor: () => LexicalEditor } | null>;
+	export type Composer = import('svelte-lexical').Composer;
 
-	export type YDoc = import('yjs').Doc
-	export type YEvent<T> = import('yjs').YEvent<T>
+	export type YDoc = import('yjs').Doc;
+	export type YEvent<T> = import('yjs').YEvent<T>;
 
 	export type YDOCPERSISTENCE = import('y-indexeddb').IndexeddbPersistence;
 
 	export namespace Prisma {
-     export = P;
+		export = P;
 	}
 }
-
 
 export {};

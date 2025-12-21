@@ -60,20 +60,16 @@
 					const selection = getSelection();
 
 					if (selection && dUrl && definedUrl === 'https://' && selection.isCollapsed()) {
-						const [, anchor] =
-							/** @type {[PointType, PointType]}*/ (
-								selection.getStartEndPoints()
-							);
+						const [, anchor] = /** @type {[PointType, PointType]}*/ (selection.getStartEndPoints());
 						const anchorOffset = anchor.offset;
 
 						const text = dAttrs?.title || dUrl;
 						selection.insertText(text);
 
 						// Modify selection to only wrap the new text.
-						const [, newFocus] =
-							/** @type {[PointType, PointType]}*/ (
-								selection.getStartEndPoints()
-							);
+						const [, newFocus] = /** @type {[PointType, PointType]}*/ (
+							selection.getStartEndPoints()
+						);
 
 						const newSelection = createRangeSelection();
 						newSelection.anchor.set(anchor.key, anchorOffset, 'text');

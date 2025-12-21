@@ -50,7 +50,11 @@ export const editableTheme = {
 	},
 };
 
-export const htmlExport =  new Map([HeadingNodeDOMExport, TableCellNodeDOMExport, TableNodeDOMExport]);
+export const htmlExport = new Map([
+	HeadingNodeDOMExport,
+	TableCellNodeDOMExport,
+	TableNodeDOMExport,
+]);
 
 /**
  * @param {Error} error
@@ -93,7 +97,7 @@ export const articleNodes = [
 	FallbackNode,
 	DeprecatedVideoEmbedNode,
 	AHeadingNode,
-	ATableCellNode
+	ATableCellNode,
 ];
 
 /**

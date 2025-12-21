@@ -37,7 +37,7 @@ const updateYPost = async (tx, { post, outRelations, systemRelations, metadata }
 			},
 			totalByteLength: metadata.totalByteLength,
 			lastUpdated: new Date(),
-		}
+		},
 	});
 };
 
@@ -76,15 +76,12 @@ export const updateArticleYPost = async (data, metadata) => {
 	const { post, outRelations, transformedSystemRelations, content } = data;
 
 	return prisma.$transaction(async (tx) => {
-		await updateYPost(
-			tx,
-			{
-				post,
-				outRelations,
-				systemRelations: transformedSystemRelations,
-				metadata,
-			}
-		);
+		await updateYPost(tx, {
+			post,
+			outRelations,
+			systemRelations: transformedSystemRelations,
+			metadata,
+		});
 
 		/**
 		 * @type {Pick<Prisma.YPostUpdate, 'content' | 'postId'>}

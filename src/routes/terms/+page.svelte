@@ -1,5 +1,5 @@
 <script>
-	import Container from "$lib/components/Container.svelte";
+	import Container from '$lib/components/Container.svelte';
 </script>
 
 <svelte:head>
@@ -8,7 +8,7 @@
 </svelte:head>
 
 <Container class="p-8">
-	<section class="prose prose-lg w-full max-w-[unset] dark:prose-invert">
+	<section class="prose prose-lg dark:prose-invert w-full max-w-[unset]">
 		<h1>Terms & Conditions</h1>
 		<p>Effective date: May 8th, 2024</p>
 		<ol>

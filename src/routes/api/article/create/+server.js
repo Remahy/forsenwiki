@@ -46,7 +46,10 @@ export async function POST({ request, locals }) {
 			return error(400, 'Article with that title already exists.');
 		}
 
-		const data = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), base64ToUint8Array(content));
+		const data = getYjsAndEditor(
+			articleConfig(null, EDITOR_IS_READONLY, null),
+			base64ToUint8Array(content)
+		);
 		editor = data.editor;
 		doc = data.doc;
 

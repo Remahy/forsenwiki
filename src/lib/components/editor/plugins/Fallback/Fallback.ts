@@ -12,7 +12,7 @@ import FallbackComponent from './FallbackComponent.svelte';
 
 type FallbackNodeType = {
 	componentClass: typeof FallbackComponent;
-  updateProps: (props: ComponentProps<typeof FallbackComponent>) => void;
+	updateProps: (props: ComponentProps<typeof FallbackComponent>) => void;
 };
 
 export class FallbackNode extends DecoratorBlockNode {

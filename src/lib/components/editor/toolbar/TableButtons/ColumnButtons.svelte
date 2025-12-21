@@ -140,14 +140,14 @@
 </script>
 
 <div class="forsen-wiki-theme-outline flex items-center gap-2 outline-offset-8">
-	<div class="flex select-none flex-col items-center justify-center font-mono text-xs leading-none">
+	<div class="flex flex-col items-center justify-center font-mono text-xs leading-none select-none">
 		<span>C</span>
 		<span>O</span>
 		<span>L</span>
 	</div>
 
 	<div
-		class="forsen-wiki-theme-border flex rounded-sm border bg-violet-900 dark:bg-violet-900/50 text-sm text-white"
+		class="forsen-wiki-theme-border flex rounded-sm border bg-violet-900 text-sm text-white dark:bg-violet-900/50"
 	>
 		<div class="flex items-center gap-2 p-2" title="Add column">
 			<PlusIcon size="16" />
@@ -155,7 +155,7 @@
 
 		<Button
 			on:click={() => onClickAddColumn(false)}
-			class="!min-w-8 !max-w-8 !rounded-none !p-0"
+			class="!max-w-8 !min-w-8 !rounded-none !p-0"
 			title="Add to the left of current column"
 		>
 			<ArrowLeftIcon size="20" />
@@ -163,7 +163,7 @@
 
 		<Button
 			on:click={() => onClickAddColumn()}
-			class="!min-w-8 !max-w-8 !rounded-l-none !p-0"
+			class="!max-w-8 !min-w-8 !rounded-l-none !p-0"
 			title="Add to the right of current column"
 		>
 			<ArrowRightIcon size="20" />

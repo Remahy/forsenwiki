@@ -1,6 +1,6 @@
 import { $createFallbackNode, FallbackNode } from '../Fallback/Fallback';
 
-/** 
+/**
  * @typedef {import('lexical').NodeKey} NodeKey
  * @typedef {import('lexical').LexicalEditor} LexicalEditor
  * @typedef {import('lexical').ElementFormatType} ElementFormatType
@@ -10,7 +10,6 @@ import { $createFallbackNode, FallbackNode } from '../Fallback/Fallback';
 // Example of how to still support deprecated nodes.
 
 export class DeprecatedVideoEmbedNode extends FallbackNode {
-
 	/**
 	 * @param {SupportedPlatforms} platform
 	 * @param {string} src
@@ -19,14 +18,7 @@ export class DeprecatedVideoEmbedNode extends FallbackNode {
 	 * @param {ElementFormatType} [format]
 	 * @param {NodeKey} [key]
 	 */
-	constructor(
-		platform,
-		src,
-		width,
-		height,
-		format,
-		key,
-	) {
+	constructor(platform, src, width, height, format, key) {
 		super({
 			format,
 			key,
