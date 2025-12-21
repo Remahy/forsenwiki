@@ -4,6 +4,7 @@
 
 	import Container from '$lib/components/Container.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
+	import Box from '$lib/components/Box.svelte';
 
 	import '$lib/components/editor/plugins/Image/Image.css';
 
@@ -95,10 +96,16 @@
 			</div>
 		</header>
 
-		<main class="article-root prose dark:prose-invert max-w-[unset] grow">
-			<h1>{rawTitle}</h1>
+		<div class="flex grow flex-col gap-4 lg:flex-row">
+			<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
+				<main class="article-root prose dark:prose-invert max-w-[unset] grow">
+					<h1>{rawTitle}</h1>
 
-			{@html html}
-		</main>
+					{@html html}
+				</main>
+			</Box>
+
+			<div class="hidden lg:block lg:w-96 lg:min-w-96"></div>
+		</div>
 	</article>
 </Container>

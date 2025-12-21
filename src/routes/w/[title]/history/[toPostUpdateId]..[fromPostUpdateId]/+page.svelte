@@ -2,8 +2,9 @@
 	import { FileIcon, HistoryIcon } from 'lucide-svelte';
 	import { page } from '$app/stores';
 
-	import LinkButton from '$lib/components/LinkButton.svelte';
 	import Container from '$lib/components/Container.svelte';
+	import LinkButton from '$lib/components/LinkButton.svelte';
+	import Box from '$lib/components/Box.svelte';
 
 	import '$lib/components/editor/plugins/Image/Image.css';
 
@@ -104,22 +105,33 @@
 			</p>
 		</div>
 
-		<main class="article-root prose dark:prose-invert max-w-[unset] grow">
-			<h1>{rawTitle}</h1>
+		<div class="flex grow flex-col gap-4 lg:flex-row">
+			<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
+				<main class="article-root prose dark:prose-invert max-w-[unset] grow break-words">
+					<h1>{rawTitle}</h1>
 
-			{@html diffHTML}
+					{@html diffHTML}
+				</main>
+			</Box>
 
-			<hr />
+			<div class="hidden lg:block lg:w-96 lg:min-w-96"></div>
+		</div>
+
+		<footer class="article-footer-color p-4">
+			<strong>Raw data</strong>
+			<details>
+				<summary><strong>Diff JSON</strong></summary>
+				<div class="prose dark:prose-invert max-w-[unset]">
+					<pre class="mt-0">{JSON.stringify(diffJSON, null, 2)}</pre>
+				</div>
+			</details>
 
 			<details>
-				<summary>Show raw data</summary>
-
-				<strong>Diff JSON:</strong>
-				<pre class="mt-0">{JSON.stringify(diffJSON, null, 2)}</pre>
-
-				<strong>Editor JSON:</strong>
-				<pre class="mt-0">{JSON.stringify(editorJSON, null, 2)}</pre>
+				<summary><strong>Editor JSON</strong></summary>
+				<div class="prose dark:prose-invert max-w-[unset]">
+					<pre class="mt-0">{JSON.stringify(editorJSON, null, 2)}</pre>
+				</div>
 			</details>
-		</main>
+		</footer>
 	</article>
 </Container>
