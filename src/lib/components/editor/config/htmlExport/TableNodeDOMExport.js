@@ -1,5 +1,5 @@
 import { TableNode } from '$lib/lexical/index';
-import { $getNodeByKey as getNodeByKey } from 'lexical';
+import { $isRootNode as isRootNode, $getNodeByKey as getNodeByKey } from 'lexical';
 
 /**
  * @type {[import("lexical").Klass<LexicalNode>, (editor: LexicalEditor, target: LexicalNode) => import("lexical").DOMExportOutput]}
@@ -12,12 +12,19 @@ export default [
 		return {
 			...output,
 			after: (generatedElement) => {
-				const nesting =
-					editor.read(() => getNodeByKey(node.getKey()))?.getParent()?.__type === 'root';
+				const parentIsRoot = editor.read(() => {
+					const n = getNodeByKey(node.getKey());
+					const parent = n?.getParent();
+					if (!parent) {
+						return false;
+					}
+
+					return isRootNode(parent);
+				});
 
 				const table = output.after ? output.after(generatedElement) : generatedElement;
 
-				if (!nesting) {
+				if (!parentIsRoot) {
 					return table;
 				}
 
