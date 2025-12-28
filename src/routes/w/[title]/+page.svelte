@@ -113,7 +113,7 @@
 
 			<div class="flex grow flex-col gap-4 lg:flex-row">
 				<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
-					<main class="article-root prose dark:prose-invert max-w-[unset] grow">
+					<main class="article-root prose dark:prose-invert max-w-[unset] grow break-words">
 						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>
@@ -165,9 +165,17 @@
 		</footer>
 	</article>
 
-	<details class="-mt-4">
-		<summary class="cursor-pointer">Tools</summary>
+	<footer class="article-footer-color p-4">
+		<details>
+			<summary class="cursor-pointer"><strong>Tools</strong></summary>
 
-		<CacheBustButton />
-	</details>
+			<div class="flex gap-4">
+				<CacheBustButton />
+				<LinkButton
+					class="mt-2 min-h-[unset] min-w-[unset] !p-1 text-xs"
+					href="/api/article/read/{title}">API request</LinkButton
+				>
+			</div>
+		</details>
+	</footer>
 </Container>

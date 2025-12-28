@@ -9,10 +9,12 @@ export default [
 	(editor, node) => {
 		const output = node.exportDOM(editor);
 
-		if (isHTMLElement(output.element)) {
-			const element = /** @type {HTMLTableCellElement} */ (output.element);
+		if (output && isHTMLElement(output.element)) {
+			const { element } = output;
 
+			element.style.border = '';
 			element.style.removeProperty('border');
+			element.style.backgroundColor = '';
 			element.style.removeProperty('background-color');
 		}
 

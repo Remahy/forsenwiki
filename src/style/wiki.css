@@ -126,10 +126,10 @@ html.forsen-wiki-theme {
 			}
 		}
 		th {
-			@apply forsen-wiki-theme-border border bg-slate-950/25 dark:bg-white/25;
+			@apply forsen-wiki-theme-border border !bg-slate-950/10 dark:!bg-white/10;
 		}
 		td {
-			@apply forsen-wiki-theme-border border bg-black/5 dark:bg-white/5;
+			@apply forsen-wiki-theme-border border !bg-black/5 dark:!bg-white/5;
 		}
 	}
 }
