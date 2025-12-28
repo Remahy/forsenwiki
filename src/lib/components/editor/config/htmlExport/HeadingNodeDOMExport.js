@@ -7,17 +7,19 @@ import { isHTMLElement } from 'lexical';
 export default [
 	HeadingNode,
 	(editor, node) => {
-		const dom = node.exportDOM(editor);
+		const output = node.exportDOM(editor);
 
 		const text = node.getTextContent().slice(0, 32);
 
-		if (isHTMLElement(dom.element)) {
-			dom.element.id = text
+		if (output && isHTMLElement(output.element)) {
+			const { element } = output;
+
+			element.id = text
 				.replace(/[^\w]+/g, ' ')
 				.trim()
 				.replace(/ /g, '-');
 		}
 
-		return dom;
+		return output;
 	},
 ];
