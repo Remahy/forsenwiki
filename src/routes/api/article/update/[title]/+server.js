@@ -22,6 +22,7 @@ import { articleConfig } from '$lib/components/editor/config/article';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 import toHTML from '$lib/worker/toHTML';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
+import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import { _emit } from '../../../adonis/frontpage/+server';
 
@@ -37,9 +38,11 @@ export async function POST({ request, locals, params }) {
 
 	const { content } = await request.json();
 
+	const { sanitized: title } = sanitizeTitle(params.title);
+
 	let post;
 	try {
-		post = await _getYPostByTitle(params.title);
+		post = await _getYPostByTitle(title);
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);

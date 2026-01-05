@@ -4,6 +4,7 @@ import { yPostUpdatesV2ToBase64 } from '$lib/yjs/utils';
 import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
 import { replacer } from '$lib/utils/json';
 import { updateToHTML } from '$lib/lexical/updateToHTML';
+import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 
 /**
  * @param {string} title
@@ -55,7 +56,8 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 }
 
 export async function GET({ params }) {
-	const { title, toPostUpdateId } = params;
+	const { title: rawTitle, toPostUpdateId } = params;
+	const { sanitized: title } = sanitizeTitle(rawTitle);
 
 	try {
 		const res = await _getToYPostUpdateIdByTitle(title, toPostUpdateId);
