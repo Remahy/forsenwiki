@@ -11,6 +11,7 @@ import { diffConfig } from '$lib/components/editor/config/diff';
 import toHTML from '$lib/worker/toHTML';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { replacer } from '$lib/utils/json';
+import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 
 /**
  * @param {string} title
@@ -119,7 +120,8 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 }
 
 export async function GET({ params }) {
-	const { fromPostUpdateId, toPostUpdateId, title } = params;
+	const { title: rawTitle, fromPostUpdateId, toPostUpdateId } = params;
+	const { sanitized: title } = sanitizeTitle(rawTitle);
 
 	try {
 		const res = await _getToYPostUpdateFromYPostUpdateByTitle(

@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { readAuthorsForYPostByTitle } from '$lib/db/article/read';
+import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { _getYPostHTML } from '../../api/article/read/[title]/+server';
 
 /** @type {Map<string, number>} */
@@ -27,12 +28,12 @@ const getShouldCacheBust = (title, url) => {
 };
 
 export async function load({ params, url, setHeaders }) {
-	const { title } = params;
+	const { sanitized: title } = sanitizeTitle(params.title);
 
 	const shouldCacheBust = getShouldCacheBust(title, url);
 
 	try {
-		const res = await _getYPostHTML(params.title, shouldCacheBust);
+		const res = await _getYPostHTML(title, shouldCacheBust);
 
 		const authors = await readAuthorsForYPostByTitle(title);
 

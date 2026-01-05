@@ -4,6 +4,7 @@ import { yPostUpdatesV2ToBase64 } from '$lib/yjs/utils';
 import { upsertHTML } from '$lib/db/article/html';
 import { updateToHTML } from '$lib/lexical/updateToHTML';
 import { replacer } from '$lib/utils/json';
+import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 
 /**
  * @param {string} title
@@ -87,8 +88,10 @@ export const _getYPostUpdate = async (title) => {
 };
 
 export async function GET({ params }) {
+	const { sanitized: title } = sanitizeTitle(params.title);
+
 	try {
-		const res = await _getYPostHTML(params.title);
+		const res = await _getYPostHTML(title);
 
 		const safeJSON = JSON.parse(JSON.stringify(res, replacer));
 
