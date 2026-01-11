@@ -68,7 +68,7 @@
 			let res;
 
 			try {
-				await validateArticle(editor);
+				validateArticle(editor);
 
 				if (!title.value) {
 					throw new Error('No title set.');

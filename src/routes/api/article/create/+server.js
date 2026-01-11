@@ -54,7 +54,7 @@ export async function POST({ request, locals }) {
 		doc = data.doc;
 
 		// Does not modify the editor.
-		await validateArticle(editor);
+		validateArticle(editor);
 
 		// Modifies the editor.
 		await adjustAndUploadImages(editor, title.sanitized, { id: session.user.id });

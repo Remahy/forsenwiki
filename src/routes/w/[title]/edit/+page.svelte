@@ -61,13 +61,14 @@
 			return;
 		}
 
-		editor.update(async () => {
+		editor.read(async () => {
 			isUploading = true;
 
 			let res;
 
 			try {
-				await validateArticle(editor);
+				validateArticle(editor);
+
 				res = await updateArticle(title, yjsDocMap);
 			} catch {
 				// noop
