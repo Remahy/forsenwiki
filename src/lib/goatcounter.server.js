@@ -1,6 +1,7 @@
 import { building } from '$app/environment';
 import { GOATCOUNTER_API_KEY, GOATCOUNTER_DISABLED } from '$env/static/private';
 import { _emit } from '../routes/api/adonis/frontpage/+server';
+import { sanitizeTitle } from './components/editor/utils/sanitizeTitle';
 import prisma from './prisma';
 
 const GOATCOUNTER_DOMAIN = 'http://goatcounter:8080';
@@ -20,7 +21,7 @@ const queryStrings = new URLSearchParams({
  * @typedef {Object} GoatCounterHit
  * @property {string} path
  * @property {string} title
- * @property {number} max
+ * @property {number} count
  */
 
 // https://stackoverflow.com/a/14400861
@@ -41,7 +42,8 @@ const parseResults = async (arr) => {
 	const titles = arr
 		.filter(({ title }) => typeof title === 'undefined' || title.length === 0)
 		.map(({ path }) => path.split('/').pop())
-		.filter((v) => typeof v !== 'undefined');
+		.filter((v) => typeof v !== 'undefined')
+		.map((v) => sanitizeTitle(v).sanitized);
 
 	const foundTitles = await prisma.yPost.findMany({
 		where: { title: { in: titles } },
@@ -54,7 +56,9 @@ const parseResults = async (arr) => {
 		const { rawTitle, title } = foundTitles[index];
 		const path = `/w/${title}`;
 
-		const newArrIndex = newArr.findIndex(({ path: p }) => p === path);
+		const newArrIndex = newArr.findIndex(
+			({ path: p }) => `/w/${sanitizeTitle(p.split('/').pop() || '').sanitized}` === path
+		);
 
 		if (newArrIndex === -1) {
 			continue;
@@ -69,7 +73,8 @@ const parseResults = async (arr) => {
 /**
  * @param {GoatCounterHit[]} arr
  */
-const formattedHits = (arr) => arr.map(({ max, path, title }) => ({ max, path, title }));
+const formattedHits = (arr) =>
+	arr.map(({ count, path, title }) => ({ count, path, title })).sort((a, b) => b.count - a.count);
 
 /**
  * @throws
@@ -100,6 +105,7 @@ const getData = () =>
 
 if (GOATCOUNTER_API_KEY && GOATCOUNTER_DOMAIN && !building && !GOATCOUNTER_DISABLED) {
 	getData();
+	console.log('Goatcounter "Popular Articles" enabled.');
 } else {
 	console.warn(
 		'Environment value GOATCOUNTER_API_KEY not set or disabled via GOATCOUNTER_DISABLED. Popular articles disabled.'

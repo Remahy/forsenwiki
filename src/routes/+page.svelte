@@ -93,9 +93,7 @@
 		<p class="m-0 text-center leading-10">
 			<strong>ForsenWiki</strong>
 			<span> - </span>
-			<span>
-				Forsen mixes, news, big plays, tilts. Everything that is somewhat related to forsen.
-			</span>
+			<span>Forsen lore, news, big plays, tilts. Forsen's past and the bajs' future. </span>
 		</p>
 	</SuggestionBox>
 
@@ -122,14 +120,15 @@
 
 			{#if $popularArticles.length}
 				<Box class="mt-4 grow p-4">
-					<div class="box-heading-wrapper mb-2">
+					<div class="box-heading-wrapper mb-2 flex items-center justify-between">
 						<h2 class="text-2xl">Popular articles</h2>
+						<Link href="https://stats.forsen.wiki/">STATS.FORSEN.WIKI</Link>
 					</div>
 					{#each $popularArticles as article}
 						<div class="p-2 pl-0">
 							<Link href={article.path}>
 								<span>
-									<strong>{article.title}</strong> - {article.max} hits
+									<strong>{article.title}</strong> - {article.count} hits
 								</span>
 							</Link>
 						</div>
