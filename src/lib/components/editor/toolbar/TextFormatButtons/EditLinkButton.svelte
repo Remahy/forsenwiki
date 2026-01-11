@@ -27,6 +27,8 @@
 
 	let hasLink = $state(false);
 
+	let isDisabled = $state(false);
+
 	let url = $state('');
 
 	let attrs = $state({});
@@ -96,7 +98,10 @@
 			const selection = getSelection();
 
 			if (!isRangeSelection(selection)) {
+				isDisabled = true;
 				return;
+			} else {
+				isDisabled = false;
 			}
 
 			/** @type {LexicalNode} */
@@ -163,7 +168,12 @@
 	});
 </script>
 
-<EditorButton title="Insert link ({ctrlKey}K)" on:click={link} isActive={hasLink}>
+<EditorButton
+	title="Insert link ({ctrlKey}K)"
+	on:click={link}
+	isActive={hasLink}
+	disabled={isDisabled}
+>
 	{#if hasLink}
 		<Link2Icon />
 		<SettingsIcon size="16" class="absolute top-0 right-0" />
