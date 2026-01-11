@@ -74,7 +74,7 @@ const parseResults = async (arr) => {
  * @param {GoatCounterHit[]} arr
  */
 const formattedHits = (arr) =>
-	arr.map(({ count, path, title }) => ({ count, path, title })).sort((a, b) => a.count - b.count);
+	arr.map(({ count, path, title }) => ({ count, path, title })).sort((a, b) => b.count - a.count);
 
 /**
  * @throws
