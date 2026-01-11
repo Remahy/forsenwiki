@@ -155,6 +155,15 @@ export const getURLAndTitle = (
 		if (isClipUrl) {
 			const clipSlug = url.pathname.split('/').pop();
 
+			const clipParam = url.searchParams.get('clip');
+			if (clipSlug === 'embed' && clipParam) {
+				const clipsTwitchURL = new URL('embed', 'https://clips.twitch.tv/');
+				clipsTwitchURL.searchParams.set('clip', clipParam);
+				clipsTwitchURL.searchParams.set('parent', parent);
+
+				return { url: clipsTwitchURL.toString(), title: 'Twitch clip' };
+			}
+
 			if (clipSlug) {
 				const clipsTwitchURL = new URL('embed', 'https://clips.twitch.tv/');
 				clipsTwitchURL.searchParams.set('clip', clipSlug);
