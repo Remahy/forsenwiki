@@ -2,6 +2,7 @@ import { error } from '@sveltejs/kit';
 import { readAuthorsForYPostByTitle } from '$lib/db/article/read';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { _getYPostHTML } from '../../api/article/read/[title]/+server';
+import { getShouldCacheBust } from '$lib/utils/cacheBust';
 
 /** @type {Map<string, number>} */
 const cacheBustRateLimit = new Map();
@@ -10,18 +11,13 @@ const cacheBustRateLimit = new Map();
  * @param {string} title
  * @param {URL} url
  */
-const getShouldCacheBust = (title, url) => {
+const getShouldCacheBustUsingURLParam = (title, url) => {
 	const { searchParams } = url;
 
 	let cacheBust = searchParams.has('cachebust');
 
 	if (cacheBust) {
-		const ratelimit = cacheBustRateLimit.get(title);
-		if (ratelimit && ratelimit > Date.now()) {
-			cacheBust = false;
-		} else {
-			cacheBustRateLimit.set(title, Date.now() + 123_960_000);
-		}
+		cacheBust = getShouldCacheBust(cacheBustRateLimit, title);
 	}
 
 	return cacheBust;
@@ -30,7 +26,7 @@ const getShouldCacheBust = (title, url) => {
 export async function load({ params, url, setHeaders }) {
 	const { sanitized: title } = sanitizeTitle(params.title);
 
-	const shouldCacheBust = getShouldCacheBust(title, url);
+	const shouldCacheBust = getShouldCacheBustUsingURLParam(title, url);
 
 	try {
 		const res = await _getYPostHTML(title, shouldCacheBust);
