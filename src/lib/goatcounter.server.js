@@ -1,6 +1,7 @@
 import { building } from '$app/environment';
 import { GOATCOUNTER_API_KEY, GOATCOUNTER_DISABLED } from '$env/static/private';
 import { _emit } from '../routes/api/adonis/frontpage/+server';
+import { sanitizeTitle } from './components/editor/utils/sanitizeTitle';
 import prisma from './prisma';
 
 const GOATCOUNTER_DOMAIN = 'http://goatcounter:8080';
@@ -41,7 +42,8 @@ const parseResults = async (arr) => {
 	const titles = arr
 		.filter(({ title }) => typeof title === 'undefined' || title.length === 0)
 		.map(({ path }) => path.split('/').pop())
-		.filter((v) => typeof v !== 'undefined');
+		.filter((v) => typeof v !== 'undefined')
+		.map((v) => sanitizeTitle(v).sanitized);
 
 	const foundTitles = await prisma.yPost.findMany({
 		where: { title: { in: titles } },
@@ -54,7 +56,9 @@ const parseResults = async (arr) => {
 		const { rawTitle, title } = foundTitles[index];
 		const path = `/w/${title}`;
 
-		const newArrIndex = newArr.findIndex(({ path: p }) => p === path);
+		const newArrIndex = newArr.findIndex(
+			({ path: p }) => `/w/${sanitizeTitle(p.split('/').pop() || '').sanitized}` === path
+		);
 
 		if (newArrIndex === -1) {
 			continue;
