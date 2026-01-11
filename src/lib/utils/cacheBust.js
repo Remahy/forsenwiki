@@ -1,6 +1,7 @@
 /**
  * @param {Map<string, number>} cache
  * @param {string} title
+ * @param {number} cacheTTL in milliseconds.
  */
 export const getShouldCacheBust = (cache, title, cacheTTL = 21_600_000) => {
 	let cacheBust = true;
