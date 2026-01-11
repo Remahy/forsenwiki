@@ -128,7 +128,7 @@
 						<div class="p-2 pl-0">
 							<Link href={article.path}>
 								<span>
-									<strong>{article.title}</strong> - {article.max} hits
+									<strong>{article.title}</strong> - {article.count} hits
 								</span>
 							</Link>
 						</div>

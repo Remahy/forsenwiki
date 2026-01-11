@@ -21,7 +21,7 @@ const queryStrings = new URLSearchParams({
  * @typedef {Object} GoatCounterHit
  * @property {string} path
  * @property {string} title
- * @property {number} max
+ * @property {number} count
  */
 
 // https://stackoverflow.com/a/14400861
@@ -73,7 +73,8 @@ const parseResults = async (arr) => {
 /**
  * @param {GoatCounterHit[]} arr
  */
-const formattedHits = (arr) => arr.map(({ max, path, title }) => ({ max, path, title }));
+const formattedHits = (arr) =>
+	arr.map(({ count, path, title }) => ({ count, path, title })).sort((a, b) => a.count - b.count);
 
 /**
  * @throws
@@ -104,6 +105,7 @@ const getData = () =>
 
 if (GOATCOUNTER_API_KEY && GOATCOUNTER_DOMAIN && !building && !GOATCOUNTER_DISABLED) {
 	getData();
+	console.log('Goatcounter "Popular Articles" enabled.');
 } else {
 	console.warn(
 		'Environment value GOATCOUNTER_API_KEY not set or disabled via GOATCOUNTER_DISABLED. Popular articles disabled.'
