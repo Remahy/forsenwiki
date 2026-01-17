@@ -5,7 +5,7 @@ import { ForbiddenError } from '$lib/errors/Forbidden';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { validateArticle } from '$lib/components/editor/validations';
 import { InvalidArticle } from '$lib/errors/InvalidArticle';
-import { getArticleURLIds } from '$lib/components/editor/utils/getEntities';
+import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { createArticle } from '$lib/db/article/create';
 import { readYPostByTitle } from '$lib/db/article/read';
@@ -16,6 +16,7 @@ import { articleConfig } from '$lib/components/editor/config/article';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 import toHTML from '$lib/worker/toHTML';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
+import { adjustInternalLinks } from '$lib/components/editor/validations/internalLinks.server';
 
 export async function POST({ request, locals }) {
 	if (locals.isBlocked) {
@@ -59,6 +60,7 @@ export async function POST({ request, locals }) {
 		// Modifies the editor.
 		await adjustAndUploadImages(editor, title.sanitized, { id: session.user.id });
 		await adjustVideoEmbedNodeSiblings(editor);
+		await adjustInternalLinks(editor);
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidArticle(err);
@@ -79,7 +81,7 @@ export async function POST({ request, locals }) {
 
 	const backendContent = uint8ArrayToBase64(backendUpdate);
 
-	const internalIds = await getArticleURLIds(editor);
+	const internalIds = getInternalIds(editor);
 
 	const body = { title, data: { content: backendContent }, ids: internalIds };
 	const metadata = { user: { name: session.user.name, id: session.user.id }, byteLength };

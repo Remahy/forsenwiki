@@ -11,13 +11,13 @@
 		$setSelection as setSelection,
 	} from 'lexical';
 	import { TOGGLE_LINK_COMMAND, $toggleLink as toggleLink } from '@lexical/link';
-	import { mergeRegister } from '@lexical/utils';
+	import { $getNearestNodeOfType as getNearestNodeOfType, mergeRegister } from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
 
 	import { ctrlKey } from '$lib/environment/environment';
 	import { getSelectedNode } from '$lib/components/editor/utils/getSelection';
 	import { modal } from '$lib/stores/modal';
-	import { $isALinkNode as isALinkNode } from '$lib/lexical/custom';
+	import { ALinkNode, $isALinkNode as isALinkNode } from '$lib/lexical/custom';
 	import EditorButton from '../EditorButton.svelte';
 	import EditLinkButtonModal from './EditLinkButtonModal.svelte';
 
@@ -35,11 +35,14 @@
 
 	let isInternal = $state(false);
 
+	/** @type {string | undefined} */
+	let internalId = $state();
+
 	let editor = $derived(getEditor?.());
 
 	const link = () => {
 		if (!hasLink) {
-			return editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://');
+			return editor.dispatchCommand(TOGGLE_LINK_COMMAND, '');
 		} else {
 			return editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
 		}
@@ -54,18 +57,18 @@
 			component: EditLinkButtonModal,
 			hasLink,
 			/**
-			 * @param {string | null} dUrl
+			 * @param {{ url: string, isInternal: boolean, internalId?: string }} arg0
 			 * @param {import('@lexical/link').LinkAttributes} [dAttrs]
 			 */
-			onSubmit: (dUrl, dAttrs) => {
+			onSubmit: ({ url, isInternal, internalId }, dAttrs) => {
 				editor.update(() => {
 					const selection = getSelection();
 
-					if (selection && dUrl && definedUrl === 'https://' && selection.isCollapsed()) {
+					if (selection && url && definedUrl === '' && selection.isCollapsed()) {
 						const [, anchor] = /** @type {[PointType, PointType]}*/ (selection.getStartEndPoints());
 						const anchorOffset = anchor.offset;
 
-						const text = dAttrs?.title || dUrl;
+						const text = dAttrs?.title || url;
 						selection.insertText(text);
 
 						// Modify selection to only wrap the new text.
@@ -80,7 +83,15 @@
 						setSelection(newSelection);
 					}
 
-					toggleLink(dUrl, dAttrs);
+					toggleLink(url, dAttrs);
+
+					if (isRangeSelection(selection)) {
+						const anchorNode = selection.anchor.getNode();
+						const link = getNearestNodeOfType(anchorNode, ALinkNode);
+
+						link?.setIsInternal(isInternal);
+						link?.setInternalId(internalId);
+					}
 				});
 			},
 			deleteLink: () => {
@@ -89,6 +100,7 @@
 			url: definedUrl || url,
 			attrs: definedAttrs || attrs,
 			isInternal,
+			internalId,
 			isOpen: true,
 		});
 	};
@@ -113,16 +125,19 @@
 				url = node.__url;
 				attrs = { ...node };
 				isInternal = node.__isInternal;
+				internalId = node.__internalId;
 			} else if (isALinkNode(parent)) {
 				hasLink = true;
 				url = parent.__url;
 				attrs = { ...parent };
 				isInternal = parent.__isInternal;
+				internalId = parent.__internalId;
 			} else {
 				hasLink = false;
 				url = '';
 				attrs = {};
 				isInternal = false;
+				internalId = undefined;
 			}
 		});
 	};

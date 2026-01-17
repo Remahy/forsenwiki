@@ -3,7 +3,7 @@ import { $nodesOfType } from 'lexical';
 import { ParagraphNode } from '$lib/lexical/index';
 import { ALinkNode } from '$lib/lexical/custom';
 
-import { getOnlyInternalLinks } from '../utils/getEntities';
+import { getOnlyInternalLinks } from '../utils/getInternalIds';
 
 /**
  * @param {LexicalEditor} editor

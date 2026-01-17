@@ -12,7 +12,7 @@ import { ForbiddenError } from '$lib/errors/Forbidden';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { validateArticle } from '$lib/components/editor/validations';
 import { InvalidArticle } from '$lib/errors/InvalidArticle';
-import { getArticleURLIds } from '$lib/components/editor/utils/getEntities';
+import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { readSystemYPostRelations } from '$lib/db/article/read';
 import { updateArticleYPost } from '$lib/db/article/update';
 import { adjustAndUploadImages } from '$lib/components/editor/validations/images.server';
@@ -23,6 +23,7 @@ import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations
 import toHTML from '$lib/worker/toHTML';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
+import { adjustInternalLinks } from '$lib/components/editor/validations/internalLinks.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import { _emit } from '../../../adonis/frontpage/+server';
 
@@ -83,6 +84,7 @@ export async function POST({ request, locals, params }) {
 		// Modifies the editor.
 		await adjustAndUploadImages(editor, post.title, { id: session.user.id });
 		await adjustVideoEmbedNodeSiblings(editor);
+		await adjustInternalLinks(editor);
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidArticle(err);
@@ -114,7 +116,7 @@ export async function POST({ request, locals, params }) {
 		toPostId: sysRelation.toPostId,
 	}));
 
-	const internalIds = await getArticleURLIds(editor);
+	const internalIds = getInternalIds(editor);
 	const outRelations = internalIds.map((mentionPostId) => ({
 		isSystem: false,
 		toPostId: mentionPostId,

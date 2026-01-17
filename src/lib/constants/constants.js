@@ -7,3 +7,5 @@ export const SYSTEM = 'system';
 
 export const EDITOR_IS_EDITABLE = true;
 export const EDITOR_IS_READONLY = false;
+
+export const WIKI_PATH = '/w/';

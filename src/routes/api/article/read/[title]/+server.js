@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import { readYPostByTitle, readYPostUpdatesByTitle } from '$lib/db/article/read';
+import { readYPostsByIds, readYPostByTitle, readYPostUpdatesByTitle } from '$lib/db/article/read';
 import { yPostUpdatesV2ToBase64 } from '$lib/yjs/utils';
 import { upsertHTML } from '$lib/db/article/html';
 import { updateToHTML } from '$lib/lexical/updateToHTML';
@@ -85,6 +85,13 @@ export const _getYPostUpdate = async (title) => {
 		post: yPost,
 		update,
 	};
+};
+
+/**
+ * @param {string[]} ids
+ */
+export const _getYPostsByIds = (ids) => {
+	return readYPostsByIds(ids);
 };
 
 export async function GET({ params }) {
