@@ -61,7 +61,7 @@ const uploadImage = async (base64String, title, sha256String, author) => {
 export const adjustAndUploadImages = (editor, title, author) => {
 	return new Promise((resolve, reject) => {
 		editor.update(
-			async () => {
+			() => {
 				const images = nodesOfType(ImageNode);
 				if (!images.length) {
 					return resolve(null);

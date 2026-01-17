@@ -147,7 +147,7 @@
 	</Box>
 
 	<label>
-		<strong>Title <small>(Must be unique)</small></strong>
+		<strong>Title <small>(Must be unique, keep it short.)</small></strong>
 		<input
 			oninput={unsetError}
 			required

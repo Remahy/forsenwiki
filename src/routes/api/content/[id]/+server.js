@@ -29,6 +29,7 @@ export async function POST({ request, locals, params }) {
 
 export async function DELETE({ locals, params }) {
 	const session = await locals.auth();
+
 	if (!session?.user?.id || !session?.user?.name) {
 		return ForbiddenError();
 	}
