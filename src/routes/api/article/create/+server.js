@@ -36,7 +36,7 @@ export async function POST({ request, locals }) {
 	try {
 		title = sanitizeTitle(rawTitle);
 
-		if (!title) {
+		if (!title.sanitized) {
 			// This throws.
 			return error(400, 'No title provided');
 		}
