@@ -1,5 +1,5 @@
 import { error, json } from '@sveltejs/kit';
-import { readAuthorsForYPostByTitle, readYPostByTitle } from '$lib/db/article/read';
+import { readRelationsToYPostTitle, readYPostByTitle } from '$lib/db/article/read';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 
 export async function GET({ params }) {
@@ -11,7 +11,7 @@ export async function GET({ params }) {
 		return error(404);
 	}
 
-	const res = await readAuthorsForYPostByTitle(title);
+	const relatedPosts = await readRelationsToYPostTitle(title);
 
-	return json(res);
+	return json(relatedPosts);
 }

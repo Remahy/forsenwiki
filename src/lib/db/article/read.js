@@ -176,3 +176,24 @@ export async function readYPostsByIds(ids) {
 	});
 }
 
+/** @param {string} title */
+export async function readRelationsToYPostTitle(title) {
+	return prisma.yPost.findMany({
+		where: {
+			outRelations: {
+				some: {
+					toPost: {
+						title,
+					},
+				},
+			},
+		},
+		select: {
+			title: true,
+			rawTitle: true,
+		},
+		orderBy: {
+			lastUpdated: 'asc',
+		},
+	});
+}
