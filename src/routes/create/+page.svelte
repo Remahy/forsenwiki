@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 
+	import { localStore } from '$lib/localStore.svelte';
 	import { resetIndexedDb } from '$lib/yjs/resetIndexedDb';
 	import { createArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
@@ -15,8 +16,7 @@
 	import Editor from '$lib/components/editor/editor.svelte';
 	import Container from '$lib/components/Container.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
-	import ResetCacheButton from '$lib/components/editor/footer/ResetCacheButton.svelte';
-	import { localStore } from '$lib/localStore.svelte';
+	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 
 	const { initialUpdate } = $page.data;
 
@@ -188,12 +188,16 @@
 		</Button>
 	</Box>
 
-	<ResetCacheButton
-		disabled={!canEdit || isUploading || !!error}
-		isLoading={isUploading}
-		onClickReset={reset}
-	>
-		<span>Reset this draft cache</span>
-		<div><small>(Will only delete this new draft)</small></div>
-	</ResetCacheButton>
+	<div>
+		<ResetCacheLink
+			disabled={!canEdit || isUploading || !!error}
+			isLoading={isUploading}
+			onClickReset={reset}
+		>
+			<div>
+				<p>Reset this draft cache</p>
+				<p>(Will only delete this new draft)</p>
+			</div>
+		</ResetCacheLink>
+	</div>
 </Container>
