@@ -16,7 +16,7 @@
 	import Container from '$lib/components/Container.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
 	import LinkButton from '$lib/components/LinkButton.svelte';
-	import ResetCacheButton from '$lib/components/editor/footer/ResetCacheButton.svelte';
+	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 
 	const {
 		post: { id, title, rawTitle },
@@ -202,11 +202,13 @@
 		</Button>
 	</Box>
 
-	<ResetCacheButton
-		disabled={!canEdit || isUploading || !!error}
-		isLoading={isUploading}
-		onClickReset={reset}
-	>
-		<span>Reset &quot;{title}&quot; draft cache</span>
-	</ResetCacheButton>
+	<div>
+		<ResetCacheLink
+			disabled={!canEdit || isUploading || !!error}
+			isLoading={isUploading}
+			onClickReset={reset}
+		>
+			<span>Reset &quot;{title}&quot; draft cache</span>
+		</ResetCacheLink>
+	</div>
 </Container>
