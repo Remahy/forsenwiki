@@ -5,7 +5,7 @@ import sanitize from 'sanitize-filename';
 export const sanitizeTitle = (title) => {
 	const raw = title;
 
-	const spaceReplacedTitle = raw.replace(/\s/g, '_');
+	const spaceReplacedTitle = raw.replace(/\s/g, '_').replace(/'/g, '').trim();
 
 	const fileNameSanitizedTitle = sanitize(spaceReplacedTitle);
 
