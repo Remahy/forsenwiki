@@ -9,7 +9,6 @@ import prisma from '$lib/prisma';
 /**
  * @param {string} query
  * @param {string[]} types
- *
  * @returns {Promise<{ results: QueryResult[] }>}
  */
 export const _getSearch = async (query, types = []) => {
