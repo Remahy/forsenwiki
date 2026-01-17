@@ -6,7 +6,7 @@ import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 export async function GET({ params }) {
 	const { sanitized: title } = sanitizeTitle(params.title);
 
-	let res = await readYPostUpdatesIdsByTitle(title);
+	const res = await readYPostUpdatesIdsByTitle(title);
 
 	if (!res) {
 		throw 404;
