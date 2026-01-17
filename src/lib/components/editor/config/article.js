@@ -75,7 +75,8 @@ export const articleNodes = [
 			return $createALinkNode(
 				node.__url,
 				{ rel: node.__rel, target: node.__target, title: node.__title },
-				false
+				false,
+				undefined
 			);
 		},
 		withKlass: ALinkNode,

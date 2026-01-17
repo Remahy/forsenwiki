@@ -13,12 +13,14 @@
 	import ToC from '$lib/components/ToC.svelte';
 	import RandomButton from '$lib/components/RandomButton.svelte';
 	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
+	import Link from '$lib/components/Link.svelte';
 
 	let { data } = $props();
 
 	const {
 		post: { rawTitle, title, createdTimestamp, lastUpdated, outRelations, id },
 		authors,
+		relatedPosts,
 		html,
 		text,
 		image,
@@ -163,6 +165,21 @@
 				</p>
 			{/if}
 		</footer>
+
+		{#if relatedPosts.length}
+			<div class="article-footer-color p-4">
+				<p>
+					<span><strong>Article{relatedPosts.length > 1 ? 's' : ''} linking here:</strong></span>
+					<span>
+						{#each relatedPosts as post, index}
+							<Link href={post.title} reload>{post.rawTitle}</Link>{index < authors.length - 1
+								? ', '
+								: ''}
+						{/each}
+					</span>
+				</p>
+			</div>
+		{/if}
 	</article>
 
 	<footer class="article-footer-color p-4">

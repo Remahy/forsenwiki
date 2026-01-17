@@ -23,7 +23,7 @@ model User {
 
   postUpdatesMetadata YPostUpdateMetadata[]
 
-  content Content[]
+  content     Content[]
   permissions Permission[]
 }
 
@@ -85,8 +85,8 @@ model Authenticator {
 
 model YPost {
   rawTitle String @default("")
-  title String @unique
-  id    String @id @default(cuid())
+  title    String @unique
+  id       String @id @default(cuid())
 
   inRelations  YPostRelation[] @relation("toPost") /// Used for relations to (Manual - By script).
   outRelations YPostRelation[] @relation("fromPost") /// Used for relations from (Has been applied to).
@@ -164,7 +164,7 @@ enum Permissions {
 model Permission {
   id String @id @default(cuid())
 
-  user User @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
   userId String
 
   type Permissions
@@ -173,10 +173,10 @@ model Permission {
 model Html {
   id String @id @default(cuid())
 
-  post YPost @relation(fields: [postId], references: [id])
+  post   YPost  @relation(fields: [postId], references: [id])
   postId String @unique
 
   content String
-  text String?
-  image String?
+  text    String?
+  image   String?
 }

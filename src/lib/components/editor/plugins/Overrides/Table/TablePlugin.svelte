@@ -63,7 +63,6 @@
 		/**
 		 * @param {TableNode} tableNode
 		 * @param {NodeKey} nodeKey
-		 *
 		 * @param {HTMLElement} dom
 		 */
 		const initializeTableNode = (tableNode, nodeKey, dom) => {

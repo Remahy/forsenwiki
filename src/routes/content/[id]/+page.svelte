@@ -28,6 +28,11 @@
 		let res;
 
 		try {
+			if (!id) {
+				error = new Error('Error: ID is unknown.');
+				throw error;
+			}
+
 			if (!name || !name.length || name === result.name) {
 				error = new Error('Error: Name is unchanged or not set!');
 				throw error;
@@ -57,6 +62,11 @@
 
 		let res;
 		try {
+			if (!id) {
+				error = new Error('Error: ID is unknown.');
+				throw error;
+			}
+
 			res = await deleteContent(id);
 		} catch (err) {
 			error = new Error(err?.toString());

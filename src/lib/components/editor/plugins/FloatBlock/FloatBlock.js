@@ -83,7 +83,6 @@ export class FloatBlockNode extends ElementNode {
 	}
 
 	/**
-	 *
 	 * @returns {SerializedFloatBlockNode}
 	 */
 	exportJSON() {

@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { readAuthorsForYPostByTitle } from '$lib/db/article/read';
+import { readAuthorsForYPostByTitle, readRelationsToYPostTitle } from '$lib/db/article/read';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { _getYPostHTML } from '../../api/article/read/[title]/+server';
 import { getShouldCacheBust } from '$lib/utils/cacheBust';
@@ -33,12 +33,14 @@ export async function load({ params, url, setHeaders }) {
 
 		const authors = await readAuthorsForYPostByTitle(title);
 
+		const relatedPosts = await readRelationsToYPostTitle(title);
+
 		setHeaders({
 			Title: encodeURIComponent(res.post.rawTitle),
 		});
 
 		if (res) {
-			return { ...res, authors };
+			return { ...res, authors, relatedPosts };
 		}
 
 		return error(404, 'Not found');

@@ -122,7 +122,7 @@
 				<Box class="mt-4 grow p-4">
 					<div class="box-heading-wrapper mb-2 flex items-center justify-between">
 						<h2 class="text-2xl">Popular articles</h2>
-						<Link href="https://stats.forsen.wiki/">STATS.FORSEN.WIKI</Link>
+						<Link href="https://stats.forsen.wiki/" target="_blank">STATS.FORSEN.WIKI</Link>
 					</div>
 					{#each $popularArticles as article}
 						<div class="p-2 pl-0">

@@ -13,17 +13,21 @@ import { LinkNode } from '$lib/lexical/index';
 
 export class ALinkNode extends LinkNode {
 	__isInternal = false;
+	/** @type {string | undefined} */
+	__internalId;
 
 	/**
 	 * @param {string} [url]
 	 * @param {LinkAttributes} [attrs]
 	 * @param {boolean} [internal]
+	 * @param {string} [internalId]
 	 * @param {string} [key]
 	 */
-	constructor(url, attrs, internal = false, key) {
+	constructor(url, attrs, internal = false, internalId, key) {
 		super(url, { ...attrs, target: internal ? attrs?.target : '_blank' }, key);
 
 		this.__isInternal = internal;
+		this.__internalId = internalId;
 	}
 
 	$config() {
@@ -42,6 +46,7 @@ export class ALinkNode extends LinkNode {
 			node.__url,
 			{ rel: node.__rel, target: node.__target, title: node.__title },
 			node.__isInternal,
+			node.__internalId,
 			node.__key
 		);
 	}
@@ -55,10 +60,15 @@ export class ALinkNode extends LinkNode {
 
 	// Getters
 
-	/** @returns {boolean} */
 	getIsInternal() {
 		const self = this.getLatest();
 		const value = self.__isInternal;
+		return value;
+	}
+
+	getInternalId() {
+		const self = this.getLatest();
+		const value = self.__internalId;
 		return value;
 	}
 
@@ -73,10 +83,20 @@ export class ALinkNode extends LinkNode {
 		return this;
 	}
 
+	/** @param {string} [internalId] */
+	setInternalId(internalId) {
+		const self = this.getWritable();
+
+		self.__internalId = internalId;
+
+		return this;
+	}
+
 	exportJSON() {
 		return {
 			...super.exportJSON(),
 			__isInternal: this.__isInternal,
+			__internalId: this.__internalId,
 			type: ALinkNode.getType(),
 		};
 	}
@@ -86,10 +106,11 @@ export class ALinkNode extends LinkNode {
  * @param {string} [url]
  * @param {LinkAttributes} [attrs]
  * @param {boolean} [internal]
+ * @param {string} [internalId]
  * @param {string} [key]
  */
-export function $createALinkNode(url, attrs, internal, key) {
-	return $applyNodeReplacement(new ALinkNode(url, attrs, internal, key));
+export function $createALinkNode(url, attrs, internal, internalId, key) {
+	return $applyNodeReplacement(new ALinkNode(url, attrs, internal, internalId, key));
 }
 
 /**

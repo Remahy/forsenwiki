@@ -40,7 +40,7 @@ html.forsen-wiki-theme {
 	}
 
 	.button {
-		@apply rounded-sm bg-violet-600 px-4 py-2 font-medium text-white hover:bg-violet-800 disabled:opacity-25;
+		@apply rounded-sm bg-violet-600 px-4 py-2 font-medium text-white hover:bg-violet-800 disabled:opacity-25 disabled:hover:cursor-not-allowed;
 
 		&.active {
 			@apply forsen-wiki-theme-border border !bg-violet-700;
@@ -64,7 +64,7 @@ html.forsen-wiki-theme {
 	}
 
 	.select {
-		@apply forsen-wiki-theme-border h-full rounded-sm bg-transparent p-1 pr-10 text-sm dark:*:bg-black;
+		@apply forsen-wiki-theme-border h-full rounded-sm bg-transparent p-1 pr-10 text-sm disabled:opacity-25 disabled:hover:cursor-not-allowed dark:*:bg-black;
 	}
 
 	.editor-border {

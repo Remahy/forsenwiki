@@ -133,30 +133,6 @@ export async function readYPostByTitle(title) {
 	});
 }
 
-/**
- * @type {Prisma.Prisma.YPostRelationInclude}
- */
-const includeToPostYPostUpdate = {
-	toPost: {
-		select: {
-			rawTitle: true,
-			title: true,
-			postUpdates: {
-				select: {
-					metadata: {
-						select: {
-							userId: true,
-						},
-					},
-				},
-				orderBy: {
-					createdTimestamp: 'asc',
-				},
-			},
-		},
-	},
-};
-
 /** @param {string} postId */
 export async function readSystemYPostRelations(postId) {
 	return prisma.yPostRelation.findMany({
@@ -164,7 +140,6 @@ export async function readSystemYPostRelations(postId) {
 			isSystem: true,
 			fromPostId: postId,
 		},
-		include: includeToPostYPostUpdate,
 	});
 }
 
@@ -184,6 +159,41 @@ export async function readAuthorsForYPostByTitle(title) {
 		},
 		select: {
 			name: true,
+		},
+	});
+}
+
+/**
+ * @param {string[]} ids
+ */
+export async function readYPostsByIds(ids) {
+	return prisma.yPost.findMany({
+		where: {
+			id: {
+				in: ids,
+			},
+		},
+	});
+}
+
+/** @param {string} title */
+export async function readRelationsToYPostTitle(title) {
+	return prisma.yPost.findMany({
+		where: {
+			outRelations: {
+				some: {
+					toPost: {
+						title,
+					},
+				},
+			},
+		},
+		select: {
+			title: true,
+			rawTitle: true,
+		},
+		orderBy: {
+			lastUpdated: 'asc',
 		},
 	});
 }
