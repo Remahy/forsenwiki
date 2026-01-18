@@ -20,12 +20,12 @@
 		diffHTML: { html: diffHTML },
 		diffJSON,
 		editorJSON,
-	} = data;
+	} = $derived(data);
 
-	const tD = toDate.toLocaleString();
-	const fD = fromDate.toLocaleString();
+	const tD = $derived(toDate.toLocaleString());
+	const fD = $derived(fromDate.toLocaleString());
 
-	const displayTitle = `Comparing "${tD}" vs "${fD}"`;
+	const displayTitle = $derived(`Comparing "${tD}" vs "${fD}"`);
 </script>
 
 <svelte:head>

@@ -52,22 +52,27 @@
 		html,
 		text,
 		image,
-	} = data;
+	} = $derived(data);
 
-	const isSystem =
+	const isSystem = $derived(
 		outRelations.find(({ isSystem, toPostId }) => isSystem && toPostId === 'system') ||
-		id === 'system';
+			id === 'system'
+	);
 
-	const authorsScriptContent = JSON.stringify({
-		'@context': 'https://schema.org',
-		author: authors
-			.filter((author) => author.name !== null)
-			.map((author) => ({
-				'@type': 'Person',
-				name: author.name!.replace(/[^\w]/g, ''),
-			})),
-	});
-	const authorsHTML = `<script type="application/ld+json">${authorsScriptContent}<\/script>`;
+	const authorsScriptContent = $derived(
+		JSON.stringify({
+			'@context': 'https://schema.org',
+			author: authors
+				.filter((author) => author.name !== null)
+				.map((author) => ({
+					'@type': 'Person',
+					name: author.name!.replace(/[^\w]/g, ''),
+				})),
+		})
+	);
+	const authorsHTML = $derived(
+		`<script type="application/ld+json">${authorsScriptContent}<\/script>`
+	);
 
 	// @ts-ignore
 	BigInt.prototype.toJSON = function () {
