@@ -3,7 +3,7 @@ import sanitize from 'sanitize-filename';
 
 /** @param {string} title */
 export const sanitizeTitle = (title) => {
-	const raw = title;
+	const raw = title.replace(/\s{2,}/, ' ').trim();
 
 	const spaceReplacedTitle = raw.replace(/\s/g, '_').replace(/'/g, '').trim();
 
