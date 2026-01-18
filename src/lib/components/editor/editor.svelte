@@ -39,7 +39,7 @@
 	/** @type {Composer | null} */
 	let composer = $state(null);
 
-	const providerFactory = instantiateProvider(update, initialUpdate);
+	const providerFactory = $derived.by(() => instantiateProvider(update, initialUpdate));
 
 	$effect(() => {
 		getContext('COMPOSER').set(composer);

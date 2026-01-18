@@ -56,7 +56,7 @@
 	let selection = $state(null);
 	/** @type {HTMLElement | HTMLImageElement | null} */
 	let imageRef = $state(null);
-	let isSelected = createNodeSelectionStore(editor, nodeKey);
+	let isSelected = $derived(createNodeSelectionStore(editor, nodeKey));
 	let isResizing = $state(false);
 
 	let isFocused = $derived($isSelected || isResizing);

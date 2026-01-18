@@ -63,12 +63,14 @@
 		startY: 0,
 	};
 
-	const editorRootElement = editor.getRootElement();
+	const editorRootElement = $derived(editor.getRootElement());
 	// Find max width, accounting for editor padding.
-	const maxWidthContainer =
-		editorRootElement !== null ? editorRootElement.getBoundingClientRect().width - 20 : minWidth;
-	const maxHeightContainer =
-		editorRootElement !== null ? editorRootElement.getBoundingClientRect().height - 20 : minHeight;
+	const maxWidthContainer = $derived(
+		editorRootElement !== null ? editorRootElement.getBoundingClientRect().width : minWidth
+	);
+	const maxHeightContainer = $derived(
+		editorRootElement !== null ? editorRootElement.getBoundingClientRect().height : minHeight
+	);
 
 	/** @param {number} direction */
 	const setStartCursor = (direction) => {

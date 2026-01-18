@@ -9,7 +9,7 @@
 	/** @type {Props} */
 	let { size = '24' } = $props();
 
-	const height = Number(size) / aspectRatio;
+	const height = $derived(Number(size) / aspectRatio);
 </script>
 
 <svg

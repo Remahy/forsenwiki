@@ -10,7 +10,7 @@
 
 	let { data } = $props();
 
-	const { title, rawTitle, postUpdates, totalByteLength } = data;
+	const { title, rawTitle, postUpdates, totalByteLength } = $derived(data);
 
 	let to = $state(1);
 	let from = $state(0);

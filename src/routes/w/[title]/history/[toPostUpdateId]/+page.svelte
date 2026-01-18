@@ -20,13 +20,13 @@
 		toPostUpdateId,
 		recentPostUpdateId,
 		html: { html },
-	} = data;
+	} = $derived(data);
 
-	const date = new Date(createdTimestamp);
+	const date = $derived(new Date(createdTimestamp));
 
-	const displayTitle = `"${date.toLocaleString()}" version for "${rawTitle}" article`;
+	const displayTitle =  $derived(`"${date.toLocaleString()}" version for "${rawTitle}" article`);
 
-	const authorName = author?.name || '?';
+	const authorName =  $derived(author?.name || '?');
 </script>
 
 <svelte:head>

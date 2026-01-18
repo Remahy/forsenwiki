@@ -56,7 +56,7 @@
 	let embedRef = $state(null);
 	/** @type {HTMLDivElement | null} */
 	let nodeRef = $state(null);
-	let isSelected = createNodeSelectionStore(editor, nodeKey);
+	let isSelected = $derived(createNodeSelectionStore(editor, nodeKey));
 	let isResizing = $state(false);
 
 	let isFocused = $derived($isSelected || isResizing);
