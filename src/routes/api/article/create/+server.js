@@ -87,7 +87,6 @@ export async function POST({ request, locals }) {
 	const metadata = {
 		user: { name: session.user.name, id: session.user.id },
 		byteLength,
-		newTitle: title.raw,
 	};
 
 	const createdArticle = await createArticle(body, metadata);
