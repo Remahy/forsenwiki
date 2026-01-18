@@ -3,12 +3,12 @@ import prisma from '$lib/prisma';
 
 /**
  * @param {{ title: { raw: string, sanitized: string }, data: { content: string }, ids: string[] }} arg1
- * @param {{ user: { name: string, id: string }, byteLength: number }} metadata
+ * @param {{ user: { name: string, id: string }, byteLength: number, newTitle: string }} metadata
  */
 export const createArticle = async ({ title, data, ids }, metadata) => {
 	const outRelations = ids.map((id) => ({ isSystem: false, toPostId: id }));
 
-	const { user, byteLength } = metadata;
+	const { user, byteLength, newTitle } = metadata;
 
 	const { post, postUpdate } = await prisma.$transaction(async (tx) => {
 		// Create yPost
@@ -60,6 +60,7 @@ export const createArticle = async ({ title, data, ids }, metadata) => {
 							},
 						},
 						byteLength,
+						newTitle,
 					},
 				},
 			},

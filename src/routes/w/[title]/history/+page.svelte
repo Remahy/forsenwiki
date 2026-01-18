@@ -98,6 +98,15 @@
 									<span class="opacity-50">({postUpdate.metadata.byteLength})</span>
 								{/if}
 
+								{#if postUpdate.metadata.newTitle}
+									<small>
+										<i>
+											(<span class="underline">Title change:</span>
+											"<span>{postUpdate.metadata.newTitle}</span>")
+										</i>
+									</small>
+								{/if}
+
 								{#if index === 0}
 									(current)
 								{/if}

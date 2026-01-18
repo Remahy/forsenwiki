@@ -54,6 +54,7 @@ export async function readYPostUpdatesWithIdByTitle(title) {
 					metadata: {
 						select: {
 							byteLength: true,
+							newTitle: true,
 						},
 					},
 				},
@@ -86,6 +87,7 @@ export async function readYPostUpdatesIdsByTitle(title) {
 								},
 							},
 							byteLength: true,
+							newTitle: true,
 						},
 					},
 				},

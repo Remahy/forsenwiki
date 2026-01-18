@@ -17,11 +17,12 @@ export const createArticle = async (title, yDoc) => {
 /**
  * @param {string} postTitle
  * @param {YDoc} yDoc
+ * @param {string} newTitle
  */
-export const updateArticle = async (postTitle, yDoc) => {
+export const updateArticle = async (postTitle, yDoc, newTitle) => {
 	const encodedContent = encodeYDocToUpdateV2ToBase64(yDoc);
 
-	const body = JSON.stringify({ content: encodedContent });
+	const body = JSON.stringify({ content: encodedContent, newTitle });
 
 	return fetch(`/api/article/update/${postTitle}`, { method: 'POST', body, headers });
 };
