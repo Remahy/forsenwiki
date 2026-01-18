@@ -17,6 +17,8 @@
 	import { validateArticle } from '$lib/components/editor/validations';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
+	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
+	import { WIKI_PATH } from '$lib/constants/constants';
 
 	const {
 		post: { id, title, rawTitle },
@@ -46,6 +48,26 @@
 
 	let isUploading = $state(false);
 
+	let newTitle = $state(rawTitle);
+
+	let titleError = $derived.by(() => {
+		const rawTitle = newTitle;
+		if (rawTitle.length === 0) {
+			return new Error('No title set!');
+		}
+
+		const { sanitized } = sanitizeTitle(rawTitle);
+		if (sanitized.length === 0) {
+			return new Error('Illegal title.');
+		}
+
+		return null;
+	});
+
+	const unsetError = () => {
+		error = null;
+	};
+
 	const submit = async () => {
 		if (!yjsDocMap) {
 			return;
@@ -69,7 +91,7 @@
 			try {
 				validateArticle(editor);
 
-				res = await updateArticle(title, yjsDocMap);
+				res = await updateArticle(title, yjsDocMap, newTitle);
 			} catch {
 				// noop
 			} finally {
@@ -84,9 +106,17 @@
 				persistence.clearData();
 
 				const json = await res.json();
-				const { title /* postUpdate: { id } */ } = json;
+				const { title /* postUpdate: { id } */, partialErrors } = json;
 
-				goto(`/w/${title}`);
+				const searchParams = new URLSearchParams();
+
+				if (partialErrors?.length) {
+					searchParams.set('partialErrors', JSON.stringify(partialErrors));
+				}
+
+				const stringSearchParams = searchParams.toString() ? `?${searchParams.toString()}` : '';
+
+				goto(`/w/${title}${stringSearchParams}`);
 			} else if (res.status >= 400) {
 				const json = await res.json();
 				error = json;
@@ -158,6 +188,34 @@
 			</LinkButton>
 		</div>
 	</Box>
+
+	{#if $page.data.isModerator}
+		<Box class="p-4">
+			<div class="mb-5 border-b border-black/25 dark:border-white/25">
+				<strong>Moderation tools</strong>
+			</div>
+
+			<div>
+				<label>
+					<strong>Title <small>(Must be unique, keep it short.)</small></strong>
+					<input
+						oninput={unsetError}
+						required
+						class="w-full rounded-sm p-2 {titleError && '!bg-red-200'} input-color"
+						bind:value={newTitle}
+					/>
+					{#if titleError}
+						<strong class="text-red-600 dark:text-red-500">{titleError.message}</strong>
+					{:else}
+						<small
+							><strong>URL:</strong>
+							<span>{WIKI_PATH}{sanitizeTitle(newTitle).sanitized}</span></small
+						>
+					{/if}
+				</label>
+			</div>
+		</Box>
+	{/if}
 
 	{#if browser}
 		<div class="flex min-h-96">

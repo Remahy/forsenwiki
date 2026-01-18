@@ -36,7 +36,7 @@ export async function POST({ request, locals }) {
 	try {
 		title = sanitizeTitle(rawTitle);
 
-		if (!title) {
+		if (!title.sanitized) {
 			// This throws.
 			return error(400, 'No title provided');
 		}
@@ -84,7 +84,10 @@ export async function POST({ request, locals }) {
 	const internalIds = getInternalIds(editor);
 
 	const body = { title, data: { content: backendContent }, ids: internalIds };
-	const metadata = { user: { name: session.user.name, id: session.user.id }, byteLength };
+	const metadata = {
+		user: { name: session.user.name, id: session.user.id },
+		byteLength,
+	};
 
 	const createdArticle = await createArticle(body, metadata);
 

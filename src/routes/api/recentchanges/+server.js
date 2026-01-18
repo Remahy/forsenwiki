@@ -20,6 +20,7 @@ export const _getRecentChanges = async ({ authors, cursor, limit }) => {
 			metadata: {
 				select: {
 					byteLength: true,
+					newTitle: true,
 					user: {
 						select: {
 							name: true,
@@ -58,6 +59,7 @@ export const _getRecentChanges = async ({ authors, cursor, limit }) => {
 		// Not a typo, technically an update's "createdTimestamp" *is* a yPost's lastUpdated.
 		lastUpdated: update.createdTimestamp.toString(),
 		byteLength: update.metadata.byteLength,
+		newTitle: update.metadata.newTitle,
 	}));
 
 	return recentChanges;

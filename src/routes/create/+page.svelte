@@ -17,6 +17,8 @@
 	import Container from '$lib/components/Container.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
+	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
+	import { WIKI_PATH } from '$lib/constants/constants';
 
 	const { initialUpdate } = $page.data;
 
@@ -32,7 +34,19 @@
 	let editor = $derived(composer?.getEditor?.());
 	let canEdit = $derived(editor?.isEditable());
 
-	let titleError = $derived(title.value.length === 0 ? new Error('No title set!') : null);
+	let titleError = $derived.by(() => {
+		const rawTitle = title.value;
+		if (rawTitle.length === 0) {
+			return new Error('No title set!');
+		}
+
+		const { sanitized } = sanitizeTitle(rawTitle);
+		if (sanitized.length === 0) {
+			return new Error('Illegal title.');
+		}
+
+		return null;
+	});
 
 	const y = getContext('YDOC');
 	let yjsDocMap = $derived($y);
@@ -156,6 +170,10 @@
 		/>
 		{#if titleError}
 			<strong class="text-red-600 dark:text-red-500">{titleError.message}</strong>
+		{:else}
+			<small
+				><strong>URL:</strong> <span>{WIKI_PATH}{sanitizeTitle(title.value).sanitized}</span></small
+			>
 		{/if}
 	</label>
 

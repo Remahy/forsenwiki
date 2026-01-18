@@ -2,7 +2,7 @@ import { Y_POST_TYPES } from '$lib/constants/constants';
 import prisma from '$lib/prisma';
 
 /**
- * @param {{ title: {raw: string, sanitized: string}, data: { content: string }, ids: string[] }} arg1
+ * @param {{ title: { raw: string, sanitized: string }, data: { content: string }, ids: string[] }} arg1
  * @param {{ user: { name: string, id: string }, byteLength: number }} metadata
  */
 export const createArticle = async ({ title, data, ids }, metadata) => {
@@ -60,6 +60,7 @@ export const createArticle = async ({ title, data, ids }, metadata) => {
 							},
 						},
 						byteLength,
+						newTitle: post.rawTitle,
 					},
 				},
 			},

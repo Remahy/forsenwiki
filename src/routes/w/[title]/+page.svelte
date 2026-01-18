@@ -15,6 +15,34 @@
 	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
 	import Link from '$lib/components/Link.svelte';
 
+	const submitErrors = $derived.by(() => {
+		try {
+			const rawErrors: Array<{ code: string; field: string; value?: string }> | null = JSON.parse(
+				$page.url.searchParams.get('partialErrors') || ''
+			);
+			if (!rawErrors || !(rawErrors instanceof Array)) {
+				return [];
+			}
+
+			// We don't want to display messages verbatim from the URL to make sure users don't modify it.
+			const ERROR_CONSTANT: { [key: string]: string } = {
+				'EMPTY-newTitle': 'New title submission is empty. Given value: %',
+				'ILLEGAL-newTitle': 'New title submission failed sanitization. Given value: %',
+				'EXISTS-newTitle':
+					'New title submission failed because an article with this title already exists. Given value: %',
+				default: 'Something went wrong updating the article.',
+			};
+
+			return rawErrors.map(
+				({ code, field, value }) =>
+					ERROR_CONSTANT[`${code}-${field}`].replace('%', value || '') || ERROR_CONSTANT.default
+			);
+		} catch {
+			// noop
+			return [];
+		}
+	});
+
 	let { data } = $props();
 
 	const {
@@ -89,6 +117,15 @@
 <Container>
 	<article class="relative flex grow flex-col gap-4">
 		<RandomButton />
+
+		{#if submitErrors.length}
+			<Box class="!bg-yellow-300/75 p-4 text-black">
+				<strong>Partial submit error(s)</strong>
+				{#each submitErrors as error}
+					<p>{error}</p>
+				{/each}
+			</Box>
+		{/if}
 
 		{#if html}
 			<SuggestionBox>

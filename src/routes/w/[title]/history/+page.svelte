@@ -68,7 +68,9 @@
 						class:mt-3={index !== 0}
 						class:outline-dashed={index === to || index === from}
 						class:outline-1={index === to || index === from}
-						class={index === to || index === from ? 'dark:outline-white/25' : ''}
+						class="{index === to || index === from ? 'dark:outline-white/25' : ''} p-2{index % 2
+							? ' bg-black/10 dark:bg-white/5'
+							: ''}"
 					>
 						<div class="flex items-center">
 							{#if from < index}
@@ -96,6 +98,15 @@
 
 								{#if postUpdate.metadata.byteLength}
 									<span class="opacity-50">({postUpdate.metadata.byteLength})</span>
+								{/if}
+
+								{#if postUpdate.metadata.newTitle}
+									<small>
+										<i>
+											(<span class="underline">Title change:</span>
+											"<span>{postUpdate.metadata.newTitle}</span>")
+										</i>
+									</small>
 								{/if}
 
 								{#if index === 0}

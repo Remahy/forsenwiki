@@ -13,8 +13,8 @@ import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { validateArticle } from '$lib/components/editor/validations';
 import { InvalidArticle } from '$lib/errors/InvalidArticle';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
-import { readSystemYPostRelations } from '$lib/db/article/read';
-import { updateArticleYPost } from '$lib/db/article/update';
+import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/article/read';
+import { updateArticleTitle, updateArticleYPost } from '$lib/db/article/update';
 import { adjustAndUploadImages } from '$lib/components/editor/validations/images.server';
 import { invalidateArticleCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/article/html';
@@ -27,17 +27,63 @@ import { adjustInternalLinks } from '$lib/components/editor/validations/internal
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import { _emit } from '../../../adonis/frontpage/+server';
 
+/**
+ * @typedef {Array<{ code: string, field: string, value?: string }>} PartialErrors
+ */
+
+/**
+ * @param {Awaited<ReturnType<_getYPostByTitle>>} post
+ * @param {string} newTitle
+ * @param {PartialErrors} partialErrors
+ */
+const validateTitle = async (post, newTitle, partialErrors) => {
+	const isNewTitle = newTitle !== post.rawTitle;
+
+	if (!isNewTitle) {
+		return undefined;
+	}
+
+	const sanitizedTitle = sanitizeTitle(newTitle);
+	if (!sanitizedTitle.sanitized) {
+		partialErrors.push({
+			code: newTitle.length ? 'ILLEGAL' : 'EMPTY',
+			field: 'newTitle',
+			value: newTitle,
+		});
+		return undefined;
+	}
+
+	const foundTitle = await readYPostByTitle(sanitizedTitle.sanitized);
+	if (foundTitle) {
+		partialErrors.push({ code: 'EXISTS', field: 'newTitle', value: newTitle });
+		return undefined;
+	}
+
+	return sanitizedTitle;
+};
+
 export async function POST({ request, locals, params }) {
-	if (locals.isBlocked) {
+	/**
+	 * @type {PartialErrors}
+	 */
+	const partialErrors = [];
+
+	const { isBlocked, isModerator, auth } = locals;
+
+	if (isBlocked) {
 		return ForbiddenError();
 	}
 
-	const session = await locals.auth();
+	const session = await auth();
 	if (!session?.user?.id || !session?.user?.name) {
 		return ForbiddenError();
 	}
 
-	const { content } = await request.json();
+	/**
+	 * @param {string} content
+	 * @param {string} newTitle - Skip this if user is not moderator.
+	 */
+	const { content, newTitle } = await request.json();
 
 	const { sanitized: title } = sanitizeTitle(params.title);
 
@@ -124,11 +170,17 @@ export async function POST({ request, locals, params }) {
 
 	const contentBase64 = uint8ArrayToBase64(combinedFinalDiff);
 
+	/** @type {{ raw: string, sanitized: string } | undefined} */
+	let potentialNewTitle = isModerator
+		? await validateTitle(post, newTitle, partialErrors)
+		: undefined;
+
 	const body = { post, outRelations, transformedSystemRelations, content: contentBase64 };
 	const metadata = {
 		user: { id: session.user.id },
 		byteLength,
 		totalByteLength,
+		newTitle: potentialNewTitle?.raw,
 	};
 
 	const updatedArticle = await updateArticleYPost(body, metadata);
@@ -142,14 +194,24 @@ export async function POST({ request, locals, params }) {
 
 	await invalidateArticleCache(post.title);
 
+	let _post = { title: post.title, rawTitle: post.rawTitle };
+
+	if (potentialNewTitle) {
+		_post = await updateArticleTitle({ post, newTitle: potentialNewTitle });
+	}
+
 	_emit('article:update', {
-		title: post.title,
-		rawTitle: post.rawTitle,
+		title: _post.title,
+		rawTitle: _post.rawTitle,
 		id: updatedArticle?.id,
 		lastUpdated: updatedArticle?.createdTimestamp.toString(),
 		byteLength,
 		author: session.user.name,
 	});
 
-	return json({ ...updatedArticle, title: post.title });
+	return json({
+		...updatedArticle,
+		title: _post.title,
+		partialErrors: partialErrors.length ? partialErrors : undefined,
+	});
 }
