@@ -103,17 +103,20 @@
 				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">New articles</h2>
 				</div>
-				{#each $latestArticles as article}
-					<div class="p-2 pl-0">
-						<Link href="/w/{article.title}">
+				{#each $latestArticles as article, index}
+					<div class="p-2{index % 2 ? ' bg-black/10 dark:bg-white/5' : ''}">
+						<Link href="/w/{article.title}" class="inline-block min-w-32">
 							<strong>{article.rawTitle}</strong>
 						</Link>
-						<span>
-							- <span title={new Date(article.createdTimestamp).toUTCString()}
-								>{new Date(article.createdTimestamp).toDateString()}</span
-							>
-							- By {article.author}
+						&nbsp;
+						<span
+							title={new Date(article.createdTimestamp).toUTCString()}
+							class="inline-block min-w-32"
+						>
+							{new Date(article.createdTimestamp).toDateString()}
 						</span>
+						&nbsp;
+						<small><strong>By:</strong> {article.author}</small>
 					</div>
 				{/each}
 			</Box>
@@ -124,13 +127,12 @@
 						<h2 class="text-2xl">Popular articles</h2>
 						<Link href="https://stats.forsen.wiki/" target="_blank">STATS.FORSEN.WIKI</Link>
 					</div>
-					{#each $popularArticles as article}
-						<div class="p-2 pl-0">
-							<Link href={article.path}>
-								<span>
-									<strong>{article.title}</strong> - {article.count} hits
-								</span>
-							</Link>
+					{#each $popularArticles as article, index}
+						<div class="p-2{index % 2 ? ' bg-black/10 dark:bg-white/5' : ''}">
+							<Link href={article.path} class="inline-block min-w-32"
+								><strong>{article.title}</strong></Link
+							>
+							&nbsp; <span>{article.count} hits</span>
 						</div>
 					{/each}
 				</Box>
