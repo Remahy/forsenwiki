@@ -34,6 +34,7 @@
 		DROP_COMMAND,
 	} from 'lexical';
 	import { $wrapNodeInElement as wrapNodeInElement, mergeRegister } from '@lexical/utils';
+	import { DRAG_DROP_PASTE } from '@lexical/rich-text';
 	import { getEditor } from 'svelte-lexical';
 
 	import { CAN_USE_DOM } from '$lib/environment/utils';
@@ -255,6 +256,51 @@
 		};
 	}
 
+	/**
+	 * Reads a File object and returns a base64 data URL.
+	 * @param {File} file
+	 * @returns {Promise<string>}
+	 */
+	function fileToBase64(file) {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onloadend = () => {
+				const result = reader.result;
+				if (typeof result !== 'string') {
+					reject(new Error('FileReader did not return a string.'));
+					return;
+				}
+				resolve(result);
+			};
+			reader.onerror = () => {
+				reject(reader.error);
+			};
+			reader.readAsDataURL(file);
+		});
+	}
+
+	/**
+	 * Handles pasted/dropped image files from the clipboard.
+	 * @param {File[]} files
+	 * @returns {boolean}
+	 */
+	function onPasteFiles(files) {
+		const imageFile = files.find((file) => file.type.startsWith('image/'));
+		if (!imageFile) {
+			return false;
+		}
+
+		fileToBase64(imageFile)
+			.then((base64) => {
+				editor.dispatchCommand(INSERT_IMAGE_COMMAND, { src: base64 });
+			})
+			.catch((error) => {
+				console.error('Error converting pasted image to base64', error);
+			});
+
+		return true;
+	}
+
 	/** @param {import('./Image').ImagePayload} payload */
 	function wrapperInsertImage(payload) {
 		const placeholderNode = createImageNode(payload);
@@ -393,6 +439,14 @@
 					return onDrop(event, editor);
 				},
 				COMMAND_PRIORITY_HIGH
+			),
+
+			editor.registerCommand(
+				DRAG_DROP_PASTE,
+				(files) => {
+					return onPasteFiles(files);
+				},
+				COMMAND_PRIORITY_LOW
 			)
 		);
 	});
