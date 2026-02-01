@@ -7,9 +7,9 @@ export async function load({ params }) {
 
 	const res = await readYPostUpdatesIdsByTitle(title);
 
-	if (res) {
-		return res;
+	if (!res) {
+		return error(404, 'Not found');
 	}
 
-	return error(404, 'Not found');
+	return res;
 }

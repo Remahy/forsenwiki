@@ -26,6 +26,7 @@ import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { adjustInternalLinks } from '$lib/components/editor/validations/internalLinks.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import { _emit } from '../../../adonis/frontpage/+server';
+import { isSystem } from '$lib/utils/isSystem';
 
 /**
  * @typedef {Array<{ code: string, field: string, value?: string }>} PartialErrors
@@ -98,11 +99,7 @@ export async function POST({ request, locals, params }) {
 		throw err;
 	}
 
-	const isSystem =
-		post.outRelations.find(({ isSystem, toPostId }) => isSystem && toPostId === 'system') ||
-		post.id === 'system';
-
-	if (isSystem) {
+	if (isSystem(post)) {
 		return ForbiddenError('This is a system article that cannot be edited.');
 	}
 

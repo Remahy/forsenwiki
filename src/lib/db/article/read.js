@@ -52,6 +52,22 @@ export async function readYPostUpdatesWithIdByTitle(title) {
 			},
 		},
 		include: {
+			outRelations: {
+				select: {
+					isSystem: true,
+					toPost: {
+						select: {
+							postUpdates: {
+								select: {
+									id: true,
+								},
+								take: 1,
+							},
+						},
+					},
+					toPostId: true,
+				},
+			},
 			postUpdates: {
 				select: {
 					id: true,
@@ -85,6 +101,22 @@ export async function readYPostUpdatesIdsByTitle(title) {
 			},
 		},
 		include: {
+			outRelations: {
+				select: {
+					isSystem: true,
+					toPost: {
+						select: {
+							postUpdates: {
+								select: {
+									id: true,
+								},
+								take: 1,
+							},
+						},
+					},
+					toPostId: true,
+				},
+			},
 			postUpdates: {
 				select: {
 					id: true,

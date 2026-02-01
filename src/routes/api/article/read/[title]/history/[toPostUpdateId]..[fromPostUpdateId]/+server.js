@@ -116,6 +116,10 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		diffJSON,
 		editorJSON,
 		diffHTML,
+		post: {
+			title: res.title,
+			outRelations: res.outRelations,
+		}
 	};
 }
 
