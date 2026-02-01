@@ -50,7 +50,7 @@ const parseResults = async (arr) => {
 		select: { title: true, rawTitle: true },
 	});
 
-	let newArr = structuredClone(arr);
+	const newArr = structuredClone(arr);
 
 	for (let index = 0; index < foundTitles.length; index += 1) {
 		const { rawTitle, title } = foundTitles[index];
@@ -67,7 +67,9 @@ const parseResults = async (arr) => {
 		newArr[newArrIndex].title = rawTitle;
 	}
 
-	return newArr;
+	const onlyWithTitles = newArr.filter(({ title }) => title);
+
+	return onlyWithTitles;
 };
 
 /**
