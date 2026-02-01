@@ -4,9 +4,12 @@ import prisma from '$lib/prisma';
  * @param {string} title
  */
 export async function readYPostUpdatesByTitle(title) {
-	return prisma.yPost.findUnique({
+	return prisma.yPost.findFirst({
 		where: {
-			title,
+			title: {
+				equals: title,
+				mode: 'insensitive',
+			},
 		},
 		include: {
 			outRelations: {
@@ -41,9 +44,12 @@ export async function readYPostUpdatesByTitle(title) {
  * @param {string} title
  */
 export async function readYPostUpdatesWithIdByTitle(title) {
-	return prisma.yPost.findUnique({
+	return prisma.yPost.findFirst({
 		where: {
-			title,
+			title: {
+				equals: title,
+				mode: 'insensitive',
+			},
 		},
 		include: {
 			postUpdates: {
@@ -71,9 +77,12 @@ export async function readYPostUpdatesWithIdByTitle(title) {
  * @param {string} title
  */
 export async function readYPostUpdatesIdsByTitle(title) {
-	return prisma.yPost.findUnique({
+	return prisma.yPost.findFirst({
 		where: {
-			title,
+			title: {
+				equals: title,
+				mode: 'insensitive',
+			},
 		},
 		include: {
 			postUpdates: {
@@ -105,9 +114,12 @@ export async function readYPostUpdatesIdsByTitle(title) {
  * @param {string} title
  */
 export async function readYPostByTitle(title) {
-	return prisma.yPost.findUnique({
+	return prisma.yPost.findFirst({
 		where: {
-			title,
+			title: {
+				equals: title,
+				mode: 'insensitive',
+			},
 		},
 		include: {
 			html: {

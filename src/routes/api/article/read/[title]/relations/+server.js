@@ -11,7 +11,7 @@ export async function GET({ params }) {
 		return error(404);
 	}
 
-	const relatedPosts = await readRelationsToYPostTitle(title);
+	const relatedPosts = await readRelationsToYPostTitle(article.title);
 
 	return json(relatedPosts);
 }

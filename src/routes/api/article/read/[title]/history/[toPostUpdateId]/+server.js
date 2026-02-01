@@ -31,7 +31,7 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 	const {
 		id,
 		createdTimestamp,
-		metadata: { byteLength, newTitle },
+		metadata: { byteLength, newTitle, oldTitle },
 	} = res.postUpdates[toPostUpdateIdIndex];
 
 	const toPostUpdates = res.postUpdates.slice(0, toPostUpdateIdIndex + 1);
@@ -51,6 +51,7 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 		current,
 		byteLength,
 		newTitle,
+		oldTitle,
 		toPostUpdateId: id,
 		recentPostUpdateId,
 	};
