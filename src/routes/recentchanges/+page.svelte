@@ -135,6 +135,10 @@
 					>
 				</span>
 				&nbsp;
+				{#if update.newTitle}
+					<small>(<strong>Title change:</strong> {update.newTitle})</small>
+				{/if}
+				&nbsp;
 				<span><small class="opacity-50">({update.byteLength})</small></span>
 				&nbsp;
 				<span>
