@@ -135,6 +135,7 @@ model YPostUpdateMetadata {
   byteLength BigInt?
 
   newTitle String?
+  oldTitle String?
 
   postUpdate YPostUpdate?
 }
