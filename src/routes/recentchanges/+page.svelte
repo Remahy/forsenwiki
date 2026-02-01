@@ -42,6 +42,7 @@
 				author: string | null
 				byteLength: number
 				newTitle?: string
+				oldTitle?: string
 			}} Update
 	 */
 
@@ -136,7 +137,12 @@
 				</span>
 				&nbsp;
 				{#if update.newTitle}
-					<small>(<strong>Title change:</strong> {update.newTitle})</small>
+					<small
+						>(<strong>Title change:</strong>
+						"{update.newTitle}"{#if update.oldTitle}
+							&nbsp;<i>was "{update.oldTitle}"</i>
+						{/if})</small
+					>
 				{/if}
 				&nbsp;
 				<span><small class="opacity-50">({update.byteLength})</small></span>

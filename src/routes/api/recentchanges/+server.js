@@ -21,6 +21,7 @@ export const _getRecentChanges = async ({ authors, cursor, limit }) => {
 				select: {
 					byteLength: true,
 					newTitle: true,
+					oldTitle: true,
 					user: {
 						select: {
 							name: true,
@@ -60,6 +61,7 @@ export const _getRecentChanges = async ({ authors, cursor, limit }) => {
 		lastUpdated: update.createdTimestamp.toString(),
 		byteLength: update.metadata.byteLength,
 		newTitle: update.metadata.newTitle,
+		oldTitle: update.metadata.oldTitle,
 	}));
 
 	return recentChanges;
