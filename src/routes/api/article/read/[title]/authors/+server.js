@@ -11,7 +11,7 @@ export async function GET({ params }) {
 		return error(404);
 	}
 
-	const res = await readAuthorsForYPostByTitle(title);
+	const res = await readAuthorsForYPostByTitle(article.title);
 
 	return json(res);
 }

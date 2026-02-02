@@ -37,9 +37,9 @@ const getLatest = async () => {
 
 	try {
 		popularArticles = await getPopularArticles();
-	} catch (error) {
+	} catch (err) {
 		if (!GOATCOUNTER_DISABLED) {
-			console.error(error);
+			console.error(err);
 		}
 	}
 

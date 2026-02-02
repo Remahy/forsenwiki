@@ -101,12 +101,12 @@
 								{/if}
 
 								{#if postUpdate.metadata.newTitle}
-									<small>
-										<i>
-											(<span class="underline">Title change:</span>
-											"<span>{postUpdate.metadata.newTitle}</span>")
-										</i>
-									</small>
+									<small
+										>(<strong>Title change:</strong>
+										"{postUpdate.metadata.newTitle}"{#if postUpdate.metadata.oldTitle}
+											&nbsp;<i>was "{postUpdate.metadata.oldTitle}"</i>
+										{/if})</small
+									>
 								{/if}
 
 								{#if index === 0}

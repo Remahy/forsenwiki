@@ -218,9 +218,7 @@
 	{/if}
 
 	{#if browser}
-		<div class="flex min-h-96">
-			<Editor {update} {id} />
-		</div>
+		<Editor {update} {id} />
 	{/if}
 
 	{#if error}

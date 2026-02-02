@@ -18,7 +18,7 @@
 	/**
 	 * @typedef {Object} Props
 	 * @property {boolean} [hasLink]
-	 * @property {(obj: { url: string, isInternal: boolean, internalId: string | null }, attrs: LinkAttributes) => void} [onSubmit]
+	 * @property {(obj: { url: string, isInternal: boolean, internalId: string | null, rawTitle: string | null }, attrs: LinkAttributes) => void} [onSubmit]
 	 * @property {() => void} [deleteLink]
 	 * @property {string} [url]
 	 * @property {LinkAttributes} [attrs]
@@ -55,6 +55,8 @@
 	let isSearching = $state(false);
 	/** @type {Array<{ title: string, rawTitle: string, lastUpdated: string, id: string }>} */
 	let searchResults = $state([]);
+
+	let rawTitle = $state('');
 
 	/** @param {Event} e */
 	const linkType = (e) => {
@@ -106,9 +108,10 @@
 		}
 	};
 
-	/** @param {{ title: string, lastUpdated: string, id: string }} value */
+	/** @param {{ title: string, rawTitle: string, lastUpdated: string, id: string }} value */
 	const handleInternalLink = (value) => {
 		finalUrl = '/w/' + value.title;
+		rawTitle = value.rawTitle;
 		internalId = value.id;
 		isInternal = true;
 		isValidLink = true;
@@ -139,7 +142,7 @@
 	};
 
 	const handleSubmit = () => {
-		onSubmit({ url: finalUrl, isInternal, internalId }, attrs);
+		onSubmit({ url: finalUrl, isInternal, internalId, rawTitle }, attrs);
 		$modal.isOpen = false;
 	};
 
@@ -155,7 +158,8 @@
 			try {
 				const res = await searchRequest(searchQuery, 'article');
 				searchResults = await res.json();
-			} catch (error) {
+			} catch (err) {
+				console.error(err);
 				error = 'Search returned an error.';
 			}
 

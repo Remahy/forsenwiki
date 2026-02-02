@@ -6,7 +6,7 @@
 	--font-dyslexic: "'Comic Neue', 'Comic Sans MS', arial, helvetica, sans-serif";
 }
 
-@plugin "@tailwindcss/forms";
-@plugin "@tailwindcss/typography";
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
 
 @import './style/wiki.css';

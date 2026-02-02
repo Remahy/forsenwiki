@@ -54,7 +54,7 @@
 
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);
-	/** @type {HTMLElement | HTMLImageElement | null} */
+	/** @type {HTMLElement | null} */
 	let imageRef = $state(null);
 	let isSelected = $derived(createNodeSelectionStore(editor, nodeKey));
 	let isResizing = $state(false);

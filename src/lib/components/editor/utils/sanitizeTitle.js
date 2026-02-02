@@ -1,7 +1,10 @@
 import isUrl from 'is-url';
 import sanitize from 'sanitize-filename';
 
-/** @param {string} title */
+/**
+ * @param {string} title
+ * @returns {{ raw: string, sanitized: string }}
+ */
 export const sanitizeTitle = (title) => {
 	const raw = title.replace(/\s{2,}/, ' ').trim();
 

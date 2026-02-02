@@ -20,8 +20,8 @@ const dir = dev ? DEV_STATIC_DIR : STATIC_DIR;
 if (!building) {
 	try {
 		await fs.access(dir, constants.R_OK);
-	} catch (error) {
-		console.error(error);
+	} catch (err) {
+		console.error(err);
 		process.exit(1);
 	}
 }

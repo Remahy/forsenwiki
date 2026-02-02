@@ -75,7 +75,7 @@ export const toHTMLWorker = async (data) => {
 if (workerData) {
 	try {
 		toHTMLWorker();
-	} catch (error) {
-		console.error('toHTMLWorker error', error);
+	} catch (err) {
+		console.error('toHTMLWorker error', err);
 	}
 }

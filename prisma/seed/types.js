@@ -88,8 +88,8 @@ try {
 	await yMain();
 	await prisma.$disconnect();
 	process.exit(0);
-} catch (error) {
+} catch (err) {
+	console.error(err);
 	await prisma.$disconnect();
-	console.error(error);
 	process.exit(1);
 }

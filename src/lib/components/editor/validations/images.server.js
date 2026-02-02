@@ -47,8 +47,8 @@ const uploadImage = async (base64String, title, sha256String, author) => {
 	try {
 		await writeContent(buffer, sha256String);
 		await createContent({ name: title, hash: sha256String, authorId: author.id });
-	} catch (error) {
-		console.warn(error);
+	} catch (err) {
+		console.warn(err);
 	}
 };
 

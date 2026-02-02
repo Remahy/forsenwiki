@@ -46,7 +46,7 @@ const parseResults = async (arr) => {
 		.map((v) => sanitizeTitle(v).sanitized);
 
 	const foundTitles = await prisma.yPost.findMany({
-		where: { title: { in: titles } },
+		where: { title: { in: titles, mode: 'insensitive' } },
 		select: { title: true, rawTitle: true },
 	});
 

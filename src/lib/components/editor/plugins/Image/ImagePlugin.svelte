@@ -242,14 +242,14 @@
 						};
 
 						reader.readAsDataURL(blob);
-					} catch (error) {
-						reject(error);
+					} catch (err) {
+						reject(err);
 					}
 				});
 
 				editor.update(() => node.setSrc(base64), { tag: 'history-merge' });
-			} catch (error) {
-				console.error('Error turning image into base64', error);
+			} catch (err) {
+				console.error('Error turning image into base64', err);
 				editor.update(() => node.setSrc(TRANSPARENT_IMAGE), { tag: 'history-merge' });
 			}
 		};
@@ -316,7 +316,10 @@
 				const promises = [];
 				editor.read(async () => {
 					for (const [key, mutation] of mutatedNodes) {
-						if (mutation === 'destroyed') continue;
+						if (mutation === 'destroyed') {
+							continue;
+						}
+
 						/** @type {ImageNode | null} */
 						const node = getNodeByKey(key);
 						if (!node) {

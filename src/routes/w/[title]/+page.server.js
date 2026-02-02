@@ -31,9 +31,9 @@ export async function load({ params, url, setHeaders }) {
 	try {
 		const res = await _getYPostHTML(title, shouldCacheBust);
 
-		const authors = await readAuthorsForYPostByTitle(title);
+		const authors = await readAuthorsForYPostByTitle(res.post.title);
 
-		const relatedPosts = await readRelationsToYPostTitle(title);
+		const relatedPosts = await readRelationsToYPostTitle(res.post.title);
 
 		setHeaders({
 			Title: encodeURIComponent(res.post.rawTitle),

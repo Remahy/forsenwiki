@@ -39,7 +39,7 @@ export const youtubeClipURLWorker = async (data) => {
 if (workerData) {
 	try {
 		youtubeClipURLWorker();
-	} catch (error) {
-		console.error('toHTMLWorker error', error);
+	} catch (err) {
+		console.error('toHTMLWorker error', err);
 	}
 }

@@ -14,6 +14,7 @@
 	import RandomButton from '$lib/components/RandomButton.svelte';
 	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
 	import Link from '$lib/components/Link.svelte';
+	import { isSystem } from '$lib/utils/isSystem.js';
 
 	const submitErrors = $derived.by(() => {
 		try {
@@ -54,10 +55,7 @@
 		image,
 	} = $derived(data);
 
-	const isSystem = $derived(
-		outRelations.find(({ isSystem, toPostId }) => isSystem && toPostId === 'system') ||
-			id === 'system'
-	);
+	const isArticleSystem = $derived(isSystem({ id, outRelations }));
 
 	const authorsScriptContent = $derived(
 		JSON.stringify({
@@ -85,7 +83,7 @@
 
 	<meta property="og:site_name" content="Forsen Wiki" />
 
-	{#if !isSystem}
+	{#if !isArticleSystem}
 		<link rel="canonical" href="{$page.url.origin}/w/{title}" />
 		<meta property="og:url" content="{$page.url.origin}/w/{title}" />
 
@@ -168,7 +166,7 @@
 
 				<ToC />
 			</div>
-		{:else if isSystem}
+		{:else if isArticleSystem}
 			<Box class="flex grow flex-col items-center justify-center gap-2 overflow-hidden p-12">
 				<h2 class="text-2xl">
 					This is {id === 'system' ? 'the' : 'a'} <strong>SYSTEM</strong> article with no content.
@@ -214,7 +212,7 @@
 					<span><strong>Article{relatedPosts.length > 1 ? 's' : ''} linking here:</strong></span>
 					<span>
 						{#each relatedPosts as post, index}
-							<Link href={post.title} reload>{post.rawTitle}</Link>{index < authors.length - 1
+							<Link href={post.title} reload>{post.rawTitle}</Link>{index < relatedPosts.length - 1
 								? ', '
 								: ''}
 						{/each}
