@@ -4,7 +4,6 @@ import {
 	ListItemNode,
 	HeadingNode,
 	QuoteNode,
-	TableNode,
 	TableCellNode,
 	TableRowNode,
 } from '$lib/lexical/index';
@@ -18,6 +17,7 @@ import {
 	FloatBlockNode,
 	AHeadingNode,
 	ATableCellNode,
+	ATableNode,
 } from '$lib/lexical/custom';
 import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
@@ -89,7 +89,8 @@ export const articleNodes = [
 	QuoteNode,
 	ImageNode,
 	VideoEmbedNode,
-	TableNode,
+
+	ATableNode,
 	TableCellNode,
 	TableRowNode,
 	FloatBlockNode,

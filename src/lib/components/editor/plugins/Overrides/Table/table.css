@@ -1,5 +1,16 @@
 .tableCell {
 	position: relative;
+	vertical-align: top;
+	text-align: start;
+	min-width: 75px;
+	padding-top: 0.5714286em;
+	padding-inline-end: 0.5714286em;
+	padding-bottom: 0.5714286em;
+	padding-inline-start: 0.5714286em;
+}
+
+.tableCell:has(table) {
+	padding: 0;
 }
 
 .tableCellSelected {

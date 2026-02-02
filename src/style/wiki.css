@@ -131,5 +131,9 @@ html.forsen-wiki-theme {
 		td {
 			@apply forsen-wiki-theme-border border !bg-black/5 dark:!bg-white/5;
 		}
+
+		td:has(> table) {
+			padding: 0;
+		}
 	}
 }

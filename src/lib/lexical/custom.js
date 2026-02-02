@@ -5,6 +5,12 @@ export {
 } from '../components/editor/plugins/Overrides/ALink';
 
 export {
+	$createATableNode,
+	$isATableNode,
+	ATableNode,
+} from '../components/editor/plugins/Overrides/Table/ATableNode';
+
+export {
 	$createImageNode,
 	$isImageNode,
 	ImageNode,

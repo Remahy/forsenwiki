@@ -1,11 +1,11 @@
-import { TableNode } from '$lib/lexical/index';
+import { ATableNode } from '$lib/lexical/custom';
 import { $isRootNode as isRootNode, $getNodeByKey as getNodeByKey } from 'lexical';
 
 /**
  * @type {[import("lexical").Klass<LexicalNode>, (editor: LexicalEditor, target: LexicalNode) => import("lexical").DOMExportOutput]}
  */
 export default [
-	TableNode,
+	ATableNode,
 	(editor, node) => {
 		const output = node.exportDOM(editor);
 

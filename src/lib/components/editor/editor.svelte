@@ -81,9 +81,11 @@
 			</div>
 
 			<div class="overflow-hidden">
-				<article class="editor-border flex min-h-96 grow flex-col">
+				<article class="editor-border box flex min-h-96 grow flex-col">
 					<div class="prose dark:prose-invert relative flex max-w-[unset] grow">
-						<ContentEditable className="editor-shell grow m-0 border-0 outline-0 p-4 overflow-hidden" />
+						<ContentEditable
+							className="editor-shell grow m-0 border-0 outline-0 p-4 overflow-hidden"
+						/>
 					</div>
 				</article>
 			</div>
@@ -99,7 +101,9 @@
 			</div>
 		</div>
 
-		<div class="editor-border sticky top-0 hidden h-full grow p-2 lg:block max-w-96">
+		<div
+			class="editor-border sticky top-0 hidden h-full w-96 max-w-96 grow flex-col flex-wrap gap-4 p-2 lg:flex"
+		>
 			<ToolbarExtra />
 		</div>
 	</div>
