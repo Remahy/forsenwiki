@@ -50,7 +50,7 @@ export const initialUpdateWorker = () => {
 if (workerData) {
 	try {
 		initialUpdateWorker();
-	} catch (error) {
-		console.error('initialUpdateWorker error', error);
+	} catch (err) {
+		console.error('initialUpdateWorker error', err);
 	}
 }

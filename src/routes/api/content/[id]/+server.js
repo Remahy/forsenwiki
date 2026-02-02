@@ -56,8 +56,8 @@ export async function DELETE({ locals, params }) {
 		await rmContentByFilename(res.hash);
 
 		deleteRes = await deleteContent(id);
-	} catch (error) {
-		console.warn(error);
+	} catch (err) {
+		console.warn(err);
 	}
 
 	if (!deleteRes) {

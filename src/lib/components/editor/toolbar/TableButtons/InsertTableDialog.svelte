@@ -60,7 +60,7 @@
 			<input
 				bind:value={rows}
 				class="input-color rounded-sm p-2"
-				placeholder={'# of rows (1-500)'}
+				placeholder="# of rows (1-500)"
 				type="number"
 			/>
 		</label>
@@ -70,7 +70,7 @@
 			<input
 				bind:value={columns}
 				class="input-color rounded-sm p-2"
-				placeholder={'# of columns (1-50)'}
+				placeholder="# of columns (1-50)"
 				type="number"
 			/>
 		</label>

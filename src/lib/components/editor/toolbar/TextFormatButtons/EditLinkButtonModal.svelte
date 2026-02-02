@@ -158,7 +158,8 @@
 			try {
 				const res = await searchRequest(searchQuery, 'article');
 				searchResults = await res.json();
-			} catch (error) {
+			} catch (err) {
+				console.error(err);
 				error = 'Search returned an error.';
 			}
 

@@ -103,6 +103,7 @@
 		"yjs": "13.6.29"
 	},
 	"devDependencies": {
+		"@eslint/compat": "^2.0.2",
 		"@eslint/js": "^9.39.2",
 		"@sveltejs/adapter-node": "^5.5.1",
 		"@sveltejs/kit": "^2.50.0",

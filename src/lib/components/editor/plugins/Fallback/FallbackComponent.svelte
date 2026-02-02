@@ -27,7 +27,8 @@
 	let { node, nodeKey, data, editor } = $props();
 
 	/** @type {BaseSelection | null} */
-	let selection = $state(null);
+	// let selection = $state(null);
+
 	/** @type {HTMLDivElement | null} */
 	let embedRef = $state(null);
 	let isSelected = $derived(createNodeSelectionStore(editor, nodeKey));
@@ -89,13 +90,15 @@
 	};
 
 	onMount(() => {
-		let isMounted = true;
+		// let isMounted = true;
 		const unregister = mergeRegister(
+			/*
 			editor.registerUpdateListener(({ editorState }) => {
 				if (isMounted) {
 					selection = editorState.read(() => getSelection());
 				}
 			}),
+			*/
 			editor.registerCommand(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
@@ -104,7 +107,7 @@
 		);
 
 		return () => {
-			isMounted = false;
+			// isMounted = false;
 			unregister();
 		};
 	});

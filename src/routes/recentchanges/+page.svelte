@@ -73,7 +73,8 @@
 			if (response.length === 0) {
 				done = true;
 			}
-		} catch (error) {
+		} catch (err) {
+			console.error(err);
 			loading = false;
 		}
 	};
