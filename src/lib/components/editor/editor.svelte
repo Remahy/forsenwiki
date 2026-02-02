@@ -1,6 +1,4 @@
 <script>
-	import { run } from 'svelte/legacy';
-
 	import { getContext, onMount } from 'svelte';
 	import isUrl from 'is-url';
 	import {
@@ -15,6 +13,8 @@
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
 	import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
 	import Toolbar from './toolbar/index.svelte';
+	import ToolbarExtra from './toolbar/Extra.svelte';
+	import MobileToolbar from './toolbar/MobileToolbar.svelte';
 	import Footer from './footer/index.svelte';
 	import { articleConfig, editableTheme } from './config/article';
 	import ImagePlugin from './plugins/Image/ImagePlugin.svelte';
@@ -54,7 +54,7 @@
 </script>
 
 <Composer {initialConfig} bind:this={composer}>
-	<div class="editor-shell w-full">
+	<div class="relative flex min-h-96 gap-2">
 		<RichTextPlugin />
 
 		<ListPlugin />
@@ -73,22 +73,34 @@
 
 		<CollaborationPlugin {id} {providerFactory} shouldBootstrap={false} />
 
-		<div class="editor-border sticky top-0 z-40 hidden w-full p-2 lg:block">
-			<Toolbar />
-		</div>
-
-		<article class="editor-border flex min-h-96 grow flex-col">
-			<div class="prose dark:prose-invert relative flex max-w-[unset] grow overflow-auto p-2">
-				<ContentEditable className="grow m-0 p-0 border-0 outline-0" />
+		<div class="w-full lg:w-148 xl:w-212 2xl:w-280">
+			<div class="editor-border sticky top-0 z-40 hidden w-full p-2 lg:block">
+				<div class="flex flex-wrap items-stretch gap-2">
+					<Toolbar />
+				</div>
 			</div>
-		</article>
 
-		<div class="editor-border sticky bottom-0 z-40 block w-full p-2 lg:hidden">
-			<Toolbar />
+			<div class="overflow-hidden">
+				<article class="editor-border flex min-h-96 grow flex-col">
+					<div class="prose dark:prose-invert relative flex max-w-[unset] grow">
+						<ContentEditable className="editor-shell grow m-0 border-0 outline-0 p-4 overflow-hidden" />
+					</div>
+				</article>
+			</div>
+
+			<div class="editor-border sticky bottom-0 z-40 block w-full p-2 lg:hidden">
+				<div class="flex flex-wrap items-stretch gap-2 text-sm">
+					<MobileToolbar />
+				</div>
+			</div>
+
+			<div class="editor-border hidden w-full border-t-0 p-2 lg:block">
+				<Footer />
+			</div>
 		</div>
 
-		<div class="editor-border hidden w-full border-t-0 p-2 lg:block">
-			<Footer />
+		<div class="editor-border sticky top-0 hidden h-full grow p-2 lg:block max-w-96">
+			<ToolbarExtra />
 		</div>
 	</div>
 </Composer>

@@ -178,9 +178,7 @@
 	</label>
 
 	{#if browser}
-		<div class="flex min-h-96">
-			<Editor update={null} id="new" {initialUpdate} />
-		</div>
+		<Editor update={null} id="new" {initialUpdate} />
 	{/if}
 
 	{#if error}
