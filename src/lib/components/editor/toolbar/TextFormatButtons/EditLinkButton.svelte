@@ -57,10 +57,10 @@
 			component: EditLinkButtonModal,
 			hasLink,
 			/**
-			 * @param {{ url: string, isInternal: boolean, internalId?: string }} arg0
+			 * @param {{ url: string, isInternal: boolean, internalId?: string, rawTitle?: string }} onSubmitArgs
 			 * @param {import('@lexical/link').LinkAttributes} [dAttrs]
 			 */
-			onSubmit: ({ url, isInternal, internalId }, dAttrs) => {
+			onSubmit: ({ url, isInternal, internalId, rawTitle }, dAttrs) => {
 				editor.update(() => {
 					const selection = getSelection();
 
@@ -68,7 +68,7 @@
 						const [, anchor] = /** @type {[PointType, PointType]}*/ (selection.getStartEndPoints());
 						const anchorOffset = anchor.offset;
 
-						const text = dAttrs?.title || url;
+						const text = dAttrs?.title || rawTitle || url;
 						selection.insertText(text);
 
 						// Modify selection to only wrap the new text.
