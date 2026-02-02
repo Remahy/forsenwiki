@@ -1,6 +1,5 @@
 import { _getSearch } from '../api/search/+server.js';
 
-
 export const load = async ({ url }) => {
 	const rawQuery = url.searchParams.get('query');
 

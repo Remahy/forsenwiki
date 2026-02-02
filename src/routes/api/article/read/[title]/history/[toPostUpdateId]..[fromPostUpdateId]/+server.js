@@ -119,7 +119,7 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		post: {
 			title: res.title,
 			outRelations: res.outRelations,
-		}
+		},
 	};
 }
 

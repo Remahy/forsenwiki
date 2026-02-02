@@ -24,9 +24,9 @@
 
 	const date = $derived(new Date(createdTimestamp));
 
-	const displayTitle =  $derived(`"${date.toLocaleString()}" version for "${rawTitle}" article`);
+	const displayTitle = $derived(`"${date.toLocaleString()}" version for "${rawTitle}" article`);
 
-	const authorName =  $derived(author?.name || '?');
+	const authorName = $derived(author?.name || '?');
 </script>
 
 <svelte:head>
