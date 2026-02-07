@@ -31,7 +31,7 @@
 		{#each results as result (result.id)}
 			<LinkBox href={!result.type ? `/w/${result.title}` : `/content/${result.id}`} class="flex">
 				<div class="flex grow flex-col gap-2">
-					<strong class="break-words">{result.rawTitle}</strong>
+					<strong class="wrap-break-words">{result.rawTitle}</strong>
 					<p>
 						Last updated: <span title={new Date(result.lastUpdated).toUTCString()}
 							>{new Date(result.lastUpdated).toLocaleString()}</span

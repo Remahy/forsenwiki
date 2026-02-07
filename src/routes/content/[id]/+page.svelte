@@ -139,7 +139,7 @@
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Used in</strong></td>
-							<td class="p-4 break-words"><small><i>// TODO: Not implemented yet.</i></small></td>
+							<td class="p-4 wrap-break-words"><small><i>// TODO: Not implemented yet.</i></small></td>
 						</tr>
 					</tbody>
 				</table>

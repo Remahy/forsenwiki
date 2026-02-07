@@ -155,7 +155,7 @@
 
 			<div class="flex grow flex-col gap-4 lg:flex-row">
 				<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
-					<main class="article-root prose dark:prose-invert max-w-[unset] grow break-words">
+					<main class="article-root prose dark:prose-invert max-w-[unset] grow wrap-break-words">
 						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>
