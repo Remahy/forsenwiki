@@ -1,13 +1,13 @@
 @utility forsen-wiki-theme-border {
-	@apply border-solid border-slate-300 dark:!border-slate-800;
+	@apply border-solid border-slate-300 dark:border-slate-800!;
 }
 
 @utility forsen-wiki-theme-outline {
-	@apply outline-1 outline-neutral-300 dark:!outline-slate-800;
+	@apply outline-1 outline-neutral-300 dark:outline-slate-800!;
 }
 
 @utility bg-dark {
-	@apply dark:!bg-slate-950/35;
+	@apply dark:bg-slate-950/35!;
 }
 
 html.forsen-wiki-theme {
@@ -43,11 +43,11 @@ html.forsen-wiki-theme {
 		@apply rounded-sm bg-violet-600 px-4 py-2 font-medium text-white hover:bg-violet-800 disabled:opacity-25 disabled:hover:cursor-not-allowed;
 
 		&.active {
-			@apply forsen-wiki-theme-border border !bg-violet-700;
+			@apply forsen-wiki-theme-border border bg-violet-700!;
 		}
 
 		&.inactive {
-			@apply forsen-wiki-theme-border border !bg-violet-900/50;
+			@apply forsen-wiki-theme-border border bg-violet-900/50!;
 		}
 	}
 
@@ -72,7 +72,7 @@ html.forsen-wiki-theme {
 	}
 
 	.suggestion-box {
-		@apply rounded-sm bg-gradient-to-br from-sky-100 to-violet-200 p-4 dark:from-slate-950/30 dark:to-violet-900/30;
+		@apply rounded-sm bg-linear-to-br from-sky-100 to-violet-200 p-4 dark:from-slate-950/30 dark:to-violet-900/30;
 	}
 
 	.element-placeholder-color {
@@ -92,7 +92,7 @@ html.forsen-wiki-theme {
 	}
 
 	.bg-error-color {
-		@apply !bg-red-600/35 text-black dark:text-white;
+		@apply bg-red-600/35! text-black dark:text-white;
 	}
 
 	.link {
@@ -100,7 +100,7 @@ html.forsen-wiki-theme {
 	}
 
 	.bg-heading-message {
-		@apply rounded-sm bg-gradient-to-br from-yellow-200 to-yellow-300 dark:from-yellow-800/30 dark:to-yellow-950/30;
+		@apply rounded-sm bg-linear-to-br from-yellow-200 to-yellow-300 dark:from-yellow-800/30 dark:to-yellow-950/30;
 	}
 
 	.article-footer-color {
@@ -126,10 +126,10 @@ html.forsen-wiki-theme {
 			}
 		}
 		th {
-			@apply forsen-wiki-theme-border border !bg-slate-950/10 dark:!bg-white/10;
+			@apply forsen-wiki-theme-border border bg-slate-950/10! dark:bg-white/10!;
 		}
 		td {
-			@apply forsen-wiki-theme-border border !bg-black/5 dark:!bg-white/5;
+			@apply forsen-wiki-theme-border border bg-black/5! dark:bg-white/5!;
 		}
 
 		td:has(> table) {
