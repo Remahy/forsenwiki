@@ -30,13 +30,12 @@
 		getURLAndTitle,
 		getWidthAndHeight,
 		$isVideoEmbedNode as isVideoEmbedNode,
-		VideoEmbedNode,
 	} from './VideoEmbed';
 	import { decoratorFormatToMarginStyle } from './DecoratorBlockNode';
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {VideoEmbedNode} node
+	 * @property {import('./VideoEmbed').VideoEmbedNode} node
 	 * @property {string} src
 	 * @property {import('./VideoEmbed').SupportedPlatforms} platform
 	 * @property {import('lexical').NodeKey} nodeKey

@@ -29,10 +29,12 @@
 			return;
 		}
 
-		const headings = [...article?.querySelectorAll('h1, h2, h3, h4, h5')]?.filter((element) => {
-			const parents = getParents(element);
-			return !parents.some((n) => n instanceof HTMLTableCellElement);
-		});
+		const headings = [...(article?.querySelectorAll?.('h1, h2, h3, h4, h5') || [])].filter(
+			(element) => {
+				const parents = getParents(element);
+				return !parents.some((n) => n instanceof HTMLTableCellElement);
+			}
+		);
 
 		if (!headings?.length) {
 			return;

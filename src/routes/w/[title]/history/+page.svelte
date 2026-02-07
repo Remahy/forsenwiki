@@ -63,7 +63,7 @@
 
 		<div class="prose dark:prose-invert mt-3 max-w-[unset]">
 			<ul>
-				{#each postUpdates as postUpdate, index}
+				{#each postUpdates as postUpdate, index (postUpdate.id)}
 					<li
 						class:mt-3={index !== 0}
 						class:outline-dashed={index === to || index === from}

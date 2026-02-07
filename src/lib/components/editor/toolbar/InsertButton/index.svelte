@@ -142,7 +142,7 @@
 	>
 		<option value="">Insert</option>
 
-		{#each insertElementTypeOptions as { value, label }}
+		{#each insertElementTypeOptions as { value, label } (value)}
 			<option {value} class="text-lg">{label}</option>
 		{/each}
 	</Select>

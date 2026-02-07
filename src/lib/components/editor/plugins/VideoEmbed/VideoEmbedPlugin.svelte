@@ -20,7 +20,6 @@
 		COMMAND_PRIORITY_EDITOR,
 		$getNodeByKey as getNodeByKey,
 		$getSelection as getSelection,
-		RootNode,
 	} from 'lexical';
 	import { mergeRegister } from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
@@ -44,7 +43,7 @@
 	 * @param {VideoEmbedNode} node
 	 */
 	const fixYouTubeClipURL = async (editor, node) => {
-		const url = /** @type {string} */ (node.getSrc());
+		const url = node.getSrc() || '';
 
 		let res;
 
@@ -81,7 +80,7 @@
 
 			insertNodes([node]);
 
-			const parent = /** @type {RootNode} */ (node.getParent());
+			const parent = /** @type {import('lexical').RootNode} */ (node.getParent());
 
 			if (!parent) {
 				node.remove();

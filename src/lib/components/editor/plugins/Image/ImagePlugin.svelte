@@ -237,7 +237,7 @@
 							resolve(result);
 						};
 
-						reader.onerror = (_) => {
+						reader.onerror = () => {
 							throw reader.error;
 						};
 

@@ -5,7 +5,7 @@
 	import Search from '$lib/components/Search.svelte';
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 
-	/** @type {import('./+page.server').QueryResult[]} */
+	/** @type {import('../api/search/+server').QueryResult[]} */
 	let results = $page.data.results;
 </script>
 
@@ -28,7 +28,7 @@
 	<Search />
 
 	<div class="flex flex-col gap-2">
-		{#each results as result}
+		{#each results as result (result.id)}
 			<LinkBox href={!result.type ? `/w/${result.title}` : `/content/${result.id}`} class="flex">
 				<div class="flex grow flex-col gap-2">
 					<strong class="break-words">{result.rawTitle}</strong>

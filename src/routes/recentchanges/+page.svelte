@@ -129,7 +129,7 @@
 		</div>
 	</Box>
 	<Box class="flex grow flex-col overflow-hidden p-2 lg:mb-0">
-		{#each $latestUpdates as update, index}
+		{#each $latestUpdates as update, index (update.id)}
 			<div class="p-2{!(index % 2) ? ' bg-black/10 dark:bg-white/5' : ''}">
 				<span>
 					<Link href="/w/{update.title}/history/{update.id}" target="_blank"

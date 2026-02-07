@@ -29,9 +29,8 @@
 	let error = $state(null);
 
 	/** @type {{[x: string]: Error}} */
-	let rawWarnings = {};
-
-	let warnings = $derived(Object.values(rawWarnings));
+	// let rawWarnings = {};
+	// let warnings = $derived(Object.values(rawWarnings));
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
@@ -227,13 +226,15 @@
 		</Box>
 	{/if}
 
+	<!--
 	{#if warnings.length}
 		<Box class="flex items-center !bg-yellow-300 p-2 dark:text-black">
-			{#each warnings as warning}
+			{#each warnings as warning (warning.name)}
 				<p>{warning.message}</p>
 			{/each}
 		</Box>
 	{/if}
+	-->
 
 	<Box class="flex items-center gap-4 p-2">
 		<small class="grow">
