@@ -99,6 +99,34 @@ export const getIframeStyle = (
 	return `${min}${max}${aspectRatio}${widthStyle}${heightStyle}${formatType ? decoratorFormatToMarginStyle(formatType) : ''}`;
 };
 
+const convertTtoSeconds = (tString: string) => {
+	let seconds = 0;
+
+	const h = tString.match(/([0-9]+)h/);
+	const m = tString.match(/([0-9]+)m/);
+	const s = tString.match(/([0-9]+)s/);
+
+	if (h) {
+		const [, hValue] = h;
+
+		seconds += Number(hValue) * 3_600;
+	}
+
+	if (m) {
+		const [, mValue] = m;
+
+		seconds += Number(mValue) * 60;
+	}
+
+	if (s) {
+		const [, sValue] = s;
+
+		seconds += Number(sValue);
+	}
+
+	return seconds.toFixed(0);
+};
+
 export const getURLAndTitle = (
 	platform?: SupportedPlatforms,
 	src?: string,
@@ -113,6 +141,11 @@ export const getURLAndTitle = (
 	if (platform === 'youtube') {
 		const url = new URL('', src);
 
+		const t = url.searchParams.get('t');
+		const start = url.searchParams.get('start');
+
+		const s = t ? convertTtoSeconds(t) : start;
+
 		if (url.pathname.startsWith('/embed/')) {
 			const fullVideoSlug = url.pathname.split('/').pop();
 			const clipSlug = url.searchParams.get('clip');
@@ -123,6 +156,10 @@ export const getURLAndTitle = (
 			if (clipSlug && clipTId) {
 				youtubeEmbedURL.searchParams.set('clip', clipSlug);
 				youtubeEmbedURL.searchParams.set('clipt', clipTId);
+			}
+
+			if (s) {
+				youtubeEmbedURL.searchParams.set('start', s);
 			}
 
 			return { url: youtubeEmbedURL.toString(), title: 'YouTube clip' };
@@ -138,8 +175,13 @@ export const getURLAndTitle = (
 			return { url: '', title: 'Unknown source' };
 		}
 
+		const searchParams = new URLSearchParams();
+		if (s) {
+			searchParams.set('start', s);
+		}
+
 		return {
-			url: `https://www.youtube-nocookie.com/embed/${v || youtuBE || vPathname}`,
+			url: `https://www.youtube-nocookie.com/embed/${v || youtuBE || vPathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`,
 			title: 'YouTube video',
 		};
 	}
