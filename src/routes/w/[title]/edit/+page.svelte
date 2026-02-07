@@ -254,7 +254,7 @@
 				<Spinner />
 			{/if}
 
-			<span class="hidden lg:inline">Submit</span>
+			<span class="hidden lg:inline" id="submit">Submit</span>
 			<FileUpIcon class="inline lg:hidden" />
 		</Button>
 	</Box>
