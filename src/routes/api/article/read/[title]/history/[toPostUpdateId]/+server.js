@@ -56,6 +56,7 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 		recentPostUpdateId,
 		outRelations: res.outRelations,
 		title: res.title,
+		rawTitle: res.rawTitle,
 	};
 }
 

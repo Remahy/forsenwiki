@@ -6,7 +6,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Search from './Search.svelte';
-	import Announcement from './Announcement.svelte';
+	// import Announcement from './Announcement.svelte';
 
 	let isLoading = $state(false);
 
@@ -110,5 +110,5 @@
 		</div>
 	</nav>
 
-	<Announcement />
+	<!-- Announcement /-->
 </header>

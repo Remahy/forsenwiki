@@ -103,7 +103,7 @@
 				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">New articles</h2>
 				</div>
-				{#each $latestArticles as article, index}
+				{#each $latestArticles as article, index (article.title)}
 					<div class="p-2{index % 2 ? ' bg-black/10 dark:bg-white/5' : ''}">
 						<Link href="/w/{article.title}" class="inline-block min-w-32">
 							<strong>{article.rawTitle}</strong>
@@ -127,7 +127,7 @@
 						<h2 class="text-2xl">Popular articles</h2>
 						<Link href="https://stats.forsen.wiki/" target="_blank">STATS.FORSEN.WIKI</Link>
 					</div>
-					{#each $popularArticles as article, index}
+					{#each $popularArticles as article, index (article.path)}
 						<div class="p-2{index % 2 ? ' bg-black/10 dark:bg-white/5' : ''}">
 							<Link href={article.path} class="inline-block min-w-32"
 								><strong>{article.title}</strong></Link
@@ -166,7 +166,7 @@
 					<h2 class="text-2xl">New users</h2>
 				</div>
 
-				{#each $latestUsers as user}
+				{#each $latestUsers as user (user.name)}
 					<div class="p-2 pl-0">
 						<span title={user.name}>
 							<strong>{user.name}</strong>

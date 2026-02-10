@@ -29,16 +29,19 @@
 			return;
 		}
 
-		const headings = [...article?.querySelectorAll('h1, h2, h3, h4, h5')]?.filter((element) => {
-			const parents = getParents(element);
-			return !parents.some((n) => n instanceof HTMLTableCellElement);
-		});
+		const headings = [...(article?.querySelectorAll?.('h1, h2, h3, h4, h5') || [])].filter(
+			(element) => {
+				const parents = getParents(element);
+				return !parents.some((n) => n instanceof HTMLTableCellElement);
+			}
+		);
 
 		if (!headings?.length) {
 			return;
 		}
 
 		const tocWrapper = doc.createElement('div');
+		tocWrapper.classList.add('p-4', 'overflow-y-auto', 'max-h-[calc(100vh-90px)]', 'pl-0');
 
 		// TODO: Rewrite it to use ordered list with nesting.
 		const ul = doc.createElement('ul');
@@ -85,8 +88,8 @@
 
 <div use:tocAction class="hidden lg:block lg:w-96 lg:min-w-96">
 	{#if toc}
-		<Box class="top-4 hidden flex-col overflow-hidden p-4 break-all lg:sticky lg:flex">
-			<div class="box-heading-wrapper mb-2">
+		<Box class="top-4 hidden flex-col overflow-hidden p-4 pr-0 pb-0 break-all lg:sticky lg:flex">
+			<div class="box-heading-wrapper">
 				<h2 class="text-2xl">Table of Contents</h2>
 			</div>
 

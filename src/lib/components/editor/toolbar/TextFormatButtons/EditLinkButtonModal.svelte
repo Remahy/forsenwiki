@@ -251,7 +251,7 @@
 					<div class="prose dark:prose-invert relative mt-2 flex max-w-[unset]">
 						<table class="table-auto">
 							<tbody>
-								{#each searchResults as result}
+								{#each searchResults as result (result.id)}
 									<tr class={internalId === result.id ? 'bg-black/10 dark:bg-white/10' : ''}>
 										<td
 											><Link href="/w/{result.title}" target="_blank">

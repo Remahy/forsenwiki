@@ -96,7 +96,7 @@
 				</div>
 			</div>
 
-			<div class="editor-border hidden w-full border-t-0 p-2 lg:block">
+			<div class="editor-border sticky bottom-0 hidden w-full border-t-0 p-2 lg:block">
 				<Footer />
 			</div>
 		</div>

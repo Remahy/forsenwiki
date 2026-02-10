@@ -102,8 +102,6 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 
 	editor.setEditorState(editor.parseEditorState(diffJSON.editorState));
 
-	const editorJSON = editor.toJSON();
-
 	const diffHTML = await toHTML({ config: 'diff', content: JSON.stringify(diffJSON.editorState) });
 
 	return {
@@ -113,11 +111,10 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		fromPostUpdateId,
 		fromDate,
 		fromAuthor,
-		diffJSON,
-		editorJSON,
 		diffHTML,
 		post: {
 			title: res.title,
+			rawTitle: res.rawTitle,
 			outRelations: res.outRelations,
 		},
 	};

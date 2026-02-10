@@ -1,7 +1,7 @@
 <script>
-	import { ScaleIcon, XIcon } from 'lucide-svelte';
-	import Button from './Button.svelte';
-	import Box from './Box.svelte';
+	// import { ScaleIcon, XIcon } from 'lucide-svelte';
+	// import Button from './Button.svelte';
+	// import Box from './Box.svelte';
 	// import Link from './Link.svelte';
 
 	// const hasSeenPrivacyUpdateNotice = globalThis?.localStorage

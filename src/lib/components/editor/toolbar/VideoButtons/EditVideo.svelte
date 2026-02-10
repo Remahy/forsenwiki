@@ -92,7 +92,7 @@
 	>
 		<option value="unknown" hidden>Unknown</option>
 
-		{#each platformOptions as [value, label]}
+		{#each platformOptions as [value, label] (value)}
 			<option {value} class="text-lg">{label}</option>
 		{/each}
 	</Select>

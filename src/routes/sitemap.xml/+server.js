@@ -1,4 +1,4 @@
-import { FULL_DOMAIN } from '$env/static/private';
+import { DOMAIN } from '$lib/environment/environment';
 import prisma from '$lib/prisma';
 import { getShouldCacheBust } from '$lib/utils/cacheBust';
 
@@ -10,7 +10,7 @@ const cacheBustRateLimit = new Map();
  */
 const siteMapEntry = ({ url, lastUpdated }) => {
 	return `<url>
-		<loc>${FULL_DOMAIN}/w/${url}</loc>
+		<loc>${DOMAIN}/w/${url}</loc>
 		<lastmod>${lastUpdated}</lastmod>
 	</url>
 `;

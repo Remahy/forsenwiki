@@ -26,11 +26,11 @@ import TableNodeDOMExport from './htmlExport/TableNodeDOMExport';
 export const articleTheme = {
 	image: 'image',
 	heading: {
-		h1: 'break-words',
-		h2: 'break-words',
-		h3: 'break-words',
-		h4: 'break-words',
-		h5: 'break-words',
+		h1: 'wrap-break-words',
+		h2: 'wrap-break-words',
+		h3: 'wrap-break-words',
+		h4: 'wrap-break-words',
+		h5: 'wrap-break-words',
 	},
 	floatResponsive: 'max-sm:!float-none',
 };

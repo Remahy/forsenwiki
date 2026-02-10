@@ -11,15 +11,12 @@
 	let { data } = $props();
 
 	const {
-		title,
-		rawTitle,
+		post: { title, rawTitle },
 		toDate,
 		toAuthor,
 		fromDate,
 		fromAuthor,
 		diffHTML: { html: diffHTML },
-		diffJSON,
-		editorJSON,
 	} = $derived(data);
 
 	const tD = $derived(toDate.toLocaleString());
@@ -107,8 +104,10 @@
 
 		<div class="flex grow flex-col gap-4 lg:flex-row">
 			<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
-				<main class="article-root prose dark:prose-invert max-w-[unset] grow break-words">
-					<h1>{rawTitle}</h1>
+				<main class="article-root prose dark:prose-invert max-w-[unset] grow wrap-break-words">
+					<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
+						<strong class="text-4xl">{rawTitle}</strong>
+					</div>
 
 					{@html diffHTML}
 				</main>
@@ -116,22 +115,5 @@
 
 			<div class="hidden lg:block lg:w-96 lg:min-w-96"></div>
 		</div>
-
-		<footer class="article-footer-color p-4">
-			<strong>Raw data</strong>
-			<details>
-				<summary><strong>Diff JSON</strong></summary>
-				<div class="prose dark:prose-invert max-w-[unset]">
-					<pre class="mt-0">{JSON.stringify(diffJSON, null, 2)}</pre>
-				</div>
-			</details>
-
-			<details>
-				<summary><strong>Editor JSON</strong></summary>
-				<div class="prose dark:prose-invert max-w-[unset]">
-					<pre class="mt-0">{JSON.stringify(editorJSON, null, 2)}</pre>
-				</div>
-			</details>
-		</footer>
 	</article>
 </Container>
