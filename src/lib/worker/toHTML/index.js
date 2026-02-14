@@ -12,7 +12,10 @@ import workerPath from './worker?modulePath';
 export default async function toHTML(workerData) {
 	if (dev) {
 		const { toHTMLWorker } = await import('./worker');
-		return toHTMLWorker(workerData);
+
+		const data = await toHTMLWorker(workerData);
+
+		return data;
 	}
 
 	return new Promise((resolve, reject) => {
