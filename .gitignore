@@ -15,5 +15,6 @@ vite.config.ts.timestamp-*
 /src/lib/worker/initialUpdate/worker.js
 /src/lib/worker/toHTML/worker.js
 /src/lib/worker/youtubeClipURL/worker.js
+/src/lib/worker/getDiffJSON/worker.js
 version
 forsen-wiki-logs
