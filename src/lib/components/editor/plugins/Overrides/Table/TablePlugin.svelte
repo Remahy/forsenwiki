@@ -153,11 +153,7 @@
 				return false;
 			}
 
-			const isAtEdge = offsetIsAtEdges(
-				atBefore,
-				anchor.offset,
-				cellNode.getTextContentSize()
-			);
+			const isAtEdge = offsetIsAtEdges(atBefore, anchor.offset, cellNode.getTextContentSize());
 			const adjacentNode = hasAdjacentNode(atBefore, aTableNodeParent);
 
 			if (!isAtEdge || adjacentNode) {
