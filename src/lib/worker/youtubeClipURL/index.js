@@ -1,5 +1,4 @@
 import { Worker } from 'node:worker_threads';
-
 import { dev } from '$app/environment';
 
 // @ts-ignore
@@ -12,7 +11,10 @@ import workerPath from './worker?modulePath';
 export default async function youtubeClipURL(workerData) {
 	if (dev) {
 		const { youtubeClipURLWorker } = await import('./worker');
-		return youtubeClipURLWorker(workerData);
+
+		const data = await youtubeClipURLWorker(workerData);
+
+		return data;
 	}
 
 	return new Promise((resolve, reject) => {
