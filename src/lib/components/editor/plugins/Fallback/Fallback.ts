@@ -16,9 +16,9 @@ type FallbackNodeType = {
 };
 
 export class FallbackNode extends DecoratorBlockNode {
-	__data: string;
+	__data?: string;
 
-	constructor({ data, format, key }: { format?: ElementFormatType; key?: NodeKey; data: string }) {
+	constructor(data?: string, format?: ElementFormatType, key?: NodeKey) {
 		super(format, key);
 		this.__data = data;
 	}
@@ -28,7 +28,7 @@ export class FallbackNode extends DecoratorBlockNode {
 	}
 
 	static clone(node: any): FallbackNode {
-		return new FallbackNode({ data: node.__data, format: node.__format, key: node.__key });
+		return new FallbackNode(node.__data, node.__format, node.__key);
 	}
 
 	exportDOM(): DOMExportOutput {
@@ -43,7 +43,7 @@ export class FallbackNode extends DecoratorBlockNode {
 		p.style.padding = '1rem';
 		p.style.borderRadius = '8px';
 
-		const data = JSON.parse(this.__data);
+		const data = JSON.parse(this.__data || '');
 
 		italic.style.color = '#000';
 		italic.textContent = `Invalid node of type: "${data?.type}"`;
@@ -87,7 +87,7 @@ export class FallbackNode extends DecoratorBlockNode {
 		_includeInert?: boolean | undefined,
 		_includeDirectionless?: false | undefined
 	): string {
-		return this.__data;
+		return this.__data || '';
 	}
 
 	decorate(editor: LexicalEditor): FallbackNodeType {
@@ -110,7 +110,7 @@ export function $createFallbackNode(node?: {
 }): FallbackNode {
 	const { data = '', key, format } = node || {};
 
-	return $applyNodeReplacement(new FallbackNode({ data, format, key }));
+	return $applyNodeReplacement(new FallbackNode(data, format, key));
 }
 
 export function $isFallbackNode(
