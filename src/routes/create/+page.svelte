@@ -22,7 +22,7 @@
 
 	const { initialUpdate } = $page.data;
 
-	/** @type {Error | null} */
+	/** @type {Error & { status?: number, statusText?: string } | null} */
 	let error = $state(null);
 
 	// svelte-ignore non_reactive_update
@@ -109,7 +109,7 @@
 				goto(`/w/${serverUrlTitle}`);
 			} else if (res.status >= 400) {
 				const json = await res.json();
-				error = json;
+				error = { status: res.status, statusText: res.statusText, ...json };
 			}
 		});
 	};
@@ -165,7 +165,7 @@
 		<input
 			oninput={unsetError}
 			required
-			class="w-full rounded-sm p-2 {titleError && '!bg-red-200'} input-color"
+			class="w-full rounded-sm p-2 {titleError && 'bg-red-200!'} input-color"
 			bind:value={title.value}
 		/>
 		{#if titleError}
@@ -182,8 +182,11 @@
 	{/if}
 
 	{#if error}
-		<Box class="flex items-center !bg-red-200 p-2 dark:text-black">
-			<p>{error.message}</p>
+		<Box class="flex items-center bg-red-300! p-2 dark:text-black font-bold">
+			<p>
+				{(error.status || error.statusText) && `(${error.status} ${error.statusText})`}
+				{error.message}
+			</p>
 		</Box>
 	{/if}
 

@@ -19,7 +19,7 @@
 		"prisma:migrate-deploy": "prisma migrate deploy",
 		"prisma:migrate-dev": "prisma migrate dev",
 		"prisma:seed": "node --experimental-transform-types ./prisma/seed/types.js",
-		"start": "node -r dotenv/config build"
+		"start": "node -r dotenv-expand/config build"
 	},
 	"overrides": {
 		"cookie": "$cookie",
