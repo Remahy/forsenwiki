@@ -77,7 +77,9 @@ export const adjustAndUploadImages = (editor, title, author) => {
 						calculateOriginalFileSizeInMiB(src) > MAX_IMAGE_SIZE_MIB
 					) {
 						image.setSrc(IMAGE_OFF);
-						return reject(`Image too large: {${image.getKey()}}`);
+						return reject(
+							`Image too large: {Parent: ${image.getParent()?.getParent()?.getType()}. Position: ${image.getIndexWithinParent() + 1}}`
+						);
 					}
 
 					let { width, height } = image.getWidthAndHeight();
