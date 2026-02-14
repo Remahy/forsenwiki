@@ -1,0 +1,18 @@
+{
+  "name": "@kararty/json-diff-rs",
+  "version": "0.1.0",
+  "description": "",
+  "main": "./index.js",
+  "scripts": {
+    "build": "cargo-cp-artifact -nc index.node -- cargo build --message-format=json-render-diagnostics",
+    "install": "npm run build",
+    "test": "cargo test && npx vitest ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@neon-rs/cli": "^0.1.82",
+    "cargo-cp-artifact": "^0.1.9",
+    "vitest": "4.0.18"
+  }
+}
