@@ -19,7 +19,6 @@ export const createArticle = async (title, yDoc) => {
 		throw error;
 	}
 
-
 	return fetch('/api/article/create', { method: 'POST', body, headers });
 };
 
