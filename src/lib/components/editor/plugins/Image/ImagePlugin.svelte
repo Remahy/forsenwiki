@@ -32,6 +32,7 @@
 		DRAGOVER_COMMAND,
 		DRAGSTART_COMMAND,
 		DROP_COMMAND,
+		getDOMSelectionFromTarget,
 	} from 'lexical';
 	import { $wrapNodeInElement as wrapNodeInElement, mergeRegister } from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
@@ -190,21 +191,14 @@
 	 */
 	function getDragSelection(event) {
 		let range;
-		const target = /** @type {null | Element | Document} */ (event.target);
-		const targetWindow =
-			target == null
-				? null
-				: target.nodeType === 9
-					? /** @type {Document} */ (target).defaultView
-					: /** @type {Element} */ (target).ownerDocument.defaultView;
-		const domSelection = getDOMSelection(targetWindow);
+		const domSelection = getDOMSelectionFromTarget(event.target);
 		if (document.caretRangeFromPoint) {
 			range = document.caretRangeFromPoint(event.clientX, event.clientY);
 		} else if (event.rangeParent && domSelection !== null) {
 			domSelection.collapse(event.rangeParent, event.rangeOffset || 0);
 			range = domSelection.getRangeAt(0);
 		} else {
-			throw new Error(`Cannot get the selection when dragging`);
+			throw new Error("Cannot get the selection when dragging");
 		}
 
 		return range;
@@ -401,5 +395,4 @@
 	});
 </script>
 
-<!--for ImageComponent history plugin -->
 {@render children?.()}
