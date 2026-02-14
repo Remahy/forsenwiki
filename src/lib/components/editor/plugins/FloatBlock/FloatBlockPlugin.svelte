@@ -88,43 +88,31 @@
 			}
 
 			const [anchor] = /** @type {[PointType, PointType]} */ (selection.getStartEndPoints());
-
 			const anchorNode = anchor.getNode();
 
-			if (
-				isFloatBlockNode(anchorNode) &&
-				offsetIsAtEdges(atBefore, anchor.offset, anchorNode.getTextContentSize()) &&
-				!hasAdjacentNode(atBefore, anchorNode)
-			) {
-				editor.update(() => {
-					const newNode = createParagraphNode().append(createTextNode());
-					insertFnc(atBefore, anchorNode, newNode);
-				});
+			const floatBlockParent = anchorNode.getParents().find((n) => isFloatBlockNode(n));
 
-				return true;
+			if (!floatBlockParent) {
+				return false;
 			}
 
-			if (
-				isTextNode(anchorNode) &&
-				offsetIsAtEdges(atBefore, anchor.offset, anchorNode.getTextContentSize())
-			) {
-				const parentParentNode = anchorNode.getParent()?.getParent();
+			const isAtEdge = offsetIsAtEdges(
+				atBefore,
+				anchor.offset,
+				floatBlockParent.getTextContentSize()
+			);
+			const adjacentNode = hasAdjacentNode(atBefore, floatBlockParent);
 
-				if (!isFloatBlockNode(parentParentNode)) {
-					return false;
-				}
-
-				if (!hasAdjacentNode(atBefore, parentParentNode)) {
-					editor.update(() => {
-						const newNode = createParagraphNode().append(createTextNode());
-						insertFnc(atBefore, parentParentNode, newNode);
-					});
-
-					return true;
-				}
+			if (!isAtEdge || adjacentNode) {
+				return false;
 			}
 
-			return false;
+			editor.update(() => {
+				const newNode = createParagraphNode().append(createTextNode());
+				insertFnc(atBefore, floatBlockParent, newNode);
+			});
+
+			return true;
 		});
 	};
 
