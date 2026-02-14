@@ -35,7 +35,7 @@
 					}}
 				>
 					<span class="hidden lg:inline">Close</span>
-					<XIcon class="inline lg:hidden" />
+					<XIcon class="inline lg:hidden min-w-4" />
 				</Button>
 			</div>
 		</Box>
