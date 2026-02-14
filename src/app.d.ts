@@ -1,7 +1,7 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 
-import * as P from '../node_modules/.prisma/client';
+import * as P from '../src/generated/prisma/client';
 
 declare global {
 	namespace App {

@@ -1,9 +1,15 @@
-import { PrismaClient } from '@prisma/client';
+import dotenv from 'dotenv';
+import dotenvExpand from 'dotenv-expand';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '../../src/generated/prisma/client.ts';
 import { SYSTEM, Y_POST_TYPES } from '../../src/lib/constants/constants.js';
+
+dotenvExpand.expand(dotenv.config());
 
 const { ARTICLE, BIO } = Y_POST_TYPES;
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 
 async function yMain() {
 	const sysUser = await prisma.user.upsert({

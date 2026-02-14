@@ -14,7 +14,7 @@ export async function load() {
 
 	if (Math.random() >= 0.1) {
 		/**
-		 * @type {[import('@prisma/client').YPost]}
+		 * @type {[Prisma.YPost]}
 		 */
 		// DO NOT pass in or accept user input here
 		const [randomArticle] =
@@ -23,7 +23,7 @@ export async function load() {
 		randomURL = `/w/${randomArticle.title}?random`;
 	} else {
 		/**
-		 * @type {[import('@prisma/client').Content]}
+		 * @type {[Prisma.Content]}
 		 */
 		// DO NOT pass in or accept user input here
 		const [randomContent] =
