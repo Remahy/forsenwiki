@@ -107,7 +107,7 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		fromDate,
 		fromAuthor,
 		/** @type {null | { html: string }} */
-		html: null,
+		html: { html: 'Diffing is temporarily disabled.' },
 		post: {
 			title: res.title,
 			rawTitle: res.rawTitle,
