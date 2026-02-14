@@ -1,15 +1,17 @@
 import { error, json } from '@sveltejs/kit';
+/*
 import { createHeadlessEditor } from '@lexical/headless';
 
 import { mergePostUpdatesV2, postUpdatesToUint8Arr } from '$lib/yjs/utils';
-import { readYPostUpdatesWithIdByTitle } from '$lib/db/article/read';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
 import { getDiffJSON } from '$lib/diff/index.server';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { diffConfig } from '$lib/components/editor/config/diff';
 import toHTML from '$lib/worker/toHTML';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
+*/
+import { readYPostUpdatesWithIdByTitle } from '$lib/db/article/read';
+import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
 import { replacer } from '$lib/utils/json';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 
@@ -71,6 +73,7 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 	const { createdTimestamp: toDate } = res.postUpdates[toPostUpdateIdIndex];
 	const { createdTimestamp: fromDate } = res.postUpdates[fromPostUpdateIdIndex];
 
+	/*
 	const toPostUpdates = postUpdatesToUint8Arr(res.postUpdates.slice(0, toPostUpdateIdIndex + 1));
 	const fromPostUpdates = postUpdatesToUint8Arr(
 		res.postUpdates.slice(0, fromPostUpdateIdIndex + 1)
@@ -84,25 +87,17 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		updatesTo
 	);
 	const toUpdate = tEditor.toJSON();
-
 	const { editor: fEditor } = getYjsAndEditor(
 		articleConfig(null, EDITOR_IS_READONLY, null),
 		updatesFrom
 	);
 	const fromUpdate = fEditor.toJSON();
+	*/
 
 	const [toAuthor, fromAuthor] = await Promise.all([
 		readAuthorForYPostUpdate(toPostUpdateId),
 		readAuthorForYPostUpdate(fromPostUpdateId),
 	]);
-
-	const diffJSON = getDiffJSON(toUpdate, fromUpdate);
-
-	const editor = createHeadlessEditor(diffConfig(null, EDITOR_IS_READONLY, null));
-
-	editor.setEditorState(editor.parseEditorState(diffJSON.editorState));
-
-	const diffHTML = await toHTML({ config: 'diff', content: JSON.stringify(diffJSON.editorState) });
 
 	return {
 		toPostUpdateId,
@@ -111,13 +106,39 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		fromPostUpdateId,
 		fromDate,
 		fromAuthor,
-		diffHTML,
+		/** @type {null | { html: string }} */
+		html: null,
 		post: {
 			title: res.title,
 			rawTitle: res.rawTitle,
 			outRelations: res.outRelations,
 		},
 	};
+
+	/*
+	const diffJSON = getDiffJSON(toUpdate, fromUpdate);
+
+	const editor = createHeadlessEditor(diffConfig(null, EDITOR_IS_READONLY, null));
+
+	editor.setEditorState(editor.parseEditorState(diffJSON.editorState));
+
+	const html = await toHTML({ config: 'diff', content: JSON.stringify(diffJSON.editorState) });
+
+	return {
+		toPostUpdateId,
+		toDate,
+		toAuthor,
+		fromPostUpdateId,
+		fromDate,
+		fromAuthor,
+		html,
+		post: {
+			title: res.title,
+			rawTitle: res.rawTitle,
+			outRelations: res.outRelations,
+		},
+	};
+	*/
 }
 
 export async function GET({ params }) {

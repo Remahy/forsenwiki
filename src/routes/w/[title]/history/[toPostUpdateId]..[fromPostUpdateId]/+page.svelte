@@ -16,7 +16,7 @@
 		toAuthor,
 		fromDate,
 		fromAuthor,
-		diffHTML: { html: diffHTML },
+		html,
 	} = $derived(data);
 
 	const tD = $derived(toDate.toLocaleString());
@@ -104,13 +104,17 @@
 
 		<div class="flex grow flex-col gap-4 lg:flex-row">
 			<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
-				<main class="article-root prose dark:prose-invert max-w-[unset] grow wrap-break-words">
-					<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
-						<strong class="text-4xl">{rawTitle}</strong>
-					</div>
+				{#if html?.html}
+					<main class="article-root prose dark:prose-invert max-w-[unset] grow">
+						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
+							<strong class="text-4xl">{rawTitle}</strong>
+						</div>
 
-					{@html diffHTML}
-				</main>
+						{@html html.html}
+					</main>
+				{:else}
+					<i>Error: No HTML returned.</i>
+				{/if}
 			</Box>
 
 			<div class="hidden lg:block lg:w-96 lg:min-w-96"></div>

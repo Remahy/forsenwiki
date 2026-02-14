@@ -108,7 +108,6 @@
 						<Link href="/w/{article.title}" class="inline-block min-w-32">
 							<strong>{article.rawTitle}</strong>
 						</Link>
-						&nbsp;
 						<span
 							title={new Date(article.createdTimestamp).toUTCString()}
 							class="inline-block min-w-32"
@@ -116,7 +115,7 @@
 							{new Date(article.createdTimestamp).toDateString()}
 						</span>
 						&nbsp;
-						<small><strong>By:</strong> {article.author}</small>
+						<small class="inline-block"><strong>By:</strong> {article.author}</small>
 					</div>
 				{/each}
 			</Box>
