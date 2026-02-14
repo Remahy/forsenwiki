@@ -59,6 +59,7 @@
 			<strong>Rows</strong>
 			<input
 				bind:value={rows}
+				min="1"
 				class="input-color rounded-sm p-2"
 				placeholder="# of rows (1-500)"
 				type="number"
@@ -69,6 +70,7 @@
 			<strong>Columns</strong>
 			<input
 				bind:value={columns}
+				min="1"
 				class="input-color rounded-sm p-2"
 				placeholder="# of columns (1-50)"
 				type="number"

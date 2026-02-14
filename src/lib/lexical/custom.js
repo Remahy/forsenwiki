@@ -37,7 +37,7 @@ export { DiffVideoEmbedNode } from '../components/editor/plugins/Diff/VideoEmbed
 export { DiffALinkNode } from '../components/editor/plugins/Diff/ALink';
 export { DiffLineBreakNode } from '../components/editor/plugins/Diff/LineBreak';
 export { DiffTabNode } from '../components/editor/plugins/Diff/Tab';
-export { DiffTableNode } from '../components/editor/plugins/Diff/Table';
+export { DiffATableNode } from '../components/editor/plugins/Diff/ATable';
 export { DiffTableRowNode } from '../components/editor/plugins/Diff/TableRow';
 export { DiffTableCellNode } from '../components/editor/plugins/Diff/TableCell';
 export { DiffFloatBlockNode } from '../components/editor/plugins/Diff/FloatBlock';

@@ -6,6 +6,7 @@ import {
 	QuoteNode,
 	TableCellNode,
 	TableRowNode,
+	TableNode,
 } from '$lib/lexical/index';
 import {
 	ALinkNode,
@@ -18,6 +19,7 @@ import {
 	AHeadingNode,
 	ATableCellNode,
 	ATableNode,
+	$createATableNode,
 } from '$lib/lexical/custom';
 import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
@@ -91,6 +93,11 @@ export const articleNodes = [
 	VideoEmbedNode,
 
 	ATableNode,
+	{
+		replace: TableNode,
+		with: () => $createATableNode(),
+		withKlass: ATableNode,
+	},
 	TableCellNode,
 	TableRowNode,
 	FloatBlockNode,

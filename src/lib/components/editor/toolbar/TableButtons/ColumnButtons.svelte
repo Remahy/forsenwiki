@@ -6,8 +6,8 @@
 	import { $isRangeSelection as isRangeSelection, $getSelection as getSelection } from 'lexical';
 	import { mergeRegister } from '@lexical/utils';
 	import {
-		$insertTableColumn__EXPERIMENTAL as insertTableColumn__EXPERIMENTAL,
-		$deleteTableColumn__EXPERIMENTAL as deleteTableColumn__EXPERIMENTAL,
+		$insertTableColumnAtSelection as insertTableColumnAtSelection,
+		$deleteTableColumnAtSelection as deleteTableColumnAtSelection,
 		$getTableNodeFromLexicalNodeOrThrow as getTableNodeFromLexicalNodeOrThrow,
 		$getTableColumnIndexFromTableCellNode as getTableColumnIndexFromTableCellNode,
 		$isTableRowNode as isTableRowNode,
@@ -38,7 +38,7 @@
 				return;
 			}
 
-			insertTableColumn__EXPERIMENTAL(insertAfter);
+			insertTableColumnAtSelection(insertAfter);
 		});
 	};
 
@@ -48,7 +48,7 @@
 				return;
 			}
 
-			deleteTableColumn__EXPERIMENTAL();
+			deleteTableColumnAtSelection();
 		});
 	};
 
