@@ -11,6 +11,15 @@ export const createArticle = async (title, yDoc) => {
 
 	const body = JSON.stringify({ title, content: encodedContent });
 
+	const { length } = new TextEncoder().encode(body);
+
+	// 10MB
+	if (length > 1_048_576) {
+		const error = new Error(`Body of ${length} exceeds limit of ${1_048_576} bytes. Submit a smaller snippet of your article and add to it afterwards.`);
+		throw error;
+	}
+
+
 	return fetch('/api/article/create', { method: 'POST', body, headers });
 };
 
