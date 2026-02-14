@@ -25,6 +25,8 @@ import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
 import TableNodeDOMExport from './htmlExport/TableNodeDOMExport';
 
+const floatResponsive = 'max-sm:float-none! max-sm:w-full! max-sm:me-0! max-sm:ms-0!';
+
 export const articleTheme = {
 	image: 'image',
 	heading: {
@@ -34,7 +36,7 @@ export const articleTheme = {
 		h4: 'wrap-break-words',
 		h5: 'wrap-break-words',
 	},
-	floatResponsive: 'max-sm:!float-none',
+	floatResponsive: `${floatResponsive} [&_p_br:only-child]:hidden`,
 };
 
 export const editableTheme = {
@@ -45,7 +47,7 @@ export const editableTheme = {
 	tableCellResizer: 'tableCellResizer',
 	tableCellSelected: 'tableCellSelected',
 	floatBlockNodeBoxShadow: '#696969 0px 0px 0px 1px',
-	floatResponsive: null,
+	floatResponsive,
 	text: {
 		bold: 'font-semibold',
 		italic: 'italic',

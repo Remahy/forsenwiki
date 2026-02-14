@@ -2,8 +2,9 @@
 	import {
 		ArrowLeftToLineIcon,
 		ArrowRightToLineIcon,
+		BrickWallIcon,
 		ChevronsLeftRightEllipsisIcon,
-		FileQuestionIcon,
+		FileQuestionMarkIcon,
 		RectangleHorizontalIcon,
 		RectangleVerticalIcon,
 	} from 'lucide-svelte';
@@ -39,8 +40,9 @@
 		right: ArrowRightToLineIcon,
 		'inline-start': ArrowLeftToLineIcon,
 		'inline-end': ArrowRightToLineIcon,
-		none: ChevronsLeftRightEllipsisIcon,
-		default: FileQuestionIcon,
+		clear: ChevronsLeftRightEllipsisIcon,
+		none: BrickWallIcon,
+		default: FileQuestionMarkIcon,
 	};
 
 	const FloatIconComponent = $derived(
@@ -69,7 +71,7 @@
 	};
 </script>
 
-<div class="flex min-h-[42px] items-center gap-2 pl-2">
+<div class="flex min-h-10.5 items-center gap-2 pl-2">
 	<FloatIconComponent />
 
 	<Select
@@ -77,7 +79,7 @@
 		bind:ref={floatValueElement}
 		on:change={float}
 		bind:value={floatValue}
-		class="!-ml-10 h-full !px-10"
+		class="-ml-10! h-full px-10!"
 	>
 		<option value="unknown" hidden>Unknown</option>
 
@@ -85,11 +87,12 @@
 		<option value="right" class="text-lg">Right</option>
 		<option value="inline-start" class="text-lg">Start (Language aware)</option>
 		<option value="inline-end" class="text-lg">End (Language aware)</option>
+		<option value="clear" class="text-lg">Clear float</option>
 		<option value="none" class="text-lg">Block (Non-floating)</option>
 	</Select>
 </div>
 
-<label title="Width" class="flex min-h-[42px] items-center gap-2 pl-2">
+<label title="Width" class="flex min-h-10.5 items-center gap-2 pl-2">
 	<span class="hidden">Width</span>
 	<RectangleHorizontalIcon />
 
@@ -101,7 +104,7 @@
 	/>
 </label>
 
-<label title="Height" class="flex min-h-[42px] items-center gap-2 pl-2">
+<label title="Height" class="flex min-h-10.5 items-center gap-2 pl-2">
 	<span class="hidden">Height</span>
 	<RectangleVerticalIcon />
 

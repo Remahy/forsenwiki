@@ -6,7 +6,7 @@ import {
 } from '$lib/constants/floatBlock';
 
 const startValues = ['left', 'inline-start', 'none', undefined];
-// const endValues = ['right', 'inline-end'];
+const endValues = ['right', 'inline-end'];
 
 /**
  * @param {any} number
@@ -28,7 +28,7 @@ const setNumberOrUndefined = (number, min) => {
  * @typedef {import('lexical').SerializedElementNode} SerializedElementNode
  * @typedef {import('lexical').EditorConfig} EditorConfig
  *
- * @typedef {('none' | 'left' | 'right' | 'inline-start' | 'inline-end' | undefined)} FloatValue
+ * @typedef {('none' | 'left' | 'right' | 'inline-start' | 'inline-end' | 'clear' | undefined)} FloatValue
  * @typedef {SerializedElementNode & { float: FloatValue, width?: number, height?: number, type: string }} SerializedFloatBlockNode
  */
 
@@ -179,9 +179,9 @@ export class FloatBlockNode extends ElementNode {
 		dom.style.float = float || 'none';
 
 		if (startValues.includes(float)) {
-			dom.style.marginInlineEnd = '8px';
-		} else {
-			dom.style.marginInlineStart = '8px';
+			dom.style.marginInlineEnd = '16px';
+		} else if (endValues.includes(float)) {
+			dom.style.marginInlineStart = '16px';
 		}
 
 		const { floatBlockNodeBoxShadow = null, floatResponsive = null } = config?.theme || {};
@@ -189,7 +189,7 @@ export class FloatBlockNode extends ElementNode {
 			dom.style.boxShadow = floatBlockNodeBoxShadow;
 		}
 		if (floatResponsive) {
-			dom.classList.add(floatResponsive);
+			dom.classList.add(...floatResponsive.split(" "));
 		}
 
 		dom.style.overflow = 'hidden';
@@ -200,7 +200,6 @@ export class FloatBlockNode extends ElementNode {
 		} else {
 			dom.style.removeProperty('width');
 		}
-		dom.style.minWidth = `${FLOATBLOCK_MIN_WIDTH}px`;
 
 		const height = this.getHeight();
 		if (height != null) {
@@ -208,7 +207,14 @@ export class FloatBlockNode extends ElementNode {
 		} else {
 			dom.style.removeProperty('height');
 		}
-		dom.style.minHeight = `${FLOATBLOCK_MIN_HEIGHT}px`;
+
+		if (float === 'clear') {
+			dom.style.clear = 'both';
+			dom.style.float = 'none';
+		} else {
+			dom.style.minWidth = `${FLOATBLOCK_MIN_WIDTH}px`;
+			dom.style.minHeight = `${FLOATBLOCK_MIN_HEIGHT}px`;
+		}
 
 		return false;
 	}
