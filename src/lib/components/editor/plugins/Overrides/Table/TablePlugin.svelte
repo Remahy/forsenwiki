@@ -1,7 +1,18 @@
 <script lang="ts">
 	// Based on umaranis' svelte-lexical
 	import { onMount } from 'svelte';
-	import { mergeRegister, $isTextNode as isTextNode, COMMAND_PRIORITY_NORMAL } from 'lexical';
+	import {
+		$createParagraphNode as createParagraphNode,
+		$isTextNode as isTextNode,
+		$createTextNode as createTextNode,
+		$getSelection as getSelection,
+		COMMAND_PRIORITY_NORMAL,
+		KEY_ARROW_LEFT_COMMAND,
+		KEY_ARROW_RIGHT_COMMAND,
+		mergeRegister,
+		type PointType,
+		COMMAND_PRIORITY_CRITICAL,
+	} from 'lexical';
 	import { $insertNodeToNearestRoot as insertNodeToNearestRoot } from '@lexical/utils';
 	import {
 		INSERT_TABLE_COMMAND,
@@ -11,12 +22,23 @@
 		setScrollableTablesActive,
 		TableCellNode,
 		$createTableNodeWithDimensions as createTableNodeWithDimensions,
+		$getTableCellNodeFromLexicalNode as getTableCellNodeFromLexicalNode,
+		$isTableCellNode as isTableCellNode,
+		$computeTableMap as computeTableMap,
+		$getTableNodeFromLexicalNodeOrThrow as getTableNodeFromLexicalNodeOrThrow,
+		$getTableRowNodeFromTableCellNodeOrThrow as getTableRowNodeFromTableCellNodeOrThrow,
 		type InsertTableCommandPayloadHeaders,
 	} from '@lexical/table';
 	import { getEditor } from 'svelte-lexical';
 
 	import { modal } from '$lib/stores/modal';
 	import InsertTableDialog from '$lib/components/editor/toolbar/TableButtons/InsertTableDialog.svelte';
+	import { $isATableNode as isATableNode } from './ATableNode';
+	import {
+		hasAdjacentNode,
+		insertFnc,
+		offsetIsAtEdges,
+	} from '$lib/components/editor/utils/insertUtils';
 
 	function wrapperInsertTable(payload: {
 		columns: string;
@@ -87,6 +109,72 @@
 
 	const editor = getEditor();
 
+	const INSERT_BEFORE = true;
+	const INSERT_AFTER = false;
+
+	const insertParagraph = (atBefore = INSERT_BEFORE) => {
+		return editor.read(() => {
+			const selection = getSelection();
+			if (!selection?.isCollapsed()) {
+				return false;
+			}
+
+			const [anchor] = selection.getStartEndPoints() as [PointType, PointType];
+			const anchorNode = anchor.getNode();
+
+			const cellNode =
+				anchorNode.getParents().find((n) => isTableCellNode(n)) ||
+				(isTableCellNode(anchorNode) && anchorNode);
+
+			if (!cellNode) {
+				return false;
+			}
+
+			const aTableNodeParent = anchorNode.getParents().find((n) => isATableNode(n));
+
+			if (!aTableNodeParent) {
+				return false;
+			}
+
+			const row = getTableRowNodeFromTableCellNodeOrThrow(cellNode);
+			const table = getTableNodeFromLexicalNodeOrThrow(cellNode);
+
+			const tableMap = computeTableMap(table, cellNode, cellNode);
+
+			const rows = tableMap.length;
+			const cols = tableMap[0].length;
+			const rowIndex = row.getIndexWithinParent();
+			const colIndex = cellNode.getIndexWithinParent();
+
+			const isLastCell = rowIndex === rows - 1 && colIndex === cols - 1;
+			const isFirstCell = rowIndex === 0 && colIndex === 0;
+
+			if (!isLastCell && !isFirstCell) {
+				return false;
+			}
+
+			const isAtEdge = offsetIsAtEdges(
+				atBefore,
+				anchor.offset,
+				cellNode.getTextContentSize()
+			);
+			const adjacentNode = hasAdjacentNode(atBefore, aTableNodeParent);
+
+			if (!isAtEdge || adjacentNode) {
+				return false;
+			}
+
+			editor.update(() => {
+				const newNode = createParagraphNode().append(createTextNode());
+				const n = insertFnc(atBefore, aTableNodeParent, newNode);
+
+				n.selectStart();
+			});
+
+			return true;
+		});
+	};
+
 	$effect(() => {
 		setScrollableTablesActive(editor, hasHorizontalScroll);
 	});
@@ -115,16 +203,38 @@
 	});
 
 	onMount(() => {
-		const unregisterTableInsertCmd = editor.registerCommand(
-			INSERT_TABLE_COMMAND,
-			({ columns, rows, includeHeaders }) => {
-				wrapperInsertTable({ columns, rows, includeHeaders });
+		return mergeRegister(
+			editor.registerCommand(
+				INSERT_TABLE_COMMAND,
+				({ columns, rows, includeHeaders }) => {
+					wrapperInsertTable({ columns, rows, includeHeaders });
 
-				return true;
-			},
-			COMMAND_PRIORITY_NORMAL
+					return true;
+				},
+				COMMAND_PRIORITY_NORMAL
+			),
+			editor.registerCommand(
+				KEY_ARROW_LEFT_COMMAND,
+				(payload) => {
+					if (payload.ctrlKey) {
+						return false;
+					}
+
+					return insertParagraph(INSERT_BEFORE);
+				},
+				COMMAND_PRIORITY_CRITICAL
+			),
+			editor.registerCommand(
+				KEY_ARROW_RIGHT_COMMAND,
+				(payload) => {
+					if (payload.ctrlKey) {
+						return false;
+					}
+
+					return insertParagraph(INSERT_AFTER);
+				},
+				COMMAND_PRIORITY_CRITICAL
+			)
 		);
-
-		return mergeRegister(unregisterTableInsertCmd);
 	});
 </script>
