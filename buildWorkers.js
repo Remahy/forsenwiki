@@ -10,11 +10,11 @@ async function buildInitialUpdateWorker() {
 		conditions: ['svelte'],
 		bundle: true,
 		platform: 'node',
-		target: 'node22',
 		format: 'esm',
 		outfile: './src/lib/worker/initialUpdate.js',
 		write: false,
 		plugins: [sveltePlugin()],
+		packages: 'external',
 	});
 
 	// Ensure dist directory exists
@@ -28,11 +28,11 @@ async function buildToHTMLWorker() {
 		conditions: ['svelte'],
 		bundle: true,
 		platform: 'node',
-		target: 'node22',
 		format: 'esm',
 		outfile: './src/lib/worker/toHTML.js',
 		write: false,
 		plugins: [sveltePlugin()],
+		packages: 'external',
 	});
 
 	// Ensure dist directory exists
@@ -45,10 +45,10 @@ async function buildYoutubeClipURLWorker() {
 		entryPoints: ['worker/youtubeClipURL.js'],
 		bundle: true,
 		platform: 'node',
-		target: 'node22',
 		format: 'esm',
 		outfile: './src/lib/worker/youtubeClipURL.js',
 		write: false,
+		packages: 'external',
 	});
 
 	// Ensure dist directory exists

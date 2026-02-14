@@ -1,5 +1,5 @@
-import { TableNode } from '@lexical/table';
 import { addInformationHover, applyCSSColorDiff } from './utils';
+import { ATableNode } from '$lib/lexical/custom';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey
@@ -7,12 +7,12 @@ import { addInformationHover, applyCSSColorDiff } from './utils';
  * @typedef {import('@lexical/table').SerializedTableNode} SerializedTableNode
  */
 
-export class DiffTableNode extends TableNode {
+export class DiffATableNode extends ATableNode {
 	/** @type {import('./Types').___Change} */
 	___change;
 
 	/**
-	 * @param {SerializedTableNode | TableNode} node
+	 * @param {SerializedTableNode | ATableNode} node
 	 * @param {NodeKey} [key]
 	 */
 	constructor(node, key) {
@@ -23,21 +23,21 @@ export class DiffTableNode extends TableNode {
 	}
 
 	/**
-	 * @param {DiffTableNode} node
+	 * @param {DiffATableNode} node
 	 */
 	static clone(node) {
-		return new DiffTableNode(node, node.__key);
+		return new DiffATableNode(node, node.__key);
 	}
 
 	static getType() {
-		return 'diff-table';
+		return 'diff-a-table';
 	}
 
 	/**
 	 * @param {SerializedTableNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
-		const node = $createDiffTableNode(serializedNode).updateFromJSON(serializedNode);
+		const node = $createDiffATableNode(serializedNode).updateFromJSON(serializedNode);
 		return node;
 	}
 
@@ -60,17 +60,17 @@ export class DiffTableNode extends TableNode {
 	}
 
 	static importDOM() {
-		return TableNode.importDOM();
+		return ATableNode.importDOM();
 	}
 
 	exportJSON() {
-		return { ...super.exportJSON(), ___change: this.___change, type: DiffTableNode.getType() };
+		return { ...super.exportJSON(), ___change: this.___change, type: DiffATableNode.getType() };
 	}
 }
 
 /**
  * @param {SerializedTableNode} node
  */
-export function $createDiffTableNode(node) {
-	return new DiffTableNode(node);
+export function $createDiffATableNode(node) {
+	return new DiffATableNode(node);
 }

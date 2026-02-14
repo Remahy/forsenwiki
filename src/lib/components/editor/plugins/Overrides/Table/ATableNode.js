@@ -16,11 +16,11 @@ export class ATableNode extends TableNode {
 	}
 
 	$config() {
-		return this.config('table', { extends: TableNode });
+		return this.config('a-table', { extends: TableNode });
 	}
 
 	static getType() {
-		return 'table';
+		return 'a-table';
 	}
 
 	/**
