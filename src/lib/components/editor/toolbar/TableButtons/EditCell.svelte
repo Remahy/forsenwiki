@@ -33,7 +33,7 @@
 		}
 
 		editor.update(() => {
-			let widths = JSON.parse(JSON.stringify(selectedTable.getColWidths()));
+			let widths = JSON.parse(JSON.stringify(selectedTable.getColWidths() || []));
 
 			if (!widths?.length) {
 				const maxCols = selectedTable.getColumnCount();
