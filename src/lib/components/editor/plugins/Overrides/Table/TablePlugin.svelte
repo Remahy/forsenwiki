@@ -136,15 +136,21 @@
 				return false;
 			}
 
-			const row = getTableRowNodeFromTableCellNodeOrThrow(cellNode);
-			const table = getTableNodeFromLexicalNodeOrThrow(cellNode);
+			const cell = getTableCellNodeFromLexicalNode(cellNode);
 
-			const tableMap = computeTableMap(table, cellNode, cellNode);
+			if (!cell) {
+				return false;
+			}
+
+			const row = getTableRowNodeFromTableCellNodeOrThrow(cell);
+			const table = getTableNodeFromLexicalNodeOrThrow(cell);
+
+			const [tableMap] = computeTableMap(table, cell, cell);
 
 			const rows = tableMap.length;
 			const cols = tableMap[0].length;
 			const rowIndex = row.getIndexWithinParent();
-			const colIndex = cellNode.getIndexWithinParent();
+			const colIndex = cell.getIndexWithinParent();
 
 			const isLastCell = rowIndex === rows - 1 && colIndex === cols - 1;
 			const isFirstCell = rowIndex === 0 && colIndex === 0;

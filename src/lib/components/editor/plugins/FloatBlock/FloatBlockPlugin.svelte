@@ -76,8 +76,17 @@
 				return false;
 			}
 
-			const isAtStart = anchor.offset === 0 && floatBlockParent.getFirstChild() === anchorNode;
-			const isAtEnd = isAtNodeEnd(focus) && floatBlockParent.getLastChild() === anchorNode;
+			let isAtStart;
+			let isAtEnd;
+			if (isTextNode(anchorNode)) {
+				const allTextNodes = floatBlockParent.getAllTextNodes();
+
+				isAtStart = anchor.offset === 0 && allTextNodes[0] === anchorNode;
+				isAtEnd = isAtNodeEnd(focus) && allTextNodes[allTextNodes.length - 1] === anchorNode;
+			} else {
+				isAtStart = anchor.offset === 0 && floatBlockParent.getFirstChild() === anchorNode;
+				isAtEnd = isAtNodeEnd(focus) && floatBlockParent.getLastChild() === anchorNode;
+			}
 
 			const isAtEdge = isAtStart || isAtEnd;
 
