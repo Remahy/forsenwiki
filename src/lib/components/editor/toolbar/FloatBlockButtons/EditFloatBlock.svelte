@@ -32,6 +32,30 @@
 	/** @type {HTMLSelectElement | null} */
 	let floatValueElement = $state(null);
 
+	let placeholderWidthText = $derived.by(() => {
+		let placeholderText = 'Auto';
+
+		if (floatValue === 'none') {
+			return 'Fill';
+		}
+
+		if (floatValue === 'clear') {
+			return 'Ignored';
+		}
+
+		return placeholderText;
+	});
+
+	let placeholderHeightText = $derived.by(() => {
+		let placeholderText = 'Auto';
+
+		if (floatValue === 'clear') {
+			return 'Ignored';
+		}
+
+		return placeholderText;
+	});
+
 	/**
 	 * @type {{[x: string]: typeof import('svelte').SvelteComponent<any>}}
 	 */
@@ -91,8 +115,10 @@
 
 		<option value="left" class="text-lg">Left</option>
 		<option value="right" class="text-lg">Right</option>
+		<!--
 		<option value="inline-start" class="text-lg">Start (Language aware)</option>
 		<option value="inline-end" class="text-lg">End (Language aware)</option>
+		-->
 		<option value="clear" class="text-lg">Clear float</option>
 		<option value="none" class="text-lg">Block (Non-floating)</option>
 	</Select>
@@ -103,10 +129,11 @@
 	<RectangleHorizontalIcon />
 
 	<input
-		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		placeholder={floatValue === 'none' ? 'Fill' : 'Auto'}
+		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm disabled:opacity-50 disabled:hover:cursor-not-allowed"
+		placeholder={placeholderWidthText}
 		bind:value={width}
 		onchange={onChange}
+		disabled={floatValue === 'clear'}
 	/>
 </label>
 
@@ -115,13 +142,14 @@
 	<RectangleVerticalIcon />
 
 	<input
-		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		placeholder="Auto"
+		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm disabled:opacity-50 disabled:hover:cursor-not-allowed"
+		placeholder={placeholderHeightText}
 		bind:value={height}
 		onchange={onChange}
+		disabled={floatValue === 'clear'}
 	/>
 </label>
 
-<EditorButton on:click={toggleHasBorder} isActive={currentHasBorder} title="Toggle border">
+<EditorButton on:click={toggleHasBorder} isActive={!!currentHasBorder} title="Toggle border">
 	<SquareDashedIcon />
 </EditorButton>

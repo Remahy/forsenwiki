@@ -38,7 +38,7 @@ export const articleTheme = {
 		h5: 'wrap-break-words',
 	},
 	floatBoxShadow,
-	floatResponsive: `${floatResponsive} [&_p_br:only-child]:hidden`,
+	floatResponsive: `${floatResponsive} [&_p:has(>br:only-child)]:hidden`,
 };
 
 export const editableTheme = {

@@ -5,7 +5,7 @@ import {
 	floatValues,
 } from '$lib/constants/floatBlock';
 
-const startValues = ['left', 'inline-start', 'none', undefined];
+const startValues = ['left', 'inline-start'];
 const endValues = ['right', 'inline-end'];
 
 /**
@@ -207,9 +207,15 @@ export class FloatBlockNode extends ElementNode {
 		dom.style.float = float || 'none';
 
 		if (startValues.includes(float)) {
+			dom.style.removeProperty('margin-inline-start');
 			dom.style.marginInlineEnd = '16px';
 		} else if (endValues.includes(float)) {
+			dom.style.removeProperty('margin-inline-end');
 			dom.style.marginInlineStart = '16px';
+		} else {
+			dom.style.removeProperty('margin-inline');
+			dom.style.removeProperty('margin-inline-start');
+			dom.style.removeProperty('margin-inline-end');
 		}
 
 		const {
@@ -220,7 +226,7 @@ export class FloatBlockNode extends ElementNode {
 		const hasBorder = this.getHasBorder();
 		let boxShadow = '';
 
-		if (hasBorder) {
+		if (hasBorder && float !== 'clear') {
 			boxShadow = floatBoxShadow;
 		}
 
@@ -228,9 +234,7 @@ export class FloatBlockNode extends ElementNode {
 			boxShadow = boxShadow ? `${boxShadow}, ${floatBoxShadowEditable}` : floatBoxShadowEditable;
 		}
 
-		if (boxShadow) {
-			dom.style.boxShadow = boxShadow;
-		}
+		dom.style.boxShadow = boxShadow;
 
 		if (floatResponsive) {
 			dom.classList.add(...floatResponsive.split(' '));
