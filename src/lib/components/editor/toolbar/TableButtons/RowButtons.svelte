@@ -129,7 +129,7 @@
 	});
 </script>
 
-<div class="forsen-wiki-theme-outline mx-2 flex items-center gap-2 outline-offset-8">
+<div class="forsen-wiki-theme-outline mx-2 flex items-center gap-2 outline-offset-8 m-2">
 	<div class="flex flex-col items-center justify-center font-mono text-xs leading-none select-none">
 		<span>R</span>
 		<span>O</span>

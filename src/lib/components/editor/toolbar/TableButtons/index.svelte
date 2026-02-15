@@ -2,15 +2,18 @@
 	import { onMount } from 'svelte';
 	import { $getSelection as getSelection } from 'lexical';
 	import { mergeRegister } from '@lexical/utils';
-	import { $isTableNode as isTableNode } from '@lexical/table';
+	import { $isTableCellNode as isTableCellNode, $isTableNode as isTableNode } from '@lexical/table';
 	import { getEditor } from 'svelte-lexical';
 
 	import Divider from '$lib/components/Divider.svelte';
 	import RowButtons from './RowButtons.svelte';
 	import ColumnButtons from './ColumnButtons.svelte';
+	import EditCell from './EditCell.svelte';
 
 	/** @type {import('@lexical/table').TableNode | null} */
 	let selectedTable = $state(null);
+	/** @type {import('@lexical/table').TableCellNode | null} */
+	let selectedCell = $state(null);
 
 	const editor = getEditor();
 
@@ -37,7 +40,15 @@
 				return;
 			}
 
+			const closestCellNode = node.getParents().find((node) => isTableCellNode(node));
+
+			if (!closestCellNode) {
+				selectedCell = null;
+				return;
+			}
+
 			selectedTable = closestParentTable;
+			selectedCell = closestCellNode;
 		});
 	};
 
@@ -61,4 +72,5 @@
 
 	<RowButtons {selectedTable} />
 	<ColumnButtons {selectedTable} />
+	<EditCell {selectedTable} {selectedCell} />
 {/if}

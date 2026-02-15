@@ -139,7 +139,7 @@
 	});
 </script>
 
-<div class="forsen-wiki-theme-outline flex items-center gap-2 outline-offset-8">
+<div class="forsen-wiki-theme-outline flex items-center gap-2 outline-offset-8 m-2">
 	<div class="flex flex-col items-center justify-center font-mono text-xs leading-none select-none">
 		<span>C</span>
 		<span>O</span>
@@ -155,7 +155,7 @@
 
 		<Button
 			on:click={() => onClickAddColumn(false)}
-			class="!max-w-8 !min-w-8 !rounded-none !p-0"
+			class="max-w-8! min-w-8! rounded-none! p-0!"
 			title="Add to the left of current column"
 		>
 			<ArrowLeftIcon size="20" />
@@ -163,14 +163,14 @@
 
 		<Button
 			on:click={() => onClickAddColumn()}
-			class="!max-w-8 !min-w-8 !rounded-l-none !p-0"
+			class="max-w-8! min-w-8! rounded-none! p-0!"
 			title="Add to the right of current column"
 		>
 			<ArrowRightIcon size="20" />
 		</Button>
 	</div>
 
-	<Button on:click={onClickRemoveColumn} class="!p-0" title="Remove column">
+	<Button on:click={onClickRemoveColumn} class="p-0!" title="Remove column">
 		<MinusIcon size="20" />
 	</Button>
 
