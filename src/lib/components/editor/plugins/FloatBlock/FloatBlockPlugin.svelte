@@ -11,12 +11,12 @@
 	import {
 		createCommand,
 		$createParagraphNode as createParagraphNode,
-		COMMAND_PRIORITY_EDITOR,
 		$isTextNode as isTextNode,
 		$createTextNode as createTextNode,
-		KEY_ARROW_LEFT_COMMAND,
-		COMMAND_PRIORITY_NORMAL,
 		$getSelection as getSelection,
+		COMMAND_PRIORITY_EDITOR,
+		COMMAND_PRIORITY_NORMAL,
+		KEY_ARROW_LEFT_COMMAND,
 		KEY_ARROW_RIGHT_COMMAND,
 	} from 'lexical';
 	import {
@@ -24,7 +24,9 @@
 		mergeRegister,
 	} from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
+	import { $isAtNodeEnd as isAtNodeEnd } from '@lexical/selection';
 
+	import { hasAdjacentNode, insertFnc } from '../../utils/insertUtils';
 	import {
 		$isFloatBlockNode as isFloatBlockNode,
 		$createFloatBlockNode as createFloatBlockNode,
@@ -39,9 +41,9 @@
 	const editor = getEditor();
 
 	/** @param {FloatBlockNodePayload} payload */
-	const wrapperInsertFloatBlock = ({ float, width, height }) => {
+	const wrapperInsertFloatBlock = ({ float, width, height, hasBorder }) => {
 		editor.update(() => {
-			const floatBlockNode = createFloatBlockNode({ float, width, height });
+			const floatBlockNode = createFloatBlockNode({ float, width, height, hasBorder });
 
 			insertNodeToNearestRoot(floatBlockNode);
 
@@ -55,28 +57,6 @@
 		});
 	};
 
-	/**
-	 * @param {boolean} atBefore
-	 * @param {number} o
-	 * @param {number} textLength
-	 */
-	const offsetIsAtEdges = (atBefore, o, textLength) => (atBefore ? o === 0 : o === textLength);
-
-	/**
-	 * @param {boolean} atBefore
-	 * @param {ElementNode} node
-	 * @param {LexicalNode} nodeToInsert
-	 */
-	const insertFnc = (atBefore, node, nodeToInsert) =>
-		atBefore ? node.insertBefore(nodeToInsert) : node.insertAfter(nodeToInsert);
-
-	/**
-	 * @param {boolean} atBefore
-	 * @param {ElementNode} node
-	 */
-	const hasAdjacentNode = (atBefore, node) =>
-		atBefore ? node.getPreviousSibling() : node.getNextSibling();
-
 	const INSERT_BEFORE = true;
 	const INSERT_AFTER = false;
 
@@ -87,44 +67,34 @@
 				return false;
 			}
 
-			const [anchor] = /** @type {[PointType, PointType]} */ (selection.getStartEndPoints());
-
+			const [anchor, focus] = /** @type {[PointType, PointType]} */ (selection.getStartEndPoints());
 			const anchorNode = anchor.getNode();
 
-			if (
-				isFloatBlockNode(anchorNode) &&
-				offsetIsAtEdges(atBefore, anchor.offset, anchorNode.getTextContentSize()) &&
-				!hasAdjacentNode(atBefore, anchorNode)
-			) {
-				editor.update(() => {
-					const newNode = createParagraphNode().append(createTextNode());
-					insertFnc(atBefore, anchorNode, newNode);
-				});
+			const floatBlockParent = anchorNode.getParents().find((n) => isFloatBlockNode(n));
 
-				return true;
+			if (!floatBlockParent) {
+				return false;
 			}
 
-			if (
-				isTextNode(anchorNode) &&
-				offsetIsAtEdges(atBefore, anchor.offset, anchorNode.getTextContentSize())
-			) {
-				const parentParentNode = anchorNode.getParent()?.getParent();
+			const isAtStart = anchor.offset === 0 && floatBlockParent.getFirstChild() === anchorNode;
+			const isAtEnd = isAtNodeEnd(focus) && floatBlockParent.getLastChild() === anchorNode;
 
-				if (!isFloatBlockNode(parentParentNode)) {
-					return false;
-				}
+			const isAtEdge = isAtStart || isAtEnd;
 
-				if (!hasAdjacentNode(atBefore, parentParentNode)) {
-					editor.update(() => {
-						const newNode = createParagraphNode().append(createTextNode());
-						insertFnc(atBefore, parentParentNode, newNode);
-					});
+			const adjacentNode = hasAdjacentNode(atBefore, floatBlockParent);
 
-					return true;
-				}
+			if (!isAtEdge || adjacentNode) {
+				return false;
 			}
 
-			return false;
+			editor.update(() => {
+				const newNode = createParagraphNode().append(createTextNode());
+				const n = insertFnc(atBefore, floatBlockParent, newNode);
+
+				n.selectStart();
+			});
+
+			return true;
 		});
 	};
 

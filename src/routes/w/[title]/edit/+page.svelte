@@ -255,7 +255,7 @@
 			{/if}
 
 			<span class="hidden lg:inline" id="submit">Submit</span>
-			<FileUpIcon class="inline lg:hidden" />
+			<FileUpIcon class="inline lg:hidden min-w-6" />
 		</Button>
 	</Box>
 

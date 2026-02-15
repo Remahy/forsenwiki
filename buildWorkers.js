@@ -35,7 +35,7 @@ async function buildInitialUpdateWorker() {
 		format: 'esm',
 		outfile: './src/lib/worker/initialUpdate.js',
 		write: false,
-		plugins: [sveltePlugin()],
+		plugins: [sveltePlugin(), injectPlugin],
 	});
 
 	// Ensure dist directory exists

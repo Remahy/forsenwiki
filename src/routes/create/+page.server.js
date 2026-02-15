@@ -6,13 +6,13 @@ export async function load() {
 
 		const initUpdate = await initialUpdate();
 
-		if (initUpdate) {
-			return {
-				initialUpdate: initUpdate,
-			};
+		if (!initUpdate) {
+			return error(500);
 		}
 
-		return error(500);
+		return {
+			initialUpdate: initUpdate,
+		};
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);
