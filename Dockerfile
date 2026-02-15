@@ -8,7 +8,7 @@ RUN npm ci
 
 FROM node:24-alpine AS build
 
-RUN apk --no-cache add git
+RUN apk add git
 
 WORKDIR /app
 

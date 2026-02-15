@@ -115,10 +115,8 @@
 
 		<option value="left" class="text-lg">Left</option>
 		<option value="right" class="text-lg">Right</option>
-		<!--
 		<option value="inline-start" class="text-lg">Start (Language aware)</option>
 		<option value="inline-end" class="text-lg">End (Language aware)</option>
-		-->
 		<option value="clear" class="text-lg">Clear float</option>
 		<option value="none" class="text-lg">Block (Non-floating)</option>
 	</Select>
