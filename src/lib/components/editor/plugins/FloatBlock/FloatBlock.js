@@ -226,7 +226,7 @@ export class FloatBlockNode extends ElementNode {
 		const hasBorder = this.getHasBorder();
 		let boxShadow = '';
 
-		if (hasBorder && float !== 'clear') {
+		if (float === 'clear' ? hasBorder && this.getTextContentSize() : hasBorder) {
 			boxShadow = floatBoxShadow;
 		}
 
