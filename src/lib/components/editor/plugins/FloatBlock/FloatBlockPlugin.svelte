@@ -41,9 +41,9 @@
 	const editor = getEditor();
 
 	/** @param {FloatBlockNodePayload} payload */
-	const wrapperInsertFloatBlock = ({ float, width, height }) => {
+	const wrapperInsertFloatBlock = ({ float, width, height, hasBorder }) => {
 		editor.update(() => {
-			const floatBlockNode = createFloatBlockNode({ float, width, height });
+			const floatBlockNode = createFloatBlockNode({ float, width, height, hasBorder });
 
 			insertNodeToNearestRoot(floatBlockNode);
 

@@ -55,6 +55,7 @@
 	const insertFloatBlock = () => {
 		editor.dispatchCommand(INSERT_FLOATBLOCK_COMMAND, {
 			float: 'inline-start',
+			hasBorder: undefined,
 			width: undefined,
 			height: undefined,
 		});

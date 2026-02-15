@@ -7,9 +7,11 @@
 		FileQuestionMarkIcon,
 		RectangleHorizontalIcon,
 		RectangleVerticalIcon,
+		SquareDashedIcon,
 	} from 'lucide-svelte';
 	import { getEditor } from 'svelte-lexical';
 	import Select from '$lib/components/Select.svelte';
+	import EditorButton from '../EditorButton.svelte';
 
 	/**
 	 * @typedef {Object} Props
@@ -21,14 +23,12 @@
 
 	let currentWidth = $derived(selectedFloatBlockNode.__width);
 	let currentHeight = $derived(selectedFloatBlockNode.__height);
+	let currentFloatValue = $derived(selectedFloatBlockNode.__float);
+	let currentHasBorder = $derived(selectedFloatBlockNode.__hasBorder);
 
 	let width = $derived(currentWidth);
 	let height = $derived(currentHeight);
-
-	let currentFloatValue = $derived(selectedFloatBlockNode.__float);
-
 	let floatValue = $derived(currentFloatValue === null ? 'none' : currentFloatValue);
-
 	/** @type {HTMLSelectElement | null} */
 	let floatValueElement = $state(null);
 
@@ -67,6 +67,12 @@
 		editor.update(() => {
 			// @ts-ignore
 			selectedFloatBlockNode.setFloat(value);
+		});
+	};
+
+	const toggleHasBorder = () => {
+		editor.update(() => {
+			selectedFloatBlockNode.setHasBorder(!currentHasBorder);
 		});
 	};
 </script>
@@ -115,3 +121,7 @@
 		onchange={onChange}
 	/>
 </label>
+
+<EditorButton on:click={toggleHasBorder} isActive={currentHasBorder} title="Toggle border">
+	<SquareDashedIcon />
+</EditorButton>

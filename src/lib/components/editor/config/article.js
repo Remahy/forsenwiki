@@ -26,6 +26,7 @@ import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
 import TableNodeDOMExport from './htmlExport/TableNodeDOMExport';
 
 const floatResponsive = 'max-sm:float-none! max-sm:w-full! max-sm:me-0! max-sm:ms-0!';
+const floatBoxShadow = '0px 0px 0px 1px #696969';
 
 export const articleTheme = {
 	image: 'image',
@@ -36,6 +37,7 @@ export const articleTheme = {
 		h4: 'wrap-break-words',
 		h5: 'wrap-break-words',
 	},
+	floatBoxShadow,
 	floatResponsive: `${floatResponsive} [&_p_br:only-child]:hidden`,
 };
 
@@ -46,7 +48,7 @@ export const editableTheme = {
 	tableCell: 'tableCell',
 	tableCellResizer: 'tableCellResizer',
 	tableCellSelected: 'tableCellSelected',
-	floatBlockNodeBoxShadow: '#696969 0px 0px 0px 1px',
+	floatBoxShadowEditable: '0px 0px 4px #696969',
 	floatResponsive,
 	text: {
 		bold: 'font-semibold',

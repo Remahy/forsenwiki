@@ -29,11 +29,11 @@ const setNumberOrUndefined = (number, min) => {
  * @typedef {import('lexical').EditorConfig} EditorConfig
  *
  * @typedef {('none' | 'left' | 'right' | 'inline-start' | 'inline-end' | 'clear' | undefined)} FloatValue
- * @typedef {SerializedElementNode & { float: FloatValue, width?: number, height?: number, type: string }} SerializedFloatBlockNode
+ * @typedef {SerializedElementNode & { float: FloatValue, width?: number, height?: number, hasBorder?: boolean, type: string }} SerializedFloatBlockNode
  */
 
 /**
- * @typedef {{ float?: FloatValue, width?: number, height?: number }} FloatBlockNodePayload
+ * @typedef {{ float?: FloatValue, width?: number, height?: number, hasBorder?: boolean }} FloatBlockNodePayload
  */
 
 export class FloatBlockNode extends ElementNode {
@@ -46,18 +46,23 @@ export class FloatBlockNode extends ElementNode {
 	/** @type {number | undefined} */
 	__height;
 
+	/** @type {boolean | undefined} */
+	__hasBorder;
+
 	/**
 	 * @param {FloatValue} [float]
 	 * @param {number} [width]
 	 * @param {number} [height]
+	 * @param {boolean} [hasBorder]
 	 * @param {NodeKey} [key]
 	 */
-	constructor(float = 'none', width, height, key) {
+	constructor(float = 'none', width, height, hasBorder, key) {
 		super(key);
 
 		this.__float = float;
 		this.__width = width;
 		this.__height = height;
+		this.__hasBorder = hasBorder;
 	}
 
 	static getType() {
@@ -72,7 +77,13 @@ export class FloatBlockNode extends ElementNode {
 	 * @param {FloatBlockNode} node
 	 */
 	static clone(node) {
-		return new FloatBlockNode(node.__float, node.__width, node.__height, node.__key);
+		return new FloatBlockNode(
+			node.__float,
+			node.__width,
+			node.__height,
+			node.__hasBorder,
+			node.__key
+		);
 	}
 
 	/** @param {SerializedFloatBlockNode} serializedNode */
@@ -92,6 +103,7 @@ export class FloatBlockNode extends ElementNode {
 			type: FloatBlockNode.getType(),
 			width: this.getWidth(),
 			height: this.getHeight(),
+			hasBorder: this.getHasBorder(),
 		};
 	}
 
@@ -156,6 +168,22 @@ export class FloatBlockNode extends ElementNode {
 	}
 
 	/**
+	 * @param {boolean} [bool]
+	 */
+	setHasBorder(bool) {
+		const self = this.getWritable();
+		self.__hasBorder = Boolean(bool);
+
+		return this;
+	}
+
+	getHasBorder() {
+		const self = this.getLatest();
+		const value = self.__hasBorder;
+		return value;
+	}
+
+	/**
 	 * @param {EditorConfig} config
 	 */
 	createDOM(config) {
@@ -184,12 +212,28 @@ export class FloatBlockNode extends ElementNode {
 			dom.style.marginInlineStart = '16px';
 		}
 
-		const { floatBlockNodeBoxShadow = null, floatResponsive = null } = config?.theme || {};
-		if (floatBlockNodeBoxShadow) {
-			dom.style.boxShadow = floatBlockNodeBoxShadow;
+		const {
+			floatBoxShadow,
+			floatBoxShadowEditable = null,
+			floatResponsive = null,
+		} = config?.theme || {};
+		const hasBorder = this.getHasBorder();
+		let boxShadow = '';
+
+		if (hasBorder) {
+			boxShadow = floatBoxShadow;
 		}
+
+		if (floatBoxShadowEditable) {
+			boxShadow = boxShadow ? `${boxShadow}, ${floatBoxShadowEditable}` : floatBoxShadowEditable;
+		}
+
+		if (boxShadow) {
+			dom.style.boxShadow = boxShadow;
+		}
+
 		if (floatResponsive) {
-			dom.classList.add(...floatResponsive.split(" "));
+			dom.classList.add(...floatResponsive.split(' '));
 		}
 
 		dom.style.overflow = 'hidden';
@@ -226,8 +270,8 @@ export class FloatBlockNode extends ElementNode {
 
 /** @param {FloatBlockNodePayload & { key?: NodeKey }} [payload] */
 export function $createFloatBlockNode(payload) {
-	const { float, width, height, key } = payload || {};
-	return $applyNodeReplacement(new FloatBlockNode(float, width, height, key));
+	const { float, width, height, hasBorder, key } = payload || {};
+	return $applyNodeReplacement(new FloatBlockNode(float, width, height, hasBorder, key));
 }
 
 /**
