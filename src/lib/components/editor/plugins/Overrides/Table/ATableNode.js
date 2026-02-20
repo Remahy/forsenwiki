@@ -54,6 +54,21 @@ export class ATableNode extends TableNode {
 			return $isRootNode(parent);
 		});
 
+		const tcs = [...dom.querySelectorAll('td'), ...dom.querySelectorAll('th')];
+
+		tcs.forEach((tc) => {
+			tc.style.width = '';
+			tc.style.removeProperty('width');
+			tc.style.minWidth = '';
+			tc.style.removeProperty('min-width');
+		});
+
+		const col = [...dom.querySelectorAll('col')];
+
+		col.forEach((c) => {
+			c.style.width = `${parseInt(c.style.width)}%`;
+		});
+
 		if (!parentIsRoot) {
 			return dom;
 		}
