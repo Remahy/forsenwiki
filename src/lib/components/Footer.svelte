@@ -2,10 +2,13 @@
 	import License from '$lib/components/License.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import { version } from '$lib/utils/version';
+	import Discord from './icons/Discord.svelte';
+	import GitHub from './icons/GitHub.svelte';
+	import TwitchGlitch from './icons/TwitchGlitch.svelte';
 </script>
 
 <footer class="footer">
-	<div class="container mx-auto w-full items-stretch gap-8 gap-y-8 p-4 lg:flex lg:py-12">
+	<div class="container mx-auto w-full items-stretch gap-2 gap-y-8 p-4 lg:flex lg:py-12">
 		<div class="bg-dark flex-1 grow overflow-hidden rounded-sm p-4">
 			<License />
 
@@ -43,6 +46,26 @@
 					</Link>
 				</li>
 			</ul>
+		</div>
+
+		<div class="bg-dark mt-2 flex flex-col gap-2 lg:gap-0 justify-evenly rounded-sm p-4 lg:mt-0">
+			<a href="https://discord.gg/ht5TqyEABp" target="_blank" title="Join the KappaWiki Discord." class="flex gap-4 items-center text-xs">
+				<Discord size="16" /> <span class="lg:hidden">Join the KappaWiki Discord.</span>
+			</a>
+			<a
+				href="https://www.twitch.tv/spectatorsen"
+				target="_blank"
+				title="Watch the Spectatorsen Twitch." class="flex gap-4 items-center text-xs"
+			>
+				<TwitchGlitch size="16" /> <span class="lg:hidden">Watch the Spectatorsen Twitch.</span>
+			</a>
+			<a
+				href="https://www.github.com/Remahy/forsenwiki"
+				target="_blank"
+				title="Read the source code." class="flex gap-4 items-center text-xs"
+			>
+				<GitHub size="16" /> <span class="lg:hidden">Read the source code.</span>
+			</a>
 		</div>
 	</div>
 </footer>
