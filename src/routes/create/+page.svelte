@@ -156,12 +156,12 @@
 	<Box class="p-4">
 		<p>
 			Creating a new article.
-			<strong>Your article drafts are automatically saved locally.</strong>
+			<span class="font-bold">Your article drafts are automatically saved locally.</span>
 		</p>
 	</Box>
 
 	<label>
-		<strong>Title <small>(Must be unique, keep it short.)</small></strong>
+		<span class="font-bold">Title <small>(Must be unique, keep it short.)</small></span>
 		<input
 			oninput={unsetError}
 			required
@@ -172,7 +172,7 @@
 			<strong class="text-red-600 dark:text-red-500">{titleError.message}</strong>
 		{:else}
 			<small
-				><strong>URL:</strong> <span>{WIKI_PATH}{sanitizeTitle(title.value).sanitized}</span></small
+				><span class="font-bold">URL:</span> <span>{WIKI_PATH}{sanitizeTitle(title.value).sanitized}</span></small
 			>
 		{/if}
 	</label>

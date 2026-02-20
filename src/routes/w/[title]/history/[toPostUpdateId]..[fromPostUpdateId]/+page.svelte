@@ -67,14 +67,14 @@
 
 			<div class="mt-4">
 				<p>
-					<span><strong>&quot;{tD}&quot; version author:</strong></span>
+					<span class="font-bold">&quot;{tD}&quot; version author:</span>
 					<span>
 						{toAuthor?.name || '?'}
 					</span>
 				</p>
 
 				<p>
-					<span><strong>&quot;{fD}&quot; version author:</strong></span>
+					<span class="font-bold">&quot;{fD}&quot; version author:</span>
 					<span>
 						{fromAuthor?.name || '?'}
 					</span>
@@ -84,16 +84,16 @@
 
 		<div class="flex flex-col gap-2 text-xs">
 			<p>
-				<strong>Legend:</strong>
+				<span class="font-bold">Legend:</span>
 			</p>
 			<p class="p-1 text-red-500 outline">
-				<span><strong>Red:</strong> Deleted &#40;-&#41;</span>
+				<span><span class="font-bold">Red:</span> Deleted &#40;-&#41;</span>
 			</p>
 			<p class="p-1 text-orange-500 outline outline-dashed dark:text-orange-300">
-				<span><strong>Orange:</strong> Modified &#40;~&#41;</span>
+				<span><span class="font-bold">Orange:</span> Modified &#40;~&#41;</span>
 			</p>
 			<p class="p-1 text-green-500 outline">
-				<span><strong>Green:</strong> Added &#40;+&#41;</span>
+				<span><span class="font-bold">Green:</span> Added &#40;+&#41;</span>
 			</p>
 			<p>
 				When available, hover over the question mark <span

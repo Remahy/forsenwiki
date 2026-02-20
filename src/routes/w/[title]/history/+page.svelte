@@ -49,7 +49,7 @@
 			</div>
 		</div>
 
-		<p><strong>Current total length:</strong> {totalByteLength} bytes.</p>
+		<p><span class="font-bold">Current total length:</span> {totalByteLength} bytes.</p>
 	</SuggestionBox>
 
 	<Box class="p-4">
@@ -102,7 +102,7 @@
 
 								{#if postUpdate.metadata.newTitle}
 									<small
-										>(<strong>Title change:</strong>
+										>(<span class="font-bold">Title change:</span>
 										"{postUpdate.metadata.newTitle}"{#if postUpdate.metadata.oldTitle}
 											&nbsp;<i>was "{postUpdate.metadata.oldTitle}"</i>
 										{/if})</small
