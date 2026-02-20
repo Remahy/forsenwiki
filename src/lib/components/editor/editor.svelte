@@ -1,4 +1,6 @@
 <script>
+	import './Article.css';
+
 	import { getContext, onMount } from 'svelte';
 	import isUrl from 'is-url';
 	import {

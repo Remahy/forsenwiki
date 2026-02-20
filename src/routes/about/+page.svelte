@@ -2,6 +2,7 @@
 	import { AtSignIcon } from 'lucide-svelte';
 	import GitHub from '$lib/components/icons/GitHub.svelte';
 	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
+	import Discord from '$lib/components/icons/Discord.svelte';
 </script>
 
 <svelte:head>
@@ -18,17 +19,7 @@
 			to forsen.
 		</p>
 
-		<h3>ForsenWiki tech stack</h3>
-
-		<ul>
-			<li>sveltekit</li>
-			<li>authjs</li>
-			<li>prisma</li>
-			<li>@facebook/lexical & svelte-lexical</li>
-			<li>yjs</li>
-			<li>json-diff & diff</li>
-		</ul>
-
+		<h3>THIRD PARTY LICENSES</h3>
 		<p>
 			This wiki uses <a href="https://github.com/org-ppsl" target="github-org-ppsl">PPSL</a> code.
 			PPSL code is licensed under
@@ -38,9 +29,31 @@
 			>.
 		</p>
 
+		<br />
+
+		<p><a href="/THIRD-PARTY-LICENSES.txt">Full THIRD-PARTY-LICENSES available here.</a></p>
+
 		<h3>Links</h3>
 
 		<ul>
+			<li>
+				<a
+					href="https://discord.gg/ht5TqyEABp"
+					target="discord.gg/kappawiki"
+					class="flex items-center gap-2"
+				>
+					<Discord size="18" /> <span>Discord - KappaWiki</span></a
+				>
+			</li>
+			<li>
+				<a
+					href="https://www.twitch.tv/forsenwiki"
+					target="twitch.tv/forsenwiki"
+					class="flex items-center gap-2"
+				>
+					<TwitchGlitch size="18" /> <span>Twitch - ForsenWiki</span></a
+				>
+			</li>
 			<li>
 				<a
 					href="https://github.com/Remahy/forsenwiki"
@@ -50,15 +63,6 @@
 					<GitHub size="18" />
 					<span class="grow">GitHub - Remahy/forsenwiki</span>
 				</a>
-			</li>
-			<li>
-				<a
-					href="https://www.twitch.tv/remahy"
-					target="twitch.tv/remahy"
-					class="flex items-center gap-2"
-				>
-					<TwitchGlitch size="18" /> <span>Twitch - Remahy</span></a
-				>
 			</li>
 		</ul>
 

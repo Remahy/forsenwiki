@@ -173,7 +173,7 @@
 		<div class="flex grow items-center overflow-hidden">
 			<p>
 				Editing the <strong>"{rawTitle}"</strong> article.
-				<strong>Your article drafts are automatically saved locally.</strong>
+				<span class="font-bold">Your article drafts are automatically saved locally.</span>
 			</p>
 		</div>
 
@@ -207,7 +207,7 @@
 						<strong class="text-red-600 dark:text-red-500">{titleError.message}</strong>
 					{:else}
 						<small
-							><strong>URL:</strong>
+							><span class="font-bold">URL:</span>
 							<span>{WIKI_PATH}{sanitizeTitle(newTitle).sanitized}</span></small
 						>
 					{/if}

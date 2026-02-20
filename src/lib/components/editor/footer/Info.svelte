@@ -65,12 +65,12 @@
 <div class="flex items-center leading-none uppercase">
 	<div class="flex items-center gap-1">
 		{#if keys}
-			<small><strong>Key:</strong> {keys}</small>
+			<small><span class="font-bold">Key:</span> {keys}</small>
 			<Divider />
 		{/if}
 
 		{#if types}
-			<small><strong>Type:</strong> {types}</small>
+			<small><span class="font-bold">Type:</span> {types}</small>
 		{/if}
 	</div>
 </div>

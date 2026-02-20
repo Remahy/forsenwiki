@@ -87,12 +87,12 @@
 					<p>This is a historical version of this article.</p>
 				{/if}
 				<p>
-					<span><strong>Version author:</strong></span>
+					<span class="font-bold">Version author:</span>
 					<span>
 						{authorName}
 					</span>
 				</p>
-				<p><strong>Update length:</strong> {byteLength} bytes.</p>
+				<p><span>Update length:</span> {byteLength} bytes.</p>
 			</div>
 		</header>
 

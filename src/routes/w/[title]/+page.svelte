@@ -136,7 +136,7 @@
 					<div class="flex w-full gap-2">
 						<div class="flex grow items-center overflow-hidden">
 							<p class="m-0 text-center leading-10">
-								forsen.wiki is currently <strong>work in progress</strong>.
+								forsen.wiki is currently <span class="font-bold">work in progress</span>.
 							</p>
 						</div>
 
@@ -224,7 +224,7 @@
 
 	<footer class="article-footer-color p-4">
 		<details>
-			<summary class="cursor-pointer"><strong>Tools</strong></summary>
+			<summary class="cursor-pointer"><span class="font-bold">Tools</span></summary>
 
 			<div class="flex gap-4">
 				<CacheBustButton />

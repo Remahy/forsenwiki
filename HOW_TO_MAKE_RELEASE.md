@@ -1,7 +1,8 @@
 Are you considering to prepare a PR to create a new release?
 
-**Create a new PR, while inside the PR branch:**
+**Create a new PR, and while inside the PR branch:**
 
+- Run `npm run generate-tpl`.
 - Open package.json, change version number accordingly. (E.g. 1.0.1)
 - Run `npm run generate-changelog`.
 - Open package.json again, reset number back to previous version. (E.g. 1.0.0)

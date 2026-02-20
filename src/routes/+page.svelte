@@ -82,18 +82,15 @@
 
 <svelte:head>
 	<title>Community Forsen Wiki</title>
-	<meta
-		name="description"
-		content="All things forsen, forsen forsen forsen forsen forsen forsen, and more."
-	/>
+	<meta name="description" content="All things forsen, Twitch and more." />
 </svelte:head>
 
 <Container>
 	<SuggestionBox>
 		<p class="m-0 text-center leading-10">
-			<strong>ForsenWiki</strong>
+			<span class="font-bold">ForsenWiki</span>
 			<span> - </span>
-			<span>Forsen lore, news, big plays, tilts. Forsen's past and the bajs' future. </span>
+			<span>Forsen lore, news, big plays, tilts. Forsen's past and the bajs' future.</span>
 		</p>
 	</SuggestionBox>
 
@@ -115,7 +112,7 @@
 							{new Date(article.createdTimestamp).toDateString()}
 						</span>
 						&nbsp;
-						<small class="inline-block"><strong>By:</strong> {article.author}</small>
+						<small class="inline-block"><span class="font-bold">By:</span> {article.author}</small>
 					</div>
 				{/each}
 			</Box>
@@ -167,9 +164,7 @@
 
 				{#each $latestUsers as user (user.name)}
 					<div class="p-2 pl-0">
-						<span title={user.name}>
-							<strong>{user.name}</strong>
-						</span>
+						<span title={user.name} class="font-bold">{user.name}</span>
 					</div>
 				{/each}
 			</Box>

@@ -133,13 +133,13 @@
 			<div class="p-2{!(index % 2) ? ' bg-black/10 dark:bg-white/5' : ''}">
 				<span>
 					<Link href="/w/{update.title}/history/{update.id}" target="_blank"
-						><strong>{update.rawTitle}</strong></Link
+						><span class="font-bold">{update.rawTitle}</span></Link
 					>
 				</span>
 				&nbsp;
 				{#if update.newTitle}
 					<small
-						>(<strong>Title change:</strong>
+						>(<span class="font-bold">Title change:</span>
 						"{update.newTitle}"{#if update.oldTitle}
 							&nbsp;<i>was "{update.oldTitle}"</i>
 						{/if})</small
@@ -160,7 +160,7 @@
 					})}</small
 				>
 				&nbsp;
-				<span><small><strong>By:</strong> {update.author}</small></span>
+				<span><small><span class="font-bold">By:</span> {update.author}</small></span>
 			</div>
 		{:else}
 			<span class="p-2 bg-black/10 dark:bg-white/5">Nothing found.</span>

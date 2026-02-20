@@ -20,7 +20,7 @@
 <section class="container mx-auto flex grow flex-col gap-4 p-4 lg:py-12">
 	<SuggestionBox>
 		<p class="m-0 text-center leading-10">
-			<strong>Tip:</strong>
+			<span class="font-bold">Tip:</span>
 			<span>Searching by an author's username shows all content they've modified or created.</span>
 		</p>
 	</SuggestionBox>

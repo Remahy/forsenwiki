@@ -42,12 +42,12 @@
 			<div class="text-2xl font-bold">{article.rawTitle || article.title}</div>
 			<p>
 				<span title={new Date(article.createdTimestamp).toUTCString()}>
-					<strong>Created:</strong>
+					<span class="font-bold">Created:</span>
 					{new Date(article.createdTimestamp).toDateString()}
 				</span>
 				{#if new Date(article.lastUpdated).getTime() !== new Date(article.createdTimestamp).getTime()}
 					<span title={new Date(article.lastUpdated).toUTCString()}>
-						<strong>Updated:</strong>
+						<span class="font-bold">Updated:</span>
 						{formatRelative(article.lastUpdated, Date.now(), { locale: enGB })}
 					</span>
 				{/if}

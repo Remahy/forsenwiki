@@ -64,20 +64,20 @@
 	{#if !disableCount}
 		<div class="flex items-center gap-1">
 			{#if wordsCount || characterCount || forsenCount}
-				<small><strong>Words:</strong> {wordsCount}</small>
+				<small><span class="font-bold">Words:</span> {wordsCount}</small>
 				<Divider />
-				<small><strong>Characters:</strong> {characterCount}</small>
+				<small><span class="font-bold">Characters:</span> {characterCount}</small>
 				<Divider />
-				<small><strong>Forsen:</strong> {forsenCount}</small>
+				<small><span class="font-bold">Forsen:</span> {forsenCount}</small>
 				<Divider />
-				<!--<span><strong>Links:</strong> <span>{linkCount}</span></span>-->
+				<!--<span><span class="font-bold">Links:</span> <span>{linkCount}</span></span>-->
 			{:else}
 				<small>Focus the editor to start the count.</small>
 			{/if}
 		</div>
 		<!--
 			<div class="flex flex-col gap-1">
-				<span><strong>Memes:</strong> <span>{memeCount}</span></span>
+				<span><span class="font-bold">Memes:</span> <span>{memeCount}</span></span>
 			</div>
 		-->
 	{/if}
