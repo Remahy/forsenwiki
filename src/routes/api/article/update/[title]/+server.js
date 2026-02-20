@@ -86,7 +86,7 @@ export async function POST({ request, locals, params }) {
 	 */
 	const { content, newTitle } = await request.json();
 
-	const { sanitized: title, raw: currentRawTitle } = sanitizeTitle(params.title);
+	const { sanitized: title } = sanitizeTitle(params.title);
 
 	let post;
 	try {
@@ -178,7 +178,7 @@ export async function POST({ request, locals, params }) {
 		byteLength,
 		totalByteLength,
 		newTitle: potentialNewTitle?.raw,
-		oldTitle: currentRawTitle,
+		oldTitle: post.rawTitle,
 	};
 
 	const updatedArticle = await updateArticleYPost(body, metadata);
