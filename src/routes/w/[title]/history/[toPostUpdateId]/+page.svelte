@@ -6,7 +6,7 @@
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import Box from '$lib/components/Box.svelte';
 
-	import '$lib/components/editor/plugins/Image/Image.css';
+	import '$lib/components/editor/Article.css';
 
 	let { data } = $props();
 

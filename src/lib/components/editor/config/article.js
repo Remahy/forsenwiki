@@ -39,13 +39,13 @@ export const articleTheme = {
 	},
 	floatBoxShadow,
 	floatResponsive: `${floatResponsive} [&_p:has(>br:only-child)]:hidden`,
+	tableCell: 'tableCell',
 };
 
 export const editableTheme = {
 	...articleTheme,
 	root: 'editor-shell',
 	image: 'image editor-image',
-	tableCell: 'tableCell',
 	tableCellResizer: 'tableCellResizer',
 	tableCellSelected: 'tableCellSelected',
 	floatBoxShadowEditable: '0px 0px 4px #696969',

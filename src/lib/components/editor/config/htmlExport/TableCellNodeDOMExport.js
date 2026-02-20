@@ -16,6 +16,10 @@ export default [
 			element.style.removeProperty('border');
 			element.style.backgroundColor = '';
 			element.style.removeProperty('background-color');
+			element.style.minWidth = '';
+			element.style.removeProperty('min-width');
+			element.style.width = '';
+			element.style.removeProperty('width');
 		}
 
 		return output;

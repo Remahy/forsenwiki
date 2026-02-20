@@ -1,5 +1,7 @@
 <script lang="ts">
 	// Based on umaranis' svelte-lexical
+	import './EditorTable.css';
+
 	import { onMount } from 'svelte';
 	import {
 		$createParagraphNode as createParagraphNode,

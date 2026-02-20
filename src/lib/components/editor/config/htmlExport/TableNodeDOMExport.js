@@ -24,8 +24,23 @@ export default [
 
 				const table = output.after ? output.after(generatedElement) : generatedElement;
 
+				const clonedTable = /** @type {HTMLElement} */ (table?.cloneNode(true));
+
+				const tcs = [...clonedTable.querySelectorAll('td'), ...clonedTable.querySelectorAll('th')];
+
+				tcs.forEach((td) => {
+					td.style.removeProperty('width');
+					td.style.removeProperty('min-width');
+				});
+
+				const col = [...clonedTable.querySelectorAll('col')];
+
+				col.forEach((c) => {
+					c.style.width = `${parseInt(c.style.width)}%`;
+				});
+
 				if (!parentIsRoot) {
-					return table;
+					return clonedTable;
 				}
 
 				/**
@@ -44,17 +59,6 @@ export default [
 				wrapper2.classList.add('inline-block', 'min-w-full', 'align-middle');
 				const wrapper3 = document.createElement('div');
 				wrapper3.classList.add('overflow-hidden');
-
-				// @ts-ignore
-				const clonedTable = table.cloneNode(true);
-
-				// @ts-ignore
-				const tds = [...clonedTable.querySelectorAll('td')];
-
-				tds.forEach((td) => {
-					td.style.width = undefined;
-					td.style.minWidth = '75px';
-				});
 
 				wrapper3.append(clonedTable);
 
