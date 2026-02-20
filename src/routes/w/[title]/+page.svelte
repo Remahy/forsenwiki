@@ -4,7 +4,7 @@
 	import { enGB } from 'date-fns/locale';
 	import { page } from '$app/stores';
 
-	import '$lib/components/editor/plugins/Image/Image.css';
+	import '$lib/components/editor/Article.css';
 
 	import Container from '$lib/components/Container.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
