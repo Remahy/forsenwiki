@@ -2,11 +2,11 @@ import { redirect } from '@sveltejs/kit';
 
 import prisma from '$lib/prisma';
 
-function unluckyRedirect () {
+function unluckyRedirect() {
 	return redirect(307, '/');
 }
 
-export async function GET() {
+export async function load() {
 	/**
 	 * @type {string}
 	 */
@@ -14,18 +14,20 @@ export async function GET() {
 
 	if (Math.random() >= 0.1) {
 		/**
-		 * @type {[import('@prisma/client').YPost]}
+		 * @type {[Prisma.YPost]}
 		 */
-			// DO NOT pass in or accept user input here
-		const [randomArticle] = await prisma.$queryRaw`SELECT * FROM "YPost" ORDER BY RANDOM() LIMIT 1;`;
+		// DO NOT pass in or accept user input here
+		const [randomArticle] =
+			await prisma.$queryRaw`SELECT * FROM "YPost" ORDER BY RANDOM() LIMIT 1;`;
 
 		randomURL = `/w/${randomArticle.title}?random`;
 	} else {
 		/**
-		 * @type {[import('@prisma/client').Content]}
+		 * @type {[Prisma.Content]}
 		 */
 		// DO NOT pass in or accept user input here
-		const [randomContent] = await prisma.$queryRaw`SELECT * FROM "Content" ORDER BY RANDOM() LIMIT 1;`;
+		const [randomContent] =
+			await prisma.$queryRaw`SELECT * FROM "Content" ORDER BY RANDOM() LIMIT 1;`;
 
 		if (!randomContent) {
 			return unluckyRedirect();

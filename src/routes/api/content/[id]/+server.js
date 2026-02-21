@@ -29,6 +29,7 @@ export async function POST({ request, locals, params }) {
 
 export async function DELETE({ locals, params }) {
 	const session = await locals.auth();
+
 	if (!session?.user?.id || !session?.user?.name) {
 		return ForbiddenError();
 	}
@@ -55,8 +56,8 @@ export async function DELETE({ locals, params }) {
 		await rmContentByFilename(res.hash);
 
 		deleteRes = await deleteContent(id);
-	} catch (error) {
-		console.warn(error);
+	} catch (err) {
+		console.warn(err);
 	}
 
 	if (!deleteRes) {

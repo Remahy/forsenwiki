@@ -1,9 +1,10 @@
-<script>
+<script lang="ts">
 	import { SquarePenIcon, HistoryIcon } from 'lucide-svelte';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
+	import { page } from '$app/stores';
 
-	import '$lib/components/editor/plugins/Image/Image.css';
+	import '$lib/components/editor/Article.css';
 
 	import Container from '$lib/components/Container.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
@@ -12,29 +13,64 @@
 	import ToC from '$lib/components/ToC.svelte';
 	import RandomButton from '$lib/components/RandomButton.svelte';
 	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
+	import Link from '$lib/components/Link.svelte';
+	import { isSystem } from '$lib/utils/isSystem.js';
+
+	const submitErrors = $derived.by(() => {
+		try {
+			const rawErrors: Array<{ code: string; field: string; value?: string }> | null = JSON.parse(
+				$page.url.searchParams.get('partialErrors') || ''
+			);
+			if (!rawErrors || !(rawErrors instanceof Array)) {
+				return [];
+			}
+
+			// We don't want to display messages verbatim from the URL to make sure users don't modify it.
+			const ERROR_CONSTANT: { [key: string]: string } = {
+				'EMPTY-newTitle': 'New title submission is empty. Given value: %',
+				'ILLEGAL-newTitle': 'New title submission failed sanitization. Given value: %',
+				'EXISTS-newTitle':
+					'New title submission failed because an article with this title already exists. Given value: %',
+				default: 'Something went wrong updating the article.',
+			};
+
+			return rawErrors.map(
+				({ code, field, value }) =>
+					ERROR_CONSTANT[`${code}-${field}`].replace('%', value || '') || ERROR_CONSTANT.default
+			);
+		} catch {
+			// noop
+			return [];
+		}
+	});
 
 	let { data } = $props();
 
 	const {
 		post: { rawTitle, title, createdTimestamp, lastUpdated, outRelations, id },
 		authors,
+		relatedPosts,
 		html,
 		text,
 		image,
-	} = data;
+	} = $derived(data);
 
-	const isSystem =
-		outRelations.find(({ isSystem, toPostId }) => isSystem && toPostId === 'system') ||
-		id === 'system';
+	const isArticleSystem = $derived(isSystem({ id, outRelations }));
 
-	const authorsScriptContent = JSON.stringify({
-		'@context': 'https://schema.org',
-		author: authors.map((author) => ({
-			'@type': 'Person',
-			name: author.name?.replace(/[^\w]/g, ''),
-		})),
-	});
-	const authorsHTML = `<script type="application/ld+json">${authorsScriptContent}<\/script>`;
+	const authorsScriptContent = $derived(
+		JSON.stringify({
+			'@context': 'https://schema.org',
+			author: authors
+				.filter((author) => author.name !== null)
+				.map((author) => ({
+					'@type': 'Person',
+					name: author.name!.replace(/[^\w]/g, ''),
+				})),
+		})
+	);
+	const authorsHTML = $derived(
+		`<script type="application/ld+json">${authorsScriptContent}<\/script>`
+	);
 
 	// @ts-ignore
 	BigInt.prototype.toJSON = function () {
@@ -44,25 +80,55 @@
 
 <svelte:head>
 	<title>{rawTitle || title} - Community Forsen Wiki</title>
-	<meta
-		name="title"
-		content="Read about &quot;{rawTitle ||
-			title}&quot; on forsen.wiki - All things forsen, and more."
-	/>
 
-	{#if text?.length}
-		<meta name="description" content={`${text.substring(0, 64)}${text.length > 64 ? '...' : ''}`} />
-	{/if}
-	{#if image?.length}
-		<meta property="og:image" content={image} />
-	{/if}
+	<meta property="og:site_name" content="Forsen Wiki" />
 
-	{@html authorsHTML}
+	{#if !isArticleSystem}
+		<link rel="canonical" href="{$page.url.origin}/w/{title}" />
+		<meta property="og:url" content="{$page.url.origin}/w/{title}" />
+
+		<meta property="og:type" content="article" />
+
+		{#if text?.length}
+			<meta
+				name="description"
+				content={`${text.substring(0, 150)}${text.length > 150 ? '...' : ''}`}
+			/>
+			<meta
+				property="og:description"
+				content={`${text.substring(0, 150)}${text.length > 150 ? '...' : ''}`}
+			/>
+		{/if}
+
+		{#if image?.length}
+			<meta property="og:image" content={image} />
+		{/if}
+
+		<meta property="article:published_time" content={createdTimestamp.toISOString()} />
+		<meta property="article:modified_time" content={lastUpdated.toISOString()} />
+
+		{#each authors as author}
+			{#if author.name}
+				<meta property="article:author" content={author.name} />
+			{/if}
+		{/each}
+
+		{@html authorsHTML}
+	{/if}
 </svelte:head>
 
 <Container>
 	<article class="relative flex grow flex-col gap-4">
 		<RandomButton />
+
+		{#if submitErrors.length}
+			<Box class="!bg-yellow-300/75 p-4 text-black">
+				<strong>Partial submit error(s)</strong>
+				{#each submitErrors as error}
+					<p>{error}</p>
+				{/each}
+			</Box>
+		{/if}
 
 		{#if html}
 			<SuggestionBox>
@@ -70,7 +136,7 @@
 					<div class="flex w-full gap-2">
 						<div class="flex grow items-center overflow-hidden">
 							<p class="m-0 text-center leading-10">
-								forsen.wiki is currently <strong>work in progress</strong>.
+								forsen.wiki is currently <span class="font-bold">work in progress</span>.
 							</p>
 						</div>
 
@@ -88,8 +154,8 @@
 			</SuggestionBox>
 
 			<div class="flex grow flex-col gap-4 lg:flex-row">
-				<Box class="flex grow flex-col p-4 lg:mb-0 overflow-hidden">
-					<main class="article-root prose dark:prose-invert max-w-[unset] grow">
+				<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
+					<main class="article-root prose dark:prose-invert max-w-[unset] grow wrap-break-words">
 						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>
@@ -100,7 +166,7 @@
 
 				<ToC />
 			</div>
-		{:else if isSystem}
+		{:else if isArticleSystem}
 			<Box class="flex grow flex-col items-center justify-center gap-2 overflow-hidden p-12">
 				<h2 class="text-2xl">
 					This is {id === 'system' ? 'the' : 'a'} <strong>SYSTEM</strong> article with no content.
@@ -139,11 +205,34 @@
 				</p>
 			{/if}
 		</footer>
+
+		{#if relatedPosts.length}
+			<div class="article-footer-color p-4">
+				<p>
+					<span><strong>Article{relatedPosts.length > 1 ? 's' : ''} linking here:</strong></span>
+					<span>
+						{#each relatedPosts as post, index}
+							<Link href={post.title} reload>{post.rawTitle}</Link>{index < relatedPosts.length - 1
+								? ', '
+								: ''}
+						{/each}
+					</span>
+				</p>
+			</div>
+		{/if}
 	</article>
 
-	<details class="-mt-4">
-		<summary class="cursor-pointer">Tools</summary>
+	<footer class="article-footer-color p-4">
+		<details>
+			<summary class="cursor-pointer"><span class="font-bold">Tools</span></summary>
 
-		<CacheBustButton />
-	</details>
+			<div class="flex gap-4">
+				<CacheBustButton />
+				<LinkButton
+					class="mt-2 min-h-[unset] min-w-[unset] !p-1 text-xs"
+					href="/api/article/read/{title}">API request</LinkButton
+				>
+			</div>
+		</details>
+	</footer>
 </Container>

@@ -4,6 +4,7 @@ import { yPostUpdatesV2ToBase64 } from '$lib/yjs/utils';
 import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
 import { replacer } from '$lib/utils/json';
 import { updateToHTML } from '$lib/lexical/updateToHTML';
+import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 
 /**
  * @param {string} title
@@ -30,7 +31,7 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 	const {
 		id,
 		createdTimestamp,
-		metadata: { byteLength },
+		metadata: { byteLength, newTitle, oldTitle },
 	} = res.postUpdates[toPostUpdateIdIndex];
 
 	const toPostUpdates = res.postUpdates.slice(0, toPostUpdateIdIndex + 1);
@@ -38,29 +39,35 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 
 	const recentPostUpdateId = res.postUpdates[res.postUpdates.length - 1].id;
 
-	const [author, html] = await Promise.all([
+	const [author, html] = await Promise.allSettled([
 		readAuthorForYPostUpdate(id),
-		updateToHTML(base64String),
+		base64String ? updateToHTML(base64String) : null,
 	]);
 
 	return {
 		createdTimestamp,
-		author,
-		html,
+		author: author.status === 'fulfilled' ? author.value : null,
+		html: html.status === 'fulfilled' ? html.value : null,
 		current,
 		byteLength,
+		newTitle,
+		oldTitle,
 		toPostUpdateId: id,
 		recentPostUpdateId,
+		outRelations: res.outRelations,
+		title: res.title,
+		rawTitle: res.rawTitle,
 	};
 }
 
 export async function GET({ params }) {
-	const { title, toPostUpdateId } = params;
+	const { title: rawTitle, toPostUpdateId } = params;
+	const { sanitized: title } = sanitizeTitle(rawTitle);
 
 	try {
 		const res = await _getToYPostUpdateIdByTitle(title, toPostUpdateId);
 
-		const safeJSON = JSON.stringify(res, replacer);
+		const safeJSON = JSON.parse(JSON.stringify(res, replacer));
 
 		return json(safeJSON);
 	} catch (err) {

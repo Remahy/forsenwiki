@@ -28,6 +28,11 @@
 		let res;
 
 		try {
+			if (!id) {
+				error = new Error('Error: ID is unknown.');
+				throw error;
+			}
+
 			if (!name || !name.length || name === result.name) {
 				error = new Error('Error: Name is unchanged or not set!');
 				throw error;
@@ -57,6 +62,11 @@
 
 		let res;
 		try {
+			if (!id) {
+				error = new Error('Error: ID is unknown.');
+				throw error;
+			}
+
 			res = await deleteContent(id);
 		} catch (err) {
 			error = new Error(err?.toString());
@@ -129,7 +139,7 @@
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Used in</strong></td>
-							<td class="p-4 break-words"><small><i>// TODO: Not implemented yet.</i></small></td>
+							<td class="p-4 wrap-break-words"><small><i>// TODO: Not implemented yet.</i></small></td>
 						</tr>
 					</tbody>
 				</table>

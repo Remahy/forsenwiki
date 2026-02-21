@@ -22,7 +22,6 @@ export const applyCSSColorDiff = (element, changeType) => {
 };
 
 /**
- *
  * @param {string} key
  * @param {import('./Types').___ChangeObject} change
  */

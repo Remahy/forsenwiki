@@ -5,11 +5,11 @@ import adapter from '@sveltejs/adapter-node';
 const config = {
 	kit: {
 		adapter: adapter({
-			out: 'build'
-		})
+			out: 'build',
+		}),
 	},
 
-	preprocess: [vitePreprocess({})]
+	preprocess: [vitePreprocess({})],
 };
 
 export default config;

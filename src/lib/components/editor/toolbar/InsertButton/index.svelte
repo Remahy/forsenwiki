@@ -2,6 +2,13 @@
 	import { PlusIcon } from 'lucide-svelte';
 	import { INSERT_TABLE_COMMAND } from '@lexical/table';
 	import { getEditor } from 'svelte-lexical';
+	import { onMount } from 'svelte';
+	import { mergeRegister } from '@lexical/utils';
+	import {
+		$getSelection as getSelection,
+		$isRangeSelection as isRangeSelection,
+		$isNodeSelection as isNodeSelection,
+	} from 'lexical';
 
 	import Select from '$lib/components/Select.svelte';
 
@@ -10,12 +17,14 @@
 	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 	import { INSERT_FLOATBLOCK_COMMAND } from '../../plugins/FloatBlock/FloatBlockPlugin.svelte';
 
+	let isDisabled = $state(false);
+
 	/** @type {HTMLSelectElement | null} */
 	let insertElementTypeElement = $state(null);
 
 	let currentInsertElementType = $state('');
 
-	let editor = $derived(getEditor());
+	let editor = $derived(getEditor?.());
 
 	const insertImage = () => {
 		editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
@@ -46,6 +55,7 @@
 	const insertFloatBlock = () => {
 		editor.dispatchCommand(INSERT_FLOATBLOCK_COMMAND, {
 			float: 'inline-start',
+			hasBorder: undefined,
 			width: undefined,
 			height: undefined,
 		});
@@ -98,21 +108,42 @@
 			insertElementTypeElement.value = '';
 		}
 	};
+
+	const updateToolbar = () => {
+		editor.read(() => {
+			const selection = getSelection();
+
+			if (isNodeSelection(selection) || (isRangeSelection(selection) && !selection.isCollapsed())) {
+				isDisabled = true;
+			} else {
+				isDisabled = false;
+			}
+		});
+	};
+
+	onMount(() => {
+		return mergeRegister(
+			editor.registerUpdateListener(() => {
+				updateToolbar();
+			})
+		);
+	});
 </script>
 
 <div class="flex items-center gap-2 pl-2">
-	<PlusIcon />
+	<PlusIcon class={isDisabled ? 'opacity-25' : ''} />
 
 	<Select
 		title="Insert new element"
 		bind:value={currentInsertElementType}
 		bind:ref={insertElementTypeElement}
 		on:change={insertElementType}
-		class="!-ml-10 !px-10"
+		class="!-ml-10 min-h-10.5 !px-10"
+		disabled={isDisabled}
 	>
 		<option value="">Insert</option>
 
-		{#each insertElementTypeOptions as { value, label }}
+		{#each insertElementTypeOptions as { value, label } (value)}
 			<option {value} class="text-lg">{label}</option>
 		{/each}
 	</Select>

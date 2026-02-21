@@ -12,9 +12,9 @@ import { ForbiddenError } from '$lib/errors/Forbidden';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { validateArticle } from '$lib/components/editor/validations';
 import { InvalidArticle } from '$lib/errors/InvalidArticle';
-import { getArticleURLIds } from '$lib/components/editor/utils/getEntities';
-import { readSystemYPostRelations } from '$lib/db/article/read';
-import { updateArticleYPost } from '$lib/db/article/update';
+import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
+import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/article/read';
+import { updateArticleTitle, updateArticleYPost } from '$lib/db/article/update';
 import { adjustAndUploadImages } from '$lib/components/editor/validations/images.server';
 import { invalidateArticleCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/article/html';
@@ -22,24 +22,75 @@ import { articleConfig } from '$lib/components/editor/config/article';
 import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 import toHTML from '$lib/worker/toHTML';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
+import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
+import { adjustInternalLinks } from '$lib/components/editor/validations/internalLinks.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
-import { _emit } from '../../../../adonis/frontpage/+server';
+import { _emit } from '../../../adonis/frontpage/+server';
+import { isSystem } from '$lib/utils/isSystem';
+
+/**
+ * @typedef {Array<{ code: string, field: string, value?: string }>} PartialErrors
+ */
+
+/**
+ * @param {Awaited<ReturnType<_getYPostByTitle>>} post
+ * @param {string} newTitle
+ * @param {PartialErrors} partialErrors
+ */
+const validateTitle = async (post, newTitle, partialErrors) => {
+	const isNewTitle = newTitle !== post.rawTitle;
+
+	if (!isNewTitle) {
+		return undefined;
+	}
+
+	const sanitizedTitle = sanitizeTitle(newTitle);
+	if (!sanitizedTitle.sanitized) {
+		partialErrors.push({
+			code: newTitle.length ? 'ILLEGAL' : 'EMPTY',
+			field: 'newTitle',
+			value: newTitle,
+		});
+		return undefined;
+	}
+
+	const foundTitle = await readYPostByTitle(sanitizedTitle.sanitized);
+	if (foundTitle) {
+		partialErrors.push({ code: 'EXISTS', field: 'newTitle', value: newTitle });
+		return undefined;
+	}
+
+	return sanitizedTitle;
+};
 
 export async function POST({ request, locals, params }) {
-	if (locals.isBlocked) {
+	/**
+	 * @type {PartialErrors}
+	 */
+	const partialErrors = [];
+
+	const { isBlocked, isModerator, auth } = locals;
+
+	if (isBlocked) {
 		return ForbiddenError();
 	}
 
-	const session = await locals.auth();
+	const session = await auth();
 	if (!session?.user?.id || !session?.user?.name) {
 		return ForbiddenError();
 	}
 
-	const { content } = await request.json();
+	/**
+	 * @param {string} content
+	 * @param {string} newTitle - Skip this if user is not moderator.
+	 */
+	const { content, newTitle } = await request.json();
+
+	const { sanitized: title } = sanitizeTitle(params.title);
 
 	let post;
 	try {
-		post = await _getYPostByTitle(params.title);
+		post = await _getYPostByTitle(title);
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);
@@ -48,11 +99,7 @@ export async function POST({ request, locals, params }) {
 		throw err;
 	}
 
-	const isSystem =
-		post.outRelations.find(({ isSystem, toPostId }) => isSystem && toPostId === 'system') ||
-		post.id === 'system';
-
-	if (isSystem) {
+	if (isSystem(post)) {
 		return ForbiddenError('This is a system article that cannot be edited.');
 	}
 
@@ -75,11 +122,12 @@ export async function POST({ request, locals, params }) {
 		const editor = e.editor;
 
 		// Does not modify the editor.
-		await validateArticle(editor);
+		validateArticle(editor);
 
 		// Modifies the editor.
 		await adjustAndUploadImages(editor, post.title, { id: session.user.id });
 		await adjustVideoEmbedNodeSiblings(editor);
+		await adjustInternalLinks(editor);
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidArticle(err);
@@ -111,7 +159,7 @@ export async function POST({ request, locals, params }) {
 		toPostId: sysRelation.toPostId,
 	}));
 
-	const internalIds = await getArticleURLIds(editor);
+	const internalIds = getInternalIds(editor);
 	const outRelations = internalIds.map((mentionPostId) => ({
 		isSystem: false,
 		toPostId: mentionPostId,
@@ -119,11 +167,18 @@ export async function POST({ request, locals, params }) {
 
 	const contentBase64 = uint8ArrayToBase64(combinedFinalDiff);
 
+	/** @type {{ raw: string, sanitized: string } | undefined} */
+	let potentialNewTitle = isModerator
+		? await validateTitle(post, newTitle, partialErrors)
+		: undefined;
+
 	const body = { post, outRelations, transformedSystemRelations, content: contentBase64 };
 	const metadata = {
 		user: { id: session.user.id },
 		byteLength,
 		totalByteLength,
+		newTitle: potentialNewTitle?.raw,
+		oldTitle: post.rawTitle,
 	};
 
 	const updatedArticle = await updateArticleYPost(body, metadata);
@@ -137,14 +192,24 @@ export async function POST({ request, locals, params }) {
 
 	await invalidateArticleCache(post.title);
 
+	let _post = { title: post.title, rawTitle: post.rawTitle };
+
+	if (potentialNewTitle) {
+		_post = await updateArticleTitle({ post, newTitle: potentialNewTitle });
+	}
+
 	_emit('article:update', {
-		title: post.title,
-		rawTitle: post.rawTitle,
+		title: _post.title,
+		rawTitle: _post.rawTitle,
 		id: updatedArticle?.id,
 		lastUpdated: updatedArticle?.createdTimestamp.toString(),
 		byteLength,
 		author: session.user.name,
 	});
 
-	return json({ ...updatedArticle, title: post.title });
+	return json({
+		...updatedArticle,
+		title: _post.title,
+		partialErrors: partialErrors.length ? partialErrors : undefined,
+	});
 }

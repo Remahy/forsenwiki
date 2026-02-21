@@ -52,7 +52,10 @@
 {#if selectedFloatBlockNode}
 	<Divider />
 
-	<div class="flex select-none flex-col items-center justify-center font-mono text-xs leading-none" title="Float Block">
+	<div
+		class="flex flex-col items-center justify-center font-mono text-xs leading-none select-none"
+		title="Float Block"
+	>
 		<span>F</span>
 		<span>L</span>
 		<span>T</span>

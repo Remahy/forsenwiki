@@ -10,7 +10,7 @@ import { VIDEO_MIN_HEIGHT, VIDEO_MAX_HEIGHT, VIDEO_MIN_WIDTH } from '$lib/consta
 export const adjustVideoEmbedNodeSiblings = (editor) => {
 	return new Promise((resolve) => {
 		editor.update(
-			async () => {
+			() => {
 				const videoEmbeds = nodesOfType(VideoEmbedNode);
 				if (!videoEmbeds.length) {
 					return resolve(null);

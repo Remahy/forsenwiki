@@ -6,7 +6,6 @@
 }
 
 .editor-shell .editor-image * {
-	max-width: unset;
 	cursor: default;
 }
 

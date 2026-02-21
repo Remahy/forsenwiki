@@ -8,6 +8,7 @@
 	import Container from '$lib/components/Container.svelte';
 	import LinkBox from '$lib/components/LinkBox.svelte';
 
+	/** @type {Array<{ rawTitle: string, title: string, id: string, lastUpdated: Date, createdTimestamp: Date }>} */
 	let data = $state($page.data.results);
 
 	// @ts-ignore - These detail props are callbacks.
@@ -36,17 +37,17 @@
 		<p>All created articles sorted by creation date.</p>
 	</div>
 
-	{#each data as article}
+	{#each data as article (article.id)}
 		<LinkBox class="flex flex-col gap-2" href="/w/{article.title}">
 			<div class="text-2xl font-bold">{article.rawTitle || article.title}</div>
 			<p>
 				<span title={new Date(article.createdTimestamp).toUTCString()}>
-					<strong>Created:</strong>
+					<span class="font-bold">Created:</span>
 					{new Date(article.createdTimestamp).toDateString()}
 				</span>
 				{#if new Date(article.lastUpdated).getTime() !== new Date(article.createdTimestamp).getTime()}
 					<span title={new Date(article.lastUpdated).toUTCString()}>
-						<strong>Updated:</strong>
+						<span class="font-bold">Updated:</span>
 						{formatRelative(article.lastUpdated, Date.now(), { locale: enGB })}
 					</span>
 				{/if}

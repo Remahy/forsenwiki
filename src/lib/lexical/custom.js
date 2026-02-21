@@ -1,12 +1,30 @@
-export { $createALinkNode, $isALinkNode, ALinkNode } from '../components/editor/plugins/Overrides/ALink';
+export {
+	$createALinkNode,
+	$isALinkNode,
+	ALinkNode,
+} from '../components/editor/plugins/Overrides/ALink';
 
-export { $createImageNode, $isImageNode, ImageNode } from '../components/editor/plugins/Image/Image';
+export {
+	$createATableNode,
+	$isATableNode,
+	ATableNode,
+} from '../components/editor/plugins/Overrides/Table/ATableNode';
+
+export {
+	$createImageNode,
+	$isImageNode,
+	ImageNode,
+} from '../components/editor/plugins/Image/Image';
 export {
 	$createVideoEmbedNode,
 	$isVideoEmbedNode,
 	VideoEmbedNode,
 } from '../components/editor/plugins/VideoEmbed/VideoEmbed';
-export { $createFloatBlockNode, $isFloatBlockNode, FloatBlockNode } from '../components/editor/plugins/FloatBlock/FloatBlock';
+export {
+	$createFloatBlockNode,
+	$isFloatBlockNode,
+	FloatBlockNode,
+} from '../components/editor/plugins/FloatBlock/FloatBlock';
 
 export { DiffHeadingNode } from '../components/editor/plugins/Diff/Heading';
 export { DiffListNode } from '../components/editor/plugins/Diff/List';
@@ -19,7 +37,7 @@ export { DiffVideoEmbedNode } from '../components/editor/plugins/Diff/VideoEmbed
 export { DiffALinkNode } from '../components/editor/plugins/Diff/ALink';
 export { DiffLineBreakNode } from '../components/editor/plugins/Diff/LineBreak';
 export { DiffTabNode } from '../components/editor/plugins/Diff/Tab';
-export { DiffTableNode } from '../components/editor/plugins/Diff/Table';
+export { DiffATableNode } from '../components/editor/plugins/Diff/ATable';
 export { DiffTableRowNode } from '../components/editor/plugins/Diff/TableRow';
 export { DiffTableCellNode } from '../components/editor/plugins/Diff/TableCell';
 export { DiffFloatBlockNode } from '../components/editor/plugins/Diff/FloatBlock';

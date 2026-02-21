@@ -62,7 +62,7 @@ export const toHTMLWorker = async (data) => {
 	}
 
 	return editor.read(() => {
-		const text = $$getTextInEditor();
+		const text = $$getTextInEditor().replace(/\n/g, ' ');
 		const image = $$getFirstImage();
 
 		const htmlString = $generateHtmlFromNodes(editor, null);
@@ -75,7 +75,7 @@ export const toHTMLWorker = async (data) => {
 if (workerData) {
 	try {
 		toHTMLWorker();
-	} catch (error) {
-		console.error('toHTMLWorker error', error);
+	} catch (err) {
+		console.error('toHTMLWorker error', err);
 	}
 }

@@ -76,9 +76,9 @@
 
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		placeholder={height === 'inherit' ? "Inherit" : ""}
+		placeholder={height === 'inherit' ? 'Inherit' : ''}
 		onchange={onChange}
-		min="{IMAGE_MIN_WIDTH}"
+		min={IMAGE_MIN_WIDTH}
 		type="number"
 		bind:value={width}
 	/>
@@ -90,9 +90,9 @@
 
 	<input
 		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		placeholder={height === 'inherit' ? "Inherit" : ""}
+		placeholder={height === 'inherit' ? 'Inherit' : ''}
 		onchange={onChange}
-		min="{IMAGE_MIN_HEIGHT}"
+		min={IMAGE_MIN_HEIGHT}
 		type="number"
 		bind:value={height}
 	/>

@@ -16,6 +16,7 @@
 	} from '$lib/utils/recentChanges';
 	import Button from '$lib/components/Button.svelte';
 	import { getMoreRecentChanges } from '$lib/api/recentchanges';
+	import { reviver } from '$lib/utils/json';
 
 	const filters = $derived(getRecentChangesFilters($page.url.searchParams));
 
@@ -33,7 +34,16 @@
 	};
 
 	/**
-	 * @typedef {{ id: string, rawTitle: string, title: string, lastUpdated: string, author: string | null, byteLength: number }} Update
+	 * @typedef {{
+				id: string
+				rawTitle: string
+				title: string
+				lastUpdated: string
+				author: string | null
+				byteLength: number
+				newTitle?: string
+				oldTitle?: string
+			}} Update
 	 */
 
 	/** @type {Writable<Update[]>} */
@@ -54,7 +64,8 @@
 			const cursor = $latestUpdates[$latestUpdates.length - 1].id;
 
 			const rawResponse = await getMoreRecentChanges({ authors, cursor, limit });
-			const response = await rawResponse.json();
+			const responseText = await rawResponse.text();
+			const response = JSON.parse(responseText, reviver);
 			$latestUpdates.push(...response);
 			$latestUpdates = $latestUpdates;
 			loading = false;
@@ -62,12 +73,13 @@
 			if (response.length === 0) {
 				done = true;
 			}
-		} catch (error) {
+		} catch (err) {
+			console.error(err);
 			loading = false;
 		}
 	};
 
-	const sseArticleUpdate = source('/adonis/frontpage').select('article:update');
+	const sseArticleUpdate = source('/api/adonis/frontpage').select('article:update');
 
 	onMount(() => {
 		sseArticleUpdate.subscribe((v) => {
@@ -98,11 +110,11 @@
 		</div>
 		<div class="flex flex-col gap-2">
 			<label title="Authors">
-				<span>Filter by authors:</span> <small>(Comma delimited)</small>
+				<strong>Filter by authors:</strong> <small>(Comma delimited)</small>
 				<div><input bind:value={authorsInput} class="input-color w-full rounded-sm" /></div>
 			</label>
 			<label title="Limit">
-				<span>Limit:</span>
+				<strong>Limit:</strong>
 				<div>
 					<input
 						bind:value={limitInput}
@@ -116,19 +128,42 @@
 			<Button on:click={handleFilterSearch}>Apply filter</Button>
 		</div>
 	</Box>
-	<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
-		{#each $latestUpdates as update}
-			<div class="p-2 pl-0">
+	<Box class="flex grow flex-col overflow-hidden p-2 lg:mb-0">
+		{#each $latestUpdates as update, index (update.id)}
+			<div class="p-2{!(index % 2) ? ' bg-black/10 dark:bg-white/5' : ''}">
 				<span>
-					<Link href="/w/{update.title}/history/{update.id}.." target="_blank">
-						<strong>{update.rawTitle}</strong> - {formatRelative(update.lastUpdated, Date.now(), {
-							locale: enGB,
-						})}</Link
-					> - By {update.author} - Size: {update.byteLength}
+					<Link href="/w/{update.title}/history/{update.id}" target="_blank"
+						><span class="font-bold">{update.rawTitle}</span></Link
+					>
 				</span>
+				&nbsp;
+				{#if update.newTitle}
+					<small
+						>(<span class="font-bold">Title change:</span>
+						"{update.newTitle}"{#if update.oldTitle}
+							&nbsp;<i>was "{update.oldTitle}"</i>
+						{/if})</small
+					>
+				{/if}
+				&nbsp;
+				<span><small class="opacity-50">({update.byteLength})</small></span>
+				&nbsp;
+				<span>
+					<Link href="/w/{update.title}/history/{update.id}.." target="_blank"
+						>Compare with previous</Link
+					></span
+				>
+				&nbsp;
+				<small
+					>{formatRelative(update.lastUpdated, Date.now(), {
+						locale: enGB,
+					})}</small
+				>
+				&nbsp;
+				<span><small><span class="font-bold">By:</span> {update.author}</small></span>
 			</div>
 		{:else}
-			<span>Nothing found.</span>
+			<span class="p-2 bg-black/10 dark:bg-white/5">Nothing found.</span>
 		{/each}
 
 		{#if !done && $latestUpdates.length}

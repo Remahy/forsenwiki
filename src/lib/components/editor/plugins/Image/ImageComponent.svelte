@@ -28,7 +28,6 @@
 	import ImageResizer from './ImageResizer.svelte';
 	import {
 		IMAGE_OFF,
-		ImageNode,
 		LUCIDE_ICON_LOADER,
 		TRANSPARENT_IMAGE,
 		$isImageNode as isImageNode,
@@ -36,7 +35,7 @@
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {ImageNode} node
+	 * @property {import('./Image').ImageNode} node
 	 * @property {string} src
 	 * @property {string} altText
 	 * @property {string} nodeKey
@@ -54,9 +53,9 @@
 
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);
-	/** @type {HTMLElement | HTMLImageElement | null} */
+	/** @type {HTMLElement | null} */
 	let imageRef = $state(null);
-	let isSelected = createNodeSelectionStore(editor, nodeKey);
+	let isSelected = $derived(createNodeSelectionStore(editor, nodeKey));
 	let isResizing = $state(false);
 
 	let isFocused = $derived($isSelected || isResizing);
@@ -236,7 +235,7 @@
 				alt={altText}
 			/>
 		</figure>
-	{:then _}
+	{:then}
 		<img
 			style:width={widthCss}
 			style:height={heightCss}

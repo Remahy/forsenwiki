@@ -5,7 +5,7 @@
 	import Search from '$lib/components/Search.svelte';
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 
-	/** @type {import('./+page.server').QueryResult[]} */
+	/** @type {import('../api/search/+server').QueryResult[]} */
 	let results = $page.data.results;
 </script>
 
@@ -20,7 +20,7 @@
 <section class="container mx-auto flex grow flex-col gap-4 p-4 lg:py-12">
 	<SuggestionBox>
 		<p class="m-0 text-center leading-10">
-			<strong>Tip:</strong>
+			<span class="font-bold">Tip:</span>
 			<span>Searching by an author's username shows all content they've modified or created.</span>
 		</p>
 	</SuggestionBox>
@@ -28,10 +28,10 @@
 	<Search />
 
 	<div class="flex flex-col gap-2">
-		{#each results as result}
+		{#each results as result (result.id)}
 			<LinkBox href={!result.type ? `/w/${result.title}` : `/content/${result.id}`} class="flex">
 				<div class="flex grow flex-col gap-2">
-					<strong class="break-words">{result.rawTitle}</strong>
+					<strong class="wrap-break-words">{result.rawTitle}</strong>
 					<p>
 						Last updated: <span title={new Date(result.lastUpdated).toUTCString()}
 							>{new Date(result.lastUpdated).toLocaleString()}</span

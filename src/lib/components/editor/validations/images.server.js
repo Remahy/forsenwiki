@@ -47,8 +47,8 @@ const uploadImage = async (base64String, title, sha256String, author) => {
 	try {
 		await writeContent(buffer, sha256String);
 		await createContent({ name: title, hash: sha256String, authorId: author.id });
-	} catch (error) {
-		console.warn(error);
+	} catch (err) {
+		console.warn(err);
 	}
 };
 
@@ -61,7 +61,7 @@ const uploadImage = async (base64String, title, sha256String, author) => {
 export const adjustAndUploadImages = (editor, title, author) => {
 	return new Promise((resolve, reject) => {
 		editor.update(
-			async () => {
+			() => {
 				const images = nodesOfType(ImageNode);
 				if (!images.length) {
 					return resolve(null);
@@ -77,7 +77,9 @@ export const adjustAndUploadImages = (editor, title, author) => {
 						calculateOriginalFileSizeInMiB(src) > MAX_IMAGE_SIZE_MIB
 					) {
 						image.setSrc(IMAGE_OFF);
-						return reject(`Image too large: {${image.getKey()}}`);
+						return reject(
+							`Image too large: {Parent: ${image.getParent()?.getParent()?.getType()}. Position: ${image.getIndexWithinParent() + 1}}`
+						);
 					}
 
 					let { width, height } = image.getWidthAndHeight();

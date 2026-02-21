@@ -4,9 +4,9 @@ import {
 	ListItemNode,
 	HeadingNode,
 	QuoteNode,
-	TableNode,
 	TableCellNode,
 	TableRowNode,
+	TableNode,
 } from '$lib/lexical/index';
 import {
 	ALinkNode,
@@ -18,39 +18,49 @@ import {
 	FloatBlockNode,
 	AHeadingNode,
 	ATableCellNode,
+	ATableNode,
+	$createATableNode,
 } from '$lib/lexical/custom';
 import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
 import TableNodeDOMExport from './htmlExport/TableNodeDOMExport';
 
+const floatResponsive = 'max-sm:float-none! max-sm:w-full! max-sm:me-0! max-sm:ms-0!';
+const floatBoxShadow = '0px 0px 0px 1px #696969';
+
 export const articleTheme = {
 	image: 'image',
 	heading: {
-		h1: 'break-words',
-		h2: 'break-words',
-		h3: 'break-words',
-		h4: 'break-words',
-		h5: 'break-words',
+		h1: 'wrap-break-words',
+		h2: 'wrap-break-words',
+		h3: 'wrap-break-words',
+		h4: 'wrap-break-words',
+		h5: 'wrap-break-words',
 	},
-	floatResponsive: 'max-sm:!float-none',
+	floatBoxShadow,
+	floatResponsive: `${floatResponsive} [&_p:has(>br:only-child)]:hidden`,
+	tableCell: 'tableCell',
 };
 
 export const editableTheme = {
 	...articleTheme,
 	root: 'editor-shell',
 	image: 'image editor-image',
-	tableCell: 'tableCell',
 	tableCellResizer: 'tableCellResizer',
 	tableCellSelected: 'tableCellSelected',
-	floatBlockNodeBoxShadow: '#696969 0px 0px 0px 1px',
-	floatResponsive: null,
+	floatBoxShadowEditable: '0px 0px 4px #696969',
+	floatResponsive,
 	text: {
 		bold: 'font-semibold',
 		italic: 'italic',
 	},
 };
 
-export const htmlExport =  new Map([HeadingNodeDOMExport, TableCellNodeDOMExport, TableNodeDOMExport]);
+export const htmlExport = new Map([
+	HeadingNodeDOMExport,
+	TableCellNodeDOMExport,
+	TableNodeDOMExport,
+]);
 
 /**
  * @param {Error} error
@@ -71,7 +81,8 @@ export const articleNodes = [
 			return $createALinkNode(
 				node.__url,
 				{ rel: node.__rel, target: node.__target, title: node.__title },
-				false
+				false,
+				undefined
 			);
 		},
 		withKlass: ALinkNode,
@@ -84,7 +95,13 @@ export const articleNodes = [
 	QuoteNode,
 	ImageNode,
 	VideoEmbedNode,
-	TableNode,
+
+	ATableNode,
+	{
+		replace: TableNode,
+		with: () => $createATableNode(),
+		withKlass: ATableNode,
+	},
 	TableCellNode,
 	TableRowNode,
 	FloatBlockNode,
@@ -93,7 +110,7 @@ export const articleNodes = [
 	FallbackNode,
 	DeprecatedVideoEmbedNode,
 	AHeadingNode,
-	ATableCellNode
+	ATableCellNode,
 ];
 
 /**

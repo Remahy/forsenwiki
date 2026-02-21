@@ -31,6 +31,8 @@ export class DiffALinkNode extends ALinkNode {
 			},
 			// @ts-ignore
 			node.isInternal ?? node.__isInternal,
+			// @ts-ignore
+			node.internalId ?? node.__internalId,
 			key
 		);
 

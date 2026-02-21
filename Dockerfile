@@ -1,4 +1,4 @@
-FROM node:22-alpine AS npm
+FROM node:24-alpine AS npm
 
 WORKDIR /app
 
@@ -6,9 +6,9 @@ COPY package*.json .
 
 RUN npm ci
 
-FROM node:22-alpine AS build
+FROM node:24-alpine AS build
 
-RUN apk --no-cache add git
+RUN apk add git
 
 WORKDIR /app
 

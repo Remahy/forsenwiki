@@ -14,7 +14,7 @@
 
 <div class="container mx-auto flex grow flex-col gap-4 p-4 lg:py-12">
 	<Box class="bg-error-color flex grow flex-wrap gap-2 overflow-hidden p-12">
-		<div class="prose prose-2xl max-w-[unset] grow dark:prose-invert">
+		<div class="prose prose-2xl dark:prose-invert max-w-[unset] grow">
 			<h2>{$page.status}</h2>
 			<p>{$page.error?.message}</p>
 		</div>

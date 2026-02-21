@@ -63,12 +63,14 @@
 		startY: 0,
 	};
 
-	const editorRootElement = editor.getRootElement();
+	const editorRootElement = $derived(editor.getRootElement());
 	// Find max width, accounting for editor padding.
-	const maxWidthContainer =
-		editorRootElement !== null ? editorRootElement.getBoundingClientRect().width - 20 : minWidth;
-	const maxHeightContainer =
-		editorRootElement !== null ? editorRootElement.getBoundingClientRect().height - 20 : minHeight;
+	const maxWidthContainer = $derived(
+		editorRootElement !== null ? editorRootElement.getBoundingClientRect().width : minWidth
+	);
+	const maxHeightContainer = $derived(
+		editorRootElement !== null ? editorRootElement.getBoundingClientRect().height : minHeight
+	);
 
 	/** @param {number} direction */
 	const setStartCursor = (direction) => {
@@ -220,47 +222,55 @@
 		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.north);
 		}}
+		aria-hidden={true}
 	></div>
 	<div
 		class="image-resizer image-resizer-ne"
 		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.north | Direction.east);
 		}}
+		aria-hidden={true}
 	></div>
 	<div
 		class="image-resizer image-resizer-e"
 		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.east);
 		}}
+		aria-hidden={true}
 	></div>
 	<div
 		class="image-resizer image-resizer-se"
 		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.south | Direction.east);
 		}}
+		aria-hidden={true}
 	></div>
 	<div
 		class="image-resizer image-resizer-s"
 		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.south);
 		}}
+		aria-hidden={true}
 	></div>
 	<div
 		class="image-resizer image-resizer-sw"
 		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.south | Direction.west);
 		}}
+		aria-hidden={true}
 	></div>
 	<div
 		class="image-resizer image-resizer-w"
 		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.west);
 		}}
+		aria-hidden={true}
 	></div>
 	<div
 		class="image-resizer image-resizer-nw"
 		onpointerdown={(event) => {
 			handlePointerDown(event, Direction.north | Direction.west);
 		}}
+		aria-hidden={true}
 	></div>
 </div>

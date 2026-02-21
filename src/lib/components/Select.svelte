@@ -21,6 +21,13 @@
 	} = $props();
 </script>
 
-<select onchange={bubble('change')} onclick={bubble('click')} bind:value bind:this={ref} {...rest} class="select {className}">
+<select
+	onchange={bubble('change')}
+	onclick={bubble('click')}
+	bind:value
+	bind:this={ref}
+	{...rest}
+	class="select {className}"
+>
 	{@render children?.()}
 </select>

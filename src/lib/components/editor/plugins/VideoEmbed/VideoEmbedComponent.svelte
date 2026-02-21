@@ -30,13 +30,12 @@
 		getURLAndTitle,
 		getWidthAndHeight,
 		$isVideoEmbedNode as isVideoEmbedNode,
-		VideoEmbedNode,
 	} from './VideoEmbed';
 	import { decoratorFormatToMarginStyle } from './DecoratorBlockNode';
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {VideoEmbedNode} node
+	 * @property {import('./VideoEmbed').VideoEmbedNode} node
 	 * @property {string} src
 	 * @property {import('./VideoEmbed').SupportedPlatforms} platform
 	 * @property {import('lexical').NodeKey} nodeKey
@@ -56,7 +55,7 @@
 	let embedRef = $state(null);
 	/** @type {HTMLDivElement | null} */
 	let nodeRef = $state(null);
-	let isSelected = createNodeSelectionStore(editor, nodeKey);
+	let isSelected = $derived(createNodeSelectionStore(editor, nodeKey));
 	let isResizing = $state(false);
 
 	let isFocused = $derived($isSelected || isResizing);

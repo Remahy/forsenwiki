@@ -1,5 +1,6 @@
 <script>
 	import { SquarePenIcon, FileIcon } from 'lucide-svelte';
+	import { page } from '$app/stores';
 
 	import Box from '$lib/components/Box.svelte';
 	import Container from '$lib/components/Container.svelte';
@@ -9,7 +10,7 @@
 
 	let { data } = $props();
 
-	const { title, rawTitle, postUpdates, totalByteLength } = data;
+	const { title, rawTitle, postUpdates, totalByteLength } = $derived(data);
 
 	let to = $state(1);
 	let from = $state(0);
@@ -21,10 +22,11 @@
 
 <svelte:head>
 	<title>&quot;{rawTitle}&quot; history - Community Forsen Wiki</title>
-	<meta
-		name="description"
-		content="History for &quot;{rawTitle}&quot; on forsen.wiki - All things forsen, and more."
-	/>
+	<meta name="description" content="History for &quot;{rawTitle}&quot; on forsen.wiki" />
+	<meta property="og:description" content="History for &quot;{rawTitle}&quot; on forsen.wiki" />
+
+	<link rel="canonical" href="{$page.url.origin}/w/{title}" />
+	<meta property="og:url" content="{$page.url.origin}/w/{title}" />
 </svelte:head>
 
 <Container>
@@ -47,7 +49,7 @@
 			</div>
 		</div>
 
-		<p><strong>Current total length:</strong> {totalByteLength} bytes.</p>
+		<p><span class="font-bold">Current total length:</span> {totalByteLength} bytes.</p>
 	</SuggestionBox>
 
 	<Box class="p-4">
@@ -61,12 +63,14 @@
 
 		<div class="prose dark:prose-invert mt-3 max-w-[unset]">
 			<ul>
-				{#each postUpdates as postUpdate, index}
+				{#each postUpdates as postUpdate, index (postUpdate.id)}
 					<li
 						class:mt-3={index !== 0}
 						class:outline-dashed={index === to || index === from}
 						class:outline-1={index === to || index === from}
-						class={index === to || index === from ? 'dark:outline-white/25' : ''}
+						class="{index === to || index === from ? 'dark:outline-white/25' : ''} p-2{index % 2
+							? ' bg-black/10 dark:bg-white/5'
+							: ''}"
 					>
 						<div class="flex items-center">
 							{#if from < index}
@@ -94,6 +98,15 @@
 
 								{#if postUpdate.metadata.byteLength}
 									<span class="opacity-50">({postUpdate.metadata.byteLength})</span>
+								{/if}
+
+								{#if postUpdate.metadata.newTitle}
+									<small
+										>(<span class="font-bold">Title change:</span>
+										"{postUpdate.metadata.newTitle}"{#if postUpdate.metadata.oldTitle}
+											&nbsp;<i>was "{postUpdate.metadata.oldTitle}"</i>
+										{/if})</small
+									>
 								{/if}
 
 								{#if index === 0}

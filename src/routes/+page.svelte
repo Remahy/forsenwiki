@@ -24,9 +24,9 @@
 	/** @type {Writable<GoatCounterHit[]>} */
 	const popularArticles = writable($page.data.popularArticles);
 
-	const sseArticleCreate = source('/adonis/frontpage').select('article:create');
-	const sseUserCreate = source('/adonis/frontpage').select('user:create');
-	const sseArticlesPopular = source('/adonis/frontpage').select('articles:popular');
+	const sseArticleCreate = source('/api/adonis/frontpage').select('article:create');
+	const sseUserCreate = source('/api/adonis/frontpage').select('user:create');
+	const sseArticlesPopular = source('/api/adonis/frontpage').select('articles:popular');
 
 	onMount(() => {
 		sseArticleCreate.subscribe((v) => {
@@ -82,20 +82,15 @@
 
 <svelte:head>
 	<title>Community Forsen Wiki</title>
-	<meta
-		name="description"
-		content="All things forsen, forsen forsen forsen forsen forsen forsen, and more."
-	/>
+	<meta name="description" content="All things forsen, Twitch and more." />
 </svelte:head>
 
 <Container>
 	<SuggestionBox>
 		<p class="m-0 text-center leading-10">
-			<strong>ForsenWiki</strong>
+			<span class="font-bold">ForsenWiki</span>
 			<span> - </span>
-			<span>
-				Forsen mixes, news, big plays, tilts. Everything that is somewhat related to forsen.
-			</span>
+			<span>Forsen lore, news, big plays, tilts. Forsen's past and the bajs' future.</span>
 		</p>
 	</SuggestionBox>
 
@@ -105,33 +100,35 @@
 				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">New articles</h2>
 				</div>
-				{#each $latestArticles as article}
-					<div class="p-2 pl-0">
-						<Link href="/w/{article.title}">
+				{#each $latestArticles as article, index (article.title)}
+					<div class="p-2{index % 2 ? ' bg-black/10 dark:bg-white/5' : ''}">
+						<Link href="/w/{article.title}" class="inline-block min-w-32">
 							<strong>{article.rawTitle}</strong>
 						</Link>
-						<span>
-							- <span title={new Date(article.createdTimestamp).toUTCString()}
-								>{new Date(article.createdTimestamp).toDateString()}</span
-							>
-							- By {article.author}
+						<span
+							title={new Date(article.createdTimestamp).toUTCString()}
+							class="inline-block min-w-32"
+						>
+							{new Date(article.createdTimestamp).toDateString()}
 						</span>
+						&nbsp;
+						<small class="inline-block"><span class="font-bold">By:</span> {article.author}</small>
 					</div>
 				{/each}
 			</Box>
 
 			{#if $popularArticles.length}
 				<Box class="mt-4 grow p-4">
-					<div class="box-heading-wrapper mb-2">
+					<div class="box-heading-wrapper mb-2 flex items-center justify-between">
 						<h2 class="text-2xl">Popular articles</h2>
+						<Link href="https://stats.forsen.wiki/" target="_blank">STATS.FORSEN.WIKI</Link>
 					</div>
-					{#each $popularArticles as article}
-						<div class="p-2 pl-0">
-							<Link href={article.path}>
-								<span>
-									<strong>{article.title}</strong> - {article.max} hits
-								</span>
-							</Link>
+					{#each $popularArticles as article, index (article.path)}
+						<div class="p-2{index % 2 ? ' bg-black/10 dark:bg-white/5' : ''}">
+							<Link href={article.path} class="inline-block min-w-32"
+								><strong>{article.title}</strong></Link
+							>
+							&nbsp; <span>{article.count} hits</span>
 						</div>
 					{/each}
 				</Box>
@@ -165,11 +162,9 @@
 					<h2 class="text-2xl">New users</h2>
 				</div>
 
-				{#each $latestUsers as user}
+				{#each $latestUsers as user (user.name)}
 					<div class="p-2 pl-0">
-						<span title={user.name}>
-							<strong>{user.name}</strong>
-						</span>
+						<span title={user.name} class="font-bold">{user.name}</span>
 					</div>
 				{/each}
 			</Box>

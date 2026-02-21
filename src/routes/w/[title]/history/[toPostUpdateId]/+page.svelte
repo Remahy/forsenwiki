@@ -1,9 +1,12 @@
 <script>
 	import { FileIcon, GitCompareIcon, HistoryIcon } from 'lucide-svelte';
+	import { page } from '$app/stores';
+
 	import Container from '$lib/components/Container.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
+	import Box from '$lib/components/Box.svelte';
 
-	import '$lib/components/editor/plugins/Image/Image.css';
+	import '$lib/components/editor/Article.css';
 
 	let { data } = $props();
 
@@ -16,19 +19,23 @@
 		byteLength,
 		toPostUpdateId,
 		recentPostUpdateId,
-		html: { html },
-	} = data;
+		html,
+	} = $derived(data);
 
-	const date = new Date(createdTimestamp);
+	const date = $derived(new Date(createdTimestamp));
 
-	const displayTitle = `"${date.toLocaleString()}" version for "${rawTitle}" article`;
+	const displayTitle = $derived(`"${date.toLocaleString()}" version for "${rawTitle}" article`);
 
-	const authorName = author?.name || '?';
+	const authorName = $derived(author?.name || '?');
 </script>
 
 <svelte:head>
 	<title>{displayTitle} - Community Forsen Wiki</title>
-	<meta name="description" content="{displayTitle} on forsen.wiki - All things forsen, and more." />
+	<meta name="description" content="{displayTitle} on forsen.wiki" />
+	<meta property="og:description" content="{displayTitle} on forsen.wiki" />
+
+	<link rel="canonical" href="{$page.url.origin}/w/{title}" />
+	<meta property="og:url" content="{$page.url.origin}/w/{title}" />
 </svelte:head>
 
 <Container>
@@ -80,19 +87,31 @@
 					<p>This is a historical version of this article.</p>
 				{/if}
 				<p>
-					<span><strong>Version author:</strong></span>
+					<span class="font-bold">Version author:</span>
 					<span>
 						{authorName}
 					</span>
 				</p>
-				<p><strong>Update length:</strong> {byteLength} bytes.</p>
+				<p><span>Update length:</span> {byteLength} bytes.</p>
 			</div>
 		</header>
 
-		<main class="article-root prose dark:prose-invert max-w-[unset] grow">
-			<h1>{rawTitle}</h1>
+		<div class="flex grow flex-col gap-4 lg:flex-row">
+			<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
+				{#if html?.html}
+					<main class="article-root prose dark:prose-invert max-w-[unset] grow">
+						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
+							<strong class="text-4xl">{rawTitle}</strong>
+						</div>
 
-			{@html html}
-		</main>
+						{@html html.html}
+					</main>
+				{:else}
+					<i>Error: No HTML returned.</i>
+				{/if}
+			</Box>
+
+			<div class="hidden lg:block lg:w-96 lg:min-w-96"></div>
+		</div>
 	</article>
 </Container>

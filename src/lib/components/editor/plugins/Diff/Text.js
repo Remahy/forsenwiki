@@ -15,7 +15,6 @@ export class DiffTextNode extends TextNode {
 	___change;
 
 	/**
-	 *
 	 * @param {SerializedTextNode | DiffTextNode} node
 	 * @param {NodeKey} [key]
 	 */

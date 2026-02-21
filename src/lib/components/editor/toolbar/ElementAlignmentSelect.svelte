@@ -100,7 +100,7 @@
 	>
 		<option value="mixed" hidden>Mixed</option>
 		<option value="" selected class="text-lg">Default</option>
-		{#each alignmentOptions as [value, label]}
+		{#each alignmentOptions as [value, label] (value)}
 			<option {value} class="text-lg">{label}</option>
 		{/each}
 	</Select>

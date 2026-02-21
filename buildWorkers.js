@@ -3,6 +3,28 @@ import sveltePlugin from 'esbuild-svelte';
 
 import { writeFileSync, mkdirSync } from 'fs';
 
+// Fix the mess that is Svelte being a dumbfuck.
+const injectPlugin = {
+	name: 'inject-at-point',
+	setup(build) {
+		build.onEnd((result) => {
+			for (const outputFile of result.outputFiles) {
+				let code = outputFile.text;
+
+				const marker = 'globalThis.document?.contentType.includes("xml") ?? false;';
+				const injection = 'false;';
+
+				if (code.includes(marker)) {
+					code = code.replace(marker, injection);
+				}
+
+				// Overwrite the file content
+				outputFile.contents = Buffer.from(code);
+			}
+		});
+	},
+};
+
 // Build the worker
 async function buildInitialUpdateWorker() {
 	const result = await esbuild.build({
@@ -10,11 +32,10 @@ async function buildInitialUpdateWorker() {
 		conditions: ['svelte'],
 		bundle: true,
 		platform: 'node',
-		target: 'node22',
 		format: 'esm',
 		outfile: './src/lib/worker/initialUpdate.js',
 		write: false,
-		plugins: [sveltePlugin()],
+		plugins: [sveltePlugin(), injectPlugin],
 	});
 
 	// Ensure dist directory exists
@@ -28,11 +49,10 @@ async function buildToHTMLWorker() {
 		conditions: ['svelte'],
 		bundle: true,
 		platform: 'node',
-		target: 'node22',
 		format: 'esm',
 		outfile: './src/lib/worker/toHTML.js',
 		write: false,
-		plugins: [sveltePlugin()],
+		plugins: [sveltePlugin(), injectPlugin],
 	});
 
 	// Ensure dist directory exists
@@ -45,7 +65,6 @@ async function buildYoutubeClipURLWorker() {
 		entryPoints: ['worker/youtubeClipURL.js'],
 		bundle: true,
 		platform: 'node',
-		target: 'node22',
 		format: 'esm',
 		outfile: './src/lib/worker/youtubeClipURL.js',
 		write: false,
@@ -55,7 +74,6 @@ async function buildYoutubeClipURLWorker() {
 	mkdirSync('src/lib/worker/youtubeClipURL', { recursive: true });
 	writeFileSync('src/lib/worker/youtubeClipURL/worker.js', result.outputFiles[0].contents);
 }
-
 
 buildInitialUpdateWorker().catch(() => process.exit(1));
 buildToHTMLWorker().catch(() => process.exit(1));

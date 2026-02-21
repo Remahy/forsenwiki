@@ -1,34 +1,37 @@
 <script>
 	import { FileIcon, HistoryIcon } from 'lucide-svelte';
+	import { page } from '$app/stores';
 
-	import LinkButton from '$lib/components/LinkButton.svelte';
 	import Container from '$lib/components/Container.svelte';
+	import LinkButton from '$lib/components/LinkButton.svelte';
+	import Box from '$lib/components/Box.svelte';
 
-	import '$lib/components/editor/plugins/Image/Image.css';
+	import '$lib/components/editor/Article.css';
 
 	let { data } = $props();
 
 	const {
-		title,
-		rawTitle,
+		post: { title, rawTitle },
 		toDate,
 		toAuthor,
 		fromDate,
 		fromAuthor,
-		diffHTML: { html: diffHTML },
-		diffJSON,
-		editorJSON,
-	} = data;
+		html,
+	} = $derived(data);
 
-	const tD = toDate.toLocaleString();
-	const fD = fromDate.toLocaleString();
+	const tD = $derived(toDate.toLocaleString());
+	const fD = $derived(fromDate.toLocaleString());
 
-	const displayTitle = `Comparing "${tD}" vs "${fD}"`;
+	const displayTitle = $derived(`Comparing "${tD}" vs "${fD}"`);
 </script>
 
 <svelte:head>
 	<title>{displayTitle} - Community Forsen Wiki</title>
-	<meta name="description" content="{displayTitle} on forsen.wiki - All things forsen, and more." />
+	<meta name="description" content="{displayTitle} on forsen.wiki" />
+	<meta property="og:description" content="{displayTitle} on forsen.wiki" />
+
+	<link rel="canonical" href="{$page.url.origin}/w/{title}" />
+	<meta property="og:url" content="{$page.url.origin}/w/{title}" />
 </svelte:head>
 
 <Container>
@@ -64,14 +67,14 @@
 
 			<div class="mt-4">
 				<p>
-					<span><strong>&quot;{tD}&quot; version author:</strong></span>
+					<span class="font-bold">&quot;{tD}&quot; version author:</span>
 					<span>
 						{toAuthor?.name || '?'}
 					</span>
 				</p>
 
 				<p>
-					<span><strong>&quot;{fD}&quot; version author:</strong></span>
+					<span class="font-bold">&quot;{fD}&quot; version author:</span>
 					<span>
 						{fromAuthor?.name || '?'}
 					</span>
@@ -81,16 +84,16 @@
 
 		<div class="flex flex-col gap-2 text-xs">
 			<p>
-				<strong>Legend:</strong>
+				<span class="font-bold">Legend:</span>
 			</p>
 			<p class="p-1 text-red-500 outline">
-				<span><strong>Red:</strong> Deleted &#40;-&#41;</span>
+				<span><span class="font-bold">Red:</span> Deleted &#40;-&#41;</span>
 			</p>
 			<p class="p-1 text-orange-500 outline outline-dashed dark:text-orange-300">
-				<span><strong>Orange:</strong> Modified &#40;~&#41;</span>
+				<span><span class="font-bold">Orange:</span> Modified &#40;~&#41;</span>
 			</p>
 			<p class="p-1 text-green-500 outline">
-				<span><strong>Green:</strong> Added &#40;+&#41;</span>
+				<span><span class="font-bold">Green:</span> Added &#40;+&#41;</span>
 			</p>
 			<p>
 				When available, hover over the question mark <span
@@ -99,22 +102,22 @@
 			</p>
 		</div>
 
-		<main class="article-root prose dark:prose-invert max-w-[unset] grow">
-			<h1>{rawTitle}</h1>
+		<div class="flex grow flex-col gap-4 lg:flex-row">
+			<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
+				{#if html?.html}
+					<main class="article-root prose dark:prose-invert max-w-[unset] grow">
+						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
+							<strong class="text-4xl">{rawTitle}</strong>
+						</div>
 
-			{@html diffHTML}
+						{@html html.html}
+					</main>
+				{:else}
+					<i>Error: No HTML returned.</i>
+				{/if}
+			</Box>
 
-			<hr />
-
-			<details>
-				<summary>Show raw data</summary>
-
-				<strong>Diff JSON:</strong>
-				<pre class="mt-0">{JSON.stringify(diffJSON, null, 2)}</pre>
-
-				<strong>Editor JSON:</strong>
-				<pre class="mt-0">{JSON.stringify(editorJSON, null, 2)}</pre>
-			</details>
-		</main>
+			<div class="hidden lg:block lg:w-96 lg:min-w-96"></div>
+		</div>
 	</article>
 </Container>

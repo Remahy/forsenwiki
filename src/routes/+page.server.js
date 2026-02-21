@@ -1,5 +1,6 @@
 import prisma from '$lib/prisma';
 import { getPopularArticles } from '$lib/goatcounter.server';
+import { GOATCOUNTER_DISABLED } from '$env/static/private';
 
 /**
  * @typedef {{ rawTitle: string, title: string, createdTimestamp: string, author: string | null }} LatestArticle
@@ -15,7 +16,7 @@ const usersQuery = {
 	orderBy: {
 		createdAt: 'desc',
 	},
-	take: 5,
+	take: 18,
 };
 
 /** @type {{
@@ -36,9 +37,10 @@ const getLatest = async () => {
 
 	try {
 		popularArticles = await getPopularArticles();
-	} catch (error) {
-		// noop
-		console.error(error);
+	} catch (err) {
+		if (!GOATCOUNTER_DISABLED) {
+			console.error(err);
+		}
 	}
 
 	const yPosts = prisma.yPost.findMany({

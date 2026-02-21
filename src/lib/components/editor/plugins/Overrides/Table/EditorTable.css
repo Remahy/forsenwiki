@@ -1,5 +1,7 @@
 .tableCell {
+	width: unset !important;
 	position: relative;
+	vertical-align: top;
 }
 
 .tableCellSelected {

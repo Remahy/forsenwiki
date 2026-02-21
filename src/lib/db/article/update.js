@@ -37,7 +37,7 @@ const updateYPost = async (tx, { post, outRelations, systemRelations, metadata }
 			},
 			totalByteLength: metadata.totalByteLength,
 			lastUpdated: new Date(),
-		}
+		},
 	});
 };
 
@@ -45,7 +45,7 @@ const updateYPost = async (tx, { post, outRelations, systemRelations, metadata }
  * Create YPostUpdateMetadata, & YPostUpdate
  * @param {Prisma.PrismaClient | Prisma.Prisma.TransactionClient} tx
  * @param {Pick<Prisma.YPostUpdate, 'content' | 'postId'>} data
- * @param {{ user: { id: string }, byteLength: number }} metadata
+ * @param {{ user: { id: string }, byteLength: number, newTitle?: string, oldTitle?: string }} metadata
  */
 const createYPostUpdate = async (tx, data, metadata) => {
 	const { user, byteLength } = metadata;
@@ -63,6 +63,8 @@ const createYPostUpdate = async (tx, data, metadata) => {
 						...data,
 					},
 				},
+				newTitle: metadata.newTitle,
+				oldTitle: metadata.oldTitle,
 			},
 		})
 		.postUpdate({ select: { id: true, createdTimestamp: true, postId: true } });
@@ -70,21 +72,18 @@ const createYPostUpdate = async (tx, data, metadata) => {
 
 /**
  * @param {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], transformedSystemRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], content: string }} data
- * @param {{ user: { id: string }, byteLength: number, totalByteLength: number }} metadata
+ * @param {{ user: { id: string }, byteLength: number, totalByteLength: number, newTitle?: string, oldTitle?: string }} metadata
  */
 export const updateArticleYPost = async (data, metadata) => {
 	const { post, outRelations, transformedSystemRelations, content } = data;
 
 	return prisma.$transaction(async (tx) => {
-		await updateYPost(
-			tx,
-			{
-				post,
-				outRelations,
-				systemRelations: transformedSystemRelations,
-				metadata,
-			}
-		);
+		await updateYPost(tx, {
+			post,
+			outRelations,
+			systemRelations: transformedSystemRelations,
+			metadata,
+		});
 
 		/**
 		 * @type {Pick<Prisma.YPostUpdate, 'content' | 'postId'>}
@@ -95,5 +94,22 @@ export const updateArticleYPost = async (data, metadata) => {
 		};
 
 		return createYPostUpdate(tx, dataToInsert, metadata);
+	});
+};
+
+/**
+ * @param {{ post: Prisma.YPost, newTitle: { sanitized: string, raw: string } }} data
+ */
+export const updateArticleTitle = async (data) => {
+	const { post, newTitle } = data;
+
+	return prisma.yPost.update({
+		where: {
+			id: post.id,
+		},
+		data: {
+			title: newTitle.sanitized,
+			rawTitle: newTitle.raw,
+		},
 	});
 };

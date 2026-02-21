@@ -6,7 +6,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Search from './Search.svelte';
-	import Announcement from './Announcement.svelte';
+	// import Announcement from './Announcement.svelte';
 
 	let isLoading = $state(false);
 
@@ -78,8 +78,9 @@
 
 					<Button
 						on:click={signOutWrapper}
-						class="!rounded-l-none p-1 text-sm"
+						class="!rounded-l-none !px-2 text-xs"
 						disabled={isLoading}
+						title="Log out"
 					>
 						<div class="hidden lg:block">
 							{#if isLoading}
@@ -90,12 +91,12 @@
 							{/if}
 						</div>
 						<div class="block lg:hidden">
-							<LogOutIcon />
+							<LogOutIcon size="16" />
 							<span class="hidden">Log out</span>
 						</div>
 					</Button>
 				{:else}
-					<Button on:click={signInWrapper} class="p-1 text-sm" disabled={isLoading}>
+					<Button on:click={signInWrapper} class="!px-2 text-xs" disabled={isLoading} title="Login">
 						{#if isLoading}
 							<Spinner size="16" />
 							<span>Logging in...</span>
@@ -108,5 +109,5 @@
 		</div>
 	</nav>
 
-	<Announcement />
+	<!-- Announcement /-->
 </header>

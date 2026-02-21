@@ -8,7 +8,7 @@
 		CLICK_COMMAND,
 		KEY_DELETE_COMMAND,
 		KEY_BACKSPACE_COMMAND,
-		KEY_ENTER_COMMAND,
+		// KEY_ENTER_COMMAND,
 		KEY_ESCAPE_COMMAND,
 	} from 'lexical';
 	import { mergeRegister } from '@lexical/utils';
@@ -24,18 +24,14 @@
 	 */
 
 	/** @type {Props} */
-	let {
-		node,
-		nodeKey,
-		data,
-		editor
-	} = $props();
+	let { node, nodeKey, data, editor } = $props();
 
 	/** @type {BaseSelection | null} */
-	let selection = $state(null);
+	// let selection = $state(null);
+
 	/** @type {HTMLDivElement | null} */
 	let embedRef = $state(null);
-	let isSelected = createNodeSelectionStore(editor, nodeKey);
+	let isSelected = $derived(createNodeSelectionStore(editor, nodeKey));
 	let isResizing = false;
 
 	let isFocused = $derived($isSelected || isResizing);
@@ -55,6 +51,7 @@
 		return false;
 	};
 
+	/*
 	const onEnter = () => {
 		const latestSelection = getSelection();
 		if (
@@ -62,9 +59,11 @@
 			isNodeSelection(latestSelection) &&
 			latestSelection.getNodes().length === 1
 		) {
+			// ????
 		}
 		return false;
 	};
+	*/
 
 	const onEscape = () => {
 		clearSelection(editor);
@@ -94,22 +93,24 @@
 	};
 
 	onMount(() => {
-		let isMounted = true;
+		// let isMounted = true;
 		const unregister = mergeRegister(
+			/*
 			editor.registerUpdateListener(({ editorState }) => {
 				if (isMounted) {
 					selection = editorState.read(() => getSelection());
 				}
 			}),
+			*/
 			editor.registerCommand(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
-			editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
+			// editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_ESCAPE_COMMAND, onEscape, COMMAND_PRIORITY_LOW)
 		);
 
 		return () => {
-			isMounted = false;
+			// isMounted = false;
 			unregister();
 		};
 	});

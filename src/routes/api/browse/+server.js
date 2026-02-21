@@ -10,7 +10,7 @@ export async function GET({ url }) {
 			}
 		: undefined;
 
-	let res = await prisma.yPost.findMany({
+	const res = await prisma.yPost.findMany({
 		orderBy: {
 			createdTimestamp: 'desc',
 		},

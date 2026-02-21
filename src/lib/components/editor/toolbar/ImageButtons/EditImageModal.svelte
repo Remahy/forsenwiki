@@ -21,7 +21,7 @@
 		altText = $bindable(''),
 		width = $bindable(IMAGE_MIN_WIDTH),
 		height = $bindable(IMAGE_MIN_HEIGHT),
-		onSubmit
+		onSubmit,
 	} = $props();
 
 	/** @type {HTMLSelectElement | null} */
