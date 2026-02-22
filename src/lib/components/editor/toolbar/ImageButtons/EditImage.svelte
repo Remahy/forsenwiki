@@ -50,11 +50,11 @@
 						const { width, height, altText, src } = data;
 
 						if (typeof width === 'number' && width >= IMAGE_MIN_WIDTH) {
-							node.setWidthAndHeight({ width, height: node.__height });
+							node.setWidthAndHeight({ width, height: node.getWidthAndHeight().height });
 						}
 
 						if (typeof height === 'number' && height >= IMAGE_MIN_HEIGHT) {
-							node.setWidthAndHeight({ height, width: node.__width });
+							node.setWidthAndHeight({ width: node.getWidthAndHeight().width, height });
 						}
 
 						node.setAltText(altText);
