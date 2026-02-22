@@ -21,6 +21,8 @@
 	});
 </script>
 
+<svelte:window onkeyup={(e) => (e.key === 'Escape' && document.hasFocus() ? closeModal() : null)} />
+
 {#if $modal && $modal.isOpen}
 	{@const SvelteComponent = $modal.component}
 	<div class="fixed inset-0 z-50 flex items-center overflow-y-auto">
@@ -30,7 +32,7 @@
 		<div
 			role="dialog"
 			aria-modal="true"
-			class="pointer-events-none relative inset-0 z-[2] m-auto w-full max-w-2xl overflow-hidden opacity-100 shadow-2xl"
+			class="pointer-events-none relative inset-0 z-2 m-auto w-full max-w-2xl overflow-hidden opacity-100 shadow-2xl"
 		>
 			<SvelteComponent {...$modal} />
 		</div>
