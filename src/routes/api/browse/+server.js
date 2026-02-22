@@ -11,12 +11,9 @@ export async function GET({ url }) {
 		: undefined;
 
 	const res = await prisma.yPost.findMany({
-		orderBy: {
-			createdTimestamp: 'desc',
-		},
-		cursor,
+		orderBy: [{ createdTimestamp: 'desc' }, { id: 'desc' }],
+		...(cursor ? { cursor, skip: 1 } : {}),
 		take: 10,
-		skip: cursor && 1,
 		select: {
 			id: true,
 			title: true,

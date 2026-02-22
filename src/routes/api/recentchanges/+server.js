@@ -30,15 +30,15 @@ export const _getRecentChanges = async ({ authors, cursor, limit }) => {
 				},
 			},
 		},
-		orderBy: {
-			createdTimestamp: 'desc',
-		},
-		cursor: cursor
+		orderBy: [{ createdTimestamp: 'desc' }, { id: 'desc' }],
+		...(cursor
 			? {
-					id: cursor,
+					cursor: {
+						id: cursor,
+					},
+					skip: 1,
 				}
-			: undefined,
-		skip: cursor ? 1 : undefined,
+			: {}),
 		take: limit,
 		where: authors.length
 			? {
