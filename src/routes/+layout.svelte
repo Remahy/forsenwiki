@@ -16,6 +16,7 @@
 	/** @type {Props} */
 	let { children } = $props();
 
+	// These are basically our global frontend variables.
 	/** @type {ComposerWritable} */
 	setContext('COMPOSER', writable(null));
 	setContext('YDOCPERSISTENCE', writable(null));

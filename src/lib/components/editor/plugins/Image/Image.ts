@@ -93,7 +93,7 @@ export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
 
 	static importDOM(): DOMConversionMap | null {
 		return {
-			img: (node: Node) => ({
+			img: (_: Node) => ({
 				conversion: convertImageElement,
 				priority: 0,
 			}),

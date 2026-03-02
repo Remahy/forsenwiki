@@ -1,6 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Dice4Icon, HistoryIcon, NewspaperIcon, SearchIcon, SquarePenIcon } from 'lucide-svelte';
+	import {
+		Dice4Icon,
+		FolderSearchIcon,
+		HistoryIcon,
+		NewspaperIcon,
+		SquarePenIcon,
+	} from 'lucide-svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
 
@@ -109,9 +115,8 @@
 							title={new Date(article.createdTimestamp).toUTCString()}
 							class="inline-block min-w-32"
 						>
-							{new Date(article.createdTimestamp).toDateString()}
+							{new Date(article.createdTimestamp).toDateString()}&nbsp;
 						</span>
-						&nbsp;
 						<small class="inline-block"><span class="font-bold">By:</span> {article.author}</small>
 					</div>
 				{/each}
@@ -143,14 +148,14 @@
 				<LinkButton href="/recentchanges" class="flex gap-2 whitespace-nowrap">
 					<HistoryIcon /> <span>Recent changes</span>
 				</LinkButton>
-				<LinkButton href="/browse" class="flex gap-2 whitespace-nowrap">
-					<NewspaperIcon /> <span>All articles</span>
-				</LinkButton>
 				<LinkButton href="/create" class="flex gap-2 whitespace-nowrap" reload>
 					<SquarePenIcon /> <span>Create new article</span>
 				</LinkButton>
-				<LinkButton href="/search" class="flex gap-2 whitespace-nowrap">
-					<SearchIcon /> <span>Search</span>
+				<LinkButton href="/browse" class="flex gap-2 whitespace-nowrap">
+					<NewspaperIcon /> <span>All articles</span>
+				</LinkButton>
+				<LinkButton href="/content" class="flex gap-2 whitespace-nowrap">
+					<FolderSearchIcon /> <span>Search content</span>
 				</LinkButton>
 				<LinkButton href="/random" class="flex gap-2 whitespace-nowrap">
 					<Dice4Icon /> <span>Random</span>

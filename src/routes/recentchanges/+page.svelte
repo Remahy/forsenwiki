@@ -101,9 +101,13 @@
 	});
 </script>
 
-<noscript>This page requires JavaScript to function.</noscript>
-
 <section class="container mx-auto flex grow flex-col gap-4 p-4 lg:py-12">
+	<noscript>
+		<Box class="bg-red-500! p-4 text-black">
+			<span class="font-bold">This page requires JavaScript to function.</span>
+		</Box>
+	</noscript>
+
 	<Box class="flex flex-col overflow-hidden p-4 lg:mb-0">
 		<div class="box-heading-wrapper mb-2">
 			<h2 class="text-2xl">Recent Changes</h2>
@@ -125,7 +129,7 @@
 					/>
 				</div>
 			</label>
-			<Button on:click={handleFilterSearch}>Apply filter</Button>
+			<Button class="self-start" on:click={handleFilterSearch}>Apply filter</Button>
 		</div>
 	</Box>
 	<Box class="flex grow flex-col overflow-hidden p-2 lg:mb-0">
@@ -134,32 +138,27 @@
 				<span>
 					<Link href="/w/{update.title}/history/{update.id}" target="_blank"
 						><span class="font-bold">{update.rawTitle}</span></Link
-					>
+					>&nbsp;
 				</span>
-				&nbsp;
 				{#if update.newTitle}
 					<small
 						>(<span class="font-bold">Title change:</span>
 						"{update.newTitle}"{#if update.oldTitle}
-							&nbsp;<i>was "{update.oldTitle}"</i>
-						{/if})</small
+							{' '}<i>was "{update.oldTitle}"</i>
+						{/if})&nbsp;</small
 					>
 				{/if}
-				&nbsp;
-				<span><small class="opacity-50">({update.byteLength})</small></span>
-				&nbsp;
+				<span><small class="opacity-50">({update.byteLength})&nbsp;</small></span>
 				<span>
 					<Link href="/w/{update.title}/history/{update.id}.." target="_blank"
 						>Compare with previous</Link
-					></span
+					>&nbsp;</span
 				>
-				&nbsp;
 				<small
 					>{formatRelative(update.lastUpdated, Date.now(), {
 						locale: enGB,
-					})}</small
+					})}&nbsp;</small
 				>
-				&nbsp;
 				<span><small><span class="font-bold">By:</span> {update.author}</small></span>
 			</div>
 		{:else}
