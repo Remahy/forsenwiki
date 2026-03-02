@@ -6,7 +6,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Search from './Search.svelte';
-	// import Announcement from './Announcement.svelte';
+	import Announcement from './Announcement.svelte';
 
 	let isLoading = $state(false);
 
@@ -20,24 +20,10 @@
 		signOut({ redirect: true });
 	};
 
-	function CachedImage() {
-		const image = new URL('', 'https://wsrv.nl');
-
-		return {
-			/**
-			 * @param {string} url
-			 */
-			setImg: (url) => {
-				image.searchParams.set('url', url);
-			},
-			image,
-		};
-	}
-
-	let cachedImage = $state(CachedImage());
+	let cachedImage = $state('');
 
 	if (page.data.session?.user?.image) {
-		cachedImage.setImg(page.data.session?.user?.image);
+		cachedImage = page.data.session?.user?.image;
 	}
 </script>
 
@@ -65,7 +51,7 @@
 					<div class="violet flex max-w-20 gap-2 overflow-hidden p-2 lg:max-w-40">
 						{#if cachedImage}
 							<img
-								src={cachedImage.image.toString()}
+								src={cachedImage}
 								class="-my-2 -ml-2 hidden h-10 w-auto lg:block"
 								alt="Twitch avatar"
 							/>
@@ -109,5 +95,5 @@
 		</div>
 	</nav>
 
-	<!-- Announcement /-->
+	<Announcement />
 </header>

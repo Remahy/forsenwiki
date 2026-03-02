@@ -1,43 +1,44 @@
 <script>
-	// import { ScaleIcon, XIcon } from 'lucide-svelte';
-	// import Button from './Button.svelte';
-	// import Box from './Box.svelte';
-	// import Link from './Link.svelte';
+	import { ScaleIcon, XIcon } from 'lucide-svelte';
+	import Button from './Button.svelte';
+	import Box from './Box.svelte';
 
-	// const hasSeenPrivacyUpdateNotice = globalThis?.localStorage
-	// 	? localStorage.getItem('privacy-update-june-3-2024')
-	// 	: true;
+	const hasSeenPrivacyUpdateNotice = globalThis?.localStorage
+		? localStorage.getItem('privacy-update-march-2025')
+		: true;
 </script>
 
-<!--
-	{#if !hasSeenPrivacyUpdateNotice}
-		<Box class="!rounded-none !bg-yellow-900/20 dark:!bg-yellow-300/20">
-			<div class="container mx-auto flex items-center gap-4 p-4">
-				<ScaleIcon class="hidden h-8 w-8 lg:block" />
-				<div class="grow">
+{#if !hasSeenPrivacyUpdateNotice}
+	<Box class="rounded-none! bg-yellow-900/20! dark:bg-yellow-300/10!">
+		<div class="container mx-auto flex items-center gap-4 p-4">
+			<ScaleIcon class="hidden h-8 w-8 lg:block" />
+			<div class="grow">
+				<a href="/privacy">
 					<p>
-						<a href="/privacy"
-							>(June 3) Privacy policy has been updated. Please take a moment to read it.</a
-						>
+						(March 2026) Privacy policy has been updated. Please take a moment to read it before its
+						effective date <strong>April 2</strong>.
 					</p>
 
 					<p>
-						<strong>Changes:</strong> Removed section about tracking cookies, added section about collecting
-						statistics on an ongoing basis. Clarified purpose of Cloudflare.
+						<strong>Changes:</strong>
+						<span>Removed section about Wsrv caching.</span>
+						<span
+							>Modified Cloudflare section to mention that it now acts as our host and cache for
+							user uploaded content.</span
+						> <span>Removed mention of notifying users of privacy policy changes via email.</span>
 					</p>
-				</div>
-
-				<Button
-					class="m-auto"
-					on:click={() => {
-						localStorage.setItem('privacy-update-june-3-2024', 'true');
-						window.location.reload();
-					}}
-				>
-					<span class="hidden lg:inline">Close</span>
-					<XIcon class="inline lg:hidden min-w-4" />
-				</Button>
+				</a>
 			</div>
-		</Box>
+
+			<Button
+				class="p-0!"
+				on:click={() => {
+					localStorage.setItem('privacy-update-march-2025', 'true');
+					window.location.reload();
+				}}
+			>
+				<XIcon class="inline min-w-4 py-1" />
+			</Button>
+		</div>
+	</Box>
 {/if}
--->

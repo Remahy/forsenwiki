@@ -12,15 +12,15 @@
 	<section class="prose prose-lg dark:prose-invert w-full max-w-[unset]">
 		<h1 id="privacy">Privacy Policy</h1>
 		<p>🐦</p>
-		<p>Effective date: June 3, 2024</p>
+		<p>Effective date: April 2, 2026</p>
 		<p>
-			ForsenWiki ("us", "we", or "our") operates the forsen.wiki website (hereinafter referred to as
+			ForsenWiki ("us", "we", or "our") operates the forsen.wiki and kappa.wiki websites (hereinafter referred to as
 			the "Service").
 		</p>
 		<p>
 			The Service is hosted on Hetzner (www.hetzner.com) behind a Cloudflare (www.cloudflare.com)
-			cache with user content caching on wsrv.nl (wsrv.nl) (all three hereinafter referred to by
-			name and as the "Service Providers").
+			cache with user content hosted on Cloudflare (www.cloudflare.com) (all three hereinafter
+			referred to by name and as the "Service Providers").
 		</p>
 		<p>
 			This page informs you of our policies regarding the collection, use, and disclosure of data
@@ -143,23 +143,19 @@
 				rel="noopener noreferrer">hetzner/legal/privacy-policy/</a
 			>
 		</p>
-		<p>We use Cloudflare to cache and protect the Service from denial of service attacks.</p>
+		<br/>
+		<p>
+			We use Cloudflare as our cache and user content upload host.
+		</p>
+				<ul>
+			<li>To host and cache uploaded user content, and to protect the Service from
+			denial of service attacks</li>
+		</ul>
 		<p>
 			Read Cloudflare's Privacy Policy here: <a
 				href="https://www.cloudflare.com/privacypolicy/"
 				target="cloudflare-privacy"
 				rel="noopener noreferrer">cloudflare/privacypolicy</a
-			>
-		</p>
-		<p>We use wsrv.nl to cache user content.</p>
-		<ul>
-			<li>To provide and maintain the Service</li>
-		</ul>
-		<p>
-			Read wsrv.nl's Privacy Policy here: <a
-				href="https://github.com/weserv/images/blob/5.x/Privacy-Policy.md"
-				target="weserv-privacy"
-				rel="noopener noreferrer">weserv/Privacy-Policy.md</a
 			>
 		</p>
 		<h2>Disclosure Of Data</h2>
@@ -260,7 +256,7 @@
 			posting the new Privacy Policy on this page.
 		</p>
 		<p>
-			We will let you know via email and/or a prominent notice on our Service, prior to the change
+			We will let you know via a prominent notice on our Service, prior to the change
 			becoming effective and update the "effective date" at the top of this Privacy Policy.
 		</p>
 		<p>
