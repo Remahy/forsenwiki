@@ -30,8 +30,8 @@
 		editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
 			altText: '',
 			src: TRANSPARENT_IMAGE,
-			width: 100,
-			height: 100,
+			width: 'inherit',
+			height: 'inherit',
 		});
 	};
 
