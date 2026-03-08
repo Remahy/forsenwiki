@@ -19,11 +19,13 @@ import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { adjustInternalLinks } from '$lib/components/editor/validations/internalLinks.server';
 
 export async function POST({ request, locals }) {
-	if (locals.isBlocked) {
+	const { isBlocked, auth } = locals;
+
+	if (isBlocked) {
 		return ForbiddenError();
 	}
 
-	const session = await locals.auth();
+	const session = await auth();
 	if (!session?.user?.id || !session?.user?.name) {
 		return ForbiddenError();
 	}

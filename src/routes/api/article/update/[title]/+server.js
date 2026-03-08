@@ -64,16 +64,16 @@ const validateTitle = async (post, newTitle, partialErrors) => {
 };
 
 export async function POST({ request, locals, params }) {
-	/**
-	 * @type {PartialErrors}
-	 */
-	const partialErrors = [];
-
 	const { isBlocked, isModerator, auth } = locals;
 
 	if (isBlocked) {
 		return ForbiddenError();
 	}
+
+	/**
+	 * @type {PartialErrors}
+	 */
+	const partialErrors = [];
 
 	const session = await auth();
 	if (!session?.user?.id || !session?.user?.name) {

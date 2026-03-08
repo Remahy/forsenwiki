@@ -6,12 +6,17 @@ import { updateContentName } from '$lib/db/content/updateName';
 import { rmContentByFilename } from '$lib/fs/content';
 
 export async function POST({ request, locals, params }) {
-	const { isModerator } = locals;
+	const { isBlocked, isModerator, auth } = locals;
+
+	if (isBlocked) {
+		return ForbiddenError();
+	}
+
 	if (!isModerator) {
 		return ForbiddenError();
 	}
 
-	const session = await locals.auth();
+	const session = await auth();
 	if (!session?.user?.id || !session?.user?.name) {
 		return ForbiddenError();
 	}
