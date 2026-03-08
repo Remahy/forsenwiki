@@ -5,7 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 
-	import { resetIndexedDb } from '$lib/yjs/resetIndexedDb';
+	import { resetIndexedDb } from '$lib/utils/indexedDb/reset';
 	import { updateArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';

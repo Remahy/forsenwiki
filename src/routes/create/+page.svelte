@@ -6,7 +6,7 @@
 	import { browser } from '$app/environment';
 
 	import { localStore } from '$lib/localStore.svelte';
-	import { resetIndexedDb } from '$lib/yjs/resetIndexedDb';
+	import { resetIndexedDb } from '$lib/utils/indexedDb/reset';
 	import { createArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
 	import Button from '$lib/components/Button.svelte';
