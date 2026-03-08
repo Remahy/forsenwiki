@@ -26,12 +26,7 @@
 	} from '$lib/components/editor/utils/getSelection';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import ImageResizer from './ImageResizer.svelte';
-	import {
-		IMAGE_OFF,
-		LUCIDE_ICON_LOADER,
-		TRANSPARENT_IMAGE,
-		$isImageNode as isImageNode,
-	} from './Image';
+	import { IMAGE_OFF, LUCIDE_ICON_LOADER, $isImageNode as isImageNode } from './Image';
 
 	/**
 	 * @typedef {Object} Props
@@ -60,18 +55,25 @@
 
 	let isFocused = $derived($isSelected || isResizing);
 
-	let promise = new Promise((resolve) => {
-		if (imageCache.has(src)) {
-			resolve(src);
-		} else {
-			const img = new Image();
-			img.src = src;
-			img.onload = () => {
-				imageCache.add(src);
-				resolve(src);
-			};
-		}
-	});
+	let promise = $derived.by(
+		() =>
+			new Promise(async (resolve) => {
+				if (src.startsWith('https://') || src.startsWith('data:')) {
+					if (imageCache.has(src)) {
+						resolve(src);
+					} else {
+						const img = new Image();
+						img.src = src;
+						img.onload = () => {
+							imageCache.add(src);
+							resolve(src);
+						};
+					}
+
+					return;
+				}
+			})
+	);
 
 	/** @param {KeyboardEvent} payload */
 	const onDelete = (payload) => {
@@ -235,12 +237,12 @@
 				alt={altText}
 			/>
 		</figure>
-	{:then}
+	{:then value}
 		<img
 			style:width={widthCss}
 			style:height={heightCss}
 			class="m-0"
-			src={src === TRANSPARENT_IMAGE ? IMAGE_OFF : src}
+			src={value === '' ? IMAGE_OFF : value}
 			alt={altText}
 		/>
 	{/await}

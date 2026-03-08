@@ -37,7 +37,6 @@
 	import { $wrapNodeInElement as wrapNodeInElement, mergeRegister } from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
 
-	import { CAN_USE_DOM } from '$lib/environment/utils';
 	import { cacheServiceBaseURLWithStatic } from '$lib/utils/getCacheURL';
 	import { modal } from '$lib/stores/modal';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
@@ -47,7 +46,6 @@
 		$createImageNode as createImageNode,
 		$isImageNode as isImageNode,
 		ImageNode,
-		TRANSPARENT_IMAGE,
 	} from './Image';
 
 	/**
@@ -198,7 +196,7 @@
 			domSelection.collapse(event.rangeParent, event.rangeOffset || 0);
 			range = domSelection.getRangeAt(0);
 		} else {
-			throw new Error("Cannot get the selection when dragging");
+			throw new Error('Cannot get the selection when dragging');
 		}
 
 		return range;
@@ -244,7 +242,7 @@
 				editor.update(() => node.setSrc(base64), { tag: 'history-merge' });
 			} catch (err) {
 				console.error('Error turning image into base64', err);
-				editor.update(() => node.setSrc(TRANSPARENT_IMAGE), { tag: 'history-merge' });
+				editor.update(() => node.setSrc(''), { tag: 'history-merge' });
 			}
 		};
 	}
@@ -302,7 +300,7 @@
 		}
 
 		img = document.createElement('img');
-		img.src = TRANSPARENT_IMAGE;
+		img.src = '';
 
 		return mergeRegister(
 			editor.registerMutationListener(ImageNode, (mutatedNodes) => {
