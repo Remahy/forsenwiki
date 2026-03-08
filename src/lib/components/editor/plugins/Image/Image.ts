@@ -14,6 +14,7 @@ import { $applyNodeReplacement, DecoratorNode } from 'lexical';
 import type { ComponentProps } from 'svelte';
 
 import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
+import { getCacheURL } from '$lib/utils/getCacheURL';
 
 import ImageComponent from './ImageComponent.svelte';
 
@@ -112,6 +113,19 @@ export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
 		return self.__src;
 	}
 
+	getRenderedSrc(): string | undefined {
+		const self = this.getLatest();
+
+		const rawSrc = self.__src;
+		if (!rawSrc) {
+			return;
+		}
+
+		const finalSrc = getCacheURL(rawSrc, { width: self.__width, height: self.__height });
+
+		return finalSrc.toString();
+	}
+
 	getAltText(): string | undefined {
 		const self = this.getLatest();
 		return self.__altText;
@@ -169,10 +183,8 @@ export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
 		element.setAttribute('width', width.toString());
 		element.setAttribute('height', height.toString());
 
-		const src = this.getSrc();
-		if (src) {
-			element.setAttribute('src', src);
-		}
+		const src = this.getRenderedSrc();
+		element.setAttribute('src', src || IMAGE_OFF);
 
 		const altText = this.getAltText();
 		if (altText) {

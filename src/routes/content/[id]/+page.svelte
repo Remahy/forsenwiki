@@ -11,7 +11,7 @@
 	import RandomButton from '$lib/components/RandomButton.svelte';
 
 	const result = $page.data.result;
-	const src = getCacheURL(result.hash, result.name).toString();
+	const src = getCacheURL(result.hash).toString();
 	const id = $page.params.id;
 
 	/** @type {string} */

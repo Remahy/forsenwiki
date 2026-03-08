@@ -15,7 +15,7 @@ import { InvalidArticle } from '$lib/errors/InvalidArticle';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/article/read';
 import { updateArticleTitle, updateArticleYPost } from '$lib/db/article/update';
-import { adjustAndUploadImages } from '$lib/components/editor/validations/images.server';
+import { adjustImages } from '$lib/components/editor/validations/images.server';
 import { invalidateArticleCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/article/html';
 import { articleConfig } from '$lib/components/editor/config/article';
@@ -125,7 +125,7 @@ export async function POST({ request, locals, params }) {
 		validateArticle(editor);
 
 		// Modifies the editor.
-		await adjustAndUploadImages(editor, post.title, { id: session.user.id });
+		await adjustImages(editor);
 		await adjustVideoEmbedNodeSiblings(editor);
 		await adjustInternalLinks(editor);
 	} catch (err) {

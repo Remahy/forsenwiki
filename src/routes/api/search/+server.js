@@ -102,7 +102,7 @@ export const _getSearch = async (query, types = []) => {
 				type: 'content',
 				lastUpdated: createdTimestamp,
 				rawTitle: name,
-				title: getCacheURL(hash, name).toString(),
+				title: getCacheURL(hash).toString(),
 				id,
 			});
 		}
