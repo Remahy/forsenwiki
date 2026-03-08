@@ -5,10 +5,6 @@
 
 	/** @type {import('lexical').LexicalCommand<InsertImagePayload>} */
 	export const INSERT_IMAGE_COMMAND = createCommand();
-
-	/** @type {(targetWindow: Window | null) => Selection | null} */
-	const getDOMSelection = (targetWindow) =>
-		CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
 </script>
 
 <script>
@@ -47,6 +43,11 @@
 		$isImageNode as isImageNode,
 		ImageNode,
 	} from './Image';
+	import { editorGlobals } from '../../editorGlobals.svelte';
+	import { saveContent } from '$lib/utils/indexedDb/content';
+	import { handleNewImage } from '../../utils/handleNewImage';
+
+	const id = $derived(editorGlobals.articleId);
 
 	/**
 	 * @typedef {Object} Props
@@ -206,42 +207,23 @@
 	 * @param {{ src: string }} img
 	 * @param {import('./Image').ImageNode} node
 	 */
-	function getBase64Image(img, node) {
+	function saveImageAsBlob(img, node) {
 		return async () => {
 			try {
 				// Fetch the image as a Blob
 				const response = await fetch(img.src);
 				const blob = await response.blob();
 
-				/** @type {string} */
-				const base64 = await new Promise((resolve, reject) => {
-					try {
-						const reader = new FileReader();
-						reader.onloadend = () => {
-							// Base64 string with MIME type
-							const result = reader.result;
+				const imageData = await handleNewImage(blob);
 
-							if (typeof result !== 'string') {
-								reject(new Error('FileReader onloadend did not return a string.'));
-								return;
-							}
+				// TODO: Handle internal
 
-							resolve(result);
-						};
-
-						reader.onerror = () => {
-							throw reader.error;
-						};
-
-						reader.readAsDataURL(blob);
-					} catch (err) {
-						reject(err);
-					}
-				});
-
-				editor.update(() => node.setSrc(base64), { tag: 'history-merge' });
+				if (imageData.file) {
+					await saveContent(id, imageData.hash, imageData.file);
+					editor.update(() => node.setSrc(imageData.hash), { tag: 'history-merge' });
+				}
 			} catch (err) {
-				console.error('Error turning image into base64', err);
+				console.error('Error turning image into blob', err);
 				editor.update(() => node.setSrc(''), { tag: 'history-merge' });
 			}
 		};
@@ -334,7 +316,10 @@
 							continue;
 						}
 
-						// Download image, turn it into base64.
+						if (!src.startsWith('https://')) {
+							continue;
+						}
+
 						const element = /** @type {HTMLImageElement | null} */ (editor.getElementByKey(key));
 
 						if (!element) {
@@ -347,7 +332,8 @@
 							continue;
 						}
 
-						promises.push(getBase64Image({ src }, node));
+						// Download image, turn it into a blob.
+						promises.push(saveImageAsBlob({ src }, node));
 					}
 
 					if (promises.length) {

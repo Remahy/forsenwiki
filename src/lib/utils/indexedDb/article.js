@@ -1,7 +1,7 @@
 /**
  * @param {string} name
  */
-export const resetIndexedDb = (name) => {
+export const resetArticle = (name) => {
 	return new Promise((resolve, reject) => {
 		const dbDelete = window.indexedDB.deleteDatabase(name);
 

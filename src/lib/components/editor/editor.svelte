@@ -19,6 +19,7 @@
 	import MobileToolbar from './toolbar/MobileToolbar.svelte';
 	import Footer from './footer/index.svelte';
 	import { articleConfig, editableTheme } from './config/article';
+	import { editorGlobals } from './editorGlobals.svelte';
 	import ImagePlugin from './plugins/Image/ImagePlugin.svelte';
 	import AutoFocus from './plugins/AutoFocus.svelte';
 	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
@@ -45,6 +46,7 @@
 
 	$effect(() => {
 		getContext('COMPOSER').set(composer);
+		editorGlobals.articleId = id;
 	});
 
 	// This reloads pages when we leave editor.

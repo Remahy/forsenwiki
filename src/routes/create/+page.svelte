@@ -6,7 +6,8 @@
 	import { browser } from '$app/environment';
 
 	import { localStore } from '$lib/localStore.svelte';
-	import { resetIndexedDb } from '$lib/utils/indexedDb/reset';
+	import { resetArticle } from '$lib/utils/indexedDb/article';
+	import { resetContent } from '$lib/utils/indexedDb/content';
 	import { createArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -19,6 +20,8 @@
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 	import { WIKI_PATH } from '$lib/constants/constants';
+
+	const id = 'new';
 
 	const { initialUpdate } = $page.data;
 
@@ -118,7 +121,8 @@
 		isUploading = true;
 
 		try {
-			await resetIndexedDb('new');
+			await resetArticle(id);
+			await resetContent(id);
 			title.value = '';
 			isUploading = false;
 			window.location.reload();
@@ -178,7 +182,7 @@
 	</label>
 
 	{#if browser}
-		<Editor update={null} id="new" {initialUpdate} />
+		<Editor update={null} {id} {initialUpdate} />
 	{/if}
 
 	{#if error}

@@ -5,7 +5,8 @@
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 
-	import { resetIndexedDb } from '$lib/utils/indexedDb/reset';
+	import { resetContent } from '$lib/utils/indexedDb/content';
+	import { resetArticle } from '$lib/utils/indexedDb/article';
 	import { updateArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';
@@ -127,7 +128,8 @@
 		isUploading = true;
 
 		try {
-			await resetIndexedDb(id);
+			await resetArticle(id);
+			await resetContent(id);
 			isUploading = false;
 			window.location.reload();
 		} catch (err) {

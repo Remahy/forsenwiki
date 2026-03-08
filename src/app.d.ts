@@ -37,6 +37,8 @@ declare global {
 	export namespace Prisma {
 		export = P;
 	}
+
+	export type FileUpload = { index?: number, mimetype: string, contentLength: number, hash: string, fileSnippet: string, name: string }
 }
 
 export {};
