@@ -66,6 +66,8 @@
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.11.1",
 		"@auth/sveltekit": "^1.11.1",
+		"@aws-sdk/client-s3": "^3.995.0",
+		"@aws-sdk/s3-request-presigner": "^3.995.0",
 		"@fontsource/comic-neue": "^5.2.7",
 		"@lexical/clipboard": "0.40.0",
 		"@lexical/code": "0.40.0",

@@ -20,7 +20,7 @@ export const validateArticle = (editor) => {
 		const internalLinks = getOnlyInternalLinks(links);
 		const internalLinkURLs = internalLinks.map((node) => node.getURL());
 		if (internalLinkURLs.length && internalLinkURLs.some((url) => !url.startsWith('/'))) {
-			throw new Error('An internal link was malformed');
+			throw new Error('An internal link was malformed.');
 		}
 	});
 };

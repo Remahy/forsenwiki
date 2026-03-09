@@ -3,6 +3,7 @@
 	import { FileUpIcon } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { browser } from '$app/environment';
 
 	import { localStore } from '$lib/localStore.svelte';
@@ -17,9 +18,12 @@
 	import Editor from '$lib/components/editor/editor.svelte';
 	import Container from '$lib/components/Container.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
+	import { adjustImages } from '$lib/components/editor/validations/images';
+	import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos';
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 	import { WIKI_PATH } from '$lib/constants/constants';
+	import { uploadImages } from '$lib/s3/uploadImage';
 
 	const id = 'new';
 
@@ -64,59 +68,6 @@
 		error = null;
 	};
 
-	const submit = async () => {
-		if (!yjsDocMap) {
-			return;
-		}
-
-		if (!canEdit) {
-			return;
-		}
-
-		const editor = composer?.getEditor();
-
-		if (!editor) {
-			return;
-		}
-
-		editor.read(async () => {
-			isUploading = true;
-
-			let res;
-
-			try {
-				validateArticle(editor);
-
-				if (!title.value) {
-					throw new Error('No title set.');
-				}
-
-				res = await createArticle(title.value, yjsDocMap);
-			} catch (err) {
-				error = new Error(err?.toString());
-			} finally {
-				isUploading = false;
-			}
-
-			if (!res) {
-				return;
-			}
-
-			if (res.status === 200) {
-				persistence.clearData();
-				title.value = '';
-
-				const json = await res.json();
-				const { title: serverUrlTitle /* postUpdate: { id } */ } = json;
-
-				goto(`/w/${serverUrlTitle}`);
-			} else if (res.status >= 400) {
-				const json = await res.json();
-				error = { status: res.status, statusText: res.statusText, ...json };
-			}
-		});
-	};
-
 	const reset = async () => {
 		isUploading = true;
 
@@ -133,6 +84,65 @@
 			}
 
 			error = new Error('Unknown error occurred while trying to delete draft cache.');
+		}
+	};
+
+	const submit = async () => {
+		if (!yjsDocMap) {
+			return;
+		}
+
+		if (!canEdit) {
+			return;
+		}
+
+		const editor = composer?.getEditor();
+
+		if (!editor) {
+			return;
+		}
+
+		isUploading = true;
+
+		let res;
+
+		try {
+			if (!title.value) {
+				throw new Error('No title set.');
+			}
+
+			validateArticle(editor);
+
+			await adjustImages(editor);
+			await adjustVideoEmbedNodeSiblings(editor);
+
+			// Upload images to S3.
+			await uploadImages(editor, id);
+
+			res = await editor.read(() => createArticle(title.value, yjsDocMap));
+		} catch (err) {
+			error = new Error(err?.toString());
+		} finally {
+			isUploading = false;
+		}
+
+		if (!res) {
+			return;
+		}
+
+		if (res.status === 200) {
+			persistence.clearData();
+			title.value = '';
+
+			const json = await res.json();
+			const { title: serverUrlTitle /* postUpdate: { id } */ } = json;
+
+			await reset();
+
+			goto(resolve(`/w/[title]`, { title: serverUrlTitle }));
+		} else if (res.status >= 400) {
+			const json = await res.json();
+			error = { status: res.status, statusText: res.statusText, ...json };
 		}
 	};
 
@@ -176,7 +186,8 @@
 			<strong class="text-red-600 dark:text-red-500">{titleError.message}</strong>
 		{:else}
 			<small
-				><span class="font-bold">URL:</span> <span>{WIKI_PATH}{sanitizeTitle(title.value).sanitized}</span></small
+				><span class="font-bold">URL:</span>
+				<span>{WIKI_PATH}{sanitizeTitle(title.value).sanitized}</span></small
 			>
 		{/if}
 	</label>
@@ -186,7 +197,7 @@
 	{/if}
 
 	{#if error}
-		<Box class="flex items-center bg-red-300! p-2 dark:text-black font-bold">
+		<Box class="flex items-center bg-red-300! p-2 font-bold dark:text-black">
 			<p>
 				{(error.status || error.statusText) && `(${error.status} ${error.statusText})`}
 				{error.message}
@@ -207,7 +218,7 @@
 			{/if}
 
 			<span class="hidden lg:inline" id="submit">Submit</span>
-			<FileUpIcon class="inline lg:hidden min-w-6" />
+			<FileUpIcon class="inline min-w-6 lg:hidden" />
 		</Button>
 	</Box>
 

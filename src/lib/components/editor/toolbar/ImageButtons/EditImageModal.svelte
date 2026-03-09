@@ -1,5 +1,4 @@
 <script>
-	import { uint8ArrayToBase64 } from 'uint8array-extras';
 	import { XIcon } from 'lucide-svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { modal } from '$lib/stores/modal';
@@ -7,8 +6,10 @@
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import { loadContent, saveContent } from '$lib/utils/indexedDb/content';
 	import { validateContent } from '$lib/api/content';
+	import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
 	import { IMAGE_OFF, LUCIDE_ICON_LOADER } from '../../plugins/Image/Image';
-	import { ErrorWithCode, handleNewImage, ImageErrorCodes } from '../../utils/handleNewImage';
+	import { handleNewImage, ImageErrorCodes } from '../../utils/handleNewImage';
+	import { createFileUploadObject } from '../../utils/fileUploadObject';
 	import { editorGlobals } from '../../editorGlobals.svelte';
 
 	const id = $derived(editorGlobals.articleId);
@@ -33,7 +34,7 @@
 
 	let newSrc = $state('');
 	let newSrcName = $state('');
-	/** @type {File | Blob | null} */
+	/** @type {File | null} */
 	let newFile = $state(null);
 	let newHash = $state('');
 
@@ -151,22 +152,10 @@
 		isValidImage = false;
 
 		if (newHash && newFile) {
-			// We just need 16kb to validate image.
-			const fileSnippet =
-				newFile.size > 16_384
-					? await newFile.slice(0, 16_384).arrayBuffer()
-					: await newFile.arrayBuffer();
-
 			try {
-				const res = await validateContent([
-					{
-						contentLength: newFile.size,
-						hash: newHash,
-						mimetype: newFile.type,
-						fileSnippet: uint8ArrayToBase64(new Uint8Array(fileSnippet)),
-						name: newSrcName,
-					},
-				]);
+				const fileUploadObject = await createFileUploadObject(newFile, newSrcName, newHash);
+
+				const res = await validateContent([fileUploadObject]);
 
 				const { status } = res;
 

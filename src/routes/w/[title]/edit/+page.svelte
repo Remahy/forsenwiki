@@ -3,6 +3,7 @@
 	import { FileIcon, FileUpIcon, HistoryIcon } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { browser } from '$app/environment';
 
 	import { resetContent } from '$lib/utils/indexedDb/content';
@@ -16,10 +17,13 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Container from '$lib/components/Container.svelte';
 	import { validateArticle } from '$lib/components/editor/validations';
+	import { adjustImages } from '$lib/components/editor/validations/images';
+	import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 	import { WIKI_PATH } from '$lib/constants/constants';
+	import { uploadImages } from '$lib/s3/uploadImage';
 
 	const {
 		post: { id, title, rawTitle },
@@ -68,62 +72,6 @@
 		error = null;
 	};
 
-	const submit = async () => {
-		if (!yjsDocMap) {
-			return;
-		}
-
-		if (!canEdit) {
-			return;
-		}
-
-		const editor = composer?.getEditor();
-
-		if (!editor) {
-			return;
-		}
-
-		editor.read(async () => {
-			isUploading = true;
-
-			let res;
-
-			try {
-				validateArticle(editor);
-
-				res = await updateArticle(title, yjsDocMap, newTitle);
-			} catch {
-				// noop
-			} finally {
-				isUploading = false;
-			}
-
-			if (!res) {
-				return;
-			}
-
-			if (res.status === 200) {
-				persistence.clearData();
-
-				const json = await res.json();
-				const { title /* postUpdate: { id } */, partialErrors } = json;
-
-				const searchParams = new URLSearchParams();
-
-				if (partialErrors?.length) {
-					searchParams.set('partialErrors', JSON.stringify(partialErrors));
-				}
-
-				const stringSearchParams = searchParams.toString() ? `?${searchParams.toString()}` : '';
-
-				goto(`/w/${title}${stringSearchParams}`);
-			} else if (res.status >= 400) {
-				const json = await res.json();
-				error = json;
-			}
-		});
-	};
-
 	const reset = async () => {
 		isUploading = true;
 
@@ -141,6 +89,68 @@
 			error = new Error(
 				"Unknown error occurred while trying to delete this article's draft cache."
 			);
+		}
+	};
+
+	const submit = async () => {
+		if (!yjsDocMap) {
+			return;
+		}
+
+		if (!canEdit) {
+			return;
+		}
+
+		const editor = composer?.getEditor();
+
+		if (!editor) {
+			return;
+		}
+
+		isUploading = true;
+
+		let res;
+
+		try {
+			validateArticle(editor);
+
+			await adjustImages(editor);
+			await adjustVideoEmbedNodeSiblings(editor);
+
+			// Upload images to S3.
+			await uploadImages(editor, id);
+
+			res = await editor.read(() => updateArticle(title, yjsDocMap, newTitle));
+		} catch {
+			// noop
+		} finally {
+			isUploading = false;
+		}
+
+		if (!res) {
+			return;
+		}
+
+		if (res.status === 200) {
+			persistence.clearData();
+
+			const json = await res.json();
+			const { title /* postUpdate: { id } */, partialErrors } = json;
+
+			const searchParams = new URLSearchParams();
+
+			if (partialErrors?.length) {
+				searchParams.set('partialErrors', JSON.stringify(partialErrors));
+			}
+
+			const stringSearchParams = searchParams.toString() ? `?${searchParams.toString()}` : '';
+
+			await reset();
+
+			goto(`${resolve('/w/[title]', { title })}${stringSearchParams}`);
+		} else if (res.status >= 400) {
+			const json = await res.json();
+			error = json;
 		}
 	};
 
@@ -257,7 +267,7 @@
 			{/if}
 
 			<span class="hidden lg:inline" id="submit">Submit</span>
-			<FileUpIcon class="inline lg:hidden min-w-6" />
+			<FileUpIcon class="inline min-w-6 lg:hidden" />
 		</Button>
 	</Box>
 

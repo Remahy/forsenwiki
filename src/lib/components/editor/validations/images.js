@@ -56,7 +56,7 @@ export const adjustImages = (editor) => {
 						height,
 					});
 
-					// TODO: Check if image has been uploaded to R3 successfully, otherwise warn user.
+					// TODO: Check if image has been uploaded to S3 successfully, otherwise warn user.
 				}
 			},
 			{ discrete: true }

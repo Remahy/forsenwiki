@@ -207,27 +207,37 @@
 	 * @param {{ src: string }} img
 	 * @param {import('./Image').ImageNode} node
 	 */
-	function saveImageAsBlob(img, node) {
-		return async () => {
-			try {
-				// Fetch the image as a Blob
-				const response = await fetch(img.src);
-				const blob = await response.blob();
+	const saveImageAsBlob = async (img, node) => {
+		try {
+			// Fetch the image as a Blob
+			const response = await fetch(img.src);
+			const lastModified = new Date(response.headers.get('Last-Modified') || Date.now()).getTime();
+			const etag = response.headers.get('Etag');
+			const contentType = response.headers.get('Content-Type') || '';
 
-				const imageData = await handleNewImage(blob);
+			const name = img.src.split('/').pop() || etag || 'pasted-image';
 
-				// TODO: Handle internal
+			const blob = await response.blob();
 
-				if (imageData.file) {
-					await saveContent(id, imageData.hash, imageData.file);
-					editor.update(() => node.setSrc(imageData.hash), { tag: 'history-merge' });
-				}
-			} catch (err) {
-				console.error('Error turning image into blob', err);
-				editor.update(() => node.setSrc(''), { tag: 'history-merge' });
+			const file = new File([blob], name, {
+				lastModified,
+				type: contentType,
+			});
+
+			const imageData = await handleNewImage(file);
+
+			// TODO: Handle internal
+			// if (imageData.type === 'internal') {}
+
+			if (imageData.file) {
+				await saveContent(id, imageData.hash, imageData.file);
+				editor.update(() => node.setSrc(imageData.hash), { tag: 'history-merge' });
 			}
-		};
-	}
+		} catch (err) {
+			console.error('Error turning image into blob', err);
+			editor.update(() => node.setSrc(''), { tag: 'history-merge' });
+		}
+	};
 
 	/** @param {import('./Image').ImagePayload} payload */
 	function wrapperInsertImage(payload) {
@@ -286,9 +296,10 @@
 
 		return mergeRegister(
 			editor.registerMutationListener(ImageNode, (mutatedNodes) => {
-				/** @type {any[]} */
-				const promises = [];
-				editor.read(async () => {
+				const mutatedImages = editor.read(() => {
+					/** @type {Array<Promise<void>>} */
+					const promises = [];
+
 					for (const [key, mutation] of mutatedNodes) {
 						if (mutation === 'destroyed') {
 							continue;
@@ -336,10 +347,10 @@
 						promises.push(saveImageAsBlob({ src }, node));
 					}
 
-					if (promises.length) {
-						Promise.all(promises.map((fn) => fn()));
-					}
+					return promises;
 				});
+
+				Promise.all(mutatedImages);
 			}),
 
 			editor.registerCommand(

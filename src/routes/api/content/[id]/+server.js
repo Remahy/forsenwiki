@@ -25,8 +25,6 @@ export async function POST({ request, locals, params }) {
 
 	const { name } = await request.json();
 
-	// TODO: Find all articles with this content and update their URL `fileName` field.
-
 	const res = await updateContentName(id, name);
 
 	return json(res);

@@ -1,5 +1,6 @@
 import { imageSize } from 'image-size';
-import { ErrorWithCode, ImageErrorCodes } from '$lib/components/editor/utils/handleNewImage';
+import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
+import { ImageErrorCodes } from '$lib/components/editor/utils/handleNewImage';
 import { IMAGE_MAX_HEIGHT, IMAGE_MAX_WIDTH } from '$lib/constants/image';
 
 /**

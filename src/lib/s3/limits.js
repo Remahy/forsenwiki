@@ -27,7 +27,7 @@ const magikaExtend = {
 		['text/markdown', 'md'],
 	]),
 };
-export const magikaTypeToMimetype = Object.entries(magikaExtend).reduce((acc, [type, list]) => {
+export const magikaTypeToMimetype = Object.entries(magikaExtend).reduce((acc, [, list]) => {
 	for (const mimes of list) {
 		for (let index = 0; index < mimes.length; index++) {
 			const mime = mimes[index];

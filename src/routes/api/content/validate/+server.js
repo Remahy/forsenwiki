@@ -4,7 +4,7 @@ import { getFileSizeLimit, getType } from '$lib/s3/limits.js';
 import { sniffMimetype } from '$lib/s3/sniffMimetype.server';
 import { validateImageDimensions } from '$lib/s3/validateImageDimensions.server.js';
 import { ForbiddenError } from '$lib/errors/Forbidden';
-import { ErrorWithCode } from '$lib/components/editor/utils/handleNewImage';
+import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
 import prisma from '$lib/prisma';
 
 /**
@@ -33,7 +33,7 @@ export const _validateContent = async (files, isModerator) => {
 
 		if (!file.contentLength || !file.fileSnippet || !file.mimetype || !file.hash) {
 			errors.push({
-				index: file.index,
+				index,
 				message: `Index [${index}] must be object: { mimetype: string, contentLength: number, hash: string, fileSnippet: string }`,
 			});
 			continue;
@@ -53,20 +53,22 @@ export const _validateContent = async (files, isModerator) => {
 		return { status: 400, errors: errors };
 	}
 
-	const nonExistingFiles = /** @type {Array<FileUpload & { contentType: string }>} */ (
-		files
-			.map((file, index) => {
-				file.index = index;
-
-				if (existingFiles[index]) {
+	const nonExistingFiles =
+		/** @type {Array<FileUpload & { index: number, contentType: string, type: string, mimetypeMetadata: { source: string, metadata: any }, dimensionsMetadata: import('image-size/types/interface').ISizeCalculationResult }>} */ (
+			files
+				.map((file, index) => {
 					// @ts-ignore
-					file = null;
-				}
+					file.index = index;
 
-				return file;
-			})
-			.filter(Boolean)
-	);
+					if (existingFiles[index]) {
+						// @ts-ignore
+						file = null;
+					}
+
+					return file;
+				})
+				.filter(Boolean)
+		);
 
 	// Before we generate presigned URLs in vain, let's quickly verify that they pass the validations.
 	for (let index = 0; index < nonExistingFiles.length; index++) {
@@ -111,19 +113,25 @@ export const _validateContent = async (files, isModerator) => {
 			continue;
 		}
 
-		try {
-			await validateImageDimensions(fileSnippet);
-		} catch (error) {
-			if (error instanceof ErrorWithCode) {
-				errors.push({
-					index: file.index,
-					message: error.message,
-				});
+		if (type === 'image') {
+			try {
+				const dimensions = await validateImageDimensions(fileSnippet);
+
+				file.dimensionsMetadata = dimensions;
+			} catch (error) {
+				if (error instanceof ErrorWithCode) {
+					errors.push({
+						index: file.index,
+						message: error.message,
+					});
+				}
+				continue;
 			}
-			continue;
 		}
 
-		file.contentType = type;
+		file.contentType = contentType.mimetype;
+		file.type = type;
+		file.mimetypeMetadata = { source: contentType.source, metadata: contentType.metadata };
 	}
 
 	if (errors.length) {
@@ -134,9 +142,13 @@ export const _validateContent = async (files, isModerator) => {
 };
 
 export async function POST({ request, locals }) {
-	const { isModerator } = locals;
+	const { isBlocked, isModerator, auth } = locals;
 
-	const session = await locals.auth();
+	if (isBlocked) {
+		return ForbiddenError();
+	}
+
+	const session = await auth();
 	if (!session?.user?.id || !session?.user?.name) {
 		return ForbiddenError();
 	}

@@ -33,3 +33,11 @@ export const validateContent = async (files) => {
 	return fetch(`/api/content/validate`, { method: 'POST', body, headers });
 };
 
+/**
+ * @param {Array<FileUpload>} files
+ */
+export const uploadContent = async (files) => {
+	const body = JSON.stringify(files.map((e) => ({ ...e, file: undefined })));
+
+	return fetch(`/api/content`, { method: 'POST', body, headers });
+};

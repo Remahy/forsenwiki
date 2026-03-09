@@ -33,15 +33,15 @@ const openDB = (articleId) => {
 /**
  * @param {string} articleId
  * @param {string} hash
- * @param {Blob} image
+ * @param {File} file
  */
-export const saveContent = async (articleId, hash, image) => {
+export const saveContent = async (articleId, hash, file) => {
 	const db = await openDB(articleId);
 
 	const transaction = db.transaction(DRAFT_CONTENT_DB_KEY, 'readwrite');
 	const store = transaction.objectStore(DRAFT_CONTENT_DB_KEY);
 
-	store.put({ hash, image });
+	store.put({ hash, file });
 
 	return new Promise((resolve, reject) => {
 		transaction.oncomplete = () => {
@@ -56,7 +56,7 @@ export const saveContent = async (articleId, hash, image) => {
 /**
  * @param {string} articleId
  * @param {string} hash
- * @returns {Promise<Blob & { url: string }>}
+ * @returns {Promise<{ file: File, hash: string, url: string }>}
  */
 export const loadContent = (articleId, hash) => {
 	const cache = hashCache.get(hash);
@@ -65,23 +65,24 @@ export const loadContent = (articleId, hash) => {
 		return cache;
 	}
 
-	const promise = new Promise(async (resolve, reject) => {
-		const db = await openDB(articleId);
+	const promise = new Promise((resolve, reject) => {
+		openDB(articleId).then((db) => {
+			const transaction = db.transaction(DRAFT_CONTENT_DB_KEY, 'readonly');
+			const store = transaction.objectStore(DRAFT_CONTENT_DB_KEY);
 
-		const transaction = db.transaction(DRAFT_CONTENT_DB_KEY, 'readonly');
-		const store = transaction.objectStore(DRAFT_CONTENT_DB_KEY);
+			const request = store.get(hash);
 
-		const request = store.get(hash);
-
-		request.onsuccess = function () {
-			const result = request.result;
-			if (result) {
-				const imageURL = URL.createObjectURL(result.image);
-				resolve({ ...result.image, url: imageURL });
-			} else {
-				reject(null);
-			}
-		};
+			request.onsuccess = function () {
+				const result = request.result;
+				if (result) {
+					const contentURL = URL.createObjectURL(result.file);
+					result.url = contentURL;
+					resolve(result);
+				} else {
+					reject(null);
+				}
+			};
+		});
 	});
 
 	hashCache.set(hash, promise);

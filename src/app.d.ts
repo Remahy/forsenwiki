@@ -38,7 +38,7 @@ declare global {
 		export = P;
 	}
 
-	export type FileUpload = { index?: number, mimetype: string, contentLength: number, hash: string, fileSnippet: string, name: string }
+	export type FileUpload = { mimetype: string, contentLength: number, hash: string, fileSnippet: string, name: string }
 }
 
 export {};
