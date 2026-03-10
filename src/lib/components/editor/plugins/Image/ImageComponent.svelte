@@ -63,6 +63,8 @@
 
 			if (image) {
 				return image.url;
+			} else {
+				return editor.read(() => node.getRenderedSrc());
 			}
 		} catch (err) {
 			console.error('Failed loading image from IndexedDb', err);

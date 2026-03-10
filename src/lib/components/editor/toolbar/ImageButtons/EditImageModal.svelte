@@ -59,14 +59,12 @@
 			return value;
 		}
 
-		try {
-			const image = await loadContent(id, src);
+		const image = await loadContent(id, src);
 
-			if (image) {
-				return image.url;
-			}
-		} catch (err) {
-			console.error('Failed loading image from IndexedDb', err);
+		if (image) {
+			return image.url;
+		} else {
+			console.error('Failed loading image from IndexedDb');
 		}
 
 		return IMAGE_OFF;

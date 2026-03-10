@@ -65,7 +65,7 @@ export const loadContent = (articleId, hash) => {
 		return cache;
 	}
 
-	const promise = new Promise((resolve, reject) => {
+	const promise = new Promise((resolve) => {
 		openDB(articleId).then((db) => {
 			const transaction = db.transaction(DRAFT_CONTENT_DB_KEY, 'readonly');
 			const store = transaction.objectStore(DRAFT_CONTENT_DB_KEY);
@@ -79,7 +79,7 @@ export const loadContent = (articleId, hash) => {
 					result.url = contentURL;
 					resolve(result);
 				} else {
-					reject(null);
+					resolve(null);
 				}
 			};
 		});
