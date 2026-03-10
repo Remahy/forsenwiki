@@ -4,18 +4,19 @@ import { loadContent } from '$lib/utils/indexedDb/content';
 import { uploadContent } from '$lib/api/content';
 import { createFileUploadObject } from '$lib/components/editor/utils/fileUploadObject';
 
-// https://stackoverflow.com/a/41797377
 /**
+ * https://stackoverflow.com/a/41797377
  * @param {string} hexstring
  */
 function hexToBase64(hexstring) {
 	return btoa(
+		// @ts-ignore
 		hexstring
 			.match(/\w{2}/g)
-			?.map(function (/** @type {string} */ a) {
+			.map(function (a) {
 				return String.fromCharCode(parseInt(a, 16));
 			})
-			?.join('') || ''
+			.join('')
 	);
 }
 
@@ -156,9 +157,10 @@ export const uploadImages = async (editor, id) => {
 		);
 	}
 
-	const res = await Promise.all(uploads);
-
-	debugger;
-
-	throw new Error();
+	try {
+		await Promise.all(uploads);
+	} catch (err) {
+		console.error(err);
+		throw new Error('Error uploading new file contents.', { cause: err });
+	}
 };

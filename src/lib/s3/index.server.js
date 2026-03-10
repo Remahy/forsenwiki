@@ -12,21 +12,6 @@ import { ImageErrorCodes } from '$lib/components/editor/utils/handleNewImage';
 import { getFileSizeLimit, getType } from './limits';
 import { validateImageDimensions } from './validateImageDimensions.server';
 
-// https://stackoverflow.com/a/41797377
-/**
- * @param {string} hexstring
- */
-function hexToBase64(hexstring) {
-	return btoa(
-		hexstring
-			.match(/\w{2}/g)
-			?.map(function (/** @type {string} */ a) {
-				return String.fromCharCode(parseInt(a, 16));
-			})
-			?.join('') || ''
-	);
-}
-
 const S3 = new S3Client({
 	region: 'auto',
 	endpoint: CLOUDFLARE_R2_ENDPOINT,
@@ -78,6 +63,11 @@ export const getPresignedURL = async (
 		}
 	}
 
+	const unhoistableHeaders = new Set([
+		'x-amz-checksum-sha256',
+		...Object.keys(metadata).map((value) => `x-amz-meta-${value}`),
+	]);
+
 	const presignedUrl = await getSignedUrl(
 		S3,
 		new PutObjectCommand({
@@ -85,10 +75,10 @@ export const getPresignedURL = async (
 			Key: key,
 			ContentType: contentType,
 			ContentLength: contentLength,
-			ChecksumSHA256: hexToBase64(hash),
+			ChecksumSHA256: Buffer.from(hash, 'hex').toString('base64'),
 			Metadata: metadata,
 		}),
-		{ expiresIn: 3600 } // Valid for 1 hour.
+		{ expiresIn: 3600, unhoistableHeaders } // Valid for 1 hour.
 	);
 
 	return { presignedUrl, metadata };
