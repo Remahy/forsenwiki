@@ -118,11 +118,11 @@ export const _validateContent = async (files, isModerator) => {
 				const dimensions = await validateImageDimensions(fileSnippet);
 
 				file.dimensionsMetadata = dimensions;
-			} catch (error) {
-				if (error instanceof ErrorWithCode) {
+			} catch (err) {
+				if (err instanceof ErrorWithCode) {
 					errors.push({
 						index: file.index,
-						message: error.message,
+						message: err.message,
 					});
 				}
 				continue;

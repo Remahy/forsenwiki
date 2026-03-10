@@ -177,8 +177,8 @@
 
 					throw new Error('Error with image validation');
 				}
-			} catch (error) {
-				console.error(error);
+			} catch (err) {
+				console.error(err);
 				return;
 			}
 

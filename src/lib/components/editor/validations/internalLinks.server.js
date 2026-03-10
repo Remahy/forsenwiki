@@ -26,7 +26,7 @@ export const adjustInternalLinks = async (editor) => {
 				const links = nodesOfType(ALinkNode);
 				const internalLinks = getOnlyInternalLinks(links);
 
-				for (let index = 0; index < internalIds.length; index += 1) {
+				for (let index = 0; index < internalIds.length; index++) {
 					const internalId = internalIds[index];
 					const relevantLinks = internalLinks.filter((link) => link.getInternalId() === internalId);
 					const relevantPost = posts.find((post) => post.id === internalId);

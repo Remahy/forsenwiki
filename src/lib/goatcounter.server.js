@@ -52,7 +52,7 @@ const parseResults = async (arr) => {
 
 	const newArr = structuredClone(arr);
 
-	for (let index = 0; index < foundTitles.length; index += 1) {
+	for (let index = 0; index < foundTitles.length; index++) {
 		const { rawTitle, title } = foundTitles[index];
 		const path = `/w/${title}`;
 
