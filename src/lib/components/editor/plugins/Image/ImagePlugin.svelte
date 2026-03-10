@@ -319,15 +319,11 @@
 							continue;
 						}
 
-						if (src?.startsWith('data:')) {
-							continue;
-						}
-
-						if (src?.startsWith(cacheServiceBaseURLWithStatic)) {
-							continue;
-						}
-
-						if (!src.startsWith('https://')) {
+						// fetch() on data should realistically work.
+						// if (src?.startsWith('data:')) {
+						// 	continue;
+						// }
+						if (!src.startsWith('https://') && !src.startsWith('data:')) {
 							continue;
 						}
 
