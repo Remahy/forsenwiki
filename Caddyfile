@@ -13,13 +13,6 @@ www.{$DOMAIN:forsen.wiki} {
 }
 
 {$FULL_DOMAIN:forsen.wiki} {
-	handle_path /usercontent* {
-		handle {
-			root * /srv
-			file_server
-		}
-	}
-
 	handle {
 		reverse_proxy sveltekit
 	}
