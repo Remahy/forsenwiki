@@ -1,4 +1,5 @@
 <script>
+	import { resolve } from '$app/paths';
 	import { AtSignIcon } from 'lucide-svelte';
 	import Container from '$lib/components/Container.svelte';
 </script>
@@ -74,7 +75,7 @@
 		<hr />
 
 		<p>
-			Any privacy concerns, and/or privacy questions please see the <a href="/privacy"
+			Any privacy concerns, and/or privacy questions please see the <a href={resolve('/privacy')}
 				>Privacy Policy</a
 			>.
 		</p>

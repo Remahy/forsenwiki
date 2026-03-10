@@ -2,6 +2,7 @@
 	import { LogOutIcon } from 'lucide-svelte';
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
 	import Logo from '$lib/components/Logo.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
@@ -29,7 +30,7 @@
 
 <header class="header">
 	<nav class="container mx-auto flex items-center gap-4 p-4">
-		<a href="/" class="hover:text-stone-500">
+		<a href={resolve("/")} class="hover:text-stone-500">
 			<div class="flex items-end gap-2">
 				<Logo width="64" height="64" />
 				<div class="flex flex-col justify-end">

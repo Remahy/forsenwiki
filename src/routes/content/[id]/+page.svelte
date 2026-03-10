@@ -1,6 +1,7 @@
 <script>
 	import { Trash2Icon } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
 
 	import { changeName, deleteContent } from '$lib/api/content';
@@ -79,7 +80,7 @@
 		}
 
 		if (res.status === 200) {
-			goto(`/search?query=${result.name}`, {});
+			goto(`${resolve('/search')}?query=${result.name}`);
 		} else if (res.status >= 400) {
 			error = await res.json();
 		}

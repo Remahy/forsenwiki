@@ -1,5 +1,6 @@
 <script>
 	import { AtSignIcon } from 'lucide-svelte';
+	import { resolve } from '$app/paths';
 	import GitHub from '$lib/components/icons/GitHub.svelte';
 	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
 	import Discord from '$lib/components/icons/Discord.svelte';
@@ -73,13 +74,13 @@
 		<h3>Privacy policy</h3>
 
 		<p>
-			<a href="/privacy">Visit Privacy page.</a>
+			<a href={resolve("/privacy")} rel="privacy-policy">Visit Privacy page.</a>
 		</p>
 
 		<h3>Terms of Service</h3>
 
 		<p>
-			<a href="/terms">Visit Terms of Service page.</a>
+			<a href={resolve("/terms")} rel="terms-of-service">Visit Terms of Service page.</a>
 		</p>
 	</section>
 </div>

@@ -1,5 +1,6 @@
 <script>
 	import { ScaleIcon, XIcon } from 'lucide-svelte';
+	import { resolve } from '$app/paths';
 	import Button from './Button.svelte';
 	import Box from './Box.svelte';
 
@@ -13,7 +14,7 @@
 		<div class="container mx-auto flex items-center gap-4 p-4">
 			<ScaleIcon class="hidden h-8 w-8 lg:block" />
 			<div class="grow">
-				<a href="/privacy">
+				<a href={resolve("/privacy")}>
 					<p>
 						(March 2026) Privacy policy has been updated. Please take a moment to read it before its
 						effective date <strong>April 2</strong>.
