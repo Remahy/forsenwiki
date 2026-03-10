@@ -72,14 +72,17 @@
 		error = null;
 	};
 
-	const reset = async () => {
+	const reset = async (reload = true) => {
 		isUploading = true;
 
 		try {
 			await resetArticle(id);
 			await resetContent(id);
 			isUploading = false;
-			window.location.reload();
+
+			if (reload) {
+				window.location.reload();
+			}
 		} catch (err) {
 			if (err instanceof Error) {
 				error = err;
@@ -121,7 +124,8 @@
 			await uploadImages(editor, id);
 
 			res = await editor.read(() => updateArticle(title, yjsDocMap, newTitle));
-		} catch {
+		} catch (e) {
+			debugger;
 			// noop
 		} finally {
 			isUploading = false;
@@ -145,7 +149,7 @@
 
 			const stringSearchParams = searchParams.toString() ? `?${searchParams.toString()}` : '';
 
-			await reset();
+			await reset(false);
 
 			goto(`${resolve('/w/[title]', { title })}${stringSearchParams}`);
 		} else if (res.status >= 400) {

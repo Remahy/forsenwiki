@@ -68,7 +68,7 @@
 		error = null;
 	};
 
-	const reset = async () => {
+	const reset = async (reload = true) => {
 		isUploading = true;
 
 		try {
@@ -76,7 +76,10 @@
 			await resetContent(id);
 			title.value = '';
 			isUploading = false;
-			window.location.reload();
+
+			if (reload) {
+				window.location.reload();
+			}
 		} catch (err) {
 			if (err instanceof Error) {
 				error = err;
@@ -137,7 +140,7 @@
 			const json = await res.json();
 			const { title: serverUrlTitle /* postUpdate: { id } */ } = json;
 
-			await reset();
+			await reset(false);
 
 			goto(resolve(`/w/[title]`, { title: serverUrlTitle }));
 		} else if (res.status >= 400) {
