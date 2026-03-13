@@ -27,7 +27,7 @@ export const _validateContent = async (files, isModerator) => {
 
 	let errors = [];
 
-	let existingFiles = [];
+	// Quick body array validation.
 	for (let index = 0; index < files.length; index++) {
 		const file = files[index];
 
@@ -38,16 +38,12 @@ export const _validateContent = async (files, isModerator) => {
 			});
 			continue;
 		}
-
-		const res = await prisma.content.findUnique({ where: { hash: file.hash } });
-
-		if (res) {
-			existingFiles.push(true);
-			continue;
-		}
-
-		existingFiles.push(null);
 	}
+
+	const found = await prisma.content.findMany({
+		where: { hash: { in: files.map(({ hash }) => hash) } },
+		select: { hash: true },
+	});
 
 	if (errors.length) {
 		return { status: 400, errors: errors };
@@ -60,7 +56,7 @@ export const _validateContent = async (files, isModerator) => {
 					// @ts-ignore
 					file.index = index;
 
-					if (existingFiles[index]) {
+					if (found.some(({ hash }) => hash === file.hash)) {
 						// @ts-ignore
 						file = null;
 					}
@@ -74,16 +70,7 @@ export const _validateContent = async (files, isModerator) => {
 	for (let index = 0; index < nonExistingFiles.length; index++) {
 		const file = nonExistingFiles[index];
 
-		if (!file.contentLength || !file.fileSnippet || !file.mimetype || !file.hash) {
-			errors.push({
-				index: file.index,
-				message: `Index [${index}] must be object: { mimetype: string, contentLength: number, hash: string, fileSnippet: string }`,
-			});
-			continue;
-		}
-
 		const fileSnippet = base64ToUint8Array(file.fileSnippet);
-
 		const contentType = await sniffMimetype(fileSnippet);
 
 		if (!contentType) {
