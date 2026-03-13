@@ -23,7 +23,7 @@
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 	import { WIKI_PATH } from '$lib/constants/constants';
-	import { uploadImages } from '$lib/s3/uploadImage';
+	import { uploadImages } from '$lib/s3/uploadContentHandlers';
 
 	const {
 		post: { id, title, rawTitle },

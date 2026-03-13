@@ -98,13 +98,11 @@ const getImages = async (editor, id) => {
 };
 
 /**
- * @param {LexicalEditor} editor
- * @param {string} id
+ * @param {Array<FileUpload & { file: File }>} contentToUpload 
+ * @returns 
  */
-export const uploadImages = async (editor, id) => {
-	const imagesToUpload = await getImages(editor, id);
-
-	const presignRes = await uploadContent(imagesToUpload);
+const uploadContentHandler = async (contentToUpload) => {
+	const presignRes = await uploadContent(contentToUpload);
 
 	if (presignRes.status !== 200) {
 		const errorJSON = await presignRes.json();
@@ -146,7 +144,7 @@ export const uploadImages = async (editor, id) => {
 	for (let index = 0; index < presignedURLs.length; index++) {
 		const presignEntry = presignedURLs[index];
 
-		const { file, hash } = imagesToUpload[presignEntry.index];
+		const { file, hash } = contentToUpload[presignEntry.index];
 
 		uploads.push(
 			fetch(presignEntry.url, {
@@ -157,10 +155,24 @@ export const uploadImages = async (editor, id) => {
 		);
 	}
 
+	let uploadsRes;
 	try {
-		await Promise.all(uploads);
+		uploadsRes = Promise.all(uploads);
 	} catch (err) {
 		console.error(err);
 		throw new Error('Error uploading new file contents.', { cause: err });
 	}
+
+	return uploadsRes;
+};
+
+/**
+ * @param {LexicalEditor} editor
+ * @param {string} id
+ * @throws 
+ */
+export const uploadImages = async (editor, id) => {
+	const imagesToUpload = await getImages(editor, id);
+
+	return uploadContentHandler(imagesToUpload);
 };
