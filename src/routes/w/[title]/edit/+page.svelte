@@ -24,6 +24,8 @@
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 	import { WIKI_PATH } from '$lib/constants/constants';
 	import { uploadImages } from '$lib/s3/uploadContentHandlers';
+	import { modal } from '$lib/stores/modal';
+	import UploadContentModal from '$lib/components/UploadContentModal.svelte';
 
 	const {
 		post: { id, title, rawTitle },
@@ -121,6 +123,8 @@
 			await adjustImages(editor);
 			await adjustVideoEmbedNodeSiblings(editor);
 
+			modal.set({ component: UploadContentModal, isOpen: true, disableClose: true });
+
 			// Upload images to S3.
 			await uploadImages(editor, id);
 
@@ -130,6 +134,8 @@
 			error = new Error(err?.toString());
 		} finally {
 			isUploading = false;
+			$modal.isOpen = false;
+			$modal.disableClose = false;
 		}
 
 		if (!res) {
