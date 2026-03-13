@@ -21,14 +21,22 @@
 	});
 </script>
 
-<svelte:window onkeyup={(e) => (e.key === 'Escape' && document.hasFocus() ? closeModal() : null)} />
+<svelte:window
+	onkeyup={(e) =>
+		$modal &&
+		!$modal.disableClose &&
+		(e.key === 'Escape' && document.hasFocus() ? closeModal() : null)}
+/>
 
 {#if $modal && $modal.isOpen}
 	{@const SvelteComponent = $modal.component}
 	<div class="fixed inset-0 z-50 flex items-center overflow-y-auto">
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
-		<div class="modal-bg-transparent fixed inset-0 duration-300" onclick={self(closeModal)}></div>
+		<div
+			class="modal-bg-transparent fixed inset-0 duration-300"
+			onclick={self(!$modal.disableClose ? closeModal : () => {})}
+		></div>
 		<div
 			role="dialog"
 			aria-modal="true"
