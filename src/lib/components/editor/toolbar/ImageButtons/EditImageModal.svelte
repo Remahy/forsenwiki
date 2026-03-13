@@ -102,6 +102,7 @@
 			isLoading = false;
 			return imageData.src;
 		} catch (err) {
+			console.error(err);
 			if (err instanceof ErrorWithCode) {
 				error = err.message;
 				switch (err.code) {

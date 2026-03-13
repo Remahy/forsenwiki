@@ -81,6 +81,7 @@
 				window.location.reload();
 			}
 		} catch (err) {
+			console.error(err);
 			if (err instanceof Error) {
 				error = err;
 				return;
@@ -124,6 +125,7 @@
 
 			res = await editor.read(() => createArticle(title.value, yjsDocMap));
 		} catch (err) {
+			console.error(err);
 			error = new Error(err?.toString());
 		} finally {
 			isUploading = false;

@@ -41,6 +41,7 @@
 
 			res = await changeName(id, name);
 		} catch (err) {
+			console.error(err);
 			error = new Error(err?.toString());
 		} finally {
 			isUpdating = false;
@@ -70,6 +71,7 @@
 
 			res = await deleteContent(id);
 		} catch (err) {
+			console.error(err);
 			error = new Error(err?.toString());
 		} finally {
 			isUpdating = false;

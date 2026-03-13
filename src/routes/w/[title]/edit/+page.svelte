@@ -84,6 +84,7 @@
 				window.location.reload();
 			}
 		} catch (err) {
+			console.error(err);
 			if (err instanceof Error) {
 				error = err;
 				return;
@@ -124,9 +125,9 @@
 			await uploadImages(editor, id);
 
 			res = await editor.read(() => updateArticle(title, yjsDocMap, newTitle));
-		} catch (e) {
-			debugger;
-			// noop
+		} catch (err) {
+			console.error(err);
+			error = new Error(err?.toString());
 		} finally {
 			isUploading = false;
 		}
@@ -141,6 +142,8 @@
 			const json = await res.json();
 			const { title /* postUpdate: { id } */, partialErrors } = json;
 
+			// This is used to generate a searchParam string.
+			// eslint-disable-next-line svelte/prefer-svelte-reactivity
 			const searchParams = new URLSearchParams();
 
 			if (partialErrors?.length) {
