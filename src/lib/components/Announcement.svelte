@@ -26,7 +26,7 @@
 						<span
 							>Modified Cloudflare section to mention that it now acts as our host and cache for
 							user uploaded content.</span
-						> <span>Removed mention of notifying users of privacy policy changes via email.</span>
+						> <span>Removed mention of notifying users of privacy policy changes via email, we don't have any user emails.</span>
 					</p>
 				</a>
 			</div>
