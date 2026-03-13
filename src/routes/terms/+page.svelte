@@ -38,6 +38,7 @@
 		</p>
 		<ul>
 			<li><strong>are younger than 2 years</strong>,</li>
+			<li>are mods in forsen's chat,</li>
 			<li>
 				and/or have a special user type like <strong>admin</strong>, <strong>global_mod</strong> or
 				<strong>staff</strong>. <small>(Use another account)</small>
