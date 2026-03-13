@@ -3,6 +3,8 @@ import { ImageNode } from '$lib/lexical/custom';
 import { loadContent } from '$lib/utils/indexedDb/content';
 import { uploadContent } from '$lib/api/content';
 import { createFileUploadObject } from '$lib/components/editor/utils/fileUploadObject';
+import { getCacheURL } from '$lib/utils/getCacheURL';
+import { uploadContentModalGlobals } from '$lib/components/uploadContentModalGlobals.svelte.js';
 
 /**
  * https://stackoverflow.com/a/41797377
@@ -98,8 +100,8 @@ const getImages = async (editor, id) => {
 };
 
 /**
- * @param {Array<FileUpload & { file: File }>} contentToUpload 
- * @returns 
+ * @param {Array<FileUpload & { file: File }>} contentToUpload
+ * @returns
  */
 const uploadContentHandler = async (contentToUpload) => {
 	const presignRes = await uploadContent(contentToUpload);
@@ -151,13 +153,15 @@ const uploadContentHandler = async (contentToUpload) => {
 				method: 'PUT',
 				headers: headers(presignEntry.contentType, hash, presignEntry.metadata),
 				body: file,
-			})
+			}).then(() =>
+				uploadContentModalGlobals.uploaded.push({ url: getCacheURL(hash).toString() })
+			)
 		);
 	}
 
 	let uploadsRes;
 	try {
-		uploadsRes = Promise.all(uploads);
+		uploadsRes = await Promise.all(uploads);
 	} catch (err) {
 		console.error(err);
 		throw new Error('Error uploading new file contents.', { cause: err });
@@ -169,10 +173,11 @@ const uploadContentHandler = async (contentToUpload) => {
 /**
  * @param {LexicalEditor} editor
  * @param {string} id
- * @throws 
  */
 export const uploadImages = async (editor, id) => {
 	const imagesToUpload = await getImages(editor, id);
+
+	uploadContentModalGlobals.uploading = imagesToUpload.length;
 
 	return uploadContentHandler(imagesToUpload);
 };
