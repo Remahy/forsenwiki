@@ -110,6 +110,7 @@ export const _getSearch = async (query, types = []) => {
 
 			results.push({
 				type: 'content',
+				hash,
 				lastUpdated: createdTimestamp,
 				rawTitle: name,
 				title: getCacheURL(hash).toString(),
