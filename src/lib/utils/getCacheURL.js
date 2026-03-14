@@ -5,14 +5,16 @@ export const cacheServiceBaseURLWithStatic = STATIC_DOMAIN;
 
 /**
  * @param {string} hash
- * @param {{ width?: 'inherit' | number, height?: 'inherit' | number }} opts
+ * @param {{ width?: 'inherit' | number, height?: 'inherit' | number }} [opts]
  */
-export const getCacheURL = (hash, opts = {}) => {
+export const getCacheURL = (hash, opts) => {
 	// This is the Cloudflare Images endpoint. Hardcoded for now.
 	// https://developers.cloudflare.com/images/transform-images/transform-via-url/
-	const ourUrl = new URL('', STATIC_DOMAIN + '/cdn-cgi/image/');
+	const ourUrl = new URL('', STATIC_DOMAIN + '/cdn-cgi/image');
 
 	if (opts) {
+		ourUrl.pathname += '/';
+
 		const newOpts = [];
 		if (typeof opts.width === 'number' && opts.width < IMAGE_MAX_WIDTH) {
 			newOpts.push(`width=${opts.width}`);
