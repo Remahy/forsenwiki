@@ -1,4 +1,5 @@
 <script>
+	import Spinner from './Spinner.svelte';
 	import { uploadContentModalGlobals } from './uploadContentModalGlobals.svelte';
 
 	let { uploading = 0, uploaded = [] } = uploadContentModalGlobals;
@@ -9,8 +10,8 @@
 		<h1 class="text-xl font-semibold lg:text-2xl">Uploading article content</h1>
 	</header>
 
-	{#if uploading > 0}
-		<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
+	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
+		{#if uploading > 0}
 			<div>
 				<p>Uploading {uploading} files...</p>
 				<progress
@@ -32,6 +33,8 @@
 					{/each}
 				</div>
 			{/if}
-		</main>
-	{/if}
+		{:else}
+			<div class="self-center"><Spinner /></div>
+		{/if}
+	</main>
 </div>

@@ -133,8 +133,6 @@
 			error = new Error(err?.toString());
 		} finally {
 			isUploading = false;
-			$modal.isOpen = false;
-			$modal.disableClose = false;
 		}
 
 		if (!res) {
@@ -155,6 +153,9 @@
 			const json = await res.json();
 			error = { status: res.status, statusText: res.statusText, ...json };
 		}
+
+		$modal.isOpen = false;
+		$modal.disableClose = false;
 	};
 
 	onMount(() => {
