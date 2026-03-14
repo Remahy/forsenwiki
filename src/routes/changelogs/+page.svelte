@@ -7,7 +7,7 @@
 
 <svelte:head>
 	<title>Community Forsen Wiki</title>
-	<meta name="description" content="Forsen Wiki code changelogs" />
+	<meta name="description" content="Forsen Wiki changelogs" />
 </svelte:head>
 
 <Container>

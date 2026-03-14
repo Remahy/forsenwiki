@@ -88,7 +88,7 @@
 
 <svelte:head>
 	<title>Community Forsen Wiki</title>
-	<meta name="description" content="All things forsen, Twitch and more." />
+	<meta name="description" content="All things forsen, forsenboys and more." />
 </svelte:head>
 
 <Container>
