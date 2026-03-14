@@ -2,6 +2,7 @@ import { getContentByHash } from '$lib/api/content';
 import { IMAGE_MAX_HEIGHT, IMAGE_MAX_WIDTH } from '$lib/constants/image';
 import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
 import { IMAGE_AUDIO_FILE_SIZE } from '$lib/s3/limits';
+import { getCacheURL } from '$lib/utils/getCacheURL';
 import { calculateChecksumSha256 } from '$lib/utils/sha256';
 
 export const ImageErrorCodes = {
@@ -53,13 +54,12 @@ export const handleNewImage = async (file) => {
 
 		img.onload = async () => {
 			if (res.status === 200) {
-				// TODO: Already exists.
 				const content = await res.json();
 				// Take me to "Browse" and search for content.name
 				resolve({
 					linkType: 'internal',
-					src: '', // TODO
-					name,
+					src: getCacheURL(hash).toString(),
+					name: content.name,
 					hash,
 					width: img.width,
 					height: img.height,

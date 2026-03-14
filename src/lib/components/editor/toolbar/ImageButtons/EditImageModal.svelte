@@ -1,12 +1,16 @@
 <script>
 	import { XIcon } from 'lucide-svelte';
 	import Button from '$lib/components/Button.svelte';
-	import { modal } from '$lib/stores/modal';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import Link from '$lib/components/Link.svelte';
+	import { modal } from '$lib/stores/modal';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import { loadContent, saveContent } from '$lib/utils/indexedDb/content';
 	import { validateContent } from '$lib/api/content';
 	import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
+	import { searchRequest } from '$lib/api/search';
+	import { getCacheURL } from '$lib/utils/getCacheURL';
+	import { mimetypes } from '$lib/s3/limits';
 	import { IMAGE_OFF, LUCIDE_ICON_LOADER } from '../../plugins/Image/Image';
 	import { handleNewImage, ImageErrorCodes } from '../../utils/handleNewImage';
 	import { createFileUploadObject } from '../../utils/fileUploadObject';
@@ -18,8 +22,8 @@
 	 * @typedef {Object} Props
 	 * @property {string} [src]
 	 * @property {string} [altText]
-	 * @property {number} [width]
-	 * @property {number} [height]
+	 * @property {number | 'inherit'} [width]
+	 * @property {number | 'inherit'} [height]
 	 * @property {(data: import('../../plugins/Image/Image').ImagePayload) => void} onSubmit
 	 */
 
@@ -41,7 +45,7 @@
 	/** @type {HTMLInputElement | null} */
 	let inputElement = $state(null);
 
-	let currentLinkType = $state('new');
+	let currentImageType = $state('new');
 
 	let isLoading = $state(false);
 
@@ -52,6 +56,11 @@
 	let originalImageHeight = $state(0);
 	let originalImageWidth = $state(0);
 
+	let searchQuery = $state('');
+	let isSearching = $state(false);
+	/** @type {Array<{ title: string, rawTitle: string, lastUpdated: string, id: string, hash?: string }>} */
+	let searchResults = $state([]);
+
 	let previewImage = $derived.by(async () => {
 		let value = newSrc || src;
 
@@ -59,16 +68,39 @@
 			return value;
 		}
 
-		const image = await loadContent(id, src);
+		const image = await loadContent(id, value);
 
 		if (image) {
 			return image.url;
-		} else {
-			console.error('Failed loading image from IndexedDb');
 		}
 
+		if (currentImageType === 'internal') {
+			return getCacheURL(value).toString();
+		}
+
+		console.error('Failed loading image from IndexedDb');
 		return IMAGE_OFF;
 	});
+
+	/** @param {{ rawTitle: string, hash?: string }} value */
+	const handleInternalImage = (value) => {
+		if (!value.hash) {
+			return;
+		}
+
+		if (newFile) {
+			originalImageWidth = 0;
+			originalImageHeight = 0;
+			width = 'inherit';
+			height = 'inherit';
+		}
+
+		newSrc = value.hash;
+		newSrcName = value.rawTitle;
+		newHash = value.hash;
+		newFile = null;
+		isValidImage = true;
+	};
 
 	/** @param {HTMLInputElement} target */
 	const handleNewImageWrapper = async (target) => {
@@ -86,8 +118,9 @@
 			height = imageData.height;
 
 			if (imageData.linkType === 'internal') {
-				currentLinkType = 'internal';
+				currentImageType = 'internal';
 				// Take me to "Browse" and search for content.name
+				searchQuery = imageData.name;
 				return;
 			}
 
@@ -132,7 +165,7 @@
 		if (target) {
 			// const value = target.value;
 			try {
-				if (currentLinkType === 'new') {
+				if (currentImageType === 'new') {
 					await handleNewImageWrapper(target);
 				}
 			} catch {
@@ -189,6 +222,35 @@
 
 		$modal.isOpen = false;
 	};
+
+	$effect(() => {
+		if (!searchQuery) {
+			return;
+		}
+
+		isSearching = true;
+
+		// Debouncer
+		const handler = setTimeout(async () => {
+			try {
+				const res = await searchRequest(searchQuery, 'content');
+				const json = await res.json();
+				searchResults = json;
+				console.log(json);
+			} catch (err) {
+				console.error(err);
+				error = 'Search returned an error.';
+			}
+
+			isSearching = false;
+		}, 750);
+
+		// Cleanup function to clear the timeout if the search query changes before the timeout completes
+		return () => {
+			clearTimeout(handler);
+			isSearching = false;
+		};
+	});
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
@@ -204,12 +266,12 @@
 			<strong>Image source</strong>
 			<div class="flex">
 				<Button
-					class="grow rounded-r-none! {currentLinkType === 'internal' ? '' : 'opacity-50'}"
-					on:click={() => (currentLinkType = 'internal')}>Browse</Button
+					class="grow rounded-r-none! {currentImageType === 'internal' ? '' : 'opacity-50'}"
+					on:click={() => (currentImageType = 'internal')}>Browse</Button
 				>
 				<Button
-					class="grow rounded-l-none! {currentLinkType === 'new' ? '' : 'opacity-50'}"
-					on:click={() => (currentLinkType = 'new')}>Upload</Button
+					class="grow rounded-l-none! {currentImageType === 'new' ? '' : 'opacity-50'}"
+					on:click={() => (currentImageType = 'new')}>Upload</Button
 				>
 			</div>
 
@@ -220,18 +282,22 @@
 					{#await previewImage}
 						<img class="animate-spin rounded-full" src={LUCIDE_ICON_LOADER} alt={altText} />
 					{:then result}
-						<img src={result} alt={altText || 'Preview of uploaded image'} class="max-h-100" />
+						<img
+							src={result}
+							alt={altText || `${currentImageType === 'new' ? 'Uploaded ' : ''}image preview`}
+							class="max-h-100"
+						/>
 					{/await}
 				</figure>
 			{/if}
 		</label>
 
-		{#if currentLinkType === 'new'}
+		{#if currentImageType === 'new'}
 			<label class="flex flex-col gap-2">
 				<strong>{src.length ? 'Replace image' : 'New image'}</strong>
 				<input
 					type="file"
-					accept="image/*"
+					accept={mimetypes.image.flatMap((v) => v).join(', ')}
 					class="forsen-wiki-theme-border rounded-sm border p-2"
 					oninput={handleInputChange}
 					bind:this={inputElement}
@@ -252,8 +318,52 @@
 					<span class="font-bold text-red-700">{error}</span>
 				{/if}
 			</label>
-		{:else}
-			<p>Work in progress!</p>
+		{/if}
+
+		{#if currentImageType === 'internal'}
+			<div>
+				<div class="flex flex-col gap-2">
+					<strong>Search by name</strong>
+					<input class="input-color w-full rounded-sm p-2" bind:value={searchQuery} />
+				</div>
+
+				{#if isSearching}
+					<div class="flex grow items-center gap-2">
+						<Spinner size="16" />
+						<span>Searching for "{searchQuery}"...</span>
+					</div>
+				{:else}
+					<strong>Results for "{searchQuery}"</strong>
+				{/if}
+
+				<div class="prose dark:prose-invert relative mt-2 flex max-w-[unset]">
+					<table class="w-full table-auto">
+						<tbody>
+							{#each searchResults as result (result.hash)}
+								<tr class={newSrc === result.hash ? 'bg-black/10 dark:bg-white/10' : ''}>
+									<td class="max-w-xs">
+										<div class="truncate">
+											<Link href={result.title} target="_blank">
+												<strong>{result.rawTitle}</strong>
+											</Link>
+										</div>
+									</td>
+									<td
+										><Button
+											class="min-h-0! p-2! text-xs"
+											on:click={() => handleInternalImage(result)}>Select</Button
+										>{newSrc === result.hash ? '(Selected)' : ''}</td
+									>
+								</tr>
+							{:else}
+								<tr>
+									<th><p>Found nothing.</p></th>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			</div>
 		{/if}
 
 		{#if src || newSrc}

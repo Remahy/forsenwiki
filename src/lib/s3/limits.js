@@ -3,7 +3,7 @@ export const VIDEO_MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024; // 1GiB
 export const IMAGE_AUDIO_FILE_SIZE = 5 * 1024 * 1024; // 25MiB
 export const DOCUMENT_FILE_SIZE = 10 * 1024 * 1024; // 10MiB
 
-const mimetypes = {
+export const mimetypes = {
 	image: [['image/avif'], ['image/gif'], ['image/jpeg'], ['image/png'], ['image/webp']],
 	video: [['video/mp4'], ['video/webm']],
 	audio: [['audio/aac'], ['audio/mpeg'], ['audio/webm']],
