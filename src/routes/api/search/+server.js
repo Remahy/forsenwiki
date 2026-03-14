@@ -3,7 +3,7 @@ import { getCacheURL } from '$lib/utils/getCacheURL';
 import prisma from '$lib/prisma';
 
 /**
- * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date, id: string }} QueryResult
+ * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date, id: string, hash?: string }} QueryResult
  */
 
 /**
@@ -12,55 +12,60 @@ import prisma from '$lib/prisma';
  * @returns {Promise<{ results: QueryResult[] }>}
  */
 export const _getSearch = async (query, types = []) => {
-	const rawRawTitleContains = prisma.yPost.findMany({
-		where: {
-			OR: [
-				{
-					rawTitle: {
-						contains: query,
-						mode: 'insensitive',
-					},
-				},
-				{
-					title: {
-						contains: query,
-						mode: 'insensitive',
-					},
-				},
-				{
-					id: {
-						equals: query,
-					},
-				},
-			],
-		},
-		select: {
-			id: true,
-			rawTitle: true,
-			lastUpdated: true,
-			title: true,
-		},
-	});
+	let rawRawTitleContains = null;
+	let rawMetadataUserName = null;
 
-	const rawMetadataUserName = prisma.yPost.findMany({
-		where: {
-			postUpdates: {
-				some: {
-					metadata: {
-						user: {
-							name: query.toLowerCase(),
+	if ((types.length && types.includes('article')) || types.length === 0) {
+		rawRawTitleContains = prisma.yPost.findMany({
+			where: {
+				OR: [
+					{
+						rawTitle: {
+							contains: query,
+							mode: 'insensitive',
+						},
+					},
+					{
+						title: {
+							contains: query,
+							mode: 'insensitive',
+						},
+					},
+					{
+						id: {
+							equals: query,
+						},
+					},
+				],
+			},
+			select: {
+				id: true,
+				rawTitle: true,
+				lastUpdated: true,
+				title: true,
+			},
+		});
+
+		rawMetadataUserName = prisma.yPost.findMany({
+			where: {
+				postUpdates: {
+					some: {
+						metadata: {
+							user: {
+								name: query.toLowerCase(),
+							},
 						},
 					},
 				},
 			},
-		},
-		select: {
-			id: true,
-			rawTitle: true,
-			lastUpdated: true,
-			title: true,
-		},
-	});
+			select: {
+				id: true,
+				rawTitle: true,
+				lastUpdated: true,
+				title: true,
+			},
+		});
+	}
 
 	let rawContentUserName = null;
 	if ((types.length && types.includes('content')) || types.length === 0) {
@@ -91,8 +96,13 @@ export const _getSearch = async (query, types = []) => {
 		rawContentUserName,
 	]);
 
-	results.push(...rawTitleContains);
-	results.push(...metadataUserName);
+	if (rawTitleContains) {
+		results.push(...rawTitleContains);
+	}
+
+	if (metadataUserName) {
+		results.push(...metadataUserName);
+	}
 
 	if (contentUserName) {
 		for (let index = 0; index < contentUserName.length; index++) {
