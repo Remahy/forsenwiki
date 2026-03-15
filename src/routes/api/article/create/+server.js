@@ -17,6 +17,8 @@ import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations
 import toHTML from '$lib/worker/toHTML';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { adjustInternalLinks } from '$lib/components/editor/validations/internalLinks.server';
+import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages.js';
+import { validateUploads } from '$lib/s3/validateUploads.server.js';
 
 export async function POST({ request, locals }) {
 	const { isBlocked, auth } = locals;
@@ -63,6 +65,13 @@ export async function POST({ request, locals }) {
 		await adjustImages(editor);
 		await adjustVideoEmbedNodeSiblings(editor);
 		await adjustInternalLinks(editor);
+
+		const imageHashes = getUniqueImageHashes(editor).map((hash, index) => ({ index, hash }));
+		const failedUploads = await validateUploads(imageHashes);
+
+		if (failedUploads.length) {
+			throw `FAILED_UPLOADS: ${failedUploads.map(({ index }) => `Image index [${index}] doesn't exist or failed to upload.`).join(' ')}`;
+		}
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidArticle(err);

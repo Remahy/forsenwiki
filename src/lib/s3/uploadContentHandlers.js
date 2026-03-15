@@ -1,10 +1,9 @@
-import { $nodesOfType as nodesOfType } from 'lexical';
-import { ImageNode } from '$lib/lexical/custom';
 import { loadContent } from '$lib/utils/indexedDb/content';
 import { uploadContent } from '$lib/api/content';
 import { createFileUploadObject } from '$lib/components/editor/utils/fileUploadObject';
 import { getCacheURL } from '$lib/utils/getCacheURL';
 import { uploadContentModalGlobals } from '$lib/components/uploadContentModalGlobals.svelte.js';
+import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
 
 /**
  * https://stackoverflow.com/a/41797377
@@ -49,31 +48,7 @@ const headers = (contentType, hash, metadata) => {
  * @param {string} id
  */
 const getImages = async (editor, id) => {
-	const imageSrcArr = editor.read(() => {
-		/**
-		 * @type {Array<string>}
-		 */
-		const srcArr = [];
-
-		const images = nodesOfType(ImageNode);
-		if (!images.length) {
-			return srcArr;
-		}
-
-		for (let index = 0; index < images.length; index++) {
-			const image = images[index];
-
-			const src = image.getSrc();
-
-			if (!src || srcArr.includes(src)) {
-				continue;
-			}
-
-			srcArr.push(src);
-		}
-
-		return srcArr;
-	});
+	const imageSrcArr = getUniqueImageHashes(editor);
 
 	/**
 	 * @type {Array<ReturnType<createFileUploadObject>>}
@@ -153,9 +128,7 @@ const uploadContentHandler = async (contentToUpload) => {
 				method: 'PUT',
 				headers: headers(presignEntry.contentType, hash, presignEntry.metadata),
 				body: file,
-			}).then(() =>
-				uploadContentModalGlobals.uploaded.push({ url: getCacheURL(hash).toString() })
-			)
+			}).then(() => uploadContentModalGlobals.uploaded.push({ url: getCacheURL(hash).toString() }))
 		);
 	}
 

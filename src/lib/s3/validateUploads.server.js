@@ -1,0 +1,27 @@
+import { getCacheURL } from '$lib/utils/getCacheURL';
+
+/**
+ * @param {Array<{ index: number, hash: string }>} hashes
+ */
+export const validateUploads = async (hashes) => {
+	// Validate all exist on S3.
+	let existsPromises = [];
+	for (let index = 0; index < hashes.length; index++) {
+		const { hash } = hashes[index];
+
+		existsPromises.push(fetch(getCacheURL(hash), { method: 'HEAD' }));
+	}
+
+	const responses = await Promise.all(existsPromises);
+
+	let failedUploads = [];
+	for (let index = 0; index < responses.length; index++) {
+		const response = responses[index];
+
+		if (response.status !== 200) {
+			failedUploads.push({ ...hashes[index] });
+		}
+	}
+
+	return failedUploads;
+};

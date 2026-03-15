@@ -27,6 +27,8 @@ import { adjustInternalLinks } from '$lib/components/editor/validations/internal
 import { isSystem } from '$lib/utils/isSystem';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import { _emit } from '../../../adonis/frontpage/+server';
+import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
+import { validateUploads } from '$lib/s3/validateUploads.server';
 
 /**
  * @typedef {Array<{ code: string, field: string, value?: string }>} PartialErrors
@@ -128,6 +130,17 @@ export async function POST({ request, locals, params }) {
 		await adjustImages(editor);
 		await adjustVideoEmbedNodeSiblings(editor);
 		await adjustInternalLinks(editor);
+
+		const oldImageHashes = getUniqueImageHashes(
+			getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), currentUpdate).editor
+		);
+		const currentImageHashes = getUniqueImageHashes(editor).map((hash, index) => ({ index, hash }));
+		const newHashes = currentImageHashes.filter(({ hash }) => !oldImageHashes.includes(hash));
+		const failedUploads = await validateUploads(newHashes);
+
+		if (failedUploads.length) {
+			throw `FAILED_UPLOADS: ${failedUploads.map(({ index }) => `Image index [${index}] doesn't exist or failed to upload.`).join(' ')}`;
+		}
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidArticle(err);
