@@ -2,7 +2,9 @@
 	import Spinner from './Spinner.svelte';
 	import { uploadContentModalGlobals } from './uploadContentModalGlobals.svelte';
 
-	let { uploading = 0, uploaded = [] } = uploadContentModalGlobals;
+	let { uploading = { count: 0 }, uploaded = [] } = uploadContentModalGlobals;
+
+	$effect(() => console.log(uploading, uploaded));
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
@@ -11,15 +13,15 @@
 	</header>
 
 	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
-		{#if uploading > 0}
+		{#if uploading.count > 0}
 			<div>
 				<p>Uploading {uploading} files...</p>
 				<progress
 					class="w-full [&::-moz-progress-bar]:bg-blue-400 [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-bar]:bg-slate-300 [&::-webkit-progress-value]:rounded-lg [&::-webkit-progress-value]:bg-blue-400"
 					value={uploaded.length}
-					max={uploading}
+					max={uploading.count}
 				></progress>
-				<p>{uploaded.length}/{uploading}</p>
+				<p>{uploaded.length}/{uploading.count}</p>
 			</div>
 
 			{#if uploaded.length}

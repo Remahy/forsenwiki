@@ -2,7 +2,10 @@ import { loadContent } from '$lib/utils/indexedDb/content';
 import { uploadContent } from '$lib/api/content';
 import { createFileUploadObject } from '$lib/components/editor/utils/fileUploadObject';
 import { getCacheURL } from '$lib/utils/getCacheURL';
-import { uploadContentModalGlobals } from '$lib/components/uploadContentModalGlobals.svelte.js';
+import {
+	addNewUploaded,
+	setUploading,
+} from '$lib/components/uploadContentModalGlobals.svelte.js';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
 
 /**
@@ -128,7 +131,7 @@ const uploadContentHandler = async (contentToUpload) => {
 				method: 'PUT',
 				headers: headers(presignEntry.contentType, hash, presignEntry.metadata),
 				body: file,
-			}).then(() => uploadContentModalGlobals.uploaded.push({ url: getCacheURL(hash).toString() }))
+			}).then(() => addNewUploaded({ url: getCacheURL(hash).toString() }))
 		);
 	}
 
@@ -150,7 +153,7 @@ const uploadContentHandler = async (contentToUpload) => {
 export const uploadImages = async (editor, id) => {
 	const imagesToUpload = await getImages(editor, id);
 
-	uploadContentModalGlobals.uploading = imagesToUpload.length;
+	setUploading(imagesToUpload.length);
 
 	return uploadContentHandler(imagesToUpload);
 };

@@ -26,6 +26,7 @@
 	import { uploadImages } from '$lib/s3/uploadContentHandlers';
 	import { modal } from '$lib/stores/modal';
 	import UploadContentModal from '$lib/components/UploadContentModal.svelte';
+	import { resetUploadContentModalGlobals } from '$lib/components/uploadContentModalGlobals.svelte';
 
 	const id = 'new';
 
@@ -156,6 +157,7 @@
 
 		$modal.isOpen = false;
 		$modal.disableClose = false;
+		resetUploadContentModalGlobals();
 	};
 
 	onMount(() => {
