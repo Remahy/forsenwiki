@@ -29,23 +29,23 @@
 		DRAGSTART_COMMAND,
 		DROP_COMMAND,
 		getDOMSelectionFromTarget,
+		$getNodeFromDOMNode as getNodeFromDOMNode,
 	} from 'lexical';
 	import { $wrapNodeInElement as wrapNodeInElement, mergeRegister } from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
 
-	import { cacheServiceBaseURLWithStatic } from '$lib/utils/getCacheURL';
 	import { modal } from '$lib/stores/modal';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
+	import { saveContent } from '$lib/utils/indexedDb/content';
 
 	import EditImageModal from '../../toolbar/ImageButtons/EditImageModal.svelte';
+	import { editorGlobals } from '../../editorGlobals.svelte';
+	import { handleNewImage } from '../../utils/handleNewImage';
 	import {
 		$createImageNode as createImageNode,
 		$isImageNode as isImageNode,
 		ImageNode,
 	} from './Image';
-	import { editorGlobals } from '../../editorGlobals.svelte';
-	import { saveContent } from '$lib/utils/indexedDb/content';
-	import { handleNewImage } from '../../utils/handleNewImage';
 
 	const id = $derived(editorGlobals.articleId);
 
@@ -205,12 +205,12 @@
 
 	/**
 	 * @param {{ src: string }} img
-	 * @param {import('./Image').ImageNode} node
+	 * @param {HTMLElement} element
 	 */
-	const saveImageAsBlob = async (img, node) => {
+	const saveImageAsBlob = async (img, element) => {
 		try {
 			// Fetch the image as a Blob
-			const response = await fetch(img.src);
+			const response = await fetch(img.src, {});
 			const lastModified = new Date(response.headers.get('Last-Modified') || Date.now()).getTime();
 			const etag = response.headers.get('Etag');
 			const contentType = response.headers.get('Content-Type') || '';
@@ -226,16 +226,48 @@
 
 			const imageData = await handleNewImage(file);
 
-			// TODO: Handle internal
-			// if (imageData.type === 'internal') {}
 
-			if (imageData.file) {
+			if (imageData?.file) {
 				await saveContent(id, imageData.hash, imageData.file);
-				editor.update(() => node.setSrc(imageData.hash), { tag: 'history-merge' });
+				return editor.update(
+					() => {
+						const node = getNodeFromDOMNode(element);
+
+						if (isImageNode(node)) {
+							node.setSrc(imageData.hash);
+						}
+					},
+					{ tag: 'history-merge' }
+				);
 			}
+
+			if (imageData.linkType === 'internal') {
+				return editor.update(
+					() => {
+						const node = getNodeFromDOMNode(element);
+
+						if (isImageNode(node)) {
+							node.setSrc(imageData.hash);
+						}
+					},
+					{ tag: 'history-merge' }
+				);
+			}
+
+			console.log(imageData);
+			throw new Error('Could not download image!');
 		} catch (err) {
 			console.error('Error turning image into blob', err);
-			editor.update(() => node.setSrc(''), { tag: 'history-merge' });
+			editor.update(
+				() => {
+					const node = getNodeFromDOMNode(element);
+
+					if (isImageNode(node)) {
+						node.setSrc('');
+					}
+				},
+				{ tag: 'history-merge' }
+			);
 		}
 	};
 
@@ -340,13 +372,13 @@
 						}
 
 						// Download image, turn it into a blob.
-						promises.push(saveImageAsBlob({ src }, node));
+						promises.push(saveImageAsBlob({ src }, element));
 					}
 
 					return promises;
 				});
 
-				Promise.all(mutatedImages);
+				Promise.allSettled(mutatedImages);
 			}),
 
 			editor.registerCommand(
