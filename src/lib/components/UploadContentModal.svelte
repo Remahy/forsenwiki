@@ -28,9 +28,9 @@
 				<div class="flex flex-wrap justify-between gap-8">
 					{#each uploaded as upload (upload.url)}
 						<div
-							class="forsen-wiki-theme-border bg-dark w-fit overflow-hidden rounded-4xl border p-4"
+							class="forsen-wiki-theme-border bg-dark w-fit overflow-hidden rounded-4xl border"
 						>
-							<img class="max-h-32 min-h-32 w-auto" src={upload.url} alt="" />
+							<img class="max-h-32 min-h-32 w-auto max-w-32" src={upload.url} alt="" />
 						</div>
 					{/each}
 				</div>
