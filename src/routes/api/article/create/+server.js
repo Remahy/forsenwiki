@@ -38,13 +38,13 @@ export async function POST({ request, locals }) {
 		title = sanitizeTitle(rawTitle);
 
 		if (!title.sanitized) {
-			// This throws.
+			// This throws, gets catched by isHttpError.
 			return error(400, 'No title provided');
 		}
 
 		const foundTitle = await readYPostByTitle(title.sanitized);
 		if (foundTitle) {
-			// This throws.
+			// This throws, gets catched by isHttpError.
 			return error(400, 'Article with that title already exists.');
 		}
 
