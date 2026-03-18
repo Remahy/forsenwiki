@@ -1,3 +1,4 @@
+import prisma from '$lib/prisma';
 import { getCacheURL } from '$lib/utils/getCacheURL';
 
 /**
@@ -24,4 +25,12 @@ export const validateUploads = async (hashes) => {
 	}
 
 	return failedUploads;
+};
+
+/**
+ * @param {string[]} hashes
+ * @param {string} authorId
+ */
+export const pruneFailedUploads = (hashes, authorId) => {
+	return prisma.content.deleteMany({ where: { hash: { in: hashes }, authorId } });
 };

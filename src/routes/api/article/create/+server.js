@@ -14,7 +14,7 @@ import { articleConfig } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages.js';
-import { validateUploads } from '$lib/s3/validateUploads.server.js';
+import { pruneFailedUploads, validateUploads } from '$lib/s3/validateUploads.server.js';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server.js';
 
 export async function POST({ request, locals }) {
@@ -59,6 +59,8 @@ export async function POST({ request, locals }) {
 
 		const imageHashes = getUniqueImageHashes(editor).map((hash, index) => ({ index, hash }));
 		const failedUploads = await validateUploads(imageHashes);
+		// Remove failed uploads from database.
+		await pruneFailedUploads(failedUploads.map(({ hash }) => hash), session.user.id);
 
 		if (failedUploads.length) {
 			throw `FAILED_UPLOADS: ${failedUploads.map(({ index }) => `Image index [${index}] doesn't exist or failed to upload.`).join(' ')}`;

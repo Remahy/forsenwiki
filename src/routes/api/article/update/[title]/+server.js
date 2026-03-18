@@ -22,7 +22,7 @@ import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { isSystem } from '$lib/utils/isSystem';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
-import { validateUploads } from '$lib/s3/validateUploads.server';
+import { validateUploads, pruneFailedUploads } from '$lib/s3/validateUploads.server';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import { _emit } from '../../../adonis/frontpage/+server';
@@ -128,6 +128,8 @@ export async function POST({ request, locals, params }) {
 		const currentImageHashes = getUniqueImageHashes(editor).map((hash, index) => ({ index, hash }));
 		const newHashes = currentImageHashes.filter(({ hash }) => !oldImageHashes.includes(hash));
 		const failedUploads = await validateUploads(newHashes);
+		// Remove failed uploads from database.
+		await pruneFailedUploads(failedUploads.map(({ hash }) => hash), session.user.id);
 
 		if (failedUploads.length) {
 			throw `FAILED_UPLOADS: ${failedUploads.map(({ index }) => `Image index [${index}] doesn't exist or failed to upload.`).join(' ')}`;
