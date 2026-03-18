@@ -10,8 +10,6 @@ import {
 } from '$lib/yjs/utils';
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { validateArticle } from '$lib/components/editor/validations/validateArticle';
-import { adjustImages } from '$lib/components/editor/validations/images';
 import { InvalidArticle } from '$lib/errors/InvalidArticle';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/article/read';
@@ -19,16 +17,15 @@ import { updateArticleTitle, updateArticleYPost } from '$lib/db/article/update';
 import { invalidateArticleCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/article/html';
 import { articleConfig } from '$lib/components/editor/config/article';
-import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos';
 import toHTML from '$lib/worker/toHTML';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-import { adjustInternalLinks } from '$lib/components/editor/validations/internalLinks.server';
 import { isSystem } from '$lib/utils/isSystem';
-import { _getYPostByTitle } from '../../read/[title]/+server';
-import { _emit } from '../../../adonis/frontpage/+server';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
 import { validateUploads } from '$lib/s3/validateUploads.server';
+import { serverRunValidations } from '$lib/components/editor/validations/index.server';
+import { _getYPostByTitle } from '../../read/[title]/+server';
+import { _emit } from '../../../adonis/frontpage/+server';
 
 /**
  * @typedef {Array<{ code: string, field: string, value?: string }>} PartialErrors
@@ -123,13 +120,7 @@ export async function POST({ request, locals, params }) {
 		e = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), combinedInitialUpdate);
 		const editor = e.editor;
 
-		// Does not modify the editor.
-		validateArticle(editor);
-
-		// Modifies the editor.
-		await adjustImages(editor);
-		await adjustVideoEmbedNodeSiblings(editor);
-		await adjustInternalLinks(editor);
+		await serverRunValidations(editor);
 
 		const oldImageHashes = getUniqueImageHashes(
 			getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), currentUpdate).editor

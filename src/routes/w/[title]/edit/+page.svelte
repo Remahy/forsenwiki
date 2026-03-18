@@ -16,9 +16,6 @@
 	import Clown from '$lib/components/Clown.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Container from '$lib/components/Container.svelte';
-	import { validateArticle } from '$lib/components/editor/validations/validateArticle';
-	import { adjustImages } from '$lib/components/editor/validations/images';
-	import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
@@ -27,6 +24,7 @@
 	import { modal } from '$lib/stores/modal';
 	import UploadContentModal from '$lib/components/UploadContentModal.svelte';
 	import { resetUploadContentModalGlobals } from '$lib/components/uploadContentModalGlobals.svelte';
+	import { runValidations } from '$lib/components/editor/validations';
 
 	const {
 		post: { id, title, rawTitle },
@@ -119,10 +117,7 @@
 		let res;
 
 		try {
-			validateArticle(editor);
-
-			await adjustImages(editor);
-			await adjustVideoEmbedNodeSiblings(editor);
+			await runValidations(editor);
 
 			modal.set({ component: UploadContentModal, isOpen: true, disableClose: true });
 

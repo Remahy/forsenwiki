@@ -3,8 +3,6 @@ import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { validateArticle } from '$lib/components/editor/validations/validateArticle';
-import { adjustImages } from '$lib/components/editor/validations/images';
 import { InvalidArticle } from '$lib/errors/InvalidArticle';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
@@ -13,12 +11,11 @@ import { readYPostByTitle } from '$lib/db/article/read';
 import { encodeYDocToUpdateV2 } from '$lib/yjs/utils';
 import { upsertHTML } from '$lib/db/article/html';
 import { articleConfig } from '$lib/components/editor/config/article';
-import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos';
 import toHTML from '$lib/worker/toHTML';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
-import { adjustInternalLinks } from '$lib/components/editor/validations/internalLinks.server';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages.js';
 import { validateUploads } from '$lib/s3/validateUploads.server.js';
+import { serverRunValidations } from '$lib/components/editor/validations/index.server.js';
 
 export async function POST({ request, locals }) {
 	const { isBlocked, auth } = locals;
@@ -58,13 +55,7 @@ export async function POST({ request, locals }) {
 		editor = data.editor;
 		doc = data.doc;
 
-		// Does not modify the editor.
-		validateArticle(editor);
-
-		// Modifies the editor.
-		await adjustImages(editor);
-		await adjustVideoEmbedNodeSiblings(editor);
-		await adjustInternalLinks(editor);
+		await serverRunValidations(editor);
 
 		const imageHashes = getUniqueImageHashes(editor).map((hash, index) => ({ index, hash }));
 		const failedUploads = await validateUploads(imageHashes);

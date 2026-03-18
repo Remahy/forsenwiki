@@ -17,9 +17,6 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Editor from '$lib/components/editor/editor.svelte';
 	import Container from '$lib/components/Container.svelte';
-	import { validateArticle } from '$lib/components/editor/validations/validateArticle';
-	import { adjustImages } from '$lib/components/editor/validations/images';
-	import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos';
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 	import { WIKI_PATH } from '$lib/constants/constants';
@@ -27,6 +24,7 @@
 	import { modal } from '$lib/stores/modal';
 	import UploadContentModal from '$lib/components/UploadContentModal.svelte';
 	import { resetUploadContentModalGlobals } from '$lib/components/uploadContentModalGlobals.svelte';
+	import { runValidations } from '$lib/components/editor/validations';
 
 	const id = 'new';
 
@@ -118,10 +116,7 @@
 				throw new Error('No title set.');
 			}
 
-			validateArticle(editor);
-
-			await adjustImages(editor);
-			await adjustVideoEmbedNodeSiblings(editor);
+			await runValidations(editor);
 
 			modal.set({ component: UploadContentModal, isOpen: true, disableClose: true });
 
