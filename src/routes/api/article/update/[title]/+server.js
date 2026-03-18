@@ -10,7 +10,7 @@ import {
 } from '$lib/yjs/utils';
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { validateArticle } from '$lib/components/editor/validations';
+import { validateArticle } from '$lib/components/editor/validations/validateArticle';
 import { adjustImages } from '$lib/components/editor/validations/images';
 import { InvalidArticle } from '$lib/errors/InvalidArticle';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';

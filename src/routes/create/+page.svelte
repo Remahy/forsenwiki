@@ -17,7 +17,7 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Editor from '$lib/components/editor/editor.svelte';
 	import Container from '$lib/components/Container.svelte';
-	import { validateArticle } from '$lib/components/editor/validations';
+	import { validateArticle } from '$lib/components/editor/validations/validateArticle';
 	import { adjustImages } from '$lib/components/editor/validations/images';
 	import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos';
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
