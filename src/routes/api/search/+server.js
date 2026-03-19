@@ -3,7 +3,7 @@ import { getCacheURL } from '$lib/utils/getCacheURL';
 import prisma from '$lib/prisma';
 
 /**
- * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date, id: string, hash?: string }} QueryResult
+ * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date, id: string, hash?: string, html?: { image: string | null, text: string | null } | null }} QueryResult
  */
 
 /**
@@ -39,6 +39,13 @@ export const _getSearch = async (query, types = []) => {
 				],
 			},
 			select: {
+				html: {
+					select: {
+						content: true,
+						text: true,
+						image: true,
+					},
+				},
 				id: true,
 				rawTitle: true,
 				lastUpdated: true,
@@ -59,6 +66,13 @@ export const _getSearch = async (query, types = []) => {
 				},
 			},
 			select: {
+				html: {
+					select: {
+						content: true,
+						text: true,
+						image: true,
+					},
+				},
 				id: true,
 				rawTitle: true,
 				lastUpdated: true,
@@ -116,6 +130,14 @@ export const _getSearch = async (query, types = []) => {
 				title: getCacheURL(hash).toString(),
 				id,
 			});
+		}
+	}
+
+	for (let index = 0; index < results.length; index++) {
+		const result = results[index];
+		const { text } = result.html || {};
+		if (result.html && text) {
+			result.html.text = `${text.substring(0, 150)}${text.length > 150 ? '...' : ''}`;
 		}
 	}
 

@@ -56,7 +56,7 @@ html.forsen-wiki-theme {
 	}
 
 	.link-box {
-		@apply forsen-wiki-theme-border border-2 p-4 hover:bg-violet-300 dark:hover:bg-violet-950/60;
+		@apply forsen-wiki-theme-border border-2 p-4 hover:bg-violet-300 dark:hover:bg-violet-950/75!;
 	}
 
 	.link-button {

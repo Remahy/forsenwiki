@@ -1,9 +1,11 @@
 <script>
+	import Masonry from 'svelte-bricks';
+
 	import { page } from '$app/stores';
 	import LinkBox from '$lib/components/LinkBox.svelte';
-	import LinkButton from '$lib/components/LinkButton.svelte';
 	import Search from '$lib/components/Search.svelte';
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
+	import { getCacheURL } from '$lib/utils/getCacheURL';
 
 	/** @type {import('../api/search/+server').QueryResult[]} */
 	let results = $page.data.results;
@@ -26,31 +28,41 @@
 	</SuggestionBox>
 
 	<Search />
-
 	<div class="flex flex-col gap-2">
-		{#each results as result (result.id)}
-			<LinkBox href={!result.type ? `/w/${result.title}` : `/content/${result.id}`} class="flex">
-				<div class="flex grow flex-col gap-2">
-					<strong class="wrap-break-words">{result.rawTitle}</strong>
-					<p>
-						Last updated: <span title={new Date(result.lastUpdated).toUTCString()}
-							>{new Date(result.lastUpdated).toLocaleString()}</span
-						>
-					</p>
-					{#if result.type === 'content'}
-						<img src={result.title} alt={result.rawTitle} class="w-fit max-w-full" />
-					{/if}
-				</div>
-				{#if result.type === 'content'}
-					<div>
-						<LinkButton href={result.title}>Open</LinkButton>
-					</div>
-				{/if}
-			</LinkBox>
-		{:else}
-			{#if $page.url.searchParams.get('query')}
-				<p><strong>No search results found.</strong></p>
-			{/if}
-		{/each}
+		{#if results?.length}
+			<Masonry items={results}>
+				{#snippet children({ item: result })}
+					<LinkBox
+						href={!result.type ? `/w/${result.title}` : `/content/${result.id}`}
+						class="flex"
+					>
+						<div class="flex grow flex-col gap-2">
+							<span class="line-clamp-1" title={result.rawTitle}>
+								{#if !result.type}<span class="rounded bg-black/10 p-1 text-xs dark:bg-black"
+										>Article</span
+									>{:else if result.type === 'content'}
+									<span class="rounded bg-violet-500/25 p-1 text-xs">Content</span>
+								{/if}
+								<strong>{result.rawTitle}</strong>
+							</span>
+
+							{#if result.html?.text}
+								<p>{result.html.text}</p>
+							{/if}
+
+							{#if result.html?.image}
+								<img src={getCacheURL(result.html.image).toString()} alt="" />
+							{/if}
+
+							{#if result.type === 'content'}
+								<img src={result.title} alt={result.rawTitle} class="min-h-32 w-fit max-w-full" />
+							{/if}
+						</div>
+					</LinkBox>
+				{/snippet}
+			</Masonry>
+		{:else if $page.url.searchParams.get('query')}
+			<p><strong>No search results found.</strong></p>
+		{/if}
 	</div>
 </section>
