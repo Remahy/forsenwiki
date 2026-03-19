@@ -1,11 +1,14 @@
 <script>
 	import Masonry from 'svelte-bricks';
+	import { formatRelative } from 'date-fns';
+	import { enGB } from 'date-fns/locale';
 
 	import { page } from '$app/stores';
 	import LinkBox from '$lib/components/LinkBox.svelte';
 	import Search from '$lib/components/Search.svelte';
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 	import { getCacheURL } from '$lib/utils/getCacheURL';
+	import Box from '$lib/components/Box.svelte';
 
 	/** @type {import('../api/search/+server').QueryResult[]} */
 	let results = $page.data.results;
@@ -27,9 +30,20 @@
 		</p>
 	</SuggestionBox>
 
-	<Search />
-	<div class="flex flex-col gap-2">
+	<Box class="flex flex-col overflow-hidden p-4 lg:mb-0">
+		<div class="box-heading-wrapper mb-2">
+			<h2 class="text-2xl">Search</h2>
+		</div>
+		<div class="flex flex-col gap-2">
+			<Search />
+		</div>
+	</Box>
+
+	<main class="flex flex-col gap-2">
 		{#if results?.length}
+			{#if $page.url.searchParams.get('query') === '' && (!$page.url.searchParams.get('order') || $page.url.searchParams.get('order') === 'desc')}
+				<p><strong>Recently created articles & content.</strong></p>
+			{/if}
 			<Masonry items={results}>
 				{#snippet children({ item: result })}
 					<LinkBox
@@ -45,6 +59,11 @@
 								{/if}
 								<strong>{result.rawTitle}</strong>
 							</span>
+							<small title={new Date(result.lastUpdated).toUTCString()}
+								>{formatRelative(result.lastUpdated, Date.now(), {
+									locale: enGB,
+								})}&nbsp;</small
+							>
 
 							{#if result.html?.text}
 								<p>{result.html.text}</p>
@@ -55,7 +74,11 @@
 							{/if}
 
 							{#if result.type === 'content'}
-								<img src={result.title} alt={result.rawTitle} class="min-h-32 w-fit max-w-full" />
+								<img
+									src={result.title}
+									alt={result.rawTitle}
+									class="mx-auto min-h-32 w-fit max-w-full"
+								/>
 							{/if}
 						</div>
 					</LinkBox>
@@ -64,5 +87,5 @@
 		{:else if $page.url.searchParams.get('query')}
 			<p><strong>No search results found.</strong></p>
 		{/if}
-	</div>
+	</main>
 </section>

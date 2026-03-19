@@ -1,13 +1,15 @@
 import { _getSearch } from '../api/search/+server.js';
 
 export const load = async ({ url }) => {
-	const rawQuery = url.searchParams.get('query');
-
-	if (!rawQuery) {
-		return { results: [] };
-	}
+	const rawQuery = url.searchParams.get('query') || '';
+	const rawType = url.searchParams.getAll('type') || [];
+	const rawOrderBy = url.searchParams.get('order') || 'desc';
 
 	const query = rawQuery.trim();
+	const type = rawType.map((t) => t.trim()).filter(Boolean);
 
-	return _getSearch(query);
+	/** @type {'asc' | 'desc'} */
+	const orderBy = /** @type {any} */ (['asc', 'desc'].includes(rawOrderBy.toLowerCase()) ? rawOrderBy.toLowerCase() : 'desc');
+
+	return _getSearch(query, type, orderBy);
 };

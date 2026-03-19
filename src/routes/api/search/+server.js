@@ -3,15 +3,79 @@ import { getCacheURL } from '$lib/utils/getCacheURL';
 import prisma from '$lib/prisma';
 
 /**
+ * @param {string[]} types
+ * @param {'asc' | 'desc'} orderBy
+ */
+const getRecentUploads = async (types = [], orderBy = 'desc') => {
+	/** @type {QueryResult[]} */
+	const results = [];
+
+	let rawRecentYPosts;
+	if ((types.length && types.includes('article')) || types.length === 0) {
+		rawRecentYPosts = prisma.yPost.findMany({ orderBy: { createdTimestamp: orderBy }, take: 50 });
+	}
+
+	let rawRecentContent;
+	if ((types.length && types.includes('content')) || types.length === 0) {
+		rawRecentContent = prisma.content.findMany({
+			orderBy: { createdTimestamp: orderBy },
+			take: 50,
+		});
+	}
+
+	const [recentYPosts, recentContent] = await Promise.all([rawRecentYPosts, rawRecentContent]);
+
+	if (recentYPosts) {
+		results.push(...recentYPosts);
+	}
+
+	if (recentContent) {
+		for (let index = 0; index < recentContent.length; index++) {
+			const { name, hash, createdTimestamp, id } = recentContent[index];
+
+			results.push({
+				type: 'content',
+				hash,
+				lastUpdated: createdTimestamp,
+				rawTitle: name,
+				title: getCacheURL(hash).toString(),
+				id,
+			});
+		}
+	}
+
+	for (let index = 0; index < results.length; index++) {
+		const result = results[index];
+		const { text } = result.html || {};
+		if (result.html && text) {
+			result.html.text = `${text.substring(0, 150)}${text.length > 150 ? '...' : ''}`;
+		}
+	}
+
+	results.sort((a, b) =>
+		orderBy === 'asc'
+			? a.lastUpdated.getTime() - b.lastUpdated.getTime()
+			: b.lastUpdated.getTime() - a.lastUpdated.getTime()
+	);
+
+	return { results };
+};
+
+/**
  * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date, id: string, hash?: string, html?: { image: string | null, text: string | null } | null }} QueryResult
  */
 
 /**
  * @param {string} query
  * @param {string[]} types
- * @returns {Promise<{ results: QueryResult[] }>}
+ * @param {'asc' | 'desc'} [orderBy]
  */
-export const _getSearch = async (query, types = []) => {
+export const _getSearch = async (query, types = [], orderBy) => {
+	// Get recent uploads
+	if (!query.length) {
+		return getRecentUploads(types, orderBy);
+	}
+
 	let rawRawTitleContains = null;
 	let rawMetadataUserName = null;
 
@@ -103,7 +167,7 @@ export const _getSearch = async (query, types = []) => {
 	}
 
 	/** @type {QueryResult[]} */
-	let results = [];
+	const results = [];
 	const [rawTitleContains, metadataUserName, contentUserName] = await Promise.all([
 		rawRawTitleContains,
 		rawMetadataUserName,
@@ -141,18 +205,21 @@ export const _getSearch = async (query, types = []) => {
 		}
 	}
 
+	results.sort((a, b) =>
+		orderBy === 'asc'
+			? a.lastUpdated.getTime() - b.lastUpdated.getTime()
+			: b.lastUpdated.getTime() - a.lastUpdated.getTime()
+	);
+
 	return { results: results.flat() };
 };
 
 export async function GET({ url }) {
-	const rawQuery = url.searchParams.get('query');
-	const types = url.searchParams.getAll('type');
-
-	if (!rawQuery) {
-		return json([]);
-	}
+	const rawQuery = url.searchParams.get('query') || '';
+	const rawTypes = url.searchParams.getAll('type') || [];
 
 	const query = rawQuery.trim();
+	const types = rawTypes.map((t) => t.trim()).filter(Boolean);
 
 	const res = await _getSearch(query, types);
 

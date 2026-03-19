@@ -67,6 +67,14 @@ html.forsen-wiki-theme {
 		@apply forsen-wiki-theme-border h-full rounded-sm bg-transparent p-1 pr-10 text-sm disabled:opacity-25 disabled:hover:cursor-not-allowed dark:*:bg-black;
 	}
 
+	.select option {
+		@apply bg-white dark:bg-black;
+	}
+
+	.select option:checked {
+		@apply bg-violet-600/50 dark:bg-violet-800/50 text-black dark:text-white;
+	}
+
 	.editor-border {
 		@apply forsen-wiki-theme-border border bg-white dark:bg-black;
 	}

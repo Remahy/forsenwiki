@@ -42,7 +42,7 @@
 
 		<div class="mt-auto grow px-2 lg:px-16">
 			<div class="hidden sm:block">
-				<Search />
+				<Search inline={true} />
 			</div>
 		</div>
 
