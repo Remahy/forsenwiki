@@ -6,7 +6,6 @@
 	import { page } from '$app/stores';
 	import LinkBox from '$lib/components/LinkBox.svelte';
 	import Search from '$lib/components/Search.svelte';
-	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 	import { getCacheURL } from '$lib/utils/getCacheURL';
 	import Box from '$lib/components/Box.svelte';
 
@@ -23,18 +22,16 @@
 </svelte:head>
 
 <section class="container mx-auto flex grow flex-col gap-4 p-4 lg:py-12">
-	<SuggestionBox>
-		<p class="m-0 text-center leading-10">
-			<span class="font-bold">Tip:</span>
-			<span>Searching by an author's username shows all content they've modified or created.</span>
-		</p>
-	</SuggestionBox>
-
 	<Box class="flex flex-col overflow-hidden p-4 lg:mb-0">
 		<div class="box-heading-wrapper mb-2">
 			<h2 class="text-2xl">Search</h2>
 		</div>
 		<div class="flex flex-col gap-2">
+			<p class="m-0 text-xs">
+				<span class="font-bold">Tip:</span>
+				<span>Searching using an author's username shows all content they've created and modified.</span
+				>
+			</p>
 			<Search />
 		</div>
 	</Box>

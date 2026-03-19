@@ -21,7 +21,7 @@
 
 		<h2>Changelogs</h2>
 		<p>
-			<a href={resolve("/changelogs")} rel="changelogs">View Changelogs.</a>
+			<a href={resolve('/changelogs')} rel="changelogs">View Changelogs.</a>
 		</p>
 
 		<h2>THIRD PARTY LICENSES</h2>
@@ -39,12 +39,8 @@
 		<h2>Links</h2>
 		<ul>
 			<li>
-				<a
-					href="https://discord.gg/ht5TqyEABp"
-					target="discord.gg/kappawiki"
-					class="flex items-center gap-2"
-				>
-					<Discord size="18" /> <span>Discord - KappaWiki</span></a
+				<a href="https://discord.gg/yp7ST3BDYt" target="discord.gg" class="flex items-center gap-2">
+					<Discord size="18" /> <span>Discord - The Fors Emotebank</span></a
 				>
 			</li>
 			<li>
@@ -73,12 +69,12 @@
 
 		<h2>Privacy policy</h2>
 		<p>
-			<a href={resolve("/privacy")} rel="privacy-policy">View Privacy Policy.</a>
+			<a href={resolve('/privacy')} rel="privacy-policy">View Privacy Policy.</a>
 		</p>
 
 		<h2>Terms of Service</h2>
 		<p>
-			<a href={resolve("/terms")} rel="terms-of-service">View Terms of Service.</a>
+			<a href={resolve('/terms')} rel="terms-of-service">View Terms of Service.</a>
 		</p>
 	</section>
 </div>

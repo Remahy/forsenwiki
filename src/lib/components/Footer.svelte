@@ -48,21 +48,28 @@
 			</ul>
 		</div>
 
-		<div class="bg-dark mt-2 flex flex-col gap-2 lg:gap-0 justify-evenly rounded-sm p-4 lg:mt-0">
-			<a href="https://discord.gg/ht5TqyEABp" target="_blank" title="Join the KappaWiki Discord." class="flex gap-4 items-center text-xs">
-				<Discord size="16" /> <span class="lg:hidden">Join the KappaWiki Discord.</span>
+		<div class="bg-dark mt-2 flex flex-col justify-evenly gap-2 rounded-sm p-4 lg:mt-0 lg:gap-0">
+			<a
+				href="https://discord.gg/yp7ST3BDYt"
+				target="discord.gg"
+				title="Join The Fors Emotebank Discord."
+				class="flex items-center gap-4 text-xs"
+			>
+				<Discord size="16" /> <span class="lg:hidden">Join The Fors Emotebank Discord.</span>
 			</a>
 			<a
 				href="https://www.twitch.tv/spectatorsen"
 				target="_blank"
-				title="Watch the Spectatorsen Twitch." class="flex gap-4 items-center text-xs"
+				title="Watch the Spectatorsen Twitch."
+				class="flex items-center gap-4 text-xs"
 			>
 				<TwitchGlitch size="16" /> <span class="lg:hidden">Watch the Spectatorsen Twitch.</span>
 			</a>
 			<a
 				href="https://www.github.com/Remahy/forsenwiki"
 				target="_blank"
-				title="Read the source code." class="flex gap-4 items-center text-xs"
+				title="Read the source code."
+				class="flex items-center gap-4 text-xs"
 			>
 				<GitHub size="16" /> <span class="lg:hidden">Read the source code.</span>
 			</a>
