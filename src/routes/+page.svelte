@@ -98,7 +98,7 @@
 		<div class="mb-4 flex grow flex-col lg:mb-0">
 			<Box class="grow p-4">
 				<div class="box-heading-wrapper mb-2">
-					<h2 class="text-2xl">New articles</h2>
+					<h2 class="text-2xl">Latest articles</h2>
 				</div>
 				{#each $latestArticles as article, index (article.title)}
 					<div class="p-2{index % 2 ? ' bg-black/10 dark:bg-white/5' : ''}">

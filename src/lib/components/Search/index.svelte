@@ -62,7 +62,7 @@
 		<div class="flex flex-col gap-1">
 			<strong class="min-w-25">Type</strong>
 			<div class="flex items-baseline gap-3">
-				<label class="flex items-baseline gap-2">
+				<label class="flex flex-wrap items-baseline gap-2">
 					<input
 						type="checkbox"
 						checked={!types.length || types.includes('')}
@@ -86,7 +86,7 @@
 		{#if types.includes('content') || types.includes('') || !types.length}
 			<div class="flex flex-col gap-1">
 				<strong class="min-w-25">Content type</strong>
-				<div class="flex items-baseline gap-3">
+				<div class="flex flex-wrap items-baseline gap-3">
 					<label class="flex items-baseline gap-2">
 						<input
 							type="checkbox"
