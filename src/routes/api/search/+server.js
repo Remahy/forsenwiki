@@ -22,12 +22,11 @@ const contentEntry = (content) => ({
 
 /**
  * @param {string[]} types
- * @param {{ orderBy: 'asc' | 'desc', contentType: string[] }} [arg2]
+ * @param {{ orderBy: 'asc' | 'desc', contentTypes: string[], page: number }} [options]
  */
-const getRecentUploads = async (
-	types = [],
-	{ orderBy, contentType } = { orderBy: 'desc', contentType: [] }
-) => {
+const getRecentUploads = async (types = [], options) => {
+	const { orderBy = 'desc', contentTypes = [], page = 0 } = options || {};
+
 	/** @type {QueryResult[]} */
 	const results = [];
 
@@ -35,6 +34,7 @@ const getRecentUploads = async (
 	if ((types.length && types.includes('article')) || types.length === 0) {
 		rawRecentYPosts = prisma.yPost.findMany({
 			orderBy: { createdTimestamp: orderBy },
+			skip: 51 * page,
 			take: 50,
 			select: {
 				html: {
@@ -56,13 +56,14 @@ const getRecentUploads = async (
 	if ((types.length && types.includes('content')) || types.length === 0) {
 		rawRecentContent = prisma.content.findMany({
 			where: {
-				type: contentType?.length
+				type: contentTypes?.length
 					? {
-							in: contentType,
+							in: contentTypes,
 						}
 					: undefined,
 			},
 			orderBy: { createdTimestamp: orderBy },
+			skip: 51 * page,
 			take: 50,
 		});
 	}
@@ -104,16 +105,14 @@ const getRecentUploads = async (
 /**
  * @param {string} query
  * @param {string[]} types
- * @param {{ orderBy: 'asc' | 'desc', contentType: string[] }} [arg3]
+ * @param {{ orderBy: 'asc' | 'desc', contentTypes: string[], page: number }} [options]
  */
-export const _getSearch = async (
-	query,
-	types = [],
-	{ orderBy, contentType } = { orderBy: 'desc', contentType: [] }
-) => {
+export const _getSearch = async (query, types = [], options) => {
+	const { orderBy = 'desc', contentTypes = [], page = 0 } = options || {};
+
 	// Get recent uploads
 	if (!query.length) {
-		return getRecentUploads(types, { orderBy, contentType });
+		return getRecentUploads(types, options);
 	}
 
 	let rawRawTitleContains = null;
@@ -155,6 +154,8 @@ export const _getSearch = async (
 				lastUpdated: true,
 				title: true,
 			},
+			skip: 51 * page,
+			take: 50,
 		});
 
 		rawMetadataUserName = prisma.yPost.findMany({
@@ -182,6 +183,8 @@ export const _getSearch = async (
 				lastUpdated: true,
 				title: true,
 			},
+			skip: 51 * page,
+			take: 50,
 		});
 	}
 
@@ -203,12 +206,14 @@ export const _getSearch = async (
 					},
 				],
 
-				type: contentType?.length
+				type: contentTypes?.length
 					? {
-							in: contentType,
+							in: contentTypes,
 						}
 					: undefined,
 			},
+			skip: 51 * page,
+			take: 50,
 		});
 	}
 
@@ -252,14 +257,33 @@ export const _getSearch = async (
 	return { results: results.flat() };
 };
 
-export async function GET({ url }) {
+/**
+ * @param {URL} url
+ */
+export const _parseSearchParamsForSearch = (url) => {
 	const rawQuery = url.searchParams.get('query') || '';
-	const rawTypes = url.searchParams.getAll('type') || [];
+	const rawType = url.searchParams.getAll('type') || [];
+	const rawContentType = url.searchParams.getAll('contenttype') || [];
+	const rawOrderBy = url.searchParams.get('order') || 'desc';
+	const rawPage = url.searchParams.get('page') || '0';
 
 	const query = rawQuery.trim();
-	const types = rawTypes.map((t) => t.trim()).filter(Boolean);
+	const types = rawType.map((t) => t.trim()).filter(Boolean);
+	const contentTypes = rawContentType.map((t) => t.trim()).filter(Boolean);
+	const page = Number.isNaN(parseInt(rawPage)) ? 0 : parseInt(rawPage);
 
-	const res = await _getSearch(query, types);
+	/** @type {'asc' | 'desc'} */
+	const orderBy = /** @type {any} */ (
+		['asc', 'desc'].includes(rawOrderBy.toLowerCase()) ? rawOrderBy.toLowerCase() : 'desc'
+	);
+
+	return { query, types, options: { contentTypes, orderBy, page } };
+};
+
+export async function GET({ url }) {
+	const { query, types, options } = _parseSearchParamsForSearch(url);
+
+	const res = await _getSearch(query, types, options);
 
 	return json(res.results);
 }
