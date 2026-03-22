@@ -2,6 +2,10 @@ import { json } from '@sveltejs/kit';
 import prisma from '$lib/prisma';
 
 /**
+ * @typedef {ReturnType<import('../../../lib/s3/limits.js').getType>} MimetypeType
+ */
+
+/**
  * @param {Prisma.Content} content
  * @returns {QueryResult}
  */
@@ -18,20 +22,46 @@ const contentEntry = (content) => ({
 
 /**
  * @param {string[]} types
- * @param {'asc' | 'desc'} orderBy
+ * @param {{ orderBy: 'asc' | 'desc', contentType: string[] }} [arg2]
  */
-const getRecentUploads = async (types = [], orderBy = 'desc') => {
+const getRecentUploads = async (
+	types = [],
+	{ orderBy, contentType } = { orderBy: 'desc', contentType: [] }
+) => {
 	/** @type {QueryResult[]} */
 	const results = [];
 
 	let rawRecentYPosts;
 	if ((types.length && types.includes('article')) || types.length === 0) {
-		rawRecentYPosts = prisma.yPost.findMany({ orderBy: { createdTimestamp: orderBy }, take: 50 });
+		rawRecentYPosts = prisma.yPost.findMany({
+			orderBy: { createdTimestamp: orderBy },
+			take: 50,
+			select: {
+				html: {
+					select: {
+						content: true,
+						text: true,
+						image: true,
+					},
+				},
+				id: true,
+				rawTitle: true,
+				lastUpdated: true,
+				title: true,
+			},
+		});
 	}
 
 	let rawRecentContent;
 	if ((types.length && types.includes('content')) || types.length === 0) {
 		rawRecentContent = prisma.content.findMany({
+			where: {
+				type: contentType?.length
+					? {
+							in: contentType,
+						}
+					: undefined,
+			},
 			orderBy: { createdTimestamp: orderBy },
 			take: 50,
 		});
@@ -68,18 +98,22 @@ const getRecentUploads = async (types = [], orderBy = 'desc') => {
 };
 
 /**
- * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date, id: string, fileType?: ReturnType<import('../../../lib/s3/limits.js').getType> | null, contentType?: string | null, html?: { image: string | null, text: string | null } | null }} QueryResult
+ * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date, id: string, fileType?: MimetypeType, contentType?: string | null, html?: { image: string | null, text: string | null } | null }} QueryResult
  */
 
 /**
  * @param {string} query
  * @param {string[]} types
- * @param {'asc' | 'desc'} [orderBy]
+ * @param {{ orderBy: 'asc' | 'desc', contentType: string[] }} [arg3]
  */
-export const _getSearch = async (query, types = [], orderBy) => {
+export const _getSearch = async (
+	query,
+	types = [],
+	{ orderBy, contentType } = { orderBy: 'desc', contentType: [] }
+) => {
 	// Get recent uploads
 	if (!query.length) {
-		return getRecentUploads(types, orderBy);
+		return getRecentUploads(types, { orderBy, contentType });
 	}
 
 	let rawRawTitleContains = null;
@@ -168,6 +202,12 @@ export const _getSearch = async (query, types = [], orderBy) => {
 						},
 					},
 				],
+
+				type: contentType?.length
+					? {
+							in: contentType,
+						}
+					: undefined,
 			},
 		});
 	}

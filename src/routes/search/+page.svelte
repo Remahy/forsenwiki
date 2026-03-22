@@ -30,7 +30,8 @@
 		<div class="flex flex-col gap-2">
 			<p class="m-0 text-xs">
 				<span class="font-bold">Tip:</span>
-				<span>Searching using an author's username shows all content they've created and modified.</span
+				<span
+					>Searching using an author's username shows everything they've created and modified.</span
 				>
 			</p>
 			<Search />

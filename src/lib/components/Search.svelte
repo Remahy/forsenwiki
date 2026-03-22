@@ -12,6 +12,9 @@
 	/** @type {string[]} */
 	let types = $state([]);
 
+	/** @type {string[]} */
+	let contentTypes = $state([]);
+
 	/** @type {string} */
 	let order = $state('');
 
@@ -23,6 +26,11 @@
 			types = t;
 			const o = url.searchParams.get('order') || 'desc';
 			order = o;
+
+			if (t.includes('content') || t.includes('')) {
+				const ct = url.searchParams.getAll('contenttype') || [];
+				contentTypes = ct;
+			}
 		}
 	});
 </script>
@@ -37,10 +45,12 @@
 			bind:value={query}
 		/>
 
-		<Button type="submit" class="forsen-wiki-theme-border h-full rounded-l-none! border">
-			<SearchIcon />
-			<span class="hidden">Search</span>
-		</Button>
+		{#if inline}
+			<Button type="submit" class="forsen-wiki-theme-border h-full rounded-l-none! border">
+				<SearchIcon />
+				<span class="hidden">Search</span>
+			</Button>
+		{/if}
 	</div>
 
 	{#if !inline}
@@ -50,7 +60,7 @@
 			<Select
 				title="Type (Multi-select)"
 				name="type"
-				class="w-full overflow-hidden p-0!"
+				class="h-15! w-full overflow-hidden p-0!"
 				bind:value={types}
 				multiple
 			>
@@ -59,6 +69,27 @@
 				<option value="content">Content</option>
 			</Select>
 		</label>
+
+		{#if types.includes('content') || types.includes('') || !types.length}
+			<label class="flex flex-col items-baseline gap-2">
+				<strong>Content type</strong>
+
+				<Select
+					title="Content type (Multi-select)"
+					name="contenttype"
+					class="h-25! w-full overflow-hidden p-0!"
+					bind:value={contentTypes}
+					multiple
+				>
+					<option value="">All</option>
+					<option value="image">Image</option>
+					<option value="video">Video</option>
+					<option value="audio">Audio</option>
+					<option value="document">Document</option>
+				</Select>
+			</label>
+		{/if}
+
 		<label class="flex items-baseline gap-2">
 			<strong class="min-w-12">Order</strong>
 			<Select title="Order by" name="order" class="h-full w-full" bind:value={order}>
@@ -66,5 +97,9 @@
 				<option value="asc">Ascending</option>
 			</Select>
 		</label>
+
+		<Button type="submit" class="self-start">
+			<span>Apply filter</span>
+		</Button>
 	{/if}
 </form>
