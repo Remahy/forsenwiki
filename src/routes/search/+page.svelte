@@ -8,6 +8,7 @@
 	import Search from '$lib/components/Search.svelte';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 	import Box from '$lib/components/Box.svelte';
+	import ContentPreview from '$lib/components/content/ContentPreview.svelte';
 
 	/** @type {import('../api/search/+server').QueryResult[]} */
 	let results = $page.data.results;
@@ -46,6 +47,7 @@
 					<LinkBox
 						href={!result.type ? `/w/${result.title}` : `/content/${result.id}`}
 						class="flex"
+						style="content-visibility: auto;"
 					>
 						<div class="flex grow flex-col gap-2">
 							<span class="line-clamp-1" title={result.rawTitle}>
@@ -71,6 +73,7 @@
 							{/if}
 
 							{#if result.type === 'content'}
+								<ContentPreview {...result} />
 							{/if}
 						</div>
 					</LinkBox>

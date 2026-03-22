@@ -2,6 +2,21 @@ import { json } from '@sveltejs/kit';
 import prisma from '$lib/prisma';
 
 /**
+ * @param {Prisma.Content} content
+ * @returns {QueryResult}
+ */
+const contentEntry = (content) => ({
+	id: content.id,
+	type: 'content',
+	// @ts-ignore
+	fileType: content.type,
+	contentType: content.contentType,
+	lastUpdated: content.createdTimestamp,
+	rawTitle: content.name,
+	title: content.hash,
+});
+
+/**
  * @param {string[]} types
  * @param {'asc' | 'desc'} orderBy
  */
@@ -30,15 +45,8 @@ const getRecentUploads = async (types = [], orderBy = 'desc') => {
 
 	if (recentContent) {
 		for (let index = 0; index < recentContent.length; index++) {
-			const { name, hash, createdTimestamp, id } = recentContent[index];
-
-			results.push({
-				type: 'content',
-				lastUpdated: createdTimestamp,
-				rawTitle: name,
-				title: hash,
-				id,
-			});
+			const entry = recentContent[index];
+			results.push(contentEntry(entry));
 		}
 	}
 
@@ -60,7 +68,7 @@ const getRecentUploads = async (types = [], orderBy = 'desc') => {
 };
 
 /**
- * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date, id: string, contentType?: string | null, html?: { image: string | null, text: string | null } | null }} QueryResult
+ * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date, id: string, fileType?: ReturnType<import('../../../lib/s3/limits.js').getType> | null, contentType?: string | null, html?: { image: string | null, text: string | null } | null }} QueryResult
  */
 
 /**
@@ -182,16 +190,8 @@ export const _getSearch = async (query, types = [], orderBy) => {
 
 	if (contentUserName) {
 		for (let index = 0; index < contentUserName.length; index++) {
-			const { name, hash, contentType, createdTimestamp, id } = contentUserName[index];
-
-			results.push({
-				type: 'content',
-				contentType,
-				lastUpdated: createdTimestamp,
-				rawTitle: name,
-				title: hash,
-				id,
-			});
+			const entry = contentUserName[index];
+			results.push(contentEntry(entry));
 		}
 	}
 

@@ -48,7 +48,7 @@
 			<strong class="min-w-12">Type</strong>
 
 			<Select
-				title="Type"
+				title="Type (Multi-select)"
 				name="type"
 				class="w-full overflow-hidden p-0!"
 				bind:value={types}

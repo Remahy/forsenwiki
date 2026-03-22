@@ -5,14 +5,15 @@
 	 * @typedef {Object} Props
 	 * @property {string} href
 	 * @property {string} [class]
+	 * @property {string} [style]
 	 * @property {import('svelte').Snippet} [children]
 	 */
 
 	/** @type {Props} */
-	let { href, class: className = '', children } = $props();
+	let { href, class: className = '', style = '', children } = $props();
 </script>
 
-<a {href}>
+<a {href} style={style}>
 	<Box class="link-box {className}">
 		{@render children?.()}
 	</Box>
