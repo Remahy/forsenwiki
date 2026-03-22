@@ -6,7 +6,7 @@
 	import { page } from '$app/stores';
 	import LinkBox from '$lib/components/LinkBox.svelte';
 	import Search from '$lib/components/Search.svelte';
-	import { getCacheURL } from '$lib/utils/getCacheURL';
+	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 	import Box from '$lib/components/Box.svelte';
 
 	/** @type {import('../api/search/+server').QueryResult[]} */
@@ -67,15 +67,10 @@
 							{/if}
 
 							{#if result.html?.image}
-								<img src={getCacheURL(result.html.image).toString()} alt="" />
+								<img src={getImageCacheURL(result.html.image).toString()} alt="" />
 							{/if}
 
 							{#if result.type === 'content'}
-								<img
-									src={result.title}
-									alt={result.rawTitle}
-									class="mx-auto min-h-32 w-fit max-w-full"
-								/>
 							{/if}
 						</div>
 					</LinkBox>

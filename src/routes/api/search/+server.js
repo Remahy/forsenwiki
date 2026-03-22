@@ -1,5 +1,4 @@
 import { json } from '@sveltejs/kit';
-import { getCacheURL } from '$lib/utils/getCacheURL';
 import prisma from '$lib/prisma';
 
 /**
@@ -35,10 +34,9 @@ const getRecentUploads = async (types = [], orderBy = 'desc') => {
 
 			results.push({
 				type: 'content',
-				hash,
 				lastUpdated: createdTimestamp,
 				rawTitle: name,
-				title: getCacheURL(hash).toString(),
+				title: hash,
 				id,
 			});
 		}
@@ -62,7 +60,7 @@ const getRecentUploads = async (types = [], orderBy = 'desc') => {
 };
 
 /**
- * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date, id: string, hash?: string, html?: { image: string | null, text: string | null } | null }} QueryResult
+ * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date, id: string, contentType?: string | null, html?: { image: string | null, text: string | null } | null }} QueryResult
  */
 
 /**
@@ -184,14 +182,14 @@ export const _getSearch = async (query, types = [], orderBy) => {
 
 	if (contentUserName) {
 		for (let index = 0; index < contentUserName.length; index++) {
-			const { name, hash, createdTimestamp, id } = contentUserName[index];
+			const { name, hash, contentType, createdTimestamp, id } = contentUserName[index];
 
 			results.push({
 				type: 'content',
-				hash,
+				contentType,
 				lastUpdated: createdTimestamp,
 				rawTitle: name,
-				title: getCacheURL(hash).toString(),
+				title: hash,
 				id,
 			});
 		}

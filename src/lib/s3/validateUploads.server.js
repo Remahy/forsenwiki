@@ -1,5 +1,5 @@
+import { STATIC_DOMAIN } from '$lib/environment/environment';
 import prisma from '$lib/prisma';
-import { getCacheURL } from '$lib/utils/getCacheURL';
 
 /**
  * @param {Array<{ index: number, hash: string }>} hashes
@@ -10,7 +10,7 @@ export const validateUploads = async (hashes) => {
 	for (let index = 0; index < hashes.length; index++) {
 		const { hash } = hashes[index];
 
-		existsPromises.push(fetch(getCacheURL(hash), { method: 'HEAD' }));
+		existsPromises.push(fetch(`${STATIC_DOMAIN}/${hash}`, { method: 'HEAD' }));
 	}
 
 	const responses = await Promise.all(existsPromises);

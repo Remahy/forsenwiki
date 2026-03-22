@@ -5,14 +5,14 @@
 	import { page } from '$app/stores';
 
 	import { changeName, deleteContent } from '$lib/api/content';
-	import { getCacheURL } from '$lib/utils/getCacheURL';
+	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 	import Box from '$lib/components/Box.svelte';
 	import Container from '$lib/components/Container.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import RandomButton from '$lib/components/RandomButton.svelte';
 
 	const result = $page.data.result;
-	const src = getCacheURL(result.hash).toString();
+	const src = getImageCacheURL(result.hash).toString();
 	const id = $page.params.id;
 
 	/** @type {string} */

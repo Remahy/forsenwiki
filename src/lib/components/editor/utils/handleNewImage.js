@@ -2,7 +2,7 @@ import { getContentByHash } from '$lib/api/content';
 import { IMAGE_MAX_HEIGHT, IMAGE_MAX_WIDTH } from '$lib/constants/image';
 import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
 import { IMAGE_AUDIO_FILE_SIZE } from '$lib/s3/limits';
-import { getCacheURL } from '$lib/utils/getCacheURL';
+import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 import { calculateChecksumSha256 } from '$lib/utils/sha256';
 
 export const ImageErrorCodes = {
@@ -58,7 +58,7 @@ export const handleNewImage = async (file) => {
 				// Take me to "Browse" and search for content.name
 				resolve({
 					linkType: 'internal',
-					src: getCacheURL(hash).toString(),
+					src: getImageCacheURL(hash).toString(),
 					name: content.name,
 					hash,
 					width: img.width,

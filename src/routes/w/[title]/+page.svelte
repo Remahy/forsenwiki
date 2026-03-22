@@ -15,7 +15,7 @@
 	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import { isSystem } from '$lib/utils/isSystem.js';
-	import { getCacheURL } from '$lib/utils/getCacheURL.js';
+	import { getImageCacheURL } from '$lib/utils/getImageCacheURL.js';
 
 	const submitErrors = $derived.by(() => {
 		try {
@@ -96,7 +96,7 @@
 		{/if}
 
 		{#if image?.length}
-			<meta property="og:image" content={getCacheURL(image).toString()} />
+			<meta property="og:image" content={getImageCacheURL(image).toString()} />
 		{/if}
 
 		<meta property="article:published_time" content={createdTimestamp.toISOString()} />

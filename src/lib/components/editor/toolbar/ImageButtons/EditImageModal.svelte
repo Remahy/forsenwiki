@@ -9,7 +9,7 @@
 	import { validateContent } from '$lib/api/content';
 	import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
 	import { searchRequest } from '$lib/api/search';
-	import { getCacheURL } from '$lib/utils/getCacheURL';
+	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 	import { mimetypes } from '$lib/s3/limits';
 	import { IMAGE_OFF, LUCIDE_ICON_LOADER } from '../../plugins/Image/Image';
 	import { handleNewImage, ImageErrorCodes } from '../../utils/handleNewImage';
@@ -58,7 +58,7 @@
 
 	let searchQuery = $state('');
 	let isSearching = $state(false);
-	/** @type {Array<{ title: string, rawTitle: string, lastUpdated: string, id: string, hash?: string }>} */
+	/** @type {Array<{ title: string, rawTitle: string, lastUpdated: string, id: string }>} */
 	let searchResults = $state([]);
 
 	let previewImage = $derived.by(async () => {
@@ -75,7 +75,7 @@
 		}
 
 		if (currentImageType === 'internal') {
-			return getCacheURL(value).toString();
+			return getImageCacheURL(value).toString();
 		}
 
 		console.error('Failed loading image from IndexedDb');
@@ -339,8 +339,8 @@
 				<div class="prose dark:prose-invert relative mt-2 flex max-w-[unset]">
 					<table class="w-full table-auto">
 						<tbody>
-							{#each searchResults as result (result.hash)}
-								<tr class={newSrc === result.hash ? 'bg-black/10 dark:bg-white/10' : ''}>
+							{#each searchResults as result (result.id)}
+								<tr class={newSrc === result.title ? 'bg-black/10 dark:bg-white/10' : ''}>
 									<td class="max-w-xs">
 										<div class="truncate">
 											<Link href={result.title} target="_blank">
@@ -352,7 +352,7 @@
 										><Button
 											class="min-h-0! p-2! text-xs"
 											on:click={() => handleInternalImage(result)}>Select</Button
-										>{newSrc === result.hash ? '(Selected)' : ''}</td
+										>{newSrc === result.title ? '(Selected)' : ''}</td
 									>
 								</tr>
 							{:else}

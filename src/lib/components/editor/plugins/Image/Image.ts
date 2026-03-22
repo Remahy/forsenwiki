@@ -14,7 +14,7 @@ import { $applyNodeReplacement, DecoratorNode } from 'lexical';
 import type { ComponentProps } from 'svelte';
 
 import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
-import { getCacheURL } from '$lib/utils/getCacheURL';
+import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 
 import ImageComponent from './ImageComponent.svelte';
 
@@ -121,7 +121,7 @@ export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
 			return;
 		}
 
-		const finalSrc = getCacheURL(rawSrc, { width: self.__width, height: self.__height });
+		const finalSrc = getImageCacheURL(rawSrc, { width: self.__width, height: self.__height });
 
 		return finalSrc.toString();
 	}
