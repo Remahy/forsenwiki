@@ -6,7 +6,7 @@
 	import Logo from '$lib/components/Logo.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
-	import Search from './Search.svelte';
+	import Search from './Search/index.svelte';
 	import Announcement from './Announcement.svelte';
 
 	let isLoading = $state(false);

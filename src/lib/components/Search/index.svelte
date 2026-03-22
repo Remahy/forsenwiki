@@ -2,8 +2,9 @@
 	import { SearchIcon } from 'lucide-svelte';
 	import { page } from '$app/stores';
 
-	import Button from './Button.svelte';
-	import Select from './Select.svelte';
+	import Button from '../Button.svelte';
+	import Select from '../Select.svelte';
+	import { parseSearchURL } from './parseSearchURL';
 
 	let { inline = false } = $props();
 
@@ -18,17 +19,21 @@
 	/** @type {string} */
 	let order = $state('');
 
-	page.subscribe(({ url }) => {
+	$effect(() => {
+		const { url } = $page;
+
 		if (url.pathname === '/search') {
-			const q = url.searchParams.get('query') || '';
+			const {
+				query: q,
+				types: t,
+				options: { orderBy: o, contentTypes: ct },
+			} = parseSearchURL(url);
+
 			query = q;
-			const t = url.searchParams.getAll('type') || [];
 			types = t;
-			const o = url.searchParams.get('order') || 'desc';
 			order = o;
 
-			if (t.includes('content') || t.includes('')) {
-				const ct = url.searchParams.getAll('contenttype') || [];
+			if (t.includes('content') || t.includes('') || !t.length) {
 				contentTypes = ct;
 			}
 		}

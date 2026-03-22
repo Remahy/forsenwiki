@@ -5,7 +5,7 @@
 
 	import { page } from '$app/stores';
 	import LinkBox from '$lib/components/LinkBox.svelte';
-	import Search from '$lib/components/Search.svelte';
+	import Search from '$lib/components/Search/index.svelte';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 	import Box from '$lib/components/Box.svelte';
 	import ContentPreview from '$lib/components/content/ContentPreview.svelte';
