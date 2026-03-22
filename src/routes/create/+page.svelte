@@ -22,8 +22,8 @@
 	import { WIKI_PATH } from '$lib/constants/constants';
 	import { uploadImages } from '$lib/s3/uploadContentHandlers';
 	import { modal } from '$lib/stores/modal';
-	import UploadContentModal from '$lib/components/UploadContentModal.svelte';
-	import { resetUploadContentModalGlobals } from '$lib/components/uploadContentModalGlobals.svelte';
+	import UploadingContentModal from '$lib/components/UploadingContentModal.svelte';
+	import { resetUploadingContentModalGlobals } from '$lib/components/uploadingContentModalGlobals.svelte';
 	import { runValidations } from '$lib/components/editor/validations';
 
 	const id = 'new';
@@ -118,7 +118,7 @@
 
 			await runValidations(editor);
 
-			modal.set({ component: UploadContentModal, isOpen: true, disableClose: true });
+			modal.set({ component: UploadingContentModal, isOpen: true, disableClose: true });
 
 			// Upload images to S3.
 			await uploadImages(editor, id);
@@ -152,7 +152,7 @@
 
 		$modal.isOpen = false;
 		$modal.disableClose = false;
-		resetUploadContentModalGlobals();
+		resetUploadingContentModalGlobals();
 	};
 
 	onMount(() => {

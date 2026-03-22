@@ -13,7 +13,7 @@ const uploaded = $state([]);
  */
 const uploading = $state({ count: 0 });
 
-export const uploadContentModalGlobals = {
+export const uploadingContentModalGlobals = {
 	uploaded,
 	uploading,
 };
@@ -29,10 +29,10 @@ export const addNewUploaded = (entry) => {
  * @param {number} length
  */
 export const setUploading = (length) => {
-	uploadContentModalGlobals.uploading.count = length;
+	uploadingContentModalGlobals.uploading.count = length;
 };
 
-export const resetUploadContentModalGlobals = () => {
-	uploadContentModalGlobals.uploaded = defaults.uploaded;
-	uploadContentModalGlobals.uploading.count = defaults.uploading;
+export const resetUploadingContentModalGlobals = () => {
+	uploadingContentModalGlobals.uploaded = defaults.uploaded;
+	uploadingContentModalGlobals.uploading.count = defaults.uploading;
 };

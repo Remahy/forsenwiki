@@ -1,8 +1,8 @@
 <script>
 	import Spinner from './Spinner.svelte';
-	import { uploadContentModalGlobals } from './uploadContentModalGlobals.svelte';
+	import { uploadingContentModalGlobals } from './uploadingContentModalGlobals.svelte';
 
-	let { uploading = { count: 0 }, uploaded = [] } = uploadContentModalGlobals;
+	let { uploading = { count: 0 }, uploaded = [] } = uploadingContentModalGlobals;
 
 	$effect(() => console.log(uploading, uploaded));
 </script>

@@ -5,7 +5,7 @@ import { createFileUploadObject } from '$lib/components/editor/utils/fileUploadO
 import {
 	addNewUploaded,
 	setUploading,
-} from '$lib/components/uploadContentModalGlobals.svelte.js';
+} from '$lib/components/uploadingContentModalGlobals.svelte.js';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
 
 /**
