@@ -2,16 +2,51 @@
 	import Masonry from 'svelte-bricks';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
+	import InfiniteLoading from 'svelte-infinite-loading';
 
 	import { page } from '$app/stores';
+	import { searchRequest } from '$lib/api/search';
 	import LinkBox from '$lib/components/LinkBox.svelte';
 	import Search from '$lib/components/Search/index.svelte';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 	import Box from '$lib/components/Box.svelte';
 	import ContentPreview from '$lib/components/content/ContentPreview.svelte';
+	import { parseSearchURL } from '$lib/components/Search/parseSearchURL';
 
 	/** @type {import('../api/search/+server').QueryResult[]} */
-	let results = $page.data.results;
+	let results = $state($page.data.results);
+
+	let currentQuery = $derived(parseSearchURL($page.url));
+
+	let currentPage = $derived(currentQuery.options.page);
+
+	// @ts-ignore - These detail props are callbacks.
+	function infiniteHandler({ detail: { complete, error, loaded } }) {
+		const newSearchRequest = structuredClone(currentQuery);
+		currentPage++;
+		$page.url.searchParams.set('page', String(currentPage));
+		newSearchRequest.options.page = currentPage;
+
+		// Classic, good old, then & catch.
+		searchRequest(newSearchRequest.query, newSearchRequest.types, newSearchRequest.options)
+			.then(async (res) => {
+				const newData = await res.json();
+				if (newData.length) {
+					const scrollTop = window.scrollY;
+					results = [...results, ...newData];
+					setTimeout(() => {
+						window.scrollTo({ top: scrollTop, behavior: 'instant' });
+						loaded();
+					}, 1000);
+				} else {
+					complete();
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+				error();
+			});
+	}
 </script>
 
 <svelte:head>
@@ -43,12 +78,13 @@
 			{#if $page.url.searchParams.get('query') === '' && (!$page.url.searchParams.get('order') || $page.url.searchParams.get('order') === 'desc')}
 				<p><strong>Recently created articles & content.</strong></p>
 			{/if}
-			<Masonry items={results}>
+			<Masonry items={results} animate={false}>
 				{#snippet children({ item: result })}
 					<LinkBox
 						href={!result.type ? `/w/${result.title}` : `/content/${result.id}`}
 						class="flex"
 						style="content-visibility: auto;"
+						id={result.id}
 					>
 						<div class="flex grow flex-col gap-2">
 							<span class="line-clamp-1" title={result.rawTitle}>
@@ -80,6 +116,12 @@
 					</LinkBox>
 				{/snippet}
 			</Masonry>
+
+			{#if currentQuery.types.length === 1}
+				<InfiniteLoading on:infinite={infiniteHandler}>
+					<div slot="noResults"></div>
+				</InfiniteLoading>
+			{/if}
 		{:else if $page.url.searchParams.get('query')}
 			<p><strong>No search results found.</strong></p>
 		{/if}
