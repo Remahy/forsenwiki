@@ -1,12 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import {
-		Dice4Icon,
-		FolderSearchIcon,
-		HistoryIcon,
-		NewspaperIcon,
-		SquarePenIcon,
-	} from 'lucide-svelte';
+	import { Dice4Icon, HistoryIcon, FolderSearchIcon, SquarePenIcon } from 'lucide-svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
 
@@ -150,9 +144,6 @@
 				</LinkButton>
 				<LinkButton href="/create" class="flex gap-2 whitespace-nowrap" reload>
 					<SquarePenIcon /> <span>Create new article</span>
-				</LinkButton>
-				<LinkButton href="/browse" class="flex gap-2 whitespace-nowrap">
-					<NewspaperIcon /> <span>All articles</span>
 				</LinkButton>
 				<LinkButton href="/content" class="flex gap-2 whitespace-nowrap">
 					<FolderSearchIcon /> <span>Search content</span>
