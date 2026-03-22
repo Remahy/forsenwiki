@@ -59,40 +59,62 @@
 	</div>
 
 	{#if !inline}
-		<label class="flex items-baseline gap-2">
-			<strong class="min-w-12">Type</strong>
+		<div class="flex flex-col gap-1">
+			<strong class="min-w-25">Type</strong>
+			<div class="flex items-baseline gap-3">
+				<label class="flex items-baseline gap-2">
+					<input
+						type="checkbox"
+						checked={!types.length || types.includes('')}
+						disabled
+						class="opacity-50"
+					/>
+					<span>All</span>
+				</label>
+				<label class="flex items-baseline gap-2">
+					<input type="checkbox" name="type" bind:group={types} value="article" />
+					<span>Articles</span>
+				</label>
 
-			<Select
-				title="Type (Multi-select)"
-				name="type"
-				class="h-15! w-full overflow-hidden p-0!"
-				bind:value={types}
-				multiple
-			>
-				<option value="">All</option>
-				<option value="article">Articles</option>
-				<option value="content">Content</option>
-			</Select>
-		</label>
+				<label class="flex items-baseline gap-2">
+					<input type="checkbox" name="type" bind:group={types} value="content" />
+					<span>Content</span>
+				</label>
+			</div>
+		</div>
 
 		{#if types.includes('content') || types.includes('') || !types.length}
-			<label class="flex flex-col items-baseline gap-2">
-				<strong>Content type</strong>
+			<div class="flex flex-col gap-1">
+				<strong class="min-w-25">Content type</strong>
+				<div class="flex items-baseline gap-3">
+					<label class="flex items-baseline gap-2">
+						<input
+							type="checkbox"
+							checked={!contentTypes.length || contentTypes.includes('')}
+							disabled
+							class="opacity-50"
+						/>
+						<span>All</span>
+					</label>
 
-				<Select
-					title="Content type (Multi-select)"
-					name="contenttype"
-					class="h-25! w-full overflow-hidden p-0!"
-					bind:value={contentTypes}
-					multiple
-				>
-					<option value="">All</option>
-					<option value="image">Image</option>
-					<option value="video">Video</option>
-					<option value="audio">Audio</option>
-					<option value="document">Document</option>
-				</Select>
-			</label>
+					<label class="flex items-baseline gap-2">
+						<input type="checkbox" name="contenttype" bind:group={contentTypes} value="image" />
+						<span>Image</span>
+					</label>
+					<label class="flex items-baseline gap-2">
+						<input type="checkbox" name="contenttype" bind:group={contentTypes} value="video" />
+						<span>Video</span>
+					</label>
+					<label class="flex items-baseline gap-2">
+						<input type="checkbox" name="contenttype" bind:group={contentTypes} value="audio" />
+						<span>Audio</span>
+					</label>
+					<label class="flex items-baseline gap-2">
+						<input type="checkbox" name="contenttype" bind:group={contentTypes} value="document" />
+						<span>Document</span>
+					</label>
+				</div>
+			</div>
 		{/if}
 
 		<label class="flex items-baseline gap-2">

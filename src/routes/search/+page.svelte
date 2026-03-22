@@ -120,6 +120,16 @@
 			{#if currentQuery.types.length === 1}
 				<InfiniteLoading on:infinite={infiniteHandler}>
 					<div slot="noResults"></div>
+					<div slot="noMore">
+						<span>End of the road.</span>
+						<br />
+						forsen.wiki v0.0.1 launched {formatRelative('2024-05-25T11:42:29.000Z', Date.now(), {
+							locale: enGB,
+						})}
+						<span title={new Date('2024-05-25T11:42:29.000Z').toUTCString()}
+							>({new Date('2024-05-25T11:42:29.000Z').toDateString()})</span
+						>
+					</div>
 				</InfiniteLoading>
 			{/if}
 		{:else if $page.url.searchParams.get('query')}
