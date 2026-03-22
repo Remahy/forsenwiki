@@ -147,7 +147,7 @@
 		// Debouncer
 		const handler = setTimeout(async () => {
 			try {
-				const res = await searchRequest(searchQuery, 'article');
+				const res = await searchRequest(searchQuery, ['article']);
 				searchResults = await res.json();
 			} catch (err) {
 				console.error(err);
@@ -240,18 +240,21 @@
 							<tbody>
 								{#each searchResults as result (result.id)}
 									<tr class={internalId === result.id ? 'bg-black/10 dark:bg-white/10' : ''}>
-										<td
-											><Link href="/w/{result.title}" target="_blank">
+										<td>
+											<Link href="/w/{result.title}" target="_blank">
 												<strong>{result.rawTitle}</strong>
-											</Link></td
-										>
+											</Link>
+										</td>
 										<td>{formatRelative(result.lastUpdated, Date.now(), { locale: enGB })}</td>
-										<td
-											><Button
-												class="!min-h-0 !p-2 text-xs"
-												on:click={() => handleInternalLink(result)}>Select</Button
-											>{internalId === result.id ? '(Selected)' : ''}</td
-										>
+										<td>
+											<Button
+												class="min-h-0! p-2! text-xs"
+												on:click={() => handleInternalLink(result)}
+											>
+												<span>Select</span>
+											</Button>
+											<span>{internalId === result.id ? '(Selected)' : ''}</span>
+										</td>
 									</tr>
 								{:else}
 									<tr>

@@ -82,9 +82,9 @@
 		return IMAGE_OFF;
 	});
 
-	/** @param {{ rawTitle: string, hash?: string }} value */
+	/** @param {{ rawTitle: string, title?: string }} value */
 	const handleInternalImage = (value) => {
-		if (!value.hash) {
+		if (!value.title) {
 			return;
 		}
 
@@ -95,9 +95,9 @@
 			height = 'inherit';
 		}
 
-		newSrc = value.hash;
+		newSrc = value.title;
 		newSrcName = value.rawTitle;
-		newHash = value.hash;
+		newHash = value.title;
 		newFile = null;
 		isValidImage = true;
 	};
@@ -233,7 +233,12 @@
 		// Debouncer
 		const handler = setTimeout(async () => {
 			try {
-				const res = await searchRequest(searchQuery, 'content');
+				const res = await searchRequest(searchQuery, ['content'], {
+					contentTypes: ['image'],
+					// Todo allow loading in of more pages.
+					page: 0,
+					orderBy: 'desc',
+				});
 				const json = await res.json();
 				searchResults = json;
 				console.log(json);
@@ -343,7 +348,7 @@
 								<tr class={newSrc === result.title ? 'bg-black/10 dark:bg-white/10' : ''}>
 									<td class="max-w-xs">
 										<div class="truncate">
-											<Link href={result.title} target="_blank">
+											<Link href="/content/{result.id}" target="_blank">
 												<strong>{result.rawTitle}</strong>
 											</Link>
 										</div>
