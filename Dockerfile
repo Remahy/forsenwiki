@@ -23,4 +23,4 @@ RUN npm prune --production
 
 COPY --chmod=0755 ./start.sh ./start.sh
 
-ENTRYPOINT ["sh", "./start.sh"]
+ENTRYPOINT ["bash", "./start.sh"]
