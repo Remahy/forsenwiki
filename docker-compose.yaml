@@ -8,8 +8,6 @@ services:
     env_file:
       - .env
     restart: unless-stopped
-    volumes:
-      - ${DEV_STATIC_DIR}:/usercontent/
     depends_on:
       - caddy
     networks:
@@ -90,7 +88,6 @@ services:
       - prisma-network
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
-      - ${DEV_STATIC_DIR}:/srv/
       - caddy_data:/data
       - caddy_config:/config
       - ./forsen-wiki-logs:/var/log
