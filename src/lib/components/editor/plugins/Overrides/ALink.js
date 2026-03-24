@@ -53,12 +53,10 @@ export class ALinkNode extends LinkNode {
 
 	/** @param {import('@lexical/link').SerializedLinkNode & { __isInternal: boolean, __internalId?: string }} serializedNode */
 	static importJSON(serializedNode) {
-		const node = $createALinkNode(
-			undefined,
-			undefined,
-			serializedNode.__isInternal,
-			serializedNode.__internalId
-		).updateFromJSON(serializedNode);
+		const node = $createALinkNode()
+			.updateFromJSON(serializedNode)
+			.setIsInternal(serializedNode.__isInternal)
+			.setInternalId(serializedNode.__internalId);
 
 		return node;
 	}
@@ -84,6 +82,8 @@ export class ALinkNode extends LinkNode {
 		const self = this.getWritable();
 
 		self.__isInternal = bool;
+
+		self.setTarget(bool ? null : '_blank');
 
 		return this;
 	}
