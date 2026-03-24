@@ -19,7 +19,6 @@
 	import Button from '../Button.svelte';
 	import Box from '../Box.svelte';
 	import UploadingContentModal from '../UploadingContentModal.svelte';
-	import { resetUploadingContentModalGlobals } from '../uploadingContentModalGlobals.svelte';
 
 	/** @type {{ file: File, hash: string, name: string, type: string }[]} */
 	const content = $state([]);
@@ -173,7 +172,6 @@
 			console.error(err);
 			error = err?.toString() || 'Something went wrong uploading files.';
 			$uploadModal.isOpen = false;
-			resetUploadingContentModalGlobals();
 		} finally {
 			isLoading = false;
 		}

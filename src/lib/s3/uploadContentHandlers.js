@@ -1,6 +1,6 @@
 import { STATIC_DOMAIN } from '$lib/environment/environment';
 import { loadContent } from '$lib/utils/indexedDb/content';
-import { uploadContent } from '$lib/api/content';
+import { deleteContent, uploadContent } from '$lib/api/content';
 import { createFileUploadObject } from '$lib/components/editor/utils/fileUploadObject';
 import {
 	addNewUploaded,
@@ -131,25 +131,31 @@ const uploadContentHandler = async (contentToUpload) => {
 				method: 'PUT',
 				headers: headers(presignEntry.contentType, hash, presignEntry.metadata),
 				body: file,
-			}).then(() =>
-				addNewUploaded({
-					id: presignEntry.metadata.id,
-					url: `${STATIC_DOMAIN}/${hash}`,
-					contentType: presignEntry.contentType,
+			})
+				.then(() =>
+					addNewUploaded({
+						id: presignEntry.metadata.id,
+						url: `${STATIC_DOMAIN}/${hash}`,
+						contentType: presignEntry.contentType,
+					})
+				)
+				.catch((err) => {
+					deleteContent(presignEntry.metadata.id);
+					throw err;
 				})
-			)
 		);
 	}
 
-	let uploadsRes;
-	try {
-		uploadsRes = await Promise.all(uploads);
-	} catch (err) {
-		console.error(err);
-		throw new Error('Error uploading new file contents.', { cause: err });
+	const uploadsRes = await Promise.allSettled(uploads);
+
+	const errors = uploadsRes.filter((r) => r.status === 'rejected').map((r) => r.reason);
+	if (errors) {
+		console.error(errors);
+		throw new Error('Error uploading new file contents.');
 	}
 
-	return uploadsRes;
+	const successes = uploadsRes.filter((r) => r.status === 'fulfilled').map((r) => r.value);
+	return successes;
 };
 
 /**
