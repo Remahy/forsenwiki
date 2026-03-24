@@ -8,7 +8,9 @@ RUN npm ci
 
 FROM node:24-slim AS build
 
-RUN apk add git
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y git
 
 WORKDIR /app
 
