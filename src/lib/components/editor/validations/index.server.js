@@ -7,6 +7,5 @@ import { adjustInternalLinks } from './internalLinks.server';
 export const serverRunValidations = async (editor) => {
 	await runValidations(editor);
 
-	// Modifies the editor.
 	await adjustInternalLinks(editor);
 };

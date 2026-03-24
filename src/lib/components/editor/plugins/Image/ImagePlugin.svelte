@@ -46,6 +46,7 @@
 		$isImageNode as isImageNode,
 		ImageNode,
 	} from './Image';
+	import { migrateWSRVImageUsingElement } from '../../migrations/migrateWSRVImages';
 
 	const id = $derived(editorGlobals.articleId);
 
@@ -204,18 +205,32 @@
 	}
 
 	/**
-	 * @param {{ src: string }} img
 	 * @param {HTMLElement} element
 	 */
-	const saveImageAsBlob = async (img, element) => {
+	const saveImageAsBlob = async (element) => {
 		try {
+			const img = editor.read(() => {
+				const node = getNodeFromDOMNode(element);
+
+				if (isImageNode(node)) {
+					return node;
+				}
+				return null;
+			});
+
+			const src = img?.getSrc();
+
+			if (!img || !src) {
+				return;
+			}
+
 			// Fetch the image as a Blob
-			const response = await fetch(img.src, {});
+			const response = await fetch(src, {});
 			const lastModified = new Date(response.headers.get('Last-Modified') || Date.now()).getTime();
 			const etag = response.headers.get('Etag');
 			const contentType = response.headers.get('Content-Type') || '';
 
-			const name = img.src.split('/').pop() || etag || 'pasted-image';
+			const name = src.split('/').pop() || etag || 'pasted-image';
 
 			const blob = await response.blob();
 
@@ -360,8 +375,13 @@
 							continue;
 						}
 
+						if (src?.startsWith('https://wsrv.nl/?url=https%3A%2F%2Fforsen.wiki')) {
+							promises.push(migrateWSRVImageUsingElement(editor, element));
+							continue;
+						}
+
 						// Download image, turn it into a blob.
-						promises.push(saveImageAsBlob({ src }, element));
+						promises.push(saveImageAsBlob(element));
 					}
 
 					return promises;
