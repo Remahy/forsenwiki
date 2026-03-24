@@ -2,7 +2,8 @@
 	import { setContext } from 'svelte';
 	import { writable } from 'svelte/store';
 
-	import Modal from '$lib/components/modal.svelte';
+	import Modal from '$lib/components/Modal.svelte';
+	import UploadModal from '$lib/components/UploadModal.svelte';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 
@@ -32,3 +33,4 @@
 </div>
 
 <Modal />
+<UploadModal />

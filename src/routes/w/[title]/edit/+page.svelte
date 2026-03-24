@@ -21,7 +21,7 @@
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 	import { WIKI_PATH } from '$lib/constants/constants';
 	import { uploadImages } from '$lib/s3/uploadContentHandlers';
-	import { modal } from '$lib/stores/modal';
+	import { uploadModal } from '$lib/stores/modal';
 	import UploadingContentModal from '$lib/components/UploadingContentModal.svelte';
 	import { resetUploadingContentModalGlobals } from '$lib/components/uploadingContentModalGlobals.svelte';
 	import { runValidations } from '$lib/components/editor/validations';
@@ -119,7 +119,7 @@
 		try {
 			await runValidations(editor);
 
-			modal.set({ component: UploadingContentModal, isOpen: true, disableClose: true });
+			uploadModal.set({ component: UploadingContentModal, isOpen: true, disableClose: true });
 
 			// Upload images to S3.
 			await uploadImages(editor, id);
@@ -160,8 +160,8 @@
 			error = json;
 		}
 
-		$modal.isOpen = false;
-		$modal.disableClose = false;
+		$uploadModal.isOpen = false;
+		$uploadModal.disableClose = false;
 		resetUploadingContentModalGlobals();
 	};
 
