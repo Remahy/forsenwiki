@@ -51,9 +51,14 @@ export class ALinkNode extends LinkNode {
 		);
 	}
 
-	/** @param {import('@lexical/link').SerializedLinkNode & { isInternal: boolean }} serializedNode */
+	/** @param {import('@lexical/link').SerializedLinkNode & { __isInternal: boolean, __internalId?: string }} serializedNode */
 	static importJSON(serializedNode) {
-		const node = $createALinkNode().updateFromJSON(serializedNode);
+		const node = $createALinkNode(
+			undefined,
+			undefined,
+			serializedNode.__isInternal,
+			serializedNode.__internalId
+		).updateFromJSON(serializedNode);
 
 		return node;
 	}
