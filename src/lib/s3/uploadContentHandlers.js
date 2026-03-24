@@ -149,7 +149,7 @@ const uploadContentHandler = async (contentToUpload) => {
 	const uploadsRes = await Promise.allSettled(uploads);
 
 	const errors = uploadsRes.filter((r) => r.status === 'rejected').map((r) => r.reason);
-	if (errors) {
+	if (errors.length) {
 		console.error(errors);
 		throw new Error('Error uploading new file contents.');
 	}
