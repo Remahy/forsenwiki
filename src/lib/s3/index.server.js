@@ -1,5 +1,5 @@
 import { base64ToUint8Array } from 'uint8array-extras';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import {
 	CLOUDFLARE_R2_ACCESS_KEY_ID,
@@ -82,4 +82,11 @@ export const getPresignedURL = async (
 	);
 
 	return { presignedUrl, metadata };
+};
+
+/**
+ * @param {string} key The hash of the file.
+ */
+export const deleteByKey = (key) => {
+	return S3.send(new DeleteObjectCommand({ Bucket: CLOUDFLARE_R2_BUCKET_NAME, Key: key }));
 };
