@@ -10,7 +10,7 @@ export const parseSearchURL = (url) => {
 
 	/** @type {string[]} */
 	let contentTypes = [];
-	if (types.includes('content') || types.includes('')) {
+	if (types.includes('content') || types.includes('') || !types.length) {
 		const ct = url.searchParams.getAll('contenttype') || [];
 		contentTypes = ct;
 	}

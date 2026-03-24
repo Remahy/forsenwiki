@@ -1,4 +1,5 @@
 import { getContentByHash } from '$lib/api/content';
+import { STATIC_DOMAIN } from '$lib/environment/environment';
 import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
 import { getFileSizeLimit, getType } from '$lib/s3/limits';
 import { calculateChecksumSha256 } from '$lib/utils/sha256';
@@ -50,4 +51,33 @@ export const checkFile = async (file, isModerator = false) => {
 	fileReader.readAsDataURL(file);
 
 	return { file, name, hash, res, size, fileReader };
+};
+
+/**
+ * @param {File} f
+ * @param {boolean} [isModerator]
+ * @returns {Promise<{ linkType: 'external' | 'internal', src: string, file?: File, name: string, hash: string }>}
+ * @throws {ErrorWithCode}
+ */
+export const handleNewFile = async (f, isModerator = false) => {
+	const { file, hash, name, res } = await checkFile(f, isModerator);
+
+	if (res.status === 200) {
+		const content = await res.json();
+		// Take me to "Browse" and search for content.name
+		return {
+			linkType: 'internal',
+			src: `${STATIC_DOMAIN}/${hash}`,
+			name: content.name,
+			hash,
+		};
+	}
+
+	return {
+		linkType: 'external',
+		hash,
+		src: hash,
+		name,
+		file,
+	};
 };

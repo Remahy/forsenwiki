@@ -25,7 +25,8 @@ export const _validateContent = async (files, isModerator) => {
 		};
 	}
 
-	let errors = [];
+	/** @type {Array<{ index: number, message: string }>} */
+	const errors = [];
 
 	// Quick body array validation.
 	for (let index = 0; index < files.length; index++) {
@@ -40,14 +41,17 @@ export const _validateContent = async (files, isModerator) => {
 		}
 	}
 
-	const found = await prisma.content.findMany({
-		where: { hash: { in: files.map(({ hash }) => hash) } },
-		select: { hash: true },
-	});
-
 	if (errors.length) {
 		return { status: 400, errors: errors };
 	}
+
+	const found = await prisma.content.findMany({
+		where: { hash: { in: files.map(({ hash }) => hash) } },
+		select: { hash: true, name: true },
+	});
+
+	/** @type {Array<{ index: number, message: string }>} */
+	const foundFilesError = [];
 
 	const nonExistingFiles =
 		/** @type {Array<FileUpload & { index: number, contentType: string, type: string, mimetypeMetadata: { source: string, metadata: any }, dimensionsMetadata: import('image-size/types/interface').ISizeCalculationResult }>} */ (
@@ -56,9 +60,14 @@ export const _validateContent = async (files, isModerator) => {
 					// @ts-ignore
 					file.index = index;
 
-					if (found.some(({ hash }) => hash === file.hash)) {
+					const existingFile = found.find(({ hash }) => hash === file.hash);
+					if (existingFile) {
 						// @ts-ignore
 						file = null;
+						foundFilesError.push({
+							index,
+							message: `Index [${index}] is already uploaded as "${existingFile.name}".`,
+						});
 					}
 
 					return file;
@@ -123,6 +132,10 @@ export const _validateContent = async (files, isModerator) => {
 
 	if (errors.length) {
 		return { status: 400, errors: errors };
+	}
+
+	if (foundFilesError.length) {
+		return { status: 400, errors: foundFilesError };
 	}
 
 	return { status: 200, errors: [], files: nonExistingFiles };

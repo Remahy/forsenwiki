@@ -119,7 +119,7 @@
 		try {
 			await runValidations(editor);
 
-			uploadModal.set({ component: UploadingContentModal, isOpen: true, disableClose: true });
+			uploadModal.set({ component: UploadingContentModal, isOpen: true });
 
 			// Upload images to S3.
 			await uploadImages(editor, id);
@@ -161,7 +161,6 @@
 		}
 
 		$uploadModal.isOpen = false;
-		$uploadModal.disableClose = false;
 		resetUploadingContentModalGlobals();
 	};
 

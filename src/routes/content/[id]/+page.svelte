@@ -10,10 +10,25 @@
 	import Container from '$lib/components/Container.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import RandomButton from '$lib/components/RandomButton.svelte';
+	import ImagePreview from '$lib/components/content/ImagePreview.svelte';
+	import VideoPreview from '$lib/components/content/VideoPreview.svelte';
+	import AudioPreview from '$lib/components/content/AudioPreview.svelte';
+	import { STATIC_DOMAIN } from '$lib/environment/environment';
+	import DocumentPreview from '$lib/components/content/DocumentPreview.svelte';
+	import Link from '$lib/components/Link.svelte';
 
 	const result = $page.data.result;
-	const src = getImageCacheURL(result.hash).toString();
+	/** @type {string} */
+	const hash = result.hash;
+	/** @type {string} */
+	const contentType = result.contentType;
+	/** @type {string} */
+	const fileType = result.type;
+	/** @type {string | undefined} */
 	const id = $page.params.id;
+
+	/** @type {{ name: string }} */
+	const author = result.author;
 
 	/** @type {string} */
 	let name = $state(result.name);
@@ -87,6 +102,39 @@
 			error = await res.json();
 		}
 	};
+
+	const PreviewComponents = {
+		image: {
+			component: ImagePreview,
+			props: () => ({
+				src: getImageCacheURL(hash).toString(),
+				name,
+			}),
+		},
+		video: {
+			component: VideoPreview,
+			props: () => ({
+				src: `${STATIC_DOMAIN}/${hash}`,
+				contentType: contentType,
+			}),
+		},
+		audio: {
+			component: AudioPreview,
+			props: () => ({
+				src: `${STATIC_DOMAIN}/${hash}`,
+			}),
+		},
+		document: {
+			component: DocumentPreview,
+			props: () => ({
+				src: `${STATIC_DOMAIN}/${hash}`,
+				name,
+			}),
+		},
+	};
+
+	const SvelteComponent = $derived(fileType && PreviewComponents[fileType].component);
+	const SvelteComponentProps = $derived(fileType && PreviewComponents[fileType].props());
 </script>
 
 <Container class="overflow-hidden">
@@ -95,7 +143,11 @@
 	<div class="items-start gap-8 xl:flex">
 		<div class="mb-4 xl:mb-0 xl:w-fit">
 			<Box class="xl:min-h-96 xl:max-w-3xl xl:min-w-96">
-				<img {src} alt={result.name} class="w-fit max-w-full" />
+				{#if SvelteComponent && SvelteComponentProps}
+					<SvelteComponent {...SvelteComponentProps} />
+				{:else}
+					<span>No preview available.</span>
+				{/if}
 			</Box>
 		</div>
 
@@ -124,7 +176,23 @@
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Uploader</strong></td>
-							<td class="p-4">{result.author.name}</td>
+							<td class="p-4">{author.name}</td>
+						</tr>
+						<tr>
+							<td class="p-4"><strong>Type</strong></td>
+							<td class="p-4">{fileType} <strong>({contentType})</strong></td>
+						</tr>
+						<tr>
+							<td class="p-4"><strong>Metadata</strong></td>
+							<td class="wrap-break-words p-4">
+								<details>
+									<summary class="cursor-pointer">Toggle expand</summary>
+									<small>
+										<div>{result.metadata.mimetype}</div>
+										<div>{result.metadata.dimensions}</div>
+									</small>
+								</details>
+							</td>
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Created at</strong></td>
@@ -134,7 +202,7 @@
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Hash</strong></td>
-							<td class="p-4">{result.hash}</td>
+							<td class="p-4">{hash}</td>
 						</tr>
 						<tr>
 							<td class="p-4"><strong>ID</strong></td>
@@ -142,7 +210,15 @@
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Used in</strong></td>
-							<td class="p-4 wrap-break-words"><small><i>// TODO: Not implemented yet.</i></small></td>
+							<td class="wrap-break-words p-4"
+								><small><i>// TODO: Not implemented yet.</i></small></td
+							>
+						</tr>
+						<tr>
+							<td class="p-4"><strong>URL</strong></td>
+							<td class="wrap-break-words p-4">
+								<Link href="{STATIC_DOMAIN}/{hash}" target="_blank">{STATIC_DOMAIN}/{hash}</Link>
+							</td>
 						</tr>
 					</tbody>
 				</table>
@@ -150,7 +226,7 @@
 		</Box>
 	</div>
 
-	{#if $page.data.isModerator || result.author.name === $page.data.session?.user?.name}
+	{#if $page.data.isModerator || author.name === $page.data.session?.user?.name}
 		<div>
 			<Button on:click={removeContent}><Trash2Icon /> Delete</Button>
 		</div>

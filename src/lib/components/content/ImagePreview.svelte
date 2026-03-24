@@ -1,5 +1,5 @@
 <script>
-	const { src, name } = $props();
+	const { src, name, className = '' } = $props();
 </script>
 
-<img src={src} alt={name} class="mx-auto min-h-32 w-fit max-w-full" />
+<img src={src} alt={name} class="mx-auto min-h-32 w-fit max-w-full {className}" />

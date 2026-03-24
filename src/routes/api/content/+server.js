@@ -42,12 +42,18 @@ export async function POST({ request, locals }) {
 	for (let index = 0; index < files.length; index++) {
 		const file = files[index];
 
+		/**
+		 * @type {{ userid: string, name: string, mimetype: string, dimensions?: string }}
+		 */
 		const metadata = {
 			userid: session.user.id,
 			name: file.name,
 			mimetype: JSON.stringify(file.mimetypeMetadata),
-			dimensions: JSON.stringify(file.dimensionsMetadata),
 		};
+
+		if (file.dimensionsMetadata) {
+			metadata.dimensions = JSON.stringify(file.dimensionsMetadata);
+		}
 
 		try {
 			await prisma.$transaction(async (tx) => {

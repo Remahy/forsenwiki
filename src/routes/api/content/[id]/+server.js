@@ -3,7 +3,6 @@ import prisma from '$lib/prisma';
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { deleteContent } from '$lib/db/content/delete';
 import { updateContentName } from '$lib/db/content/updateName';
-import { rmContentByFilename } from '$lib/fs/content';
 
 export async function POST({ request, locals, params }) {
 	const { isBlocked, isModerator, auth } = locals;
@@ -56,8 +55,6 @@ export async function DELETE({ locals, params }) {
 
 	let deleteRes;
 	try {
-		await rmContentByFilename(res.hash);
-
 		deleteRes = await deleteContent(id);
 	} catch (err) {
 		console.warn(err);

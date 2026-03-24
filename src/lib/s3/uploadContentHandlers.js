@@ -116,7 +116,7 @@ const uploadContentHandler = async (contentToUpload) => {
 	}
 
 	/**
-	 * @type {Array<{ index: number, url: string, contentType: string, metadata: any }>}
+	 * @type {Array<{ index: number, url: string, contentType: string, metadata: { id: string } }>}
 	 */
 	const presignedURLs = await presignRes.json();
 
@@ -131,7 +131,13 @@ const uploadContentHandler = async (contentToUpload) => {
 				method: 'PUT',
 				headers: headers(presignEntry.contentType, hash, presignEntry.metadata),
 				body: file,
-			}).then(() => addNewUploaded({ url: `${STATIC_DOMAIN}/${hash}` }))
+			}).then(() =>
+				addNewUploaded({
+					id: presignEntry.metadata.id,
+					url: `${STATIC_DOMAIN}/${hash}`,
+					contentType: presignEntry.contentType,
+				})
+			)
 		);
 	}
 
@@ -156,4 +162,13 @@ export const uploadImages = async (editor, id) => {
 	setUploading(imagesToUpload.length);
 
 	return uploadContentHandler(imagesToUpload);
+};
+
+/**
+ * @param {(FileUpload & { file: File; })[]} files
+ */
+export const uploadFiles = async (files) => {
+	setUploading(files.length);
+
+	return uploadContentHandler(files);
 };

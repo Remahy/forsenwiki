@@ -1,15 +1,24 @@
 <script>
+	import { getType } from '$lib/s3/limits';
+	import { uploadModal } from '$lib/stores/modal';
+	import Button from './Button.svelte';
+	import AudioPreview from './content/AudioPreview.svelte';
+	import ImagePreview from './content/ImagePreview.svelte';
+	import VideoPreview from './content/VideoPreview.svelte';
+	import LinkButton from './LinkButton.svelte';
 	import Spinner from './Spinner.svelte';
 	import { uploadingContentModalGlobals } from './uploadingContentModalGlobals.svelte';
 
 	let { uploading = { count: 0 }, uploaded = [] } = uploadingContentModalGlobals;
 
-	$effect(() => console.log(uploading, uploaded));
+	const cancel = () => {
+		$uploadModal.isOpen = false;
+	};
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
 	<header class="forsen-wiki-theme-border flex items-center justify-between border-b p-6">
-		<h1 class="text-xl font-semibold lg:text-2xl">Uploading article content</h1>
+		<h1 class="text-xl font-semibold lg:text-2xl">Uploading content</h1>
 	</header>
 
 	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
@@ -27,10 +36,20 @@
 			{#if uploaded.length}
 				<div class="flex flex-wrap justify-between gap-8">
 					{#each uploaded as upload (upload.url)}
+						{@const type = getType(upload.contentType)}
 						<div
-							class="forsen-wiki-theme-border bg-dark w-fit overflow-hidden rounded-4xl border"
+							class="forsen-wiki-theme-border bg-dark flex w-fit flex-col gap-2 overflow-hidden rounded border"
 						>
-							<img class="max-h-32 min-h-32 w-auto max-w-32" src={upload.url} alt="" />
+							{#if type === 'image'}
+								<ImagePreview src={upload.url} name="" className="max-h-32 w-auto! max-w-32!" />
+							{:else if type === 'audio'}
+								<AudioPreview src={upload.url} />
+							{:else if type === 'video'}
+								<VideoPreview contentType={upload.contentType} src={upload.url} />
+							{:else if type === 'document'}
+								<span>Document {upload.url}</span>
+							{/if}
+							<LinkButton href="/content/{upload.id}" target="_blank" class="self-start">View</LinkButton>
 						</div>
 					{/each}
 				</div>
@@ -39,4 +58,8 @@
 			<div class="self-center"><Spinner /></div>
 		{/if}
 	</main>
+
+	<footer class="flex items-center justify-end gap-2 p-6">
+		<Button on:click={cancel} disabled={uploaded.length < uploading.count}>OK</Button>
+	</footer>
 </div>

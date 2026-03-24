@@ -1,6 +1,6 @@
 const MODERATORS_ARE_FAT_FILE_SIZE = 5 * 1024 * 1024 * 1024; // 5GiB
 export const VIDEO_MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024; // 1GiB
-export const IMAGE_AUDIO_FILE_SIZE = 5 * 1024 * 1024; // 25MiB
+export const IMAGE_AUDIO_FILE_SIZE = 25 * 1024 * 1024; // 25MiB
 export const DOCUMENT_FILE_SIZE = 10 * 1024 * 1024; // 10MiB
 
 export const mimetypes = {
@@ -15,6 +15,13 @@ export const mimetypes = {
 		['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
 	],
 };
+
+export const supportedMimeTypes = [
+	...mimetypes.image,
+	...mimetypes.video,
+	...mimetypes.audio,
+	...mimetypes.document,
+].flatMap(([v]) => v);
 
 const magikaExtend = {
 	...mimetypes,
