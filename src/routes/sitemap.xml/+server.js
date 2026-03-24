@@ -1,5 +1,5 @@
 import { DOMAIN } from '$lib/environment/environment';
-import prisma from '$lib/prisma';
+import prisma from '$lib/prisma.server';
 import { getShouldCacheBust } from '$lib/utils/cacheBust';
 
 /** @type {Map<string, number>} */

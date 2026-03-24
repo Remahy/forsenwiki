@@ -1,5 +1,5 @@
 import { sequence } from '@sveltejs/kit/hooks';
-import prisma, { Permissions } from '$lib/prisma';
+import prisma, { Permissions } from '$lib/prisma.server';
 import { CLOUDFLARE_API_TOKEN, CLOUDFLARE_ZONE_ID } from '$env/static/private';
 import { validateToken } from '$lib/cloudflare.server';
 import '../static';

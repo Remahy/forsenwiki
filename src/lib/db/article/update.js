@@ -1,4 +1,4 @@
-import prisma from '$lib/prisma';
+import prisma from '$lib/prisma.server';
 import { Y_POST_TYPES } from '$lib/constants/constants';
 import { postYRelationDeleteByFromPostId } from './delete';
 

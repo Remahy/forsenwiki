@@ -5,7 +5,7 @@ import { sniffMimetype } from '$lib/s3/sniffMimetype.server';
 import { validateImageDimensions } from '$lib/s3/validateImageDimensions.server.js';
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
-import prisma from '$lib/prisma';
+import prisma from '$lib/prisma.server';
 
 /**
  * @param {Array<FileUpload>} files

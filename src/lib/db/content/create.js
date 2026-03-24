@@ -1,4 +1,4 @@
-import prisma from '$lib/prisma';
+import prisma from '$lib/prisma.server';
 
 /**
  * @typedef {Omit<prisma<never, undefined, import('@prisma/client/runtime/client').DefaultArgs>, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">} PrismaTransaction

@@ -1,4 +1,4 @@
-import prisma from '$lib/prisma';
+import prisma from '$lib/prisma.server';
 import { getPopularArticles } from '$lib/goatcounter.server';
 import { GOATCOUNTER_DISABLED } from '$env/static/private';
 
