@@ -7,7 +7,7 @@ import { uint8ArrayToBase64 } from 'uint8array-extras';
  * @returns {Promise<FileUpload & { file: File }>}
  */
 export const createFileUploadObject = async (file, name, hash) => {
-	// We just need 16kb to validate image.
+	// We just need 16kb to validate content.
 	const fileSnippet =
 		file.size > 16_384 ? await file.slice(0, 16_384).arrayBuffer() : await file.arrayBuffer();
 

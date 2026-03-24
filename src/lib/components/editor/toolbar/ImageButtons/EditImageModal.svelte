@@ -121,6 +121,7 @@
 				currentImageType = 'internal';
 				// Take me to "Browse" and search for content.name
 				searchQuery = imageData.name;
+				isLoading = false;
 				return;
 			}
 

@@ -226,22 +226,11 @@
 
 			const imageData = await handleNewImage(file);
 
-
 			if (imageData?.file) {
 				await saveContent(id, imageData.hash, imageData.file);
-				return editor.update(
-					() => {
-						const node = getNodeFromDOMNode(element);
-
-						if (isImageNode(node)) {
-							node.setSrc(imageData.hash);
-						}
-					},
-					{ tag: 'history-merge' }
-				);
 			}
 
-			if (imageData.linkType === 'internal') {
+			if (imageData) {
 				return editor.update(
 					() => {
 						const node = getNodeFromDOMNode(element);
