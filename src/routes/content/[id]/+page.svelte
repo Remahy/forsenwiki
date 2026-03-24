@@ -30,6 +30,8 @@
 	/** @type {{ name: string }} */
 	const author = result.author;
 
+	const allowModify = $page.data.isModerator || author.name === $page.data.session?.user?.name;
+
 	/** @type {string} */
 	let name = $state(result.name);
 
@@ -157,9 +159,9 @@
 					<tbody>
 						<tr>
 							<td class="p-4"><strong>Name</strong></td>
-							{#if $page.data.isModerator}
+							{#if allowModify}
 								<td class="pl-4">
-									<div class="flex">
+									<div class="flex mt-1 mr-1">
 										<input
 											bind:value={name}
 											type="text"
@@ -167,7 +169,7 @@
 											class="input-color w-full py-4 placeholder:text-inherit"
 											placeholder={result.name}
 										/>
-										<Button class="px-4" on:click={updateName} disabled={isUpdating}>Save</Button>
+										<Button class="px-4 rounded-l-none!" on:click={updateName} disabled={isUpdating}>Save</Button>
 									</div>
 								</td>
 							{:else}
@@ -226,7 +228,7 @@
 		</Box>
 	</div>
 
-	{#if $page.data.isModerator || author.name === $page.data.session?.user?.name}
+	{#if allowModify}
 		<div>
 			<Button on:click={removeContent}><Trash2Icon /> Delete</Button>
 		</div>
