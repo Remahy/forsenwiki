@@ -1,10 +1,10 @@
 <script>
-	import { Loader2Icon } from 'lucide-svelte';
+	import { LoaderCircleIcon } from 'lucide-svelte';
 
 	let { size = undefined } = $props();
 </script>
 
 <div role="status" class="inline-block animate-spin">
-	<Loader2Icon {size} />
+	<LoaderCircleIcon {size} />
 	<span class="sr-only">Loading...</span>
 </div>

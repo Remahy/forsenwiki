@@ -18,9 +18,10 @@ Don't have Postgres installed locally? Skip this and use the dockerfile.
 
 ### Twitch console
 
-- Add `http://localhost:5080/auth/callback/twitch` to make "Login" work.
+- Add `http://localhost:5173/auth/callback/twitch` to make "Login" work when not using Dockerfile.
+- Add `http://localhost:3000/auth/callback/twitch` to make "Login" work when using Dockerfile.
 
 ### Dockerfile
 
-- Compose up, and visit `http://localhost:5080`.
+- Compose up, and visit `http://localhost:3000`.
 - When updating frontend code, stop the service and then delete the sveltekit container and the sveltekit image and regenerate it with compose up.

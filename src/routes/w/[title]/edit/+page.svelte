@@ -3,9 +3,11 @@
 	import { FileIcon, FileUpIcon, HistoryIcon } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { browser } from '$app/environment';
 
-	import { resetIndexedDb } from '$lib/yjs/resetIndexedDb';
+	import { resetContent } from '$lib/utils/indexedDb/content';
+	import { resetArticle } from '$lib/utils/indexedDb/article';
 	import { updateArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';
@@ -14,11 +16,15 @@
 	import Clown from '$lib/components/Clown.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Container from '$lib/components/Container.svelte';
-	import { validateArticle } from '$lib/components/editor/validations';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 	import { WIKI_PATH } from '$lib/constants/constants';
+	import { uploadImages } from '$lib/s3/uploadContentHandlers';
+	import { uploadModal } from '$lib/stores/modal';
+	import UploadingContentModal from '$lib/components/UploadingContentModal.svelte';
+	import { resetUploadingContentModalGlobals } from '$lib/components/uploadingContentModalGlobals.svelte';
+	import { runValidations } from '$lib/components/editor/validations';
 
 	const {
 		post: { id, title, rawTitle },
@@ -67,6 +73,30 @@
 		error = null;
 	};
 
+	const reset = async (reload = true) => {
+		isUploading = true;
+
+		try {
+			await resetArticle(id);
+			await resetContent(id);
+			isUploading = false;
+
+			if (reload) {
+				window.location.reload();
+			}
+		} catch (err) {
+			console.error(err);
+			if (err instanceof Error) {
+				error = err;
+				return;
+			}
+
+			error = new Error(
+				"Unknown error occurred while trying to delete this article's draft cache."
+			);
+		}
+	};
+
 	const submit = async () => {
 		if (!yjsDocMap) {
 			return;
@@ -82,64 +112,56 @@
 			return;
 		}
 
-		editor.read(async () => {
-			isUploading = true;
-
-			let res;
-
-			try {
-				validateArticle(editor);
-
-				res = await updateArticle(title, yjsDocMap, newTitle);
-			} catch {
-				// noop
-			} finally {
-				isUploading = false;
-			}
-
-			if (!res) {
-				return;
-			}
-
-			if (res.status === 200) {
-				persistence.clearData();
-
-				const json = await res.json();
-				const { title /* postUpdate: { id } */, partialErrors } = json;
-
-				const searchParams = new URLSearchParams();
-
-				if (partialErrors?.length) {
-					searchParams.set('partialErrors', JSON.stringify(partialErrors));
-				}
-
-				const stringSearchParams = searchParams.toString() ? `?${searchParams.toString()}` : '';
-
-				goto(`/w/${title}${stringSearchParams}`);
-			} else if (res.status >= 400) {
-				const json = await res.json();
-				error = json;
-			}
-		});
-	};
-
-	const reset = async () => {
 		isUploading = true;
 
+		let res;
+
 		try {
-			await resetIndexedDb(id);
-			isUploading = false;
-			window.location.reload();
+			await runValidations(editor);
+
+			uploadModal.set({ component: UploadingContentModal, isOpen: true });
+
+			// Upload images to S3.
+			await uploadImages(editor, id);
+
+			res = await editor.read(() => updateArticle(title, yjsDocMap, newTitle));
 		} catch (err) {
-			if (err instanceof Error) {
-				error = err;
-				return;
+			console.error(err);
+			error = new Error(err?.toString());
+		} finally {
+			isUploading = false;
+		}
+
+		if (!res) {
+			return;
+		}
+
+		if (res.status === 200) {
+			persistence.clearData();
+
+			const json = await res.json();
+			const { title /* postUpdate: { id } */, partialErrors } = json;
+
+			// This is used to generate a searchParam string.
+			// eslint-disable-next-line svelte/prefer-svelte-reactivity
+			const searchParams = new URLSearchParams();
+
+			if (partialErrors?.length) {
+				searchParams.set('partialErrors', JSON.stringify(partialErrors));
 			}
 
-			error = new Error(
-				"Unknown error occurred while trying to delete this article's draft cache."
-			);
+			const stringSearchParams = searchParams.toString() ? `?${searchParams.toString()}` : '';
+
+			await reset(false);
+
+			goto(`${resolve('/w/[title]', { title })}${stringSearchParams}`);
+		} else if (res.status >= 400) {
+			const json = await res.json();
+			error = json;
 		}
+
+		$uploadModal.isOpen = false;
+		resetUploadingContentModalGlobals();
 	};
 
 	onMount(() => {
@@ -255,7 +277,7 @@
 			{/if}
 
 			<span class="hidden lg:inline" id="submit">Submit</span>
-			<FileUpIcon class="inline lg:hidden min-w-6" />
+			<FileUpIcon class="inline min-w-6 lg:hidden" />
 		</Button>
 	</Box>
 

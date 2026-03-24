@@ -19,17 +19,19 @@ export class DeprecatedVideoEmbedNode extends FallbackNode {
 	 * @param {NodeKey} [key]
 	 */
 	constructor(platform, src, width, height, format, key) {
-		super({
-			format,
-			key,
-			data: JSON.stringify({
-				type: DeprecatedVideoEmbedNode.getType(),
-				platform,
-				src,
-				width,
-				height,
-			}),
-		});
+		super(
+			JSON.stringify({
+				format,
+				key,
+				data: JSON.stringify({
+					type: DeprecatedVideoEmbedNode.getType(),
+					platform,
+					src,
+					width,
+					height,
+				}),
+			})
+		);
 	}
 
 	static getType() {

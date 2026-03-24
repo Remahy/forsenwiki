@@ -5,7 +5,6 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 
 import prisma from '$lib/prisma';
 import { AccountTooYoung } from '$lib/errors/auth/AccountTooYoung';
-import { AccountIsSpecial } from '$lib/errors/auth/AccountIsSpecial';
 import { NoUser } from '$lib/errors/auth/NoUser';
 import { version } from '$lib/utils/version';
 
@@ -102,11 +101,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 						/**
 						 * @type {{ created_at: string, type: '' | 'staff' | 'admin' | 'global_mod' }}
 						 */
-						const { created_at, type } = profile;
-
-						if (type.length) {
-							throw new AccountIsSpecial('Your Twitch account is too special');
-						}
+						const { created_at } = profile;
 
 						const isWhitelisted = await prisma.whitelistedAccounts.findFirst({
 							where: {
@@ -120,7 +115,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 							new Date().getTime() - new Date(created_at).getTime() < 31_556_952_000 * 2 &&
 							!isWhitelisted
 						) {
-							throw new AccountTooYoung('Your Twitch account is too young');
+							throw new AccountTooYoung('Your Twitch account is too new.');
 						}
 
 						// https://authjs.dev/reference/core/types#profile

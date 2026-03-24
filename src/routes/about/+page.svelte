@@ -1,5 +1,6 @@
 <script>
 	import { AtSignIcon } from 'lucide-svelte';
+	import { resolve } from '$app/paths';
 	import GitHub from '$lib/components/icons/GitHub.svelte';
 	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
 	import Discord from '$lib/components/icons/Discord.svelte';
@@ -13,13 +14,17 @@
 <div class="container mx-auto p-8 lg:py-12">
 	<section class="prose prose-lg dark:prose-invert w-full max-w-[unset]">
 		<h1>About</h1>
-
 		<p>
 			Forsen related wiki. Forsen mixes, news, big plays, tilts. Everything that is somewhat related
 			to forsen.
 		</p>
 
-		<h3>THIRD PARTY LICENSES</h3>
+		<h2>Changelogs</h2>
+		<p>
+			<a href={resolve('/changelogs')} rel="changelogs">View Changelogs.</a>
+		</p>
+
+		<h2>THIRD PARTY LICENSES</h2>
 		<p>
 			This wiki uses <a href="https://github.com/org-ppsl" target="github-org-ppsl">PPSL</a> code.
 			PPSL code is licensed under
@@ -28,21 +33,14 @@
 				target="ppsl-code-license">GNU AFFERO GENERAL PUBLIC LICENSE Version 3</a
 			>.
 		</p>
-
 		<br />
-
 		<p><a href="/THIRD-PARTY-LICENSES.txt">Full THIRD-PARTY-LICENSES available here.</a></p>
 
-		<h3>Links</h3>
-
+		<h2>Links</h2>
 		<ul>
 			<li>
-				<a
-					href="https://discord.gg/ht5TqyEABp"
-					target="discord.gg/kappawiki"
-					class="flex items-center gap-2"
-				>
-					<Discord size="18" /> <span>Discord - KappaWiki</span></a
+				<a href="https://discord.gg/yp7ST3BDYt" target="discord.gg" class="flex items-center gap-2">
+					<Discord size="18" /> <span>Discord - The Fors Emotebank</span></a
 				>
 			</li>
 			<li>
@@ -65,21 +63,18 @@
 				</a>
 			</li>
 		</ul>
-
 		<p>
 			<strong>Contact email:</strong> info<AtSignIcon class="inline" />forsen.wiki
 		</p>
 
-		<h3>Privacy policy</h3>
-
+		<h2>Privacy policy</h2>
 		<p>
-			<a href="/privacy">Visit Privacy page.</a>
+			<a href={resolve('/privacy')} rel="privacy-policy">View Privacy Policy.</a>
 		</p>
 
-		<h3>Terms of Service</h3>
-
+		<h2>Terms of Service</h2>
 		<p>
-			<a href="/terms">Visit Terms of Service page.</a>
+			<a href={resolve('/terms')} rel="terms-of-service">View Terms of Service.</a>
 		</p>
 	</section>
 </div>

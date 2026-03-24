@@ -13,11 +13,11 @@ export const createArticle = async (title, yDoc) => {
 
 	const { length } = new TextEncoder().encode(body);
 
-	const TEN_MB = 10 * 1024 * 1024;
+	const TEN_MiB = 10 * 1024 * 1024;
 
-	if (length > TEN_MB) {
+	if (length > TEN_MiB) {
 		const error = new Error(
-			`Body of ${length} exceeds limit of ${TEN_MB} bytes (10MB). Submit a smaller snippet of your article and add to it afterwards.`
+			`Body of ${length} (~${(length / 1_048_576).toFixed(2)} MiB) exceeds limit of ${TEN_MiB} bytes (10 MiB). Submit a smaller snippet of your article and add to it afterwards.`
 		);
 		throw error;
 	}

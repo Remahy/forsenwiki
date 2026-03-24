@@ -1,18 +1,31 @@
 <script>
 	import { XIcon } from 'lucide-svelte';
 	import Button from '$lib/components/Button.svelte';
-	import { modal } from '$lib/stores/modal';
-	import Select from '$lib/components/Select.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
-	import { MAX_IMAGE_SIZE_MIB, IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
+	import Link from '$lib/components/Link.svelte';
+	import { modal } from '$lib/stores/modal';
+	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
+	import { loadContent, saveContent } from '$lib/utils/indexedDb/content';
+	import { validateContent } from '$lib/api/content';
+	import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
+	import { searchRequest } from '$lib/api/search';
+	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
+	import { mimetypes } from '$lib/s3/limits';
+	import { IMAGE_OFF, LUCIDE_ICON_LOADER } from '../../plugins/Image/Image';
+	import { handleNewImage } from '../../utils/handleNewImage';
+	import { createFileUploadObject } from '../../utils/fileUploadObject';
+	import { editorGlobals } from '../../editorGlobals.svelte';
+	import { FileErrorCodes } from '../../utils/handleNewFile';
+
+	const id = $derived(editorGlobals.articleId);
 
 	/**
 	 * @typedef {Object} Props
 	 * @property {string} [src]
 	 * @property {string} [altText]
-	 * @property {number} [width]
-	 * @property {number} [height]
-	 * @property {(data:import('../../plugins/Image/Image').ImagePayload) => void} onSubmit
+	 * @property {number | 'inherit'} [width]
+	 * @property {number | 'inherit'} [height]
+	 * @property {(data: import('../../plugins/Image/Image').ImagePayload) => void} onSubmit
 	 */
 
 	/** @type {Props} */
@@ -24,13 +37,16 @@
 		onSubmit,
 	} = $props();
 
-	/** @type {HTMLSelectElement | null} */
-	let selectLinkTypeElement = $state(null);
+	let newSrc = $state('');
+	let newSrcName = $state('');
+	/** @type {File | null} */
+	let newFile = $state(null);
+	let newHash = $state('');
 
 	/** @type {HTMLInputElement | null} */
 	let inputElement = $state(null);
 
-	let currentLinkType = $state('new');
+	let currentImageType = $state('new');
 
 	let isLoading = $state(false);
 
@@ -41,71 +57,105 @@
 	let originalImageHeight = $state(0);
 	let originalImageWidth = $state(0);
 
+	let searchQuery = $state('');
+	let isSearching = $state(false);
+	/** @type {Array<{ title: string, rawTitle: string, lastUpdated: string, id: string }>} */
+	let searchResults = $state([]);
+
+	let previewImage = $derived.by(async () => {
+		let value = newSrc || src;
+
+		if (value.startsWith('https://') || value.startsWith('data:')) {
+			return value;
+		}
+
+		const image = await loadContent(id, value);
+
+		if (image) {
+			return image.url;
+		}
+
+		if (currentImageType === 'internal') {
+			return getImageCacheURL(value).toString();
+		}
+
+		console.error('Failed loading image from IndexedDb');
+		return IMAGE_OFF;
+	});
+
+	/** @param {{ rawTitle: string, title?: string }} value */
+	const handleInternalImage = (value) => {
+		if (!value.title) {
+			return;
+		}
+
+		if (newFile) {
+			originalImageWidth = 0;
+			originalImageHeight = 0;
+			width = 'inherit';
+			height = 'inherit';
+		}
+
+		newSrc = value.title;
+		newSrcName = value.rawTitle;
+		newHash = value.title;
+		newFile = null;
+		isValidImage = true;
+	};
+
 	/** @param {HTMLInputElement} target */
-	const handleNewImage = (target) => {
-		return new Promise((resolve, reject) => {
-			isLoading = true;
-			/** @type {Blob | undefined} */
-			const file = target.files?.[0];
+	const handleNewImageWrapper = async (target) => {
+		const file = target.files?.[0];
+		if (!file) {
+			return;
+		}
 
-			if (file && file?.size) {
-				const size = file.size / 1048576;
+		try {
+			const imageData = await handleNewImage(file);
 
-				if (size > MAX_IMAGE_SIZE_MIB) {
-					isValidImage = false;
-					error = `File size too large: Max is 5 MiB. Uploaded file size: ~${size.toFixed(2)} MiB`;
+			originalImageWidth = imageData.width;
+			originalImageHeight = imageData.height;
+			width = imageData.width;
+			height = imageData.height;
 
-					if (inputElement) {
-						inputElement.value = '';
-					}
-
-					src = '';
-					reject(null);
-					return;
-				}
-
-				const fileReader = new FileReader();
-				fileReader.readAsDataURL(file);
-				const img = new Image();
-
-				fileReader.addEventListener('load', () => {
-					if (typeof fileReader.result === 'string') {
-						resolve(fileReader.result);
-						src = fileReader.result;
-						img.src = fileReader.result;
-						isValidImage = true;
-					}
-					isLoading = false;
-				});
-
-				img.onload = () => {
-					originalImageWidth = img.width;
-					originalImageHeight = img.height;
-					width = img.width;
-					height = img.height;
-				};
-
-				img.onerror = () => {
-					isValidImage = false;
-
-					if (inputElement) {
-						inputElement.value = '';
-					}
-
-					src = '';
-					error = 'Image is invalid.';
-					reject(null);
-				};
-
-				fileReader.addEventListener('error', () => {
-					error = /** @type {string} */ (fileReader.error?.message);
-				});
-			} else {
-				isValidImage = false;
-				error = 'Image is invalid.';
-				reject(null);
+			if (imageData.linkType === 'internal') {
+				currentImageType = 'internal';
+				// Take me to "Browse" and search for content.name
+				searchQuery = imageData.name;
+				isLoading = false;
+				return;
 			}
-		});
+
+			if (imageData.file) {
+				newFile = imageData.file;
+				newSrc = imageData.src;
+				newSrcName = imageData.name;
+				newHash = imageData.hash;
+				isValidImage = true;
+			}
+
+			isLoading = false;
+			return imageData.src;
+		} catch (err) {
+			console.error(err);
+			if (err instanceof ErrorWithCode) {
+				error = err.message;
+				switch (err.code) {
+					case FileErrorCodes.TOO_LARGE:
+					case FileErrorCodes.INVALID_IMAGE:
+					case FileErrorCodes.DIMENSIONS_TOO_LARGE:
+						isValidImage = false;
+
+						if (inputElement) {
+							inputElement.value = '';
+						}
+
+						newSrc = '';
+
+						break;
+				}
+			}
+		}
 	};
 
 	/** @param {Event} e */
@@ -115,10 +165,9 @@
 		/** @type {HTMLInputElement} */
 		const target = /** @type {any} */ (e.target);
 		if (target) {
-			// const value = target.value;
 			try {
-				if (currentLinkType === 'new') {
-					await handleNewImage(target);
+				if (currentImageType === 'new') {
+					await handleNewImageWrapper(target);
 				}
 			} catch {
 				// noop
@@ -132,10 +181,82 @@
 		$modal.isOpen = false;
 	};
 
-	const handleSubmit = () => {
-		onSubmit({ src, altText, width: Number(width), height: Number(height) });
+	const handleSubmit = async () => {
+		isValidImage = false;
+
+		if (newHash && newFile) {
+			try {
+				const fileUploadObject = await createFileUploadObject(newFile, newSrcName, newHash);
+
+				const res = await validateContent([fileUploadObject]);
+
+				const { status } = res;
+
+				if (status !== 200) {
+					const errorJSON = await res.json();
+					const parsedMessage = JSON.parse(errorJSON.message);
+
+					/**
+					 * @type {Array<{ index: number, message: string }>}
+					 */
+					const errors = parsedMessage;
+
+					if (errors[0].index === -1) {
+						// -1 index means global error.
+						error = errors[0].message;
+					} else {
+						error = errors.map(({ message }) => message).join('\n');
+					}
+
+					throw new Error('Error with image validation');
+				}
+			} catch (err) {
+				console.error(err);
+				return;
+			}
+
+			await saveContent(id, newHash, newFile);
+			onSubmit({ src: newHash, altText, width: Number(width), height: Number(height) });
+		} else if (newSrc) {
+			onSubmit({ src: newSrc, altText, width: Number(width), height: Number(height) });
+		}
+
 		$modal.isOpen = false;
 	};
+
+	$effect(() => {
+		if (!searchQuery) {
+			return;
+		}
+
+		isSearching = true;
+
+		// Debouncer
+		const handler = setTimeout(async () => {
+			try {
+				const res = await searchRequest(searchQuery, ['content'], {
+					contentTypes: ['image'],
+					// Todo allow loading in of more pages.
+					page: 0,
+					orderBy: 'desc',
+				});
+				const json = await res.json();
+				searchResults = json;
+				console.log(json);
+			} catch (err) {
+				console.error(err);
+				error = 'Search returned an error.';
+			}
+
+			isSearching = false;
+		}, 750);
+
+		// Cleanup function to clear the timeout if the search query changes before the timeout completes
+		return () => {
+			clearTimeout(handler);
+			isSearching = false;
+		};
+	});
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
@@ -149,51 +270,116 @@
 	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
 		<label class="flex flex-col gap-2" for="select">
 			<strong>Image source</strong>
-			<Select
-				id="select"
-				class="grow !p-2 text-base"
-				bind:ref={selectLinkTypeElement}
-				bind:value={currentLinkType}
-				on:click={() => selectLinkTypeElement?.dispatchEvent(new Event('change'))}
-			>
-				<option value="new" selected class="text-lg">New</option>
-				<option value="internal" hidden class="text-lg">Existing</option>
-			</Select>
+			<div class="flex">
+				<Button
+					class="grow rounded-r-none! {currentImageType === 'internal' ? '' : 'opacity-50'}"
+					on:click={() => (currentImageType = 'internal')}>Browse</Button
+				>
+				<Button
+					class="grow rounded-l-none! {currentImageType === 'new' ? '' : 'opacity-50'}"
+					on:click={() => (currentImageType = 'new')}>Upload</Button
+				>
+			</div>
+
+			{#if src || newSrc}
+				<figure
+					class="bg-dark forsen-wiki-theme-border mx-auto flex min-h-50 min-w-50 items-center justify-center border"
+				>
+					{#await previewImage}
+						<img class="animate-spin rounded-full" src={LUCIDE_ICON_LOADER} alt={altText} />
+					{:then result}
+						<img
+							src={result}
+							alt={altText || `${currentImageType === 'new' ? 'Uploaded ' : ''}image preview`}
+							class="max-h-100"
+						/>
+					{/await}
+				</figure>
+			{/if}
 		</label>
 
-		<label class="flex flex-col gap-2">
-			<strong
-				>{currentLinkType === 'internal'
-					? 'Search for image'
-					: src
-						? 'Replace image'
-						: 'New image'}</strong
-			>
-			<input
-				type="file"
-				accept="image/*"
-				class="forsen-wiki-theme-border rounded-sm border p-2"
-				oninput={handleInputChange}
-				bind:this={inputElement}
-				onclick={() => inputElement?.dispatchEvent(new Event('change'))}
-			/>
+		{#if currentImageType === 'new'}
+			<label class="flex flex-col gap-2">
+				<strong>{src.length ? 'Replace image' : 'New image'}</strong>
+				<input
+					type="file"
+					accept={mimetypes.image.flatMap((v) => v).join(', ')}
+					class="forsen-wiki-theme-border rounded-sm border p-2"
+					oninput={handleInputChange}
+					bind:this={inputElement}
+					onclick={() => inputElement?.dispatchEvent(new Event('change'))}
+				/>
 
-			{#if isLoading}
-				<div>
-					<Spinner />
+				{#if newSrc.length}
+					<div>File selected: {newSrcName}</div>
+				{/if}
+
+				{#if isLoading}
+					<div>
+						<Spinner />
+					</div>
+				{/if}
+
+				{#if error}
+					<span class="font-bold text-red-700">{error}</span>
+				{/if}
+			</label>
+		{/if}
+
+		{#if currentImageType === 'internal'}
+			<div>
+				<div class="flex flex-col gap-2">
+					<strong>Search by name</strong>
+					<input class="input-color w-full rounded-sm p-2" bind:value={searchQuery} />
 				</div>
-			{/if}
 
-			{#if error}
-				<span class="font-bold text-red-700">{error}</span>
-			{/if}
-		</label>
+				{#if isSearching}
+					<div class="flex grow items-center gap-2">
+						<Spinner size="16" />
+						<span>Searching for "{searchQuery}"...</span>
+					</div>
+				{:else}
+					<strong>Results for "{searchQuery}"</strong>
+				{/if}
 
-		{#if src.length}
+				<div class="prose dark:prose-invert relative mt-2 flex max-w-[unset]">
+					<table class="w-full table-auto">
+						<tbody>
+							{#each searchResults as result (result.id)}
+								<tr class={newSrc === result.title ? 'bg-black/10 dark:bg-white/10' : ''}>
+									<td class="max-w-xs">
+										<div class="truncate">
+											<Link href="/content/{result.id}" target="_blank">
+												<strong>{result.rawTitle}</strong>
+											</Link>
+										</div>
+									</td>
+									<td
+										><Button
+											class="min-h-0! p-2! text-xs"
+											on:click={() => handleInternalImage(result)}>Select</Button
+										>{newSrc === result.title ? '(Selected)' : ''}</td
+									>
+								</tr>
+							{:else}
+								<tr>
+									<th><p>Found nothing.</p></th>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		{/if}
+
+		{#if src || newSrc}
 			<label class="flex flex-col gap-2">
 				<strong>Alt text</strong>
 				<input class="input-color rounded-sm p-2" bind:value={altText} />
 			</label>
+		{/if}
+
+		{#if newSrc}
 			<div class="flex gap-16">
 				<label class="inline-flex grow flex-col gap-2">
 					<span>
@@ -204,7 +390,7 @@
 					</span>
 					<input
 						type="number"
-						min={IMAGE_MIN_WIDTH}
+						placeholder="Inherit"
 						class="input-color w-full rounded-sm p-2"
 						bind:value={width}
 					/>
@@ -218,7 +404,7 @@
 					</span>
 					<input
 						type="number"
-						min={IMAGE_MIN_HEIGHT}
+						placeholder="Inherit"
 						class="input-color w-full rounded-sm p-2"
 						bind:value={height}
 					/>

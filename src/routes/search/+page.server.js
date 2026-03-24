@@ -1,13 +1,7 @@
-import { _getSearch } from '../api/search/+server.js';
+import { _getSearch, _parseSearchParamsForSearch } from '../api/search/+server.js';
 
 export const load = async ({ url }) => {
-	const rawQuery = url.searchParams.get('query');
+	const { query, types, options } = _parseSearchParamsForSearch(url);
 
-	if (!rawQuery) {
-		return { results: [] };
-	}
-
-	const query = rawQuery.trim();
-
-	return _getSearch(query);
+	return _getSearch(query, types, options);
 };

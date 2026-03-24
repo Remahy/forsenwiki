@@ -6,7 +6,6 @@
 
 	import { modal } from '$lib/stores/modal';
 	import Button from '$lib/components/Button.svelte';
-	import Select from '$lib/components/Select.svelte';
 	import { searchRequest } from '$lib/api/search';
 	import { sanitizeUrl } from '../../utils/sanitizeUrl';
 	import Spinner from '$lib/components/Spinner.svelte';
@@ -39,9 +38,6 @@
 
 	let finalUrl = $state();
 
-	/** @type {HTMLSelectElement | null} */
-	let selectLinkTypeElement = $state(null);
-
 	/** @type {HTMLInputElement | null} */
 	let inputElement = $state(null);
 
@@ -51,28 +47,23 @@
 
 	let error = $state('');
 
+	let rawTitle = $state('');
+
 	let searchQuery = $state('');
 	let isSearching = $state(false);
 	/** @type {Array<{ title: string, rawTitle: string, lastUpdated: string, id: string }>} */
 	let searchResults = $state([]);
 
-	let rawTitle = $state('');
-
-	/** @param {Event} e */
-	const linkType = (e) => {
-		/** @type {HTMLSelectElement} */
-		const target = /** @type {any} */ (e.target);
-		if (target) {
-			// These are only used as placeholders, don't action on them.
-			const value = target.value;
-
-			if (!['external', 'internal'].includes(value)) {
-				return;
-			}
-
-			currentLinkType = value;
-			error = '';
+	/** @param {string} value */
+	const linkType = (value) => {
+		if (!['external', 'internal'].includes(value)) {
+			return;
 		}
+
+		currentLinkType = value;
+		error = '';
+
+		inputElement?.dispatchEvent(new Event('input', { bubbles: true }));
 	};
 
 	const handleDeleteLink = () => {
@@ -156,7 +147,7 @@
 		// Debouncer
 		const handler = setTimeout(async () => {
 			try {
-				const res = await searchRequest(searchQuery, 'article');
+				const res = await searchRequest(searchQuery, ['article']);
 				searchResults = await res.json();
 			} catch (err) {
 				console.error(err);
@@ -195,20 +186,16 @@
 	<main class="forsen-wiki-theme-border flex flex-col gap-16 border-b p-6">
 		<label class="flex flex-col gap-2" for="select">
 			<strong>Type of link</strong>
-			<Select
-				id="select"
-				class="grow p-2"
-				bind:ref={selectLinkTypeElement}
-				on:change={linkType}
-				bind:value={currentLinkType}
-				on:click={() => {
-					selectLinkTypeElement?.dispatchEvent(new Event('change', { bubbles: true }));
-					inputElement?.dispatchEvent(new Event('input', { bubbles: true }));
-				}}
-			>
-				<option value="external" selected class="text-lg">External</option>
-				<option value="internal" class="text-lg">Internal</option>
-			</Select>
+			<div class="flex">
+				<Button
+					class="grow rounded-r-none! {currentLinkType === 'internal' ? '' : 'opacity-50'}"
+					on:click={() => linkType('internal')}>Internal</Button
+				>
+				<Button
+					class="grow rounded-l-none! {currentLinkType === 'external' ? '' : 'opacity-50'}"
+					on:click={() => linkType('external')}>External</Button
+				>
+			</div>
 		</label>
 
 		{#if currentLinkType === 'internal' && finalUrl}
@@ -253,18 +240,21 @@
 							<tbody>
 								{#each searchResults as result (result.id)}
 									<tr class={internalId === result.id ? 'bg-black/10 dark:bg-white/10' : ''}>
-										<td
-											><Link href="/w/{result.title}" target="_blank">
+										<td>
+											<Link href="/w/{result.title}" target="_blank">
 												<strong>{result.rawTitle}</strong>
-											</Link></td
-										>
+											</Link>
+										</td>
 										<td>{formatRelative(result.lastUpdated, Date.now(), { locale: enGB })}</td>
-										<td
-											><Button
-												class="!min-h-0 !p-2 text-xs"
-												on:click={() => handleInternalLink(result)}>Select</Button
-											>{internalId === result.id ? '(Selected)' : ''}</td
-										>
+										<td>
+											<Button
+												class="min-h-0! p-2! text-xs"
+												on:click={() => handleInternalLink(result)}
+											>
+												<span>Select</span>
+											</Button>
+											<span>{internalId === result.id ? '(Selected)' : ''}</span>
+										</td>
 									</tr>
 								{:else}
 									<tr>

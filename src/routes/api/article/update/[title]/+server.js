@@ -10,23 +10,22 @@ import {
 } from '$lib/yjs/utils';
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { validateArticle } from '$lib/components/editor/validations';
 import { InvalidArticle } from '$lib/errors/InvalidArticle';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/article/read';
 import { updateArticleTitle, updateArticleYPost } from '$lib/db/article/update';
-import { adjustAndUploadImages } from '$lib/components/editor/validations/images.server';
 import { invalidateArticleCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/article/html';
 import { articleConfig } from '$lib/components/editor/config/article';
-import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 import toHTML from '$lib/worker/toHTML';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-import { adjustInternalLinks } from '$lib/components/editor/validations/internalLinks.server';
+import { isSystem } from '$lib/utils/isSystem';
+import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
+import { validateUploads, pruneFailedUploads } from '$lib/s3/validateUploads.server';
+import { serverRunValidations } from '$lib/components/editor/validations/index.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import { _emit } from '../../../adonis/frontpage/+server';
-import { isSystem } from '$lib/utils/isSystem';
 
 /**
  * @typedef {Array<{ code: string, field: string, value?: string }>} PartialErrors
@@ -64,16 +63,16 @@ const validateTitle = async (post, newTitle, partialErrors) => {
 };
 
 export async function POST({ request, locals, params }) {
-	/**
-	 * @type {PartialErrors}
-	 */
-	const partialErrors = [];
-
 	const { isBlocked, isModerator, auth } = locals;
 
 	if (isBlocked) {
 		return ForbiddenError();
 	}
+
+	/**
+	 * @type {PartialErrors}
+	 */
+	const partialErrors = [];
 
 	const session = await auth();
 	if (!session?.user?.id || !session?.user?.name) {
@@ -121,13 +120,20 @@ export async function POST({ request, locals, params }) {
 		e = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), combinedInitialUpdate);
 		const editor = e.editor;
 
-		// Does not modify the editor.
-		validateArticle(editor);
+		await serverRunValidations(editor);
 
-		// Modifies the editor.
-		await adjustAndUploadImages(editor, post.title, { id: session.user.id });
-		await adjustVideoEmbedNodeSiblings(editor);
-		await adjustInternalLinks(editor);
+		const oldImageHashes = getUniqueImageHashes(
+			getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), currentUpdate).editor
+		);
+		const currentImageHashes = getUniqueImageHashes(editor).map((hash, index) => ({ index, hash }));
+		const newHashes = currentImageHashes.filter(({ hash }) => !oldImageHashes.includes(hash));
+		const failedUploads = await validateUploads(newHashes);
+		// Remove failed uploads from database.
+		await pruneFailedUploads(failedUploads.map(({ hash }) => hash), session.user.id);
+
+		if (failedUploads.length) {
+			throw `FAILED_UPLOADS: ${failedUploads.map(({ index }) => `Image index [${index}] doesn't exist or failed to upload.`).join(' ')}`;
+		}
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidArticle(err);

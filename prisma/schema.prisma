@@ -151,6 +151,9 @@ model Content {
   id String @id @default(cuid())
 
   hash String @unique
+  type String?
+  contentType String?
+  metadata Json @default("{}")
   name String
 
   author   User   @relation(fields: [authorId], references: [id])

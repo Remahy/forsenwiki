@@ -10,7 +10,12 @@
 <Container class="p-8">
 	<section class="prose prose-lg dark:prose-invert w-full max-w-[unset]">
 		<h1>Terms & Conditions</h1>
-		<p>Effective date: May 8th, 2024</p>
+		<p>Effective date: April 12, 2026</p>
+
+		<hr />
+		<p>forsen.wiki is a user-generated content platform.</p>
+		<hr />
+
 		<ol>
 			<li
 				data-content="Primum non nocere."
@@ -37,11 +42,7 @@
 			from Twitch accounts that
 		</p>
 		<ul>
-			<li><strong>are younger than 2 years</strong>,</li>
-			<li>
-				and/or have a special user type like <strong>admin</strong>, <strong>global_mod</strong> or
-				<strong>staff</strong>. <small>(Use another account)</small>
-			</li>
+			<li><strong>are younger than 2 years</strong>.</li>
 		</ul>
 	</section>
 </Container>

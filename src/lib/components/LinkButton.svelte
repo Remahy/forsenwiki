@@ -1,4 +1,5 @@
 <script>
+	/* eslint-disable svelte/no-navigation-without-resolve */
 	import { navigating } from '$app/state';
 	import Spinner from './Spinner.svelte';
 
@@ -24,7 +25,7 @@
 	class:pointer-events-none={navigatingToInternalHref}
 >
 	{#if navigatingToInternalHref}
-		<Spinner size="16" />
+		<div class="flex h-full items-center justify-center"><Spinner size="16" /></div>
 	{/if}
 	{@render children?.()}
 </a>

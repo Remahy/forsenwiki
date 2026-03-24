@@ -1,6 +1,4 @@
 <script>
-	const imageCache = new Set();
-
 	/** @type {import('lexical').LexicalCommand<MouseEvent>} */
 	const RIGHT_CLICK_IMAGE_COMMAND = createCommand('RIGHT_CLICK_IMAGE_COMMAND');
 
@@ -26,12 +24,11 @@
 	} from '$lib/components/editor/utils/getSelection';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import ImageResizer from './ImageResizer.svelte';
-	import {
-		IMAGE_OFF,
-		LUCIDE_ICON_LOADER,
-		TRANSPARENT_IMAGE,
-		$isImageNode as isImageNode,
-	} from './Image';
+	import { IMAGE_OFF, LUCIDE_ICON_LOADER, $isImageNode as isImageNode } from './Image';
+	import { loadContent } from '$lib/utils/indexedDb/content';
+	import { editorGlobals } from '../../editorGlobals.svelte';
+
+	const id = $derived(editorGlobals.articleId);
 
 	/**
 	 * @typedef {Object} Props
@@ -60,16 +57,17 @@
 
 	let isFocused = $derived($isSelected || isResizing);
 
-	let promise = new Promise((resolve) => {
-		if (imageCache.has(src)) {
-			resolve(src);
-		} else {
-			const img = new Image();
-			img.src = src;
-			img.onload = () => {
-				imageCache.add(src);
-				resolve(src);
-			};
+	let promise = $derived.by(async () => {
+		try {
+			const image = await loadContent(id, src);
+
+			if (image) {
+				return image.url;
+			} else {
+				return editor.read(() => node.getRenderedSrc());
+			}
+		} catch (err) {
+			console.error('Failed loading image from IndexedDb', err);
 		}
 	});
 
@@ -235,12 +233,12 @@
 				alt={altText}
 			/>
 		</figure>
-	{:then}
+	{:then value}
 		<img
 			style:width={widthCss}
 			style:height={heightCss}
 			class="m-0"
-			src={src === TRANSPARENT_IMAGE ? IMAGE_OFF : src}
+			src={value === '' ? IMAGE_OFF : value}
 			alt={altText}
 		/>
 	{/await}

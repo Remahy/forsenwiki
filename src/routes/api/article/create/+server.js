@@ -3,27 +3,28 @@ import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { validateArticle } from '$lib/components/editor/validations';
 import { InvalidArticle } from '$lib/errors/InvalidArticle';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { createArticle } from '$lib/db/article/create';
 import { readYPostByTitle } from '$lib/db/article/read';
 import { encodeYDocToUpdateV2 } from '$lib/yjs/utils';
-import { adjustAndUploadImages } from '$lib/components/editor/validations/images.server';
 import { upsertHTML } from '$lib/db/article/html';
 import { articleConfig } from '$lib/components/editor/config/article';
-import { adjustVideoEmbedNodeSiblings } from '$lib/components/editor/validations/videos.server';
 import toHTML from '$lib/worker/toHTML';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
-import { adjustInternalLinks } from '$lib/components/editor/validations/internalLinks.server';
+import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages.js';
+import { pruneFailedUploads, validateUploads } from '$lib/s3/validateUploads.server.js';
+import { serverRunValidations } from '$lib/components/editor/validations/index.server.js';
 
 export async function POST({ request, locals }) {
-	if (locals.isBlocked) {
+	const { isBlocked, auth } = locals;
+
+	if (isBlocked) {
 		return ForbiddenError();
 	}
 
-	const session = await locals.auth();
+	const session = await auth();
 	if (!session?.user?.id || !session?.user?.name) {
 		return ForbiddenError();
 	}
@@ -37,13 +38,13 @@ export async function POST({ request, locals }) {
 		title = sanitizeTitle(rawTitle);
 
 		if (!title.sanitized) {
-			// This throws.
+			// This throws, gets catched by isHttpError.
 			return error(400, 'No title provided');
 		}
 
 		const foundTitle = await readYPostByTitle(title.sanitized);
 		if (foundTitle) {
-			// This throws.
+			// This throws, gets catched by isHttpError.
 			return error(400, 'Article with that title already exists.');
 		}
 
@@ -54,13 +55,16 @@ export async function POST({ request, locals }) {
 		editor = data.editor;
 		doc = data.doc;
 
-		// Does not modify the editor.
-		validateArticle(editor);
+		await serverRunValidations(editor);
 
-		// Modifies the editor.
-		await adjustAndUploadImages(editor, title.sanitized, { id: session.user.id });
-		await adjustVideoEmbedNodeSiblings(editor);
-		await adjustInternalLinks(editor);
+		const imageHashes = getUniqueImageHashes(editor).map((hash, index) => ({ index, hash }));
+		const failedUploads = await validateUploads(imageHashes);
+		// Remove failed uploads from database.
+		await pruneFailedUploads(failedUploads.map(({ hash }) => hash), session.user.id);
+
+		if (failedUploads.length) {
+			throw `FAILED_UPLOADS: ${failedUploads.map(({ index }) => `Image index [${index}] doesn't exist or failed to upload.`).join(' ')}`;
+		}
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidArticle(err);

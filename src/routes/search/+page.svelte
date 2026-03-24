@@ -1,12 +1,60 @@
 <script>
+	import Masonry from 'svelte-bricks';
+	import { formatRelative } from 'date-fns';
+	import { enGB } from 'date-fns/locale';
+	import InfiniteLoading from 'svelte-infinite-loading';
+
 	import { page } from '$app/stores';
+	import { searchRequest } from '$lib/api/search';
 	import LinkBox from '$lib/components/LinkBox.svelte';
-	import LinkButton from '$lib/components/LinkButton.svelte';
-	import Search from '$lib/components/Search.svelte';
-	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
+	import Search from '$lib/components/Search/index.svelte';
+	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
+	import Box from '$lib/components/Box.svelte';
+	import ContentPreview from '$lib/components/content/ContentPreview.svelte';
+	import { parseSearchURL } from '$lib/components/Search/parseSearchURL';
+	import Button from '$lib/components/Button.svelte';
+	import { modal } from '$lib/stores/modal';
+	import UploadContentModal from '$lib/components/Search/UploadContentModal.svelte';
+	import { UploadIcon } from 'lucide-svelte';
 
 	/** @type {import('../api/search/+server').QueryResult[]} */
-	let results = $page.data.results;
+	let results = $state($page.data.results);
+
+	let currentQuery = $derived(parseSearchURL($page.url));
+
+	let currentPage = $derived(currentQuery.options.page);
+
+	// @ts-ignore - These detail props are callbacks.
+	function infiniteHandler({ detail: { complete, error, loaded } }) {
+		const newSearchRequest = structuredClone(currentQuery);
+		currentPage++;
+		$page.url.searchParams.set('page', String(currentPage));
+		newSearchRequest.options.page = currentPage;
+
+		// Classic, good old, then & catch.
+		searchRequest(newSearchRequest.query, newSearchRequest.types, newSearchRequest.options)
+			.then(async (res) => {
+				const newData = await res.json();
+				if (newData.length) {
+					const scrollTop = window.scrollY;
+					results = [...results, ...newData];
+					setTimeout(() => {
+						window.scrollTo({ top: scrollTop, behavior: 'instant' });
+						loaded();
+					}, 1000);
+				} else {
+					complete();
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+				error();
+			});
+	}
+
+	const toggleUploadModal = () => {
+		modal.set({ component: UploadContentModal, isOpen: true });
+	};
 </script>
 
 <svelte:head>
@@ -18,39 +66,87 @@
 </svelte:head>
 
 <section class="container mx-auto flex grow flex-col gap-4 p-4 lg:py-12">
-	<SuggestionBox>
-		<p class="m-0 text-center leading-10">
-			<span class="font-bold">Tip:</span>
-			<span>Searching by an author's username shows all content they've modified or created.</span>
-		</p>
-	</SuggestionBox>
+	<Button onclick={toggleUploadModal} class="self-start">
+		<UploadIcon /> <span>Upload content</span>
+	</Button>
 
-	<Search />
+	<Box class="flex flex-col overflow-hidden p-4 lg:mb-0">
+		<div class="box-heading-wrapper mb-2">
+			<h2 class="text-2xl">Search</h2>
+		</div>
+		<div class="flex flex-col gap-2">
+			<p class="m-0 text-xs">
+				<span class="font-bold">Tip:</span>
+				<span
+					>Searching using an author's username shows everything they've created and modified.</span
+				>
+			</p>
+			<Search />
+		</div>
+	</Box>
 
-	<div class="flex flex-col gap-2">
-		{#each results as result (result.id)}
-			<LinkBox href={!result.type ? `/w/${result.title}` : `/content/${result.id}`} class="flex">
-				<div class="flex grow flex-col gap-2">
-					<strong class="wrap-break-words">{result.rawTitle}</strong>
-					<p>
-						Last updated: <span title={new Date(result.lastUpdated).toUTCString()}
-							>{new Date(result.lastUpdated).toLocaleString()}</span
-						>
-					</p>
-					{#if result.type === 'content'}
-						<img src={result.title} alt={result.rawTitle} class="w-fit max-w-full" />
-					{/if}
-				</div>
-				{#if result.type === 'content'}
-					<div>
-						<LinkButton href={result.title}>Open</LinkButton>
-					</div>
-				{/if}
-			</LinkBox>
-		{:else}
-			{#if $page.url.searchParams.get('query')}
-				<p><strong>No search results found.</strong></p>
+	<main class="flex flex-col gap-2">
+		{#if results?.length}
+			{#if $page.url.searchParams.get('query') === '' && (!$page.url.searchParams.get('order') || $page.url.searchParams.get('order') === 'desc')}
+				<p><strong>Recently created articles & content.</strong></p>
 			{/if}
-		{/each}
-	</div>
+			<Masonry items={results} animate={false}>
+				{#snippet children({ item: result })}
+					<LinkBox
+						href={!result.type ? `/w/${result.title}` : `/content/${result.id}`}
+						class="flex"
+						style="content-visibility: auto;"
+						id={result.id}
+						target="_blank"
+					>
+						<div class="flex grow flex-col gap-2">
+							<span class="line-clamp-1" title={result.rawTitle}>
+								{#if !result.type}<span class="rounded bg-black/10 p-1 text-xs dark:bg-black"
+										>Article</span
+									>{:else if result.type === 'content'}
+									<span class="rounded bg-violet-500/25 p-1 text-xs">Content</span>
+								{/if}
+								<strong>{result.rawTitle}</strong>
+							</span>
+							<small title={new Date(result.lastUpdated).toUTCString()}
+								>{formatRelative(result.lastUpdated, Date.now(), {
+									locale: enGB,
+								})}&nbsp;</small
+							>
+
+							{#if result.html?.text}
+								<p>{result.html.text}</p>
+							{/if}
+
+							{#if result.html?.image}
+								<img src={getImageCacheURL(result.html.image).toString()} alt="" />
+							{/if}
+
+							{#if result.type === 'content'}
+								<ContentPreview {...result} />
+							{/if}
+						</div>
+					</LinkBox>
+				{/snippet}
+			</Masonry>
+
+			{#if currentQuery.types.length === 1}
+				<InfiniteLoading on:infinite={infiniteHandler}>
+					<div slot="noResults"></div>
+					<div slot="noMore">
+						<span>End of the road.</span>
+						<br />
+						forsen.wiki v0.0.1 launched {formatRelative('2024-05-25T11:42:29.000Z', Date.now(), {
+							locale: enGB,
+						})}
+						<span title={new Date('2024-05-25T11:42:29.000Z').toUTCString()}
+							>({new Date('2024-05-25T11:42:29.000Z').toDateString()})</span
+						>
+					</div>
+				</InfiniteLoading>
+			{/if}
+		{:else if $page.url.searchParams.get('query')}
+			<p><strong>No search results found.</strong></p>
+		{/if}
+	</main>
 </section>

@@ -3,10 +3,12 @@
 	import { FileUpIcon } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { browser } from '$app/environment';
 
 	import { localStore } from '$lib/localStore.svelte';
-	import { resetIndexedDb } from '$lib/yjs/resetIndexedDb';
+	import { resetArticle } from '$lib/utils/indexedDb/article';
+	import { resetContent } from '$lib/utils/indexedDb/content';
 	import { createArticle } from '$lib/api/articles';
 	import Box from '$lib/components/Box.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -15,10 +17,16 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Editor from '$lib/components/editor/editor.svelte';
 	import Container from '$lib/components/Container.svelte';
-	import { validateArticle } from '$lib/components/editor/validations';
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 	import { WIKI_PATH } from '$lib/constants/constants';
+	import { uploadImages } from '$lib/s3/uploadContentHandlers';
+	import { uploadModal } from '$lib/stores/modal';
+	import UploadingContentModal from '$lib/components/UploadingContentModal.svelte';
+	import { resetUploadingContentModalGlobals } from '$lib/components/uploadingContentModalGlobals.svelte';
+	import { runValidations } from '$lib/components/editor/validations';
+
+	const id = 'new';
 
 	const { initialUpdate } = $page.data;
 
@@ -61,6 +69,29 @@
 		error = null;
 	};
 
+	const reset = async (reload = true) => {
+		isUploading = true;
+
+		try {
+			await resetArticle(id);
+			await resetContent(id);
+			title.value = '';
+			isUploading = false;
+
+			if (reload) {
+				window.location.reload();
+			}
+		} catch (err) {
+			console.error(err);
+			if (err instanceof Error) {
+				error = err;
+				return;
+			}
+
+			error = new Error('Unknown error occurred while trying to delete draft cache.');
+		}
+	};
+
 	const submit = async () => {
 		if (!yjsDocMap) {
 			return;
@@ -76,60 +107,51 @@
 			return;
 		}
 
-		editor.read(async () => {
-			isUploading = true;
-
-			let res;
-
-			try {
-				validateArticle(editor);
-
-				if (!title.value) {
-					throw new Error('No title set.');
-				}
-
-				res = await createArticle(title.value, yjsDocMap);
-			} catch (err) {
-				error = new Error(err?.toString());
-			} finally {
-				isUploading = false;
-			}
-
-			if (!res) {
-				return;
-			}
-
-			if (res.status === 200) {
-				persistence.clearData();
-				title.value = '';
-
-				const json = await res.json();
-				const { title: serverUrlTitle /* postUpdate: { id } */ } = json;
-
-				goto(`/w/${serverUrlTitle}`);
-			} else if (res.status >= 400) {
-				const json = await res.json();
-				error = { status: res.status, statusText: res.statusText, ...json };
-			}
-		});
-	};
-
-	const reset = async () => {
 		isUploading = true;
 
+		let res;
+
 		try {
-			await resetIndexedDb('new');
-			title.value = '';
-			isUploading = false;
-			window.location.reload();
-		} catch (err) {
-			if (err instanceof Error) {
-				error = err;
-				return;
+			if (!title.value) {
+				throw new Error('No title set.');
 			}
 
-			error = new Error('Unknown error occurred while trying to delete draft cache.');
+			await runValidations(editor);
+
+			uploadModal.set({ component: UploadingContentModal, isOpen: true });
+
+			// Upload images to S3.
+			await uploadImages(editor, id);
+
+			res = await editor.read(() => createArticle(title.value, yjsDocMap));
+		} catch (err) {
+			console.error(err);
+			error = new Error(err?.toString());
+		} finally {
+			isUploading = false;
 		}
+
+		if (!res) {
+			return;
+		}
+
+		if (res.status === 200) {
+			persistence.clearData();
+			title.value = '';
+
+			const json = await res.json();
+			const { title: serverUrlTitle /* postUpdate: { id } */ } = json;
+
+			await reset(false);
+
+			goto(resolve(`/w/[title]`, { title: serverUrlTitle }));
+		} else if (res.status >= 400) {
+			const json = await res.json();
+			error = { status: res.status, statusText: res.statusText, ...json };
+		}
+
+		$uploadModal.isOpen = false;
+		resetUploadingContentModalGlobals();
 	};
 
 	onMount(() => {
@@ -172,17 +194,18 @@
 			<strong class="text-red-600 dark:text-red-500">{titleError.message}</strong>
 		{:else}
 			<small
-				><span class="font-bold">URL:</span> <span>{WIKI_PATH}{sanitizeTitle(title.value).sanitized}</span></small
+				><span class="font-bold">URL:</span>
+				<span>{WIKI_PATH}{sanitizeTitle(title.value).sanitized}</span></small
 			>
 		{/if}
 	</label>
 
 	{#if browser}
-		<Editor update={null} id="new" {initialUpdate} />
+		<Editor update={null} {id} {initialUpdate} />
 	{/if}
 
 	{#if error}
-		<Box class="flex items-center bg-red-300! p-2 dark:text-black font-bold">
+		<Box class="flex items-center bg-red-300! p-2 font-bold dark:text-black">
 			<p>
 				{(error.status || error.statusText) && `(${error.status} ${error.statusText})`}
 				{error.message}
@@ -203,7 +226,7 @@
 			{/if}
 
 			<span class="hidden lg:inline" id="submit">Submit</span>
-			<FileUpIcon class="inline lg:hidden min-w-6" />
+			<FileUpIcon class="inline min-w-6 lg:hidden" />
 		</Button>
 	</Box>
 

@@ -40,6 +40,10 @@ export async function load({ params, url, setHeaders }) {
 		});
 
 		if (res) {
+			if (res.text) {
+				res.text = `${res.text.substring(0, 150)}${res.text.length > 150 ? '...' : ''}`;
+			}
+
 			return { ...res, authors, relatedPosts };
 		}
 

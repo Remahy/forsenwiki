@@ -5,10 +5,6 @@
 
 	/** @type {import('lexical').LexicalCommand<InsertImagePayload>} */
 	export const INSERT_IMAGE_COMMAND = createCommand();
-
-	/** @type {(targetWindow: Window | null) => Selection | null} */
-	const getDOMSelection = (targetWindow) =>
-		CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
 </script>
 
 <script>
@@ -33,22 +29,26 @@
 		DRAGSTART_COMMAND,
 		DROP_COMMAND,
 		getDOMSelectionFromTarget,
+		$getNodeFromDOMNode as getNodeFromDOMNode,
 	} from 'lexical';
 	import { $wrapNodeInElement as wrapNodeInElement, mergeRegister } from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
 
-	import { CAN_USE_DOM } from '$lib/environment/utils';
-	import { cacheServiceBaseURLWithStatic } from '$lib/utils/getCacheURL';
 	import { modal } from '$lib/stores/modal';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
+	import { saveContent } from '$lib/utils/indexedDb/content';
 
 	import EditImageModal from '../../toolbar/ImageButtons/EditImageModal.svelte';
+	import { editorGlobals } from '../../editorGlobals.svelte';
+	import { handleNewImage } from '../../utils/handleNewImage';
 	import {
 		$createImageNode as createImageNode,
 		$isImageNode as isImageNode,
 		ImageNode,
-		TRANSPARENT_IMAGE,
 	} from './Image';
+	import { migrateWSRVImageUsingElement } from '../../migrations/migrateWSRVImages';
+
+	const id = $derived(editorGlobals.articleId);
 
 	/**
 	 * @typedef {Object} Props
@@ -198,56 +198,82 @@
 			domSelection.collapse(event.rangeParent, event.rangeOffset || 0);
 			range = domSelection.getRangeAt(0);
 		} else {
-			throw new Error("Cannot get the selection when dragging");
+			throw new Error('Cannot get the selection when dragging');
 		}
 
 		return range;
 	}
 
 	/**
-	 * @param {{ src: string }} img
-	 * @param {import('./Image').ImageNode} node
+	 * @param {HTMLElement} element
 	 */
-	function getBase64Image(img, node) {
-		return async () => {
-			try {
-				// Fetch the image as a Blob
-				const response = await fetch(img.src);
-				const blob = await response.blob();
+	const saveImageAsBlob = async (element) => {
+		try {
+			const img = editor.read(() => {
+				const node = getNodeFromDOMNode(element);
 
-				/** @type {string} */
-				const base64 = await new Promise((resolve, reject) => {
-					try {
-						const reader = new FileReader();
-						reader.onloadend = () => {
-							// Base64 string with MIME type
-							const result = reader.result;
+				if (isImageNode(node)) {
+					return node;
+				}
+				return null;
+			});
 
-							if (typeof result !== 'string') {
-								reject(new Error('FileReader onloadend did not return a string.'));
-								return;
-							}
+			const src = img?.getSrc();
 
-							resolve(result);
-						};
-
-						reader.onerror = () => {
-							throw reader.error;
-						};
-
-						reader.readAsDataURL(blob);
-					} catch (err) {
-						reject(err);
-					}
-				});
-
-				editor.update(() => node.setSrc(base64), { tag: 'history-merge' });
-			} catch (err) {
-				console.error('Error turning image into base64', err);
-				editor.update(() => node.setSrc(TRANSPARENT_IMAGE), { tag: 'history-merge' });
+			if (!img || !src) {
+				return;
 			}
-		};
-	}
+
+			// Fetch the image as a Blob
+			const response = await fetch(src, {});
+			const lastModified = new Date(response.headers.get('Last-Modified') || Date.now()).getTime();
+			const etag = response.headers.get('Etag');
+			const contentType = response.headers.get('Content-Type') || '';
+
+			const name = src.split('/').pop() || etag || 'pasted-image';
+
+			const blob = await response.blob();
+
+			const file = new File([blob], name, {
+				lastModified,
+				type: contentType,
+			});
+
+			const imageData = await handleNewImage(file);
+
+			if (imageData?.file) {
+				await saveContent(id, imageData.hash, imageData.file);
+			}
+
+			if (imageData) {
+				return editor.update(
+					() => {
+						const node = getNodeFromDOMNode(element);
+
+						if (isImageNode(node)) {
+							node.setSrc(imageData.hash);
+						}
+					},
+					{ tag: 'history-merge' }
+				);
+			}
+
+			console.log(imageData);
+			throw new Error('Could not download image!');
+		} catch (err) {
+			console.error('Error turning image into blob', err);
+			editor.update(
+				() => {
+					const node = getNodeFromDOMNode(element);
+
+					if (isImageNode(node)) {
+						node.setSrc('');
+					}
+				},
+				{ tag: 'history-merge' }
+			);
+		}
+	};
 
 	/** @param {import('./Image').ImagePayload} payload */
 	function wrapperInsertImage(payload) {
@@ -302,13 +328,14 @@
 		}
 
 		img = document.createElement('img');
-		img.src = TRANSPARENT_IMAGE;
+		img.src = '';
 
 		return mergeRegister(
 			editor.registerMutationListener(ImageNode, (mutatedNodes) => {
-				/** @type {any[]} */
-				const promises = [];
-				editor.read(async () => {
+				const mutatedImages = editor.read(() => {
+					/** @type {Array<Promise<void>>} */
+					const promises = [];
+
 					for (const [key, mutation] of mutatedNodes) {
 						if (mutation === 'destroyed') {
 							continue;
@@ -328,15 +355,14 @@
 							continue;
 						}
 
-						if (src?.startsWith('data:')) {
+						// fetch() on data should realistically work.
+						// if (src?.startsWith('data:')) {
+						// 	continue;
+						// }
+						if (!src.startsWith('https://') && !src.startsWith('data:')) {
 							continue;
 						}
 
-						if (src?.startsWith(cacheServiceBaseURLWithStatic)) {
-							continue;
-						}
-
-						// Download image, turn it into base64.
 						const element = /** @type {HTMLImageElement | null} */ (editor.getElementByKey(key));
 
 						if (!element) {
@@ -349,13 +375,19 @@
 							continue;
 						}
 
-						promises.push(getBase64Image({ src }, node));
+						if (src?.startsWith('https://wsrv.nl/?url=https%3A%2F%2Fforsen.wiki')) {
+							promises.push(migrateWSRVImageUsingElement(editor, element));
+							continue;
+						}
+
+						// Download image, turn it into a blob.
+						promises.push(saveImageAsBlob(element));
 					}
 
-					if (promises.length) {
-						Promise.all(promises.map((fn) => fn()));
-					}
+					return promises;
 				});
+
+				Promise.allSettled(mutatedImages);
 			}),
 
 			editor.registerCommand(

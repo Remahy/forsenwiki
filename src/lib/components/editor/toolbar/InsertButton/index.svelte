@@ -12,7 +12,6 @@
 
 	import Select from '$lib/components/Select.svelte';
 
-	import { TRANSPARENT_IMAGE } from '../../plugins/Image/Image';
 	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
 	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 	import { INSERT_FLOATBLOCK_COMMAND } from '../../plugins/FloatBlock/FloatBlockPlugin.svelte';
@@ -29,9 +28,9 @@
 	const insertImage = () => {
 		editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
 			altText: '',
-			src: TRANSPARENT_IMAGE,
-			width: 100,
-			height: 100,
+			src: '',
+			width: 'inherit',
+			height: 'inherit',
 		});
 	};
 

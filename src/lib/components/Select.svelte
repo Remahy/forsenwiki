@@ -5,7 +5,7 @@
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {any} ref
+	 * @property {any} [ref]
 	 * @property {any} value
 	 * @property {string} [class]
 	 * @property {import('svelte').Snippet} [children]

@@ -15,6 +15,7 @@
 	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import { isSystem } from '$lib/utils/isSystem.js';
+	import { getImageCacheURL } from '$lib/utils/getImageCacheURL.js';
 
 	const submitErrors = $derived.by(() => {
 		try {
@@ -90,18 +91,12 @@
 		<meta property="og:type" content="article" />
 
 		{#if text?.length}
-			<meta
-				name="description"
-				content={`${text.substring(0, 150)}${text.length > 150 ? '...' : ''}`}
-			/>
-			<meta
-				property="og:description"
-				content={`${text.substring(0, 150)}${text.length > 150 ? '...' : ''}`}
-			/>
+			<meta name="description" content={text} />
+			<meta property="og:description" content={text} />
 		{/if}
 
 		{#if image?.length}
-			<meta property="og:image" content={image} />
+			<meta property="og:image" content={getImageCacheURL(image).toString()} />
 		{/if}
 
 		<meta property="article:published_time" content={createdTimestamp.toISOString()} />
@@ -155,7 +150,7 @@
 
 			<div class="flex grow flex-col gap-4 lg:flex-row">
 				<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
-					<main class="article-root prose dark:prose-invert max-w-[unset] grow wrap-break-words">
+					<main class="article-root prose dark:prose-invert wrap-break-words max-w-[unset] grow">
 						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>

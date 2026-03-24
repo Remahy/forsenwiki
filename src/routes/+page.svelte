@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Dice4Icon, HistoryIcon, SearchIcon, SquarePenIcon } from 'lucide-svelte';
+	import { Dice4Icon, HistoryIcon, FolderSearchIcon, SquarePenIcon } from 'lucide-svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
 
@@ -82,7 +82,7 @@
 
 <svelte:head>
 	<title>Community Forsen Wiki</title>
-	<meta name="description" content="All things forsen, Twitch and more." />
+	<meta name="description" content="All things forsen, forsenboys and more." />
 </svelte:head>
 
 <Container>
@@ -98,7 +98,7 @@
 		<div class="mb-4 flex grow flex-col lg:mb-0">
 			<Box class="grow p-4">
 				<div class="box-heading-wrapper mb-2">
-					<h2 class="text-2xl">New articles</h2>
+					<h2 class="text-2xl">Latest articles</h2>
 				</div>
 				{#each $latestArticles as article, index (article.title)}
 					<div class="p-2{index % 2 ? ' bg-black/10 dark:bg-white/5' : ''}">
@@ -109,9 +109,8 @@
 							title={new Date(article.createdTimestamp).toUTCString()}
 							class="inline-block min-w-32"
 						>
-							{new Date(article.createdTimestamp).toDateString()}
+							{new Date(article.createdTimestamp).toDateString()}&nbsp;
 						</span>
-						&nbsp;
 						<small class="inline-block"><span class="font-bold">By:</span> {article.author}</small>
 					</div>
 				{/each}
@@ -146,8 +145,8 @@
 				<LinkButton href="/create" class="flex gap-2 whitespace-nowrap" reload>
 					<SquarePenIcon /> <span>Create new article</span>
 				</LinkButton>
-				<LinkButton href="/search" class="flex gap-2 whitespace-nowrap">
-					<SearchIcon /> <span>Search</span>
+				<LinkButton href="/content" class="flex gap-2 whitespace-nowrap">
+					<FolderSearchIcon /> <span>Search content</span>
 				</LinkButton>
 				<LinkButton href="/random" class="flex gap-2 whitespace-nowrap">
 					<Dice4Icon /> <span>Random</span>

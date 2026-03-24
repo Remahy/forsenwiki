@@ -3,15 +3,20 @@ import prisma from '$lib/prisma';
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { deleteContent } from '$lib/db/content/delete';
 import { updateContentName } from '$lib/db/content/updateName';
-import { rmContentByFilename } from '$lib/fs/content';
+import { deleteByKey } from '$lib/s3/index.server.js';
 
 export async function POST({ request, locals, params }) {
-	const { isModerator } = locals;
+	const { isBlocked, isModerator, auth } = locals;
+
+	if (isBlocked) {
+		return ForbiddenError();
+	}
+
 	if (!isModerator) {
 		return ForbiddenError();
 	}
 
-	const session = await locals.auth();
+	const session = await auth();
 	if (!session?.user?.id || !session?.user?.name) {
 		return ForbiddenError();
 	}
@@ -19,8 +24,6 @@ export async function POST({ request, locals, params }) {
 	const { id } = params;
 
 	const { name } = await request.json();
-
-	// TODO: Find all articles with this content and update their URL `fileName` field.
 
 	const res = await updateContentName(id, name);
 
@@ -53,9 +56,9 @@ export async function DELETE({ locals, params }) {
 
 	let deleteRes;
 	try {
-		await rmContentByFilename(res.hash);
-
 		deleteRes = await deleteContent(id);
+
+		await deleteByKey(res.hash);
 	} catch (err) {
 		console.warn(err);
 	}

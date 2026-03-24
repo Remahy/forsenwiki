@@ -67,19 +67,7 @@ export const _getYPostHTML = async (title, shouldCacheBust) => {
  * @param {string} title
  */
 export const _getYPostUpdate = async (title) => {
-	let yPost;
-	let update;
-	try {
-		const { update: _update, ..._yPost } = await _getYPostByTitle(title);
-		yPost = _yPost;
-		update = _update;
-	} catch (err) {
-		if (typeof err === 'number') {
-			throw err;
-		}
-
-		throw err;
-	}
+	const { update: update, ...yPost } = await _getYPostByTitle(title);
 
 	return {
 		post: yPost,

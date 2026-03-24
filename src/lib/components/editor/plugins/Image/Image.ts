@@ -14,6 +14,7 @@ import { $applyNodeReplacement, DecoratorNode } from 'lexical';
 import type { ComponentProps } from 'svelte';
 
 import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
+import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 
 import ImageComponent from './ImageComponent.svelte';
 
@@ -93,7 +94,7 @@ export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
 
 	static importDOM(): DOMConversionMap | null {
 		return {
-			img: (node: Node) => ({
+			img: (_: Node) => ({
 				conversion: convertImageElement,
 				priority: 0,
 			}),
@@ -110,6 +111,19 @@ export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
 	getSrc(): string | undefined {
 		const self = this.getLatest();
 		return self.__src;
+	}
+
+	getRenderedSrc(): string | undefined {
+		const self = this.getLatest();
+
+		const rawSrc = self.__src;
+		if (!rawSrc) {
+			return;
+		}
+
+		const finalSrc = getImageCacheURL(rawSrc, { width: self.__width, height: self.__height });
+
+		return finalSrc.toString();
 	}
 
 	getAltText(): string | undefined {
@@ -169,10 +183,8 @@ export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
 		element.setAttribute('width', width.toString());
 		element.setAttribute('height', height.toString());
 
-		const src = this.getSrc();
-		if (src) {
-			element.setAttribute('src', src);
-		}
+		const src = this.getRenderedSrc();
+		element.setAttribute('src', src || IMAGE_OFF);
 
 		const altText = this.getAltText();
 		if (altText) {
@@ -224,9 +236,6 @@ export function $createImageNode(payload?: ImagePayload): ImageNode {
 export function $isImageNode(node: LexicalNode | null | undefined): node is ImageNode {
 	return node instanceof ImageNode;
 }
-
-export const TRANSPARENT_IMAGE =
-	'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
 export const IMAGE_OFF =
 	'data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogIHdpZHRoPSIyNCIKICBoZWlnaHQ9IjI0IgogIHZpZXdCb3g9IjAgMCAyNCAyNCIKICBmaWxsPSJub25lIgogIHN0cm9rZT0iIzAwMCIgc3R5bGU9ImJhY2tncm91bmQtY29sb3I6ICNmZmY7IGJvcmRlci1yYWRpdXM6IDJweCIKICBzdHJva2Utd2lkdGg9IjIiCiAgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIgogIHN0cm9rZS1saW5lam9pbj0icm91bmQiCj4KICA8bGluZSB4MT0iMiIgeDI9IjIyIiB5MT0iMiIgeTI9IjIyIiAvPgogIDxwYXRoIGQ9Ik0xMC40MSAxMC40MWEyIDIgMCAxIDEtMi44My0yLjgzIiAvPgogIDxsaW5lIHgxPSIxMy41IiB4Mj0iNiIgeTE9IjEzLjUiIHkyPSIyMSIgLz4KICA8bGluZSB4MT0iMTgiIHgyPSIyMSIgeTE9IjEyIiB5Mj0iMTUiIC8+CiAgPHBhdGggZD0iTTMuNTkgMy41OUExLjk5IDEuOTkgMCAwIDAgMyA1djE0YTIgMiAwIDAgMCAyIDJoMTRjLjU1IDAgMS4wNTItLjIyIDEuNDEtLjU5IiAvPgogIDxwYXRoIGQ9Ik0yMSAxNVY1YTIgMiAwIDAgMC0yLTJIOSIgLz4KPC9zdmc+Cg==';

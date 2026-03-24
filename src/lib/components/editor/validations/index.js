@@ -1,26 +1,17 @@
-import { $nodesOfType } from 'lexical';
-
-import { ParagraphNode } from '$lib/lexical/index';
-import { ALinkNode } from '$lib/lexical/custom';
-
-import { getOnlyInternalLinks } from '../utils/getInternalIds';
+import { migrations } from '../migrations';
+import { adjustImages } from './images';
+import { validateArticle } from './validateArticle';
+import { adjustVideoEmbedNodeSiblings } from './videos';
 
 /**
  * @param {LexicalEditor} editor
- * @throws {string}
  */
-export const validateArticle = (editor) => {
-	return editor.read(() => {
-		const paragraphs = $nodesOfType(ParagraphNode);
-		if (!paragraphs.length) {
-			throw new Error('No paragraphs');
-		}
+export const runValidations = async (editor) => {
+	// Does not modify the editor.
+	validateArticle(editor);
 
-		const links = $nodesOfType(ALinkNode) || [];
-		const internalLinks = getOnlyInternalLinks(links);
-		const internalLinkURLs = internalLinks.map((node) => node.getURL());
-		if (internalLinkURLs.length && internalLinkURLs.some((url) => !url.startsWith('/'))) {
-			throw new Error('An internal link was malformed');
-		}
-	});
+	// Modifies the editor.
+	migrations(editor);
+	await adjustImages(editor);
+	await adjustVideoEmbedNodeSiblings(editor);
 };
