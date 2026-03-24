@@ -8,7 +8,7 @@ import {
 	CLOUDFLARE_R2_SECRET_ACCESS_KEY,
 } from '$env/static/private';
 import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
-import { ImageErrorCodes } from '$lib/components/editor/utils/handleNewImage';
+import { FileErrorCodes } from '$lib/components/editor/utils/handleNewFile';
 import { getFileSizeLimit, getType } from './limits';
 import { validateImageDimensions } from './validateImageDimensions.server';
 
@@ -38,7 +38,7 @@ export const getPresignedURL = async (
 
 	if (!type) {
 		const error = new ErrorWithCode(`Index [${index}]: Unsupported file type.`);
-		error.code = ImageErrorCodes.GENERIC;
+		error.code = FileErrorCodes.GENERIC;
 		throw error;
 	}
 
@@ -47,7 +47,7 @@ export const getPresignedURL = async (
 		const error = new ErrorWithCode(
 			`Index [${index}]: File size too large! Max is ${fileSize.max ? fileSize.max / 1_048_576 : '?'} MiB. Uploaded file size: ~${(contentLength / 1_048_576).toFixed(2)} MiB`
 		);
-		error.code = ImageErrorCodes.TOO_LARGE;
+		error.code = FileErrorCodes.TOO_LARGE;
 		throw error;
 	}
 

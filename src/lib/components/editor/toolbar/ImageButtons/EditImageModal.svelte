@@ -12,9 +12,10 @@
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 	import { mimetypes } from '$lib/s3/limits';
 	import { IMAGE_OFF, LUCIDE_ICON_LOADER } from '../../plugins/Image/Image';
-	import { handleNewImage, ImageErrorCodes } from '../../utils/handleNewImage';
+	import { handleNewImage } from '../../utils/handleNewImage';
 	import { createFileUploadObject } from '../../utils/fileUploadObject';
 	import { editorGlobals } from '../../editorGlobals.svelte';
+	import { FileErrorCodes } from '../../utils/handleNewFile';
 
 	const id = $derived(editorGlobals.articleId);
 
@@ -140,9 +141,9 @@
 			if (err instanceof ErrorWithCode) {
 				error = err.message;
 				switch (err.code) {
-					case ImageErrorCodes.TOO_LARGE:
-					case ImageErrorCodes.INVALID_IMAGE:
-					case ImageErrorCodes.DIMENSIONS_TOO_LARGE:
+					case FileErrorCodes.TOO_LARGE:
+					case FileErrorCodes.INVALID_IMAGE:
+					case FileErrorCodes.DIMENSIONS_TOO_LARGE:
 						isValidImage = false;
 
 						if (inputElement) {
@@ -164,7 +165,6 @@
 		/** @type {HTMLInputElement} */
 		const target = /** @type {any} */ (e.target);
 		if (target) {
-			// const value = target.value;
 			try {
 				if (currentImageType === 'new') {
 					await handleNewImageWrapper(target);

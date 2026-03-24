@@ -1,6 +1,6 @@
 import { imageSize } from 'image-size';
 import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
-import { ImageErrorCodes } from '$lib/components/editor/utils/handleNewImage';
+import { FileErrorCodes } from '$lib/components/editor/utils/handleNewFile';
 import { IMAGE_MAX_HEIGHT, IMAGE_MAX_WIDTH } from '$lib/constants/image';
 
 /**
@@ -12,7 +12,7 @@ export const validateImageDimensions = async (fileSnippet) => {
 
 	if (!dimensions.width || !dimensions.height) {
 		const error = new ErrorWithCode("Couldn't validate image dimensions.");
-		error.code = ImageErrorCodes.GENERIC;
+		error.code = FileErrorCodes.GENERIC;
 		throw error;
 	}
 
@@ -20,7 +20,7 @@ export const validateImageDimensions = async (fileSnippet) => {
 		const error = new ErrorWithCode(
 			`Height is too large. Max is ${IMAGE_MAX_WIDTH}x${IMAGE_MAX_HEIGHT} (${IMAGE_MAX_HEIGHT}). Uploaded height size: ${dimensions.height}`
 		);
-		error.code = ImageErrorCodes.DIMENSIONS_TOO_LARGE;
+		error.code = FileErrorCodes.DIMENSIONS_TOO_LARGE;
 		throw error;
 	}
 
@@ -28,7 +28,7 @@ export const validateImageDimensions = async (fileSnippet) => {
 		const error = new ErrorWithCode(
 			`Width is too large. Max is ${IMAGE_MAX_WIDTH}x${IMAGE_MAX_HEIGHT} (${IMAGE_MAX_WIDTH}). Uploaded width size: ${dimensions.width}`
 		);
-		error.code = ImageErrorCodes.DIMENSIONS_TOO_LARGE;
+		error.code = FileErrorCodes.DIMENSIONS_TOO_LARGE;
 		throw error;
 	}
 

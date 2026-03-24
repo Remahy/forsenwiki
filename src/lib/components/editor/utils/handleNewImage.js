@@ -1,48 +1,17 @@
-import { getContentByHash } from '$lib/api/content';
 import { IMAGE_MAX_HEIGHT, IMAGE_MAX_WIDTH } from '$lib/constants/image';
 import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
-import { IMAGE_AUDIO_FILE_SIZE } from '$lib/s3/limits';
 import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
-import { calculateChecksumSha256 } from '$lib/utils/sha256';
-
-export const ImageErrorCodes = {
-	NO_FILE_SIZE: 'NO_FILE_SIZE',
-	TOO_LARGE: 'TOO_LARGE',
-	INVALID_IMAGE: 'INVALID_IMAGE',
-	DIMENSIONS_TOO_LARGE: 'DIMENSIONS_TOO_LARGE',
-	GENERIC: 'GENERIC',
-};
+import { checkFile, FileErrorCodes } from './handleNewFile';
 
 /**
- * @param {File} file
+ * @param {File} f
+ * @param {boolean} [isModerator]
  * @returns {Promise<{ linkType: 'external' | 'internal', src: string, file?: File, name: string, width: number, height: number, hash: string }>}
  * @throws {ErrorWithCode}
  */
-export const handleNewImage = async (file) => {
-	if (!file?.size) {
-		const error = new ErrorWithCode('No file size?');
-		error.code = ImageErrorCodes.NO_FILE_SIZE;
-		throw error;
-	}
+export const handleNewImage = async (f, isModerator = false) => {
+	const { file, fileReader, hash, name, res } = await checkFile(f, isModerator);
 
-	// @ts-ignore
-	const name = file.name || 'Uploaded image';
-
-	const size = file.size;
-
-	if (size > IMAGE_AUDIO_FILE_SIZE) {
-		const error = new ErrorWithCode(
-			`File size too large! Max is ${IMAGE_AUDIO_FILE_SIZE / 1_048_576} MiB. Uploaded file size: ~${(size / 1_048_576).toFixed(2)} MiB`
-		);
-		error.code = ImageErrorCodes.TOO_LARGE;
-		throw error;
-	}
-
-	const hash = await calculateChecksumSha256(file);
-	const res = await getContentByHash(hash);
-
-	const fileReader = new FileReader();
-	fileReader.readAsDataURL(file);
 	const img = new Image();
 
 	return new Promise((resolve, reject) => {
@@ -50,6 +19,12 @@ export const handleNewImage = async (file) => {
 			if (typeof fileReader.result === 'string') {
 				img.src = fileReader.result;
 			}
+		});
+
+		fileReader.addEventListener('error', () => {
+			const error = new ErrorWithCode(fileReader.error?.message);
+			error.code = FileErrorCodes.GENERIC;
+			reject(error);
 		});
 
 		img.onload = async () => {
@@ -71,7 +46,7 @@ export const handleNewImage = async (file) => {
 				const error = new ErrorWithCode(
 					`Width is too large. Max is ${IMAGE_MAX_WIDTH}x${IMAGE_MAX_HEIGHT} (${IMAGE_MAX_WIDTH}). Uploaded width size: ${img.width}`
 				);
-				error.code = ImageErrorCodes.DIMENSIONS_TOO_LARGE;
+				error.code = FileErrorCodes.DIMENSIONS_TOO_LARGE;
 				reject(error);
 				return;
 			}
@@ -80,7 +55,7 @@ export const handleNewImage = async (file) => {
 				const error = new ErrorWithCode(
 					`Height is too large. Max is ${IMAGE_MAX_WIDTH}x${IMAGE_MAX_HEIGHT} (${IMAGE_MAX_HEIGHT}). Uploaded height size: ${img.height}`
 				);
-				error.code = ImageErrorCodes.DIMENSIONS_TOO_LARGE;
+				error.code = FileErrorCodes.DIMENSIONS_TOO_LARGE;
 				reject(error);
 				return;
 			}
@@ -97,15 +72,9 @@ export const handleNewImage = async (file) => {
 		};
 
 		img.onerror = () => {
-			const error = new ErrorWithCode('Image is invalid');
-			error.code = ImageErrorCodes.INVALID_IMAGE;
+			const error = new ErrorWithCode('Image is invalid.');
+			error.code = FileErrorCodes.INVALID_IMAGE;
 			reject(error);
 		};
-
-		fileReader.addEventListener('error', () => {
-			const error = new ErrorWithCode(fileReader.error?.message);
-			error.code = ImageErrorCodes.GENERIC;
-			reject(error);
-		});
 	});
 };
