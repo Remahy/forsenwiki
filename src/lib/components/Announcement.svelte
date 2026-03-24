@@ -1,5 +1,5 @@
 <script>
-	import { ScaleIcon, XIcon } from 'lucide-svelte';
+	import { ScaleIcon, XIcon } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import Button from './Button.svelte';
 	import Box from './Box.svelte';

@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from 'lucide-svelte';
+	import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from '@lucide/svelte';
 	import { COMMAND_PRIORITY_CRITICAL, FORMAT_ELEMENT_COMMAND } from 'lexical';
 	import { mergeRegister } from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';

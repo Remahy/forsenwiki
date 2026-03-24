@@ -2,7 +2,7 @@
 	// Based on umaranis' svelte-lexical
 
 	import { onMount } from 'svelte';
-	import { PlusIcon, MinusIcon, ArrowLeftIcon, ArrowRightIcon, Columns3Icon } from 'lucide-svelte';
+	import { PlusIcon, MinusIcon, ArrowLeftIcon, ArrowRightIcon, Columns3Icon } from '@lucide/svelte';
 	import { $isRangeSelection as isRangeSelection, $getSelection as getSelection } from 'lexical';
 	import { mergeRegister } from '@lexical/utils';
 	import {

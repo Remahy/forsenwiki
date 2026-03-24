@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Dice4Icon, HistoryIcon, FolderSearchIcon, SquarePenIcon } from 'lucide-svelte';
+	import { Dice4Icon, HistoryIcon, FolderSearchIcon, SquarePenIcon } from '@lucide/svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
 

@@ -1,5 +1,5 @@
 <script>
-	import { Trash2Icon } from 'lucide-svelte';
+	import { Trash2Icon } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';

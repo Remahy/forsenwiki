@@ -15,7 +15,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import { modal } from '$lib/stores/modal';
 	import UploadContentModal from '$lib/components/Search/UploadContentModal.svelte';
-	import { UploadIcon } from 'lucide-svelte';
+	import { UploadIcon } from '@lucide/svelte';
 
 	/** @type {import('../api/search/+server').QueryResult[]} */
 	let results = $state($page.data.results);

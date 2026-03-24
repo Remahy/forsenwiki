@@ -1,7 +1,7 @@
 <script>
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
-	import { Trash2Icon, XIcon } from 'lucide-svelte';
+	import { Trash2Icon, XIcon } from '@lucide/svelte';
 	import isUrl from 'is-url';
 
 	import { modal } from '$lib/stores/modal';

@@ -1,5 +1,5 @@
 <script>
-	import { SearchIcon } from 'lucide-svelte';
+	import { SearchIcon } from '@lucide/svelte';
 	import { page } from '$app/stores';
 
 	import Button from '../Button.svelte';

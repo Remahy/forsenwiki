@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Redo2Icon, Undo2Icon } from 'lucide-svelte';
+	import { Redo2Icon, Undo2Icon } from '@lucide/svelte';
 	import {
 		CAN_UNDO_COMMAND,
 		UNDO_COMMAND,

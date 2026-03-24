@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { TypeIcon } from 'lucide-svelte';
+	import { TypeIcon } from '@lucide/svelte';
 	import {
 		$isNodeSelection as isNodeSelection,
 		$getSelection as getSelection,

@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Link2Icon, SettingsIcon } from 'lucide-svelte';
+	import { Link2Icon, SettingsIcon } from '@lucide/svelte';
 	import {
 		COMMAND_PRIORITY_HIGH,
 		COMMAND_PRIORITY_NORMAL,

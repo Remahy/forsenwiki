@@ -1,5 +1,5 @@
 <script>
-	import { XIcon } from 'lucide-svelte';
+	import { XIcon } from '@lucide/svelte';
 	import { page } from '$app/stores';
 	import { modal, uploadModal } from '$lib/stores/modal';
 	import {

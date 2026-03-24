@@ -4,7 +4,7 @@
 		LinkIcon,
 		RectangleHorizontalIcon,
 		RectangleVerticalIcon,
-	} from 'lucide-svelte';
+	} from '@lucide/svelte';
 	import { getEditor } from 'svelte-lexical';
 
 	import Select from '$lib/components/Select.svelte';

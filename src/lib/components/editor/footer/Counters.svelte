@@ -1,6 +1,6 @@
 <script>
 	import { getContext, onMount } from 'svelte';
-	import { ChevronRightIcon, XIcon } from 'lucide-svelte';
+	import { ChevronRightIcon, XIcon } from '@lucide/svelte';
 	import Divider from '$lib/components/Divider.svelte';
 
 	/** @type {ComposerWritable} */

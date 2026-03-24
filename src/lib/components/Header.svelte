@@ -1,5 +1,5 @@
 <script>
-	import { LogOutIcon } from 'lucide-svelte';
+	import { LogOutIcon } from '@lucide/svelte';
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';

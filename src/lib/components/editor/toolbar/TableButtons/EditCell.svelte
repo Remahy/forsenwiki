@@ -1,6 +1,6 @@
 <script>
 	import { getEditor } from 'svelte-lexical';
-	import { RectangleHorizontalIcon } from 'lucide-svelte';
+	import { RectangleHorizontalIcon } from '@lucide/svelte';
 
 	/**
 	 * @typedef {Object} Props

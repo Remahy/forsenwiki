@@ -1,5 +1,5 @@
 <script>
-	import { AtSignIcon } from 'lucide-svelte';
+	import { AtSignIcon } from '@lucide/svelte';
 	import Container from '$lib/components/Container.svelte';
 </script>
 

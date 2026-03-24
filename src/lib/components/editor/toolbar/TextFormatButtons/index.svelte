@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { BoldIcon, ItalicIcon } from 'lucide-svelte';
+	import { BoldIcon, ItalicIcon } from '@lucide/svelte';
 	import {
 		$isRangeSelection as isRangeSelection,
 		FORMAT_TEXT_COMMAND,

@@ -1,5 +1,5 @@
 <script>
-	import { LoaderCircleIcon } from 'lucide-svelte';
+	import { LoaderCircleIcon } from '@lucide/svelte';
 
 	let { size = undefined } = $props();
 </script>

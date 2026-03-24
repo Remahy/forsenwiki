@@ -2,7 +2,7 @@
 	// Based on umaranis' svelte-lexical
 
 	import { onMount } from 'svelte';
-	import { XIcon } from 'lucide-svelte';
+	import { XIcon } from '@lucide/svelte';
 
 	import Button from '$lib/components/Button.svelte';
 	import { modal } from '$lib/stores/modal';

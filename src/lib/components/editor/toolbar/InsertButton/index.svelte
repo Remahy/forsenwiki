@@ -1,5 +1,5 @@
 <script>
-	import { PlusIcon } from 'lucide-svelte';
+	import { PlusIcon } from '@lucide/svelte';
 	import { INSERT_TABLE_COMMAND } from '@lexical/table';
 	import { getEditor } from 'svelte-lexical';
 	import { onMount } from 'svelte';
