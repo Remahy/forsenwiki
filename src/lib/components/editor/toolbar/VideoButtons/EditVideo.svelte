@@ -4,7 +4,6 @@
 		LinkIcon,
 		RectangleHorizontalIcon,
 		RectangleVerticalIcon,
-		YoutubeIcon,
 	} from 'lucide-svelte';
 	import { getEditor } from 'svelte-lexical';
 
@@ -17,6 +16,7 @@
 		VIDEO_MIN_WIDTH,
 	} from '$lib/constants/video';
 	import { DOMAIN } from '$lib/environment/environment';
+	import YouTube from '$lib/components/icons/YouTube.svelte';
 	import { getURLAndTitle } from '../../plugins/VideoEmbed/VideoEmbed';
 
 	/**
@@ -44,7 +44,7 @@
 	let height = $derived(currentHeight);
 
 	const platformIcons = {
-		youtube: YoutubeIcon,
+		youtube: YouTube,
 		twitch: TwitchGlitch,
 		default: FileQuestionIcon,
 	};
