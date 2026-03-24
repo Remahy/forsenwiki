@@ -10,7 +10,7 @@
 <Container class="p-8">
 	<section class="prose prose-lg dark:prose-invert w-full max-w-[unset]">
 		<h1>Terms & Conditions</h1>
-		<p>Effective date: April 2, 2026</p>
+		<p>Effective date: April 12, 2026</p>
 
 		<hr />
 		<p>forsen.wiki is a user-generated content platform.</p>

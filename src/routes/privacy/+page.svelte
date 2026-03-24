@@ -12,7 +12,7 @@
 	<section class="prose prose-lg dark:prose-invert w-full max-w-[unset]">
 		<h1 id="privacy">Privacy Policy</h1>
 		<p>🐦</p>
-		<p>Effective date: April 2, 2026</p>
+		<p>Effective date: April 12, 2026</p>
 		<p>
 			ForsenWiki ("us", "we", or "our") operates the forsen.wiki and kappa.wiki websites (hereinafter referred to as
 			the "Service").

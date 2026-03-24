@@ -17,7 +17,7 @@
 				<a href={resolve("/privacy")}>
 					<p>
 						(March 2026) Privacy policy has been updated. Please take a moment to read it before its
-						effective date <strong>April 2</strong>.
+						effective date <strong>April 12</strong>.
 					</p>
 
 					<p>
