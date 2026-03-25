@@ -7,8 +7,8 @@
 		CAN_REDO_COMMAND,
 		REDO_COMMAND,
 		COMMAND_PRIORITY_LOW,
+		mergeRegister,
 	} from 'lexical';
-	import { mergeRegister } from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
 
 	import { ctrlKey } from '$lib/environment/environment';

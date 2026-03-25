@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { $getSelection as getSelection } from 'lexical';
-	import { mergeRegister } from '@lexical/utils';
+	import { $getSelection as getSelection, mergeRegister } from 'lexical';
 	import { $isTableCellNode as isTableCellNode, $isTableNode as isTableNode } from '@lexical/table';
 	import { getEditor } from 'svelte-lexical';
 

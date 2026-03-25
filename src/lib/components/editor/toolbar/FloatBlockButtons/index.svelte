@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { $getSelection as getSelection } from 'lexical';
-	import { mergeRegister } from '@lexical/utils';
+	import { $getSelection as getSelection, mergeRegister } from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 
 	import Divider from '$lib/components/Divider.svelte';

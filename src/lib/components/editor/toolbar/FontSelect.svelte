@@ -5,12 +5,12 @@
 		$isNodeSelection as isNodeSelection,
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,
+		mergeRegister,
 	} from 'lexical';
 	import {
 		$patchStyleText as patchStyleText,
 		$getSelectionStyleValueForProperty as getSelectionStyleValueForProperty,
 	} from '@lexical/selection';
-	import { mergeRegister } from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
 
 	import Select from '$lib/components/Select.svelte';

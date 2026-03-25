@@ -5,8 +5,8 @@
 		$isRangeSelection as isRangeSelection,
 		FORMAT_TEXT_COMMAND,
 		$getSelection as getSelection,
+		mergeRegister,
 	} from 'lexical';
-	import { mergeRegister } from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
 
 	import { ctrlKey } from '$lib/environment/environment';
