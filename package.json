@@ -41,6 +41,7 @@
 		"@lexical/yjs": "$@lexical/yjs",
 		"@lexical/markdown": "$@lexical/markdown",
 		"@lexical/text": "$@lexical/text",
+		"@lexical/extension": "$@lexical/extension",
 		"lexical": "$lexical",
 		"svelte-lexical@^0.6.4": {
 			"@lexical/clipboard": "$@lexical/clipboard",
@@ -61,6 +62,7 @@
 			"@lexical/yjs": "$@lexical/yjs",
 			"@lexical/markdown": "$@lexical/markdown",
 			"@lexical/text": "$@lexical/text",
+			"@lexical/extension": "$@lexical/extension",
 			"lexical": "$lexical",
 			"yjs": "$yjs"
 		},
@@ -74,6 +76,7 @@
 		"@fontsource/comic-neue": "^5.2.7",
 		"@lexical/clipboard": "0.42.0",
 		"@lexical/code": "0.42.0",
+		"@lexical/extension": "^0.42.0",
 		"@lexical/file": "0.42.0",
 		"@lexical/hashtag": "0.42.0",
 		"@lexical/headless": "0.42.0",

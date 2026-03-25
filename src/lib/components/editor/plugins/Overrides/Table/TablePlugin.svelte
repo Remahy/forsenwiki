@@ -31,6 +31,7 @@
 		$getTableRowNodeFromTableCellNodeOrThrow as getTableRowNodeFromTableCellNodeOrThrow,
 		type InsertTableCommandPayloadHeaders,
 	} from '@lexical/table';
+	import { signal } from '@lexical/extension';
 	import { getEditor } from 'svelte-lexical';
 
 	import { modal } from '$lib/stores/modal';
@@ -98,7 +99,7 @@
 	}
 
 	/**
-	 * A plugin to enable all of the features of Lexical's TableNode.
+	 * A plugin to enable the features of Lexical's TableNode.
 	 * @param props - See type for documentation
 	 * @returns An element to render in your LexicalComposer
 	 */
@@ -110,6 +111,8 @@
 	}: TablePluginProps = $props();
 
 	const editor = getEditor();
+
+	const hasNestedTables = signal(true);
 
 	const INSERT_BEFORE = true;
 	const INSERT_AFTER = false;
@@ -180,30 +183,23 @@
 	};
 
 	$effect(() => {
+		registerTablePlugin(editor, { hasNestedTables });
+		registerTableSelectionObserver(editor, hasTabHandler);
 		setScrollableTablesActive(editor, hasHorizontalScroll);
-	});
 
-	$effect(() => registerTablePlugin(editor));
-
-	$effect(() => registerTableSelectionObserver(editor, hasTabHandler));
-
-	// Unmerge cells when the feature isn't enabled
-	$effect(() => {
+		// Unmerge cells when the feature isn't enabled
 		if (!hasCellMerge) {
-			return registerTableCellUnmergeTransform(editor);
+			registerTableCellUnmergeTransform(editor);
 		}
-	});
 
-	// Remove cell background color when feature is disabled
-	$effect(() => {
-		if (hasCellBackgroundColor) {
-			return;
+		// Remove cell background color when feature is disabled
+		if (!hasCellBackgroundColor) {
+			editor.registerNodeTransform(TableCellNode, (node) => {
+				if (node.getBackgroundColor() !== null) {
+					node.setBackgroundColor(null);
+				}
+			});
 		}
-		return editor.registerNodeTransform(TableCellNode, (node) => {
-			if (node.getBackgroundColor() !== null) {
-				node.setBackgroundColor(null);
-			}
-		});
 	});
 
 	onMount(() => {
