@@ -1,5 +1,5 @@
 <script>
-	import { AtSignIcon } from 'lucide-svelte';
+	import { AtSignIcon } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import GitHub from '$lib/components/icons/GitHub.svelte';
 	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';

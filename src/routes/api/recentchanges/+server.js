@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import prisma from '$lib/prisma';
+import prisma from '$lib/prisma.server';
 import { getRecentChangesFilters } from '$lib/utils/recentChanges';
 import { replacer } from '$lib/utils/json';
 

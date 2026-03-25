@@ -1,4 +1,4 @@
-import prisma from '$lib/prisma';
+import prisma from '$lib/prisma.server';
 
 /** @param {string} postUpdateId */
 export async function readAuthorForYPostUpdate(postUpdateId) {

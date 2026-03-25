@@ -11,7 +11,7 @@
 		ListOrderedIcon,
 		PilcrowIcon,
 		QuoteIcon,
-	} from 'lucide-svelte';
+	} from '@lucide/svelte';
 	import {
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,

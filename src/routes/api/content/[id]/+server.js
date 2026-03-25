@@ -1,5 +1,5 @@
 import { error, json } from '@sveltejs/kit';
-import prisma from '$lib/prisma';
+import prisma from '$lib/prisma.server';
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { deleteContent } from '$lib/db/content/delete';
 import { updateContentName } from '$lib/db/content/updateName';

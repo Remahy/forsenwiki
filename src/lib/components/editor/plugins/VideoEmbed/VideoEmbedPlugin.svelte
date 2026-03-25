@@ -20,8 +20,8 @@
 		COMMAND_PRIORITY_EDITOR,
 		$getNodeByKey as getNodeByKey,
 		$getSelection as getSelection,
+		mergeRegister,
 	} from 'lexical';
-	import { mergeRegister } from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
 
 	import { getYouTubeClipURL } from '$lib/api/utils';

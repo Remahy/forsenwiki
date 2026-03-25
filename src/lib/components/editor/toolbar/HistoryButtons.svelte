@@ -1,14 +1,14 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Redo2Icon, Undo2Icon } from 'lucide-svelte';
+	import { Redo2Icon, Undo2Icon } from '@lucide/svelte';
 	import {
 		CAN_UNDO_COMMAND,
 		UNDO_COMMAND,
 		CAN_REDO_COMMAND,
 		REDO_COMMAND,
 		COMMAND_PRIORITY_LOW,
+		mergeRegister,
 	} from 'lexical';
-	import { mergeRegister } from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
 
 	import { ctrlKey } from '$lib/environment/environment';

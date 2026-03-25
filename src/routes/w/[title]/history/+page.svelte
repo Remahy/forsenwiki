@@ -1,5 +1,5 @@
 <script>
-	import { SquarePenIcon, FileIcon } from 'lucide-svelte';
+	import { SquarePenIcon, FileIcon } from '@lucide/svelte';
 	import { page } from '$app/stores';
 
 	import Box from '$lib/components/Box.svelte';

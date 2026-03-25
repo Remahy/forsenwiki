@@ -5,7 +5,9 @@ import { PrismaClient, Permissions as Perm } from '../generated/prisma/client';
 import { _emit } from '../routes/api/adonis/frontpage/+server';
 import { Y_POST_TYPES } from './constants/constants';
 
-const adapter = new PrismaPg({ connectionString: DATABASE_URL });
+const dbStr = DATABASE_URL+'';
+
+const adapter = new PrismaPg({ connectionString: dbStr });
 const p = new PrismaClient({ adapter });
 
 /**

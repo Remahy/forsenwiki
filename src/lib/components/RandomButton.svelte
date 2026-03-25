@@ -1,6 +1,6 @@
 <script>
 	import { page } from '$app/stores';
-	import { Dice4Icon } from 'lucide-svelte';
+	import { Dice4Icon } from '@lucide/svelte';
 
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';

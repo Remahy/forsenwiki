@@ -15,8 +15,8 @@
 		KEY_BACKSPACE_COMMAND,
 		KEY_ESCAPE_COMMAND,
 		// KEY_ENTER_COMMAND,
+		mergeRegister,
 	} from 'lexical';
-	import { mergeRegister } from '@lexical/utils';
 
 	import {
 		clearSelection,

@@ -3,7 +3,7 @@ import { SvelteKitAuth } from '@auth/sveltekit';
 import Twitch from '@auth/sveltekit/providers/twitch';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 
-import prisma from '$lib/prisma';
+import prisma from '$lib/prisma.server';
 import { AccountTooYoung } from '$lib/errors/auth/AccountTooYoung';
 import { NoUser } from '$lib/errors/auth/NoUser';
 import { version } from '$lib/utils/version';

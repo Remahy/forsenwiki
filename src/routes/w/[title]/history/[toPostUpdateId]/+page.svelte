@@ -1,5 +1,5 @@
 <script>
-	import { FileIcon, GitCompareIcon, HistoryIcon } from 'lucide-svelte';
+	import { FileIcon, GitCompareIcon, HistoryIcon } from '@lucide/svelte';
 	import { page } from '$app/stores';
 
 	import Container from '$lib/components/Container.svelte';

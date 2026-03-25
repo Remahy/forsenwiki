@@ -1,5 +1,5 @@
 import { error, json } from '@sveltejs/kit';
-import prisma from '$lib/prisma';
+import prisma from '$lib/prisma.server';
 import { ForbiddenError } from '$lib/errors/Forbidden.js';
 import { _validateContent } from './validate/+server';
 import { getPresignedURL } from '$lib/s3/index.server';

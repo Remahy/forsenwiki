@@ -1,14 +1,14 @@
 <script>
-	import { PlusIcon } from 'lucide-svelte';
-	import { INSERT_TABLE_COMMAND } from '@lexical/table';
-	import { getEditor } from 'svelte-lexical';
 	import { onMount } from 'svelte';
-	import { mergeRegister } from '@lexical/utils';
+	import { PlusIcon } from '@lucide/svelte';
 	import {
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,
 		$isNodeSelection as isNodeSelection,
+		mergeRegister,
 	} from 'lexical';
+	import { INSERT_TABLE_COMMAND } from '@lexical/table';
+	import { getEditor } from 'svelte-lexical';
 
 	import Select from '$lib/components/Select.svelte';
 

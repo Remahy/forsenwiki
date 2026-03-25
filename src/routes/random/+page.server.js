@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 
-import prisma from '$lib/prisma';
+import prisma from '$lib/prisma.server';
 
 function unluckyRedirect() {
 	return redirect(307, '/');
