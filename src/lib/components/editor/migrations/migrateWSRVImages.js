@@ -50,6 +50,6 @@ export const migrateWSRVImages = (editor) => {
 				migrateWSRVImage(image);
 			}
 		},
-		{ tag: 'history-merge' }
+		{ tag: 'history-merge', discrete: true }
 	);
 };
