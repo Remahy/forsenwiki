@@ -128,8 +128,8 @@
 		} catch (err) {
 			console.error(err);
 			error = new Error(err?.toString());
-		} finally {
 			$uploadModal.isOpen = false;
+		} finally {
 			isUploading = false;
 		}
 
