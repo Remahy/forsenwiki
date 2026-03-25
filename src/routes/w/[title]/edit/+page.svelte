@@ -129,6 +129,7 @@
 			console.error(err);
 			error = new Error(err?.toString());
 		} finally {
+			$uploadModal.isOpen = false;
 			isUploading = false;
 		}
 

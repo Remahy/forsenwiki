@@ -167,14 +167,22 @@ export const uploadImages = async (editor, id) => {
 
 	setUploading(imagesToUpload.length);
 
+	if (!imagesToUpload.length) {
+		return null;
+	}
+
 	return uploadContentHandler(imagesToUpload);
 };
 
 /**
- * @param {(FileUpload & { file: File; })[]} files
+ * @param {(FileUpload & { file: File; })[]} filesToUpload
  */
-export const uploadFiles = async (files) => {
-	setUploading(files.length);
+export const uploadFiles = async (filesToUpload) => {
+	setUploading(filesToUpload.length);
 
-	return uploadContentHandler(files);
+	if (!filesToUpload.length) {
+		return true;
+	}
+
+	return uploadContentHandler(filesToUpload);
 };

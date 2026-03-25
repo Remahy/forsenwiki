@@ -49,7 +49,9 @@
 							{:else if type === 'document'}
 								<span>Document {upload.url}</span>
 							{/if}
-							<LinkButton href="/content/{upload.id}" target="_blank" class="self-start">View</LinkButton>
+							<LinkButton href="/content/{upload.id}" target="_blank" class="self-start"
+								>View</LinkButton
+							>
 						</div>
 					{/each}
 				</div>
@@ -59,7 +61,9 @@
 		{/if}
 	</main>
 
-	<footer class="flex items-center justify-end gap-2 p-6">
-		<Button on:click={cancel} disabled={uploaded.length < uploading.count}>OK</Button>
-	</footer>
+	{#if uploading.count > 0}
+		<footer class="flex items-center justify-end gap-2 p-6">
+			<Button on:click={cancel} disabled={uploaded.length < uploading.count}>OK</Button>
+		</footer>
+	{/if}
 </div>
