@@ -12,6 +12,7 @@ import { articleConfig } from '$lib/components/editor/config/article';
 import { diffConfig } from '$lib/components/editor/config/diff';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { ImageNode } from '$lib/lexical/custom';
+import { migrations } from '$lib/components/editor/migrations';
 
 const $$getTextInEditor = () => {
 	return $getRoot().getTextContent().trim().replace(/\n+/gm, '\n');
@@ -59,6 +60,8 @@ export const toHTMLWorker = async (data) => {
 		editor = createHeadlessEditor(cfg(null, EDITOR_IS_READONLY, null));
 
 		editor.setEditorState(editor.parseEditorState(content));
+
+		migrations(editor);
 	}
 
 	return editor.read(() => {
