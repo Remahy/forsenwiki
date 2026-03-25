@@ -2,7 +2,7 @@
 	// Based on umaranis' svelte-lexical
 	import './EditorTable.css';
 
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import {
 		$createParagraphNode as createParagraphNode,
 		$isTextNode as isTextNode,
@@ -32,16 +32,15 @@
 		type InsertTableCommandPayloadHeaders,
 	} from '@lexical/table';
 	import { signal } from '@lexical/extension';
-	import { getEditor } from 'svelte-lexical';
 
 	import { modal } from '$lib/stores/modal';
 	import InsertTableDialog from '$lib/components/editor/toolbar/TableButtons/InsertTableDialog.svelte';
-	import { $isATableNode as isATableNode } from './ATableNode';
 	import {
 		hasAdjacentNode,
 		insertFnc,
 		offsetIsAtEdges,
 	} from '$lib/components/editor/utils/insertUtils';
+	import { $isATableNode as isATableNode } from './ATableNode';
 
 	function wrapperInsertTable(payload: {
 		columns: string;
@@ -110,8 +109,9 @@
 		hasHorizontalScroll = false,
 	}: TablePluginProps = $props();
 
-	const editor = getEditor();
-
+	const c: ComposerWritable = getContext('COMPOSER');
+	let composer = $derived($c);
+	let editor = $derived(composer?.getEditor?.() as LexicalEditor);
 	const hasNestedTables = signal(true);
 
 	const INSERT_BEFORE = true;
@@ -182,59 +182,65 @@
 		});
 	};
 
-	$effect(() => {
-		registerTablePlugin(editor, { hasNestedTables });
-		registerTableSelectionObserver(editor, hasTabHandler);
-		setScrollableTablesActive(editor, hasHorizontalScroll);
-
-		// Unmerge cells when the feature isn't enabled
-		if (!hasCellMerge) {
-			registerTableCellUnmergeTransform(editor);
-		}
-
-		// Remove cell background color when feature is disabled
-		if (!hasCellBackgroundColor) {
-			editor.registerNodeTransform(TableCellNode, (node) => {
-				if (node.getBackgroundColor() !== null) {
-					node.setBackgroundColor(null);
-				}
-			});
-		}
-	});
-
 	onMount(() => {
-		return mergeRegister(
-			editor.registerCommand(
-				INSERT_TABLE_COMMAND,
-				({ columns, rows, includeHeaders }) => {
-					wrapperInsertTable({ columns, rows, includeHeaders });
+		c.subscribe((composer) => {
+			if (composer === null) {
+				return;
+			}
 
-					return true;
-				},
-				COMMAND_PRIORITY_NORMAL
-			),
-			editor.registerCommand(
-				KEY_ARROW_LEFT_COMMAND,
-				(payload) => {
-					if (payload.ctrlKey) {
-						return false;
+			const editor = composer.getEditor();
+
+			registerTablePlugin(editor, { hasNestedTables });
+			registerTableSelectionObserver(editor, hasTabHandler);
+			setScrollableTablesActive(editor, hasHorizontalScroll);
+
+			// Unmerge cells when the feature isn't enabled
+			if (!hasCellMerge) {
+				registerTableCellUnmergeTransform(editor);
+			}
+
+			// Remove cell background color when feature is disabled
+			if (!hasCellBackgroundColor) {
+				editor.registerNodeTransform(TableCellNode, (node) => {
+					if (node.getBackgroundColor() !== null) {
+						node.setBackgroundColor(null);
 					}
+				});
+			}
 
-					return insertParagraph(INSERT_BEFORE);
-				},
-				COMMAND_PRIORITY_CRITICAL
-			),
-			editor.registerCommand(
-				KEY_ARROW_RIGHT_COMMAND,
-				(payload) => {
-					if (payload.ctrlKey) {
-						return false;
-					}
+			return mergeRegister(
+				editor.registerCommand(
+					INSERT_TABLE_COMMAND,
+					({ columns, rows, includeHeaders }) => {
+						wrapperInsertTable({ columns, rows, includeHeaders });
 
-					return insertParagraph(INSERT_AFTER);
-				},
-				COMMAND_PRIORITY_CRITICAL
-			)
-		);
+						return true;
+					},
+					COMMAND_PRIORITY_NORMAL
+				),
+				editor.registerCommand(
+					KEY_ARROW_LEFT_COMMAND,
+					(payload) => {
+						if (payload.ctrlKey) {
+							return false;
+						}
+
+						return insertParagraph(INSERT_BEFORE);
+					},
+					COMMAND_PRIORITY_CRITICAL
+				),
+				editor.registerCommand(
+					KEY_ARROW_RIGHT_COMMAND,
+					(payload) => {
+						if (payload.ctrlKey) {
+							return false;
+						}
+
+						return insertParagraph(INSERT_AFTER);
+					},
+					COMMAND_PRIORITY_CRITICAL
+				)
+			);
+		});
 	});
 </script>

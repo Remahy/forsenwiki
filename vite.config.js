@@ -43,6 +43,7 @@ export default defineConfig({
 			'@lexical/utils': path.resolve('./node_modules/@lexical/utils/LexicalUtils.mjs'),
 			'@lexical/markdown': path.resolve('./node_modules/@lexical/markdown/LexicalMarkdown.mjs'),
 			'@lexical/text': path.resolve('./node_modules/@lexical/text/LexicalText.mjs'),
+			'@lexical/extension': path.resolve('./node_modules/@lexical/extension/LexicalExtension.mjs'),
 		},
 	},
 });
