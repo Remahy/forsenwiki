@@ -12,10 +12,6 @@ export async function POST({ request, locals, params }) {
 		return ForbiddenError();
 	}
 
-	if (!isModerator) {
-		return ForbiddenError();
-	}
-
 	const session = await auth();
 	if (!session?.user?.id || !session?.user?.name) {
 		return ForbiddenError();
@@ -23,11 +19,25 @@ export async function POST({ request, locals, params }) {
 
 	const { id } = params;
 
+	const res = await prisma.content.findFirst({ where: { id } });
+
+	if (!res) {
+		return error(404);
+	}
+
+	const isAuthor = session.user.id === res.authorId;
+
+	const isAllowed = isModerator || isAuthor;
+
+	if (!isAllowed) {
+		return ForbiddenError();
+	}
+
 	const { name } = await request.json();
 
-	const res = await updateContentName(id, name);
+	const updateRes = await updateContentName(id, name);
 
-	return json(res);
+	return json(updateRes);
 }
 
 export async function DELETE({ locals, params }) {
@@ -46,7 +56,7 @@ export async function DELETE({ locals, params }) {
 	}
 
 	const { isModerator } = locals;
-	const isAuthor = session.user.id === res?.authorId;
+	const isAuthor = session.user.id === res.authorId;
 
 	const isAllowed = isModerator || isAuthor;
 
