@@ -109,7 +109,7 @@
 		image: {
 			component: ImagePreview,
 			props: () => ({
-				src: getImageCacheURL(hash).toString(),
+				src: `${STATIC_DOMAIN}/${hash}`,
 				name,
 			}),
 		},
@@ -139,6 +139,47 @@
 	const SvelteComponentProps = $derived(fileType && PreviewComponents[fileType].props());
 </script>
 
+<svelte:head>
+	<meta property="og:site_name" content="Forsen Wiki" />
+	<title
+		>{fileType.substring(0, 1).toUpperCase()}{fileType.substring(1)}: {name} - Uploaded user content -
+		Community Forsen Wiki</title
+	>
+
+	{#if fileType === 'image'}
+		<meta name="description" content="User uploaded image on forsen.wiki." />
+		<meta property="og:description" content="User uploaded image on forsen.wiki." />
+
+		<meta property="og:image" content="{STATIC_DOMAIN}/{hash}" />
+
+		{#if contentType}
+			<meta property="og:image:type" content={contentType} />
+		{/if}
+	{/if}
+
+	{#if fileType === 'video'}
+		<meta name="description" content="User uploaded video on forsen.wiki." />
+		<meta property="og:description" content="User uploaded video on forsen.wiki." />
+
+		<meta property="og:video" content="{STATIC_DOMAIN}/{hash}" />
+
+		{#if contentType}
+			<meta property="og:video:type" content={contentType} />
+		{/if}
+	{/if}
+
+	{#if fileType === 'audio'}
+		<meta name="description" content="User uploaded audio on forsen.wiki." />
+		<meta property="og:description" content="User uploaded audio on forsen.wiki." />
+
+		<meta property="og:audio" content="{STATIC_DOMAIN}/{hash}" />
+
+		{#if contentType}
+			<meta property="og:audio:type" content={contentType} />
+		{/if}
+	{/if}
+</svelte:head>
+
 <Container class="overflow-hidden">
 	<RandomButton />
 
@@ -161,7 +202,7 @@
 							<td class="p-4"><strong>Name</strong></td>
 							{#if allowModify}
 								<td class="pl-4">
-									<div class="flex mt-1 mr-1">
+									<div class="mt-1 mr-1 flex">
 										<input
 											bind:value={name}
 											type="text"
@@ -169,7 +210,9 @@
 											class="input-color w-full py-4 placeholder:text-inherit"
 											placeholder={result.name}
 										/>
-										<Button class="px-4 rounded-l-none!" on:click={updateName} disabled={isUpdating}>Save</Button>
+										<Button class="rounded-l-none! px-4" on:click={updateName} disabled={isUpdating}
+											>Save</Button
+										>
 									</div>
 								</td>
 							{:else}
