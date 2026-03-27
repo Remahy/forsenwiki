@@ -148,9 +148,12 @@
 
 	{#if fileType === 'image'}
 		<meta name="description" content="User uploaded image on forsen.wiki." />
-		<meta property="og:description" content="User uploaded image on forsen.wiki." />
 
+		<meta property="og:description" content="User uploaded image on forsen.wiki." />
 		<meta property="og:image" content="{STATIC_DOMAIN}/{hash}" />
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:image" content="{STATIC_DOMAIN}/{hash}" />
 
 		{#if contentType}
 			<meta property="og:image:type" content={contentType} />
@@ -159,23 +162,33 @@
 
 	{#if fileType === 'video'}
 		<meta name="description" content="User uploaded video on forsen.wiki." />
-		<meta property="og:description" content="User uploaded video on forsen.wiki." />
 
+		<meta property="og:description" content="User uploaded video on forsen.wiki." />
 		<meta property="og:video" content="{STATIC_DOMAIN}/{hash}" />
+
+		<meta name="twitter:card" content="player" />
+		<meta name="twitter:player" content="{STATIC_DOMAIN}/{hash}" />
+		<meta name="twitter:player:stream" content="{STATIC_DOMAIN}/{hash}" />
 
 		{#if contentType}
 			<meta property="og:video:type" content={contentType} />
+			<meta name="twitter:player:stream:content_type" content={contentType} />
 		{/if}
 	{/if}
 
 	{#if fileType === 'audio'}
 		<meta name="description" content="User uploaded audio on forsen.wiki." />
-		<meta property="og:description" content="User uploaded audio on forsen.wiki." />
 
+		<meta property="og:description" content="User uploaded audio on forsen.wiki." />
 		<meta property="og:audio" content="{STATIC_DOMAIN}/{hash}" />
+
+		<meta name="twitter:card" content="player" />
+		<meta name="twitter:player" content="{STATIC_DOMAIN}/{hash}" />
+		<meta name="twitter:player:stream" content="{STATIC_DOMAIN}/{hash}" />
 
 		{#if contentType}
 			<meta property="og:audio:type" content={contentType} />
+			<meta name="twitter:player:stream:content_type" content={contentType} />
 		{/if}
 	{/if}
 </svelte:head>
