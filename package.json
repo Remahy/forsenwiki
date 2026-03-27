@@ -22,6 +22,21 @@
 		"start": "node -r dotenv-expand/config build"
 	},
 	"overrides": {
+		"rimraf": {
+			"minimatch": {
+				"brace-expansion": "^1.1.13"
+			}
+		},
+		"@mapbox/node-pre-gyp": {
+			"minimatch": {
+				"brace-expansion": "^1.1.13"
+			}
+		},
+		"minimatch": {
+			"brace-expansion": "^5.0.5"
+		},
+		"handlebars": "4.7.9",
+		"tar": "7.5.13",
 		"cookie": "$cookie",
 		"@lexical/clipboard": "$@lexical/clipboard",
 		"@lexical/code": "$@lexical/code",
@@ -71,8 +86,8 @@
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.11.1",
 		"@auth/sveltekit": "^1.11.1",
-		"@aws-sdk/client-s3": "^3.1016.0",
-		"@aws-sdk/s3-request-presigner": "^3.1016.0",
+		"@aws-sdk/client-s3": "^3.1019.0",
+		"@aws-sdk/s3-request-presigner": "^3.1019.0",
 		"@fontsource/comic-neue": "^5.2.7",
 		"@lexical/clipboard": "0.41.0",
 		"@lexical/code": "0.41.0",
@@ -94,16 +109,16 @@
 		"@lexical/text": "0.41.0",
 		"@lexical/utils": "0.41.0",
 		"@lexical/yjs": "0.41.0",
-		"@lucide/svelte": "^1.6.0",
-		"@prisma/adapter-pg": "^7.5.0",
-		"@prisma/client": "^7.5.0",
+		"@lucide/svelte": "^1.7.0",
+		"@prisma/adapter-pg": "^7.6.0",
+		"@prisma/client": "^7.6.0",
 		"@tailwindcss/vite": "^4.2.2",
 		"cookie": "1.1.1",
 		"date-fns": "^4.1.0",
 		"diff": "^8.0.4",
 		"dotenv": "^17.3.1",
 		"dotenv-expand": "^12.0.3",
-		"file-type": "^21.3.4",
+		"file-type": "^22.0.0",
 		"image-size": "^2.0.2",
 		"is-url": "^1.2.4",
 		"json-diff": "^1.0.6",
@@ -147,7 +162,7 @@
 		"prettier": "^3.8.1",
 		"prettier-plugin-svelte": "^3.5.1",
 		"prettier-plugin-tailwindcss": "^0.7.2",
-		"prisma": "^7.5.0",
+		"prisma": "^7.6.0",
 		"svelte": "^5.55.0",
 		"svelte-check": "^4.4.5",
 		"tailwindcss": "^4.2.2",
