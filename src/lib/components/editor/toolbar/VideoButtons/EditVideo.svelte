@@ -107,7 +107,7 @@
 	};
 </script>
 
-<div class="flex min-h-[42px] items-center gap-2 pl-2">
+<div class="flex min-h-10.5 items-center gap-2 pl-2">
 	<SvelteComponent />
 
 	<Select
@@ -115,7 +115,7 @@
 		bind:ref={platformElement}
 		on:change={setPlatform}
 		bind:value={currentPlatform}
-		class="!-ml-10 h-full !px-10"
+		class="-ml-10! h-full px-10!"
 	>
 		<option value="unknown" hidden>Unknown</option>
 
@@ -128,7 +128,7 @@
 {#if currentPlatform === 'usercontent'}
 	<Button on:click={video} class="text-xs">Select content</Button>
 {:else}
-	<label title="URL" class="flex min-h-[42px] items-center gap-2 pl-2">
+	<label title="URL" class="flex min-h-10.5 items-center gap-2 pl-2">
 		<span class="hidden">URL</span>
 		<LinkIcon />
 
@@ -142,7 +142,7 @@
 	</label>
 {/if}
 
-<label title="Width" class="flex min-h-[42px] items-center gap-2 pl-2">
+<label title="Width" class="flex min-h-10.5 items-center gap-2 pl-2">
 	<span class="hidden">Width</span>
 	<RectangleHorizontalIcon />
 
@@ -156,7 +156,7 @@
 	/>
 </label>
 
-<label title="Height" class="flex min-h-[42px] items-center gap-2 pl-2">
+<label title="Height" class="flex min-h-10.5 items-center gap-2 pl-2">
 	<span class="hidden">Height</span>
 	<RectangleVerticalIcon />
 

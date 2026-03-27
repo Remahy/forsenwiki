@@ -117,7 +117,7 @@
 		<RandomButton />
 
 		{#if submitErrors.length}
-			<Box class="!bg-yellow-300/75 p-4 text-black">
+			<Box class="bg-yellow-300/75! p-4 text-black">
 				<strong>Partial submit error(s)</strong>
 				{#each submitErrors as error}
 					<p>{error}</p>
@@ -224,7 +224,7 @@
 			<div class="flex gap-4">
 				<CacheBustButton />
 				<LinkButton
-					class="mt-2 min-h-[unset] min-w-[unset] !p-1 text-xs"
+					class="mt-2 min-h-[unset] min-w-[unset] p-1! text-xs"
 					href="/api/article/read/{title}">API request</LinkButton
 				>
 			</div>

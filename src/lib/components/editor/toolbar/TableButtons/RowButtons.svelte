@@ -148,7 +148,7 @@
 
 		<Button
 			on:click={() => onClickAddRow(false)}
-			class="!max-w-8 !min-w-8 !rounded-none !p-0"
+			class="max-w-8! min-w-8! rounded-none! p-0!"
 			title="Add before current row"
 		>
 			<ArrowUpIcon size="20" />
@@ -156,14 +156,14 @@
 
 		<Button
 			on:click={() => onClickAddRow()}
-			class="!max-w-8 !min-w-8 !rounded-l-none !p-0"
+			class="max-w-8! min-w-8! rounded-l-none! p-0!"
 			title="Add after current row"
 		>
 			<ArrowDownIcon size="20" />
 		</Button>
 	</div>
 
-	<Button on:click={onClickRemoveRow} class="!p-0" title="Remove row">
+	<Button on:click={onClickRemoveRow} class="p-0!" title="Remove row">
 		<MinusIcon size="20" />
 	</Button>
 

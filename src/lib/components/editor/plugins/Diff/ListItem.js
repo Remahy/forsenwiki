@@ -58,13 +58,13 @@ export class DiffListItemNode extends ListItemNode {
 
 			switch (this.___change.___type) {
 				case '~':
-					dom.element.classList.add('marker:!text-orange-300');
+					dom.element.classList.add('marker:text-orange-300!');
 					break;
 				case '+':
-					dom.element.classList.add('marker:!text-green-500');
+					dom.element.classList.add('marker:text-green-500!');
 					break;
 				case '-':
-					dom.element.classList.add('marker:!text-red-500');
+					dom.element.classList.add('marker:text-red-500!');
 					break;
 			}
 

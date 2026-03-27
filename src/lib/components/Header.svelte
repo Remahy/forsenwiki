@@ -65,7 +65,7 @@
 
 					<Button
 						on:click={signOutWrapper}
-						class="!rounded-l-none !px-2 text-xs"
+						class="rounded-l-none! px-2! text-xs"
 						disabled={isLoading}
 						title="Log out"
 					>
@@ -83,7 +83,7 @@
 						</div>
 					</Button>
 				{:else}
-					<Button on:click={signInWrapper} class="!px-2 text-xs" disabled={isLoading} title="Login">
+					<Button on:click={signInWrapper} class="px-2! text-xs" disabled={isLoading} title="Login">
 						{#if isLoading}
 							<Spinner size="16" />
 							<span>Logging in...</span>

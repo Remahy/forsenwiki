@@ -223,7 +223,7 @@
 					<input
 						oninput={unsetError}
 						required
-						class="w-full rounded-sm p-2 {titleError && '!bg-red-200'} input-color"
+						class="w-full rounded-sm p-2 {titleError && 'bg-red-200!'} input-color"
 						bind:value={newTitle}
 					/>
 					{#if titleError}
@@ -244,14 +244,14 @@
 	{/if}
 
 	{#if error}
-		<Box class="flex items-center !bg-red-300 p-2 dark:text-black">
+		<Box class="flex items-center bg-red-300! p-2 dark:text-black">
 			<p>{error.message}</p>
 		</Box>
 	{/if}
 
 	<!--
 	{#if warnings.length}
-		<Box class="flex items-center !bg-yellow-300 p-2 dark:text-black">
+		<Box class="flex items-center bg-yellow-300! p-2 dark:text-black">
 			{#each warnings as warning (warning.name)}
 				<p>{warning.message}</p>
 			{/each}
@@ -263,7 +263,7 @@
 		<small class="grow">
 			Make sure you read the <Link
 				href="/terms"
-				class="hover:!text-indigo-700"
+				class="hover:text-indigo-700!"
 				target="forsenwiki-tos">Terms & Conditions</Link
 			>.
 			<span
