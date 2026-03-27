@@ -241,7 +241,7 @@
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Metadata</strong></td>
-							<td class="wrap-break-words p-4">
+							<td class="wrap-break-word p-4">
 								<details>
 									<summary class="cursor-pointer">Toggle expand</summary>
 									<small>
@@ -267,13 +267,13 @@
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Used in</strong></td>
-							<td class="wrap-break-words p-4"
+							<td class="wrap-break-word p-4"
 								><small><i>// TODO: Not implemented yet.</i></small></td
 							>
 						</tr>
 						<tr>
 							<td class="p-4"><strong>URL</strong></td>
-							<td class="wrap-break-words p-4">
+							<td class="wrap-break-word p-4">
 								<Link href="{STATIC_DOMAIN}/{hash}" target="_blank">{STATIC_DOMAIN}/{hash}</Link>
 							</td>
 						</tr>
