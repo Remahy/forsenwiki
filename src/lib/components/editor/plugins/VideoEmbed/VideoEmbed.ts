@@ -272,11 +272,11 @@ const setVideoAttributes = (node: VideoEmbedNode, element: HTMLElement) => {
 
 	element.setAttribute(
 		'style',
-		getIframeStyle(
+		`${getIframeStyle(
 			width as VideoEmbedPayload['width'],
 			height as VideoEmbedPayload['height'],
 			node.getFormatType()
-		)
+		)}margin:0!important;`
 	);
 };
 
