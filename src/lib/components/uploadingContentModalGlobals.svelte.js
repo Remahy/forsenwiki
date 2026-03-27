@@ -1,4 +1,4 @@
-const defaults ={
+const defaults = {
 	uploading: 0,
 	uploaded: [],
 };

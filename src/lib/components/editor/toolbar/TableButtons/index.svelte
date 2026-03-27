@@ -63,7 +63,10 @@
 {#if selectedTable}
 	<Divider />
 
-	<div class="flex flex-col items-center justify-center font-mono text-xs leading-none select-none">
+	<div class="
+		flex flex-col items-center justify-center font-mono text-xs leading-none
+		select-none
+	">
 		<span>T</span>
 		<span>B</span>
 		<span>L</span>

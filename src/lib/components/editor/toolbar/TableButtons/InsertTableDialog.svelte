@@ -42,14 +42,21 @@
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
-	<header class="forsen-wiki-theme-border flex items-center justify-between border-b p-6">
-		<h1 class="text-xl font-semibold lg:text-2xl">Insert table</h1>
+	<header class="
+		flex items-center justify-between border-b forsen-wiki-theme-border p-6
+	">
+		<h1 class="
+			text-xl font-semibold
+			lg:text-2xl
+		">Insert table</h1>
 		<Button class="ml-auto inline-flex items-center rounded-lg" on:click={cancel}>
 			<XIcon />
 		</Button>
 	</header>
 
-	<main class="forsen-wiki-theme-border flex flex-col gap-8 overflow-hidden border-b p-6">
+	<main class="
+		flex flex-col gap-8 overflow-hidden border-b forsen-wiki-theme-border p-6
+	">
 		<label class="flex items-center gap-2">
 			<strong>Include headers</strong>
 			<input bind:checked={includeHeaders} type="checkbox" />

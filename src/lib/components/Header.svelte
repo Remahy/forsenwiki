@@ -30,7 +30,7 @@
 
 <header class="header">
 	<nav class="container mx-auto flex items-center gap-4 p-4">
-		<a href={resolve("/")} class="hover:text-stone-500">
+		<a href={resolve('/')} class="hover:text-stone-500">
 			<div class="flex items-end gap-2">
 				<Logo width="64" height="64" />
 				<div class="flex flex-col justify-end">
@@ -40,8 +40,14 @@
 			</div>
 		</a>
 
-		<div class="mt-auto grow px-2 lg:px-16">
-			<div class="hidden sm:block">
+		<div class="
+			mt-auto grow px-2
+			lg:px-16
+		">
+			<div class="
+				hidden
+				sm:block
+			">
 				<Search inline={true} />
 			</div>
 		</div>
@@ -49,11 +55,17 @@
 		<div class="mt-auto flex items-end overflow-hidden">
 			<div class="flex items-stretch justify-end overflow-hidden">
 				{#if page.data.session?.user}
-					<div class="violet flex max-w-20 gap-2 overflow-hidden p-2 lg:max-w-40">
+					<div class="
+						violet flex max-w-20 gap-2 overflow-hidden p-2
+						lg:max-w-40
+					">
 						{#if cachedImage}
 							<img
 								src={cachedImage}
-								class="-my-2 -ml-2 hidden h-10 w-auto lg:block"
+								class="
+									-my-2 -ml-2 hidden h-10 w-auto
+									lg:block
+								"
 								alt="Twitch avatar"
 							/>
 						{/if}
@@ -65,11 +77,14 @@
 
 					<Button
 						on:click={signOutWrapper}
-						class="!rounded-l-none !px-2 text-xs"
+						class="rounded-l-none! px-2! text-xs"
 						disabled={isLoading}
 						title="Log out"
 					>
-						<div class="hidden lg:block">
+						<div class="
+							hidden
+							lg:block
+						">
 							{#if isLoading}
 								<Spinner size="16" />
 								<span>Logging out...</span>
@@ -77,18 +92,24 @@
 								<span>Log out</span>
 							{/if}
 						</div>
-						<div class="block lg:hidden">
+						<div class="
+							block
+							lg:hidden
+						">
 							<LogOutIcon size="16" />
 							<span class="hidden">Log out</span>
 						</div>
 					</Button>
 				{:else}
-					<Button on:click={signInWrapper} class="!px-2 text-xs" disabled={isLoading} title="Login">
+					<Button on:click={signInWrapper} class="px-2! text-xs" disabled={isLoading} title="Login">
 						{#if isLoading}
 							<Spinner size="16" />
 							<span>Logging in...</span>
 						{:else}
-							<span>Login</span><span class="-ml-1 hidden lg:inline"> with Twitch</span>
+							<span>Login</span><span class="
+								-ml-1 hidden
+								lg:inline
+							"> with Twitch</span>
 						{/if}
 					</Button>
 				{/if}

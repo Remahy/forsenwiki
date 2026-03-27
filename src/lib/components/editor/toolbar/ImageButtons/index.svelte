@@ -1,6 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
-	import { $getSelection as getSelection, $isNodeSelection as isNodeSelection, mergeRegister } from 'lexical';
+	import {
+		$getSelection as getSelection,
+		$isNodeSelection as isNodeSelection,
+		mergeRegister,
+	} from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 
 	import { $isImageNode as isImageNode } from '$lib/lexical/custom';
@@ -43,7 +47,10 @@
 {#if selectedImageNode}
 	<Divider />
 
-	<div class="flex flex-col items-center justify-center font-mono text-xs leading-none select-none">
+	<div class="
+		flex flex-col items-center justify-center font-mono text-xs leading-none
+		select-none
+	">
 		<span>I</span>
 		<span>M</span>
 		<span>G</span>

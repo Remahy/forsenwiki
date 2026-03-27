@@ -14,7 +14,9 @@
 	<LinkButton
 		href="/random"
 		reload
-		class="flex gap-2 whitespace-nowrap{randomIsSpinning ? ' pointer-events-none opacity-50' : ''}"
+		class="
+			flex gap-2
+			whitespace-nowrap{randomIsSpinning ? `pointer-events-none opacity-50` : ''}"
 		on:click={() => (randomIsSpinning = true)}
 	>
 		<Dice4Icon /> <span>Random</span>

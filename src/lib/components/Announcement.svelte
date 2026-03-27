@@ -10,11 +10,21 @@
 </script>
 
 {#if !hasSeenPrivacyUpdateNotice}
-	<Box class="rounded-none! bg-yellow-900/20! dark:bg-yellow-300/10!">
+	<Box
+		class="
+			rounded-none! bg-yellow-900/20!
+			dark:bg-yellow-300/10!
+		"
+	>
 		<div class="container mx-auto flex items-center gap-4 p-4">
-			<ScaleIcon class="hidden h-8 w-8 lg:block" />
+			<ScaleIcon
+				class="
+					hidden size-8
+					lg:block
+				"
+			/>
 			<div class="grow">
-				<a href={resolve("/privacy")}>
+				<a href={resolve('/privacy')}>
 					<p>
 						(March 2026) Privacy policy has been updated. Please take a moment to read it before its
 						effective date <strong>April 12</strong>.
@@ -26,7 +36,11 @@
 						<span
 							>Modified Cloudflare section to mention that it now acts as our host and cache for
 							user uploaded content.</span
-						> <span>Removed mention of notifying users of privacy policy changes via email, we don't have any user emails.</span>
+						>
+						<span
+							>Removed mention of notifying users of privacy policy changes via email, we don't have
+							any user emails.</span
+						>
 					</p>
 				</a>
 			</div>

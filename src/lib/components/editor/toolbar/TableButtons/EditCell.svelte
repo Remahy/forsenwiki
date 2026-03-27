@@ -48,8 +48,13 @@
 	};
 </script>
 
-<div class="forsen-wiki-theme-outline m-1.5 flex items-center gap-2 outline-offset-8">
-	<div class="flex flex-col items-center justify-center font-mono text-xs leading-none select-none">
+<div class="
+	m-1.5 flex items-center gap-2 forsen-wiki-theme-outline outline-offset-8
+">
+	<div class="
+		flex flex-col items-center justify-center font-mono text-xs leading-none
+		select-none
+	">
 		<span>C</span>
 		<span>L</span>
 		<span>L</span>

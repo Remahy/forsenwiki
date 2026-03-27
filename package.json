@@ -137,6 +137,7 @@
 		"esbuild-svelte": "^0.9.4",
 		"eslint": "^10.1.0",
 		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-better-tailwindcss": "^4.3.2",
 		"eslint-plugin-svelte": "^3.16.0",
 		"generate-license-file": "^4.1.1",
 		"globals": "^17.4.0",

@@ -22,7 +22,10 @@
 		<div
 			role="dialog"
 			aria-modal="true"
-			class="pointer-events-none relative inset-0 z-2 m-auto w-full max-w-2xl overflow-hidden opacity-100 shadow-2xl"
+			class="
+				pointer-events-none relative inset-0 z-2 m-auto w-full max-w-2xl
+				overflow-hidden opacity-100 shadow-2xl
+			"
 		>
 			<SvelteComponent {...$uploadModal} />
 		</div>

@@ -55,7 +55,10 @@
 						title="View live article"
 					>
 						<FileIcon size="16" />
-						<span class="hidden lg:inline">View live article</span>
+						<span class="
+							hidden
+							lg:inline
+						">View live article</span>
 					</LinkButton>
 
 					{#if !current}
@@ -65,7 +68,10 @@
 							title="Compare to live article"
 						>
 							<GitCompareIcon size="16" />
-							<span class="hidden lg:inline">Compare to live article</span>
+							<span class="
+								hidden
+								lg:inline
+							">Compare to live article</span>
 						</LinkButton>
 					{/if}
 
@@ -75,7 +81,10 @@
 						title="Return to history list"
 					>
 						<HistoryIcon size="16" />
-						<span class="hidden lg:inline">Return to history list</span>
+						<span class="
+							hidden
+							lg:inline
+						">Return to history list</span>
 					</LinkButton>
 				</div>
 			</div>
@@ -96,11 +105,20 @@
 			</div>
 		</header>
 
-		<div class="flex grow flex-col gap-4 lg:flex-row">
-			<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
+		<div class="
+			flex grow flex-col gap-4
+			lg:flex-row
+		">
+			<Box class="
+				flex grow flex-col overflow-hidden p-4
+				lg:mb-0
+			">
 				{#if html?.html}
-					<main class="article-root prose dark:prose-invert max-w-[unset] grow">
-						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
+					<main class="
+						article-root prose max-w-[unset] grow
+						dark:prose-invert
+					">
+						<div class="mb-2 border-b-2 forsen-wiki-theme-border pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>
 
@@ -111,7 +129,10 @@
 				{/if}
 			</Box>
 
-			<div class="hidden lg:block lg:w-96 lg:min-w-96"></div>
+			<div class="
+				hidden
+				lg:block lg:w-96 lg:min-w-96
+			"></div>
 		</div>
 	</article>
 </Container>

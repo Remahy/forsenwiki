@@ -51,7 +51,9 @@
 		/>
 
 		{#if inline}
-			<Button type="submit" class="forsen-wiki-theme-border h-full rounded-l-none! border">
+			<Button type="submit" class="
+				h-full rounded-l-none! border forsen-wiki-theme-border
+			">
 				<SearchIcon />
 				<span class="hidden">Search</span>
 			</Button>
@@ -119,7 +121,7 @@
 
 		<label class="flex items-baseline gap-2">
 			<strong class="min-w-12">Order</strong>
-			<Select title="Order by" name="order" class="h-full w-full" bind:value={order}>
+			<Select title="Order by" name="order" class="size-full" bind:value={order}>
 				<option value="desc">Descending</option>
 				<option value="asc">Ascending</option>
 			</Select>

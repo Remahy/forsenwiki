@@ -9,13 +9,16 @@
 </svelte:head>
 
 <Container class="p-8">
-	<section class="prose prose-lg dark:prose-invert w-full max-w-[unset]">
+	<section class="
+		prose prose-lg w-full max-w-[unset]
+		dark:prose-invert
+	">
 		<h1 id="privacy">Privacy Policy</h1>
 		<p>🐦</p>
 		<p>Effective date: April 12, 2026</p>
 		<p>
-			ForsenWiki ("us", "we", or "our") operates the forsen.wiki and kappa.wiki websites (hereinafter referred to as
-			the "Service").
+			ForsenWiki ("us", "we", or "our") operates the forsen.wiki and kappa.wiki websites
+			(hereinafter referred to as the "Service").
 		</p>
 		<p>
 			The Service is hosted on Hetzner (www.hetzner.com) behind a Cloudflare (www.cloudflare.com)
@@ -143,13 +146,13 @@
 				rel="noopener noreferrer">hetzner/legal/privacy-policy/</a
 			>
 		</p>
-		<br/>
-		<p>
-			We use Cloudflare as our cache and user content upload host.
-		</p>
-				<ul>
-			<li>To host and cache uploaded user content, and to protect the Service from
-			denial of service attacks</li>
+		<br />
+		<p>We use Cloudflare as our cache and user content upload host.</p>
+		<ul>
+			<li>
+				To host and cache uploaded user content, and to protect the Service from denial of service
+				attacks
+			</li>
 		</ul>
 		<p>
 			Read Cloudflare's Privacy Policy here: <a
@@ -256,8 +259,8 @@
 			posting the new Privacy Policy on this page.
 		</p>
 		<p>
-			We will let you know via a prominent notice on our Service, prior to the change
-			becoming effective and update the "effective date" at the top of this Privacy Policy.
+			We will let you know via a prominent notice on our Service, prior to the change becoming
+			effective and update the "effective date" at the top of this Privacy Policy.
 		</p>
 		<p>
 			You are advised to review this Privacy Policy periodically for any changes. Changes to this

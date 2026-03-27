@@ -195,8 +195,14 @@
 <Container class="overflow-hidden">
 	<RandomButton />
 
-	<div class="items-start gap-8 xl:flex">
-		<div class="mb-4 xl:mb-0 xl:w-fit">
+	<div class="
+		items-start gap-8
+		xl:flex
+	">
+		<div class="
+			mb-4
+			xl:mb-0 xl:w-fit
+		">
 			<Box class="xl:min-h-96 xl:max-w-3xl xl:min-w-96">
 				{#if SvelteComponent && SvelteComponentProps}
 					<SvelteComponent {...SvelteComponentProps} />
@@ -219,7 +225,10 @@
 											bind:value={name}
 											type="text"
 											name="query"
-											class="input-color w-full py-4 placeholder:text-inherit/25"
+											class="
+												input-color w-full py-4
+												placeholder:text-inherit/25
+											"
 											placeholder={result.name}
 										/>
 										<Button class="rounded-l-none! px-4" on:click={updateName} disabled={isUpdating}
@@ -241,7 +250,7 @@
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Metadata</strong></td>
-							<td class="wrap-break-word p-4">
+							<td class="p-4 wrap-break-word">
 								<details>
 									<summary class="cursor-pointer">Toggle expand</summary>
 									<small>
@@ -267,13 +276,13 @@
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Used in</strong></td>
-							<td class="wrap-break-word p-4"
+							<td class="p-4 wrap-break-word"
 								><small><i>// TODO: Not implemented yet.</i></small></td
 							>
 						</tr>
 						<tr>
 							<td class="p-4"><strong>URL</strong></td>
-							<td class="wrap-break-word p-4">
+							<td class="p-4 wrap-break-word">
 								<Link href="{STATIC_DOMAIN}/{hash}" target="_blank">{STATIC_DOMAIN}/{hash}</Link>
 							</td>
 						</tr>
@@ -290,7 +299,10 @@
 	{/if}
 
 	{#if error}
-		<Box class="flex items-center !bg-red-200 p-4 text-xl font-medium dark:text-black">
+		<Box class="
+			flex items-center bg-red-200! p-4 text-xl font-medium
+			dark:text-black
+		">
 			<p>{error.message}</p>
 		</Box>
 	{/if}

@@ -37,7 +37,7 @@ async function authorizationHandle({ event, resolve }) {
 
 export const handle = sequence(authenticationHandle, authorizationHandle);
 
-export const handleError = async ({ error}) => {
+export const handleError = async ({ error }) => {
 	/** @type {Error & { status: number } | null} */
 	const e = /** @type {any} */ (error instanceof Error ? error : null);
 

@@ -1,10 +1,11 @@
+import { fileURLToPath } from 'node:url';
+import globals from 'globals';
 import eslint from '@eslint/js';
+import { includeIgnoreFile } from '@eslint/compat';
+import { defineConfig } from 'eslint/config';
 import svelte from 'eslint-plugin-svelte';
 import prettier from 'eslint-config-prettier';
-import globals from 'globals';
-import { defineConfig } from 'eslint/config';
-import { includeIgnoreFile } from '@eslint/compat';
-import { fileURLToPath } from 'node:url';
+import eslintPluginBetterTailwindcss from 'eslint-plugin-better-tailwindcss';
 
 const gitignorePath = fileURLToPath(new URL('.gitignore', import.meta.url));
 
@@ -15,7 +16,21 @@ export default defineConfig([
 	...svelte.configs['flat/recommended'],
 	includeIgnoreFile(gitignorePath, 'Imported .gitignore patterns'),
 	{
+		extends: [eslintPluginBetterTailwindcss.configs.recommended],
+		settings: {
+			'better-tailwindcss': {
+				entryPoint: 'src/app.css',
+			},
+		},
 		rules: {
+			'better-tailwindcss/enforce-consistent-line-wrapping': [
+				'warn',
+				{
+					indent: 'tab',
+					strictness: 'loose',
+				},
+			],
+			'better-tailwindcss/no-unknown-classes': ['off'],
 			semi: ['error', 'always'],
 			curly: ['error'],
 		},

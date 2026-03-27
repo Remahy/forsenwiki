@@ -27,7 +27,9 @@
 	bind:value
 	bind:this={ref}
 	{...rest}
-	class="select {className}"
+	class="
+		select
+		{className}"
 >
 	{@render children?.()}
 </select>

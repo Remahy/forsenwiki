@@ -17,16 +17,30 @@
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
-	<header class="forsen-wiki-theme-border flex items-center justify-between border-b p-6">
-		<h1 class="text-xl font-semibold lg:text-2xl">Uploading content</h1>
+	<header class="
+		flex items-center justify-between border-b forsen-wiki-theme-border p-6
+	">
+		<h1 class="
+			text-xl font-semibold
+			lg:text-2xl
+		">Uploading content</h1>
 	</header>
 
-	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
+	<main class="
+		flex flex-col gap-16 overflow-hidden border-b forsen-wiki-theme-border p-6
+	">
 		{#if uploading.count > 0}
 			<div>
 				<p>Uploading {uploading.count} files...</p>
 				<progress
-					class="w-full [&::-moz-progress-bar]:bg-blue-400 [&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-bar]:bg-slate-300 [&::-webkit-progress-value]:rounded-lg [&::-webkit-progress-value]:bg-blue-400"
+					class="
+						w-full
+						[&::-moz-progress-bar]:bg-blue-400
+						[&::-webkit-progress-bar]:rounded-lg
+						[&::-webkit-progress-bar]:bg-slate-300
+						[&::-webkit-progress-value]:rounded-lg
+						[&::-webkit-progress-value]:bg-blue-400
+					"
 					value={uploaded.length}
 					max={uploading.count}
 				></progress>
@@ -38,10 +52,15 @@
 					{#each uploaded as upload (upload.url)}
 						{@const type = getType(upload.contentType)}
 						<div
-							class="forsen-wiki-theme-border bg-dark flex w-fit flex-col gap-2 overflow-hidden rounded border"
+							class="
+								flex w-fit flex-col gap-2 overflow-hidden rounded-sm border
+								forsen-wiki-theme-border bg-dark
+							"
 						>
 							{#if type === 'image'}
-								<ImagePreview src={upload.url} name="" className="max-h-32 w-auto! max-w-32!" />
+								<ImagePreview src={upload.url} name="" className="
+									max-h-32 w-auto! max-w-32!
+								" />
 							{:else if type === 'audio'}
 								<AudioPreview src={upload.url} />
 							{:else if type === 'video'}
@@ -49,7 +68,9 @@
 							{:else if type === 'document'}
 								<span>Document {upload.url}</span>
 							{/if}
-							<LinkButton href="/content/{upload.id}" target="_blank" class="self-start"
+							<LinkButton href="/content/{upload.id}" target="_blank" class="
+								self-start
+							"
 								>View</LinkButton
 							>
 						</div>

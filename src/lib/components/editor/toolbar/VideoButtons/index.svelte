@@ -1,6 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
-	import { $getSelection as getSelection, $isNodeSelection as isNodeSelection, mergeRegister } from 'lexical';
+	import {
+		$getSelection as getSelection,
+		$isNodeSelection as isNodeSelection,
+		mergeRegister,
+	} from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 
 	import { $isVideoEmbedNode as isVideoEmbedNode } from '$lib/lexical/custom';
@@ -44,7 +48,10 @@
 {#if selectedVideoEmbedNode}
 	<Divider />
 
-	<div class="flex flex-col items-center justify-center font-mono text-xs leading-none select-none">
+	<div class="
+		flex flex-col items-center justify-center font-mono text-xs leading-none
+		select-none
+	">
 		<span>V</span>
 		<span>I</span>
 		<span>D</span>
