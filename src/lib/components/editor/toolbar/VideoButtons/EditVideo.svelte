@@ -1,10 +1,12 @@
 <script>
 	import {
+		FileIcon,
 		FileQuestionMarkIcon,
 		LinkIcon,
 		RectangleHorizontalIcon,
 		RectangleVerticalIcon,
 	} from '@lucide/svelte';
+	import { $getNodeByKey as getNodeByKey } from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 
 	import Select from '$lib/components/Select.svelte';
@@ -18,6 +20,9 @@
 	import { DOMAIN } from '$lib/environment/environment';
 	import YouTube from '$lib/components/icons/YouTube.svelte';
 	import { getURLAndTitle } from '../../plugins/VideoEmbed/VideoEmbed';
+	import Button from '$lib/components/Button.svelte';
+	import EditVideoModal from './EditVideoModal.svelte';
+	import { modal } from '$lib/stores/modal';
 
 	/**
 	 * @typedef {Object} Props
@@ -46,6 +51,7 @@
 	const platformIcons = {
 		youtube: YouTube,
 		twitch: TwitchGlitch,
+		usercontent: FileIcon,
 		default: FileQuestionMarkIcon,
 	};
 
@@ -78,6 +84,27 @@
 	const SvelteComponent = $derived(
 		currentPlatform ? platformIcons[currentPlatform] : platformIcons.default
 	);
+
+	const video = () => {
+		editor.read(() => {
+			modal.set({
+				component: EditVideoModal,
+				src: selectedVideoEmbedNode.getSrc(),
+				/** @param {import('../../plugins/VideoEmbed/VideoEmbed').VideoEmbedPayload} data */
+				onSubmit: (data) => {
+					editor.update(() => {
+						/** @type {import('../../plugins/Image/Image').ImageNode} */
+						const node = /** @type {any} */ (getNodeByKey(selectedVideoEmbedNode.getKey()));
+
+						const { src } = data;
+
+						node.setSrc(src);
+					});
+				},
+				isOpen: true,
+			});
+		});
+	};
 </script>
 
 <div class="flex min-h-[42px] items-center gap-2 pl-2">
@@ -98,18 +125,22 @@
 	</Select>
 </div>
 
-<label title="URL" class="flex min-h-[42px] items-center gap-2 pl-2">
-	<span class="hidden">URL</span>
-	<LinkIcon />
+{#if currentPlatform === 'usercontent'}
+	<Button on:click={video} class="text-xs">Select content</Button>
+{:else}
+	<label title="URL" class="flex min-h-[42px] items-center gap-2 pl-2">
+		<span class="hidden">URL</span>
+		<LinkIcon />
 
-	<input
-		class="input-color -ml-10 h-full w-auto py-1 pr-0 pl-10 text-sm lg:h-full"
-		onchange={setURL}
-		placeholder="https://..."
-		type="url"
-		bind:value={currentURL}
-	/>
-</label>
+		<input
+			class="input-color -ml-10 h-full w-auto py-1 pr-0 pl-10 text-sm lg:h-full"
+			onchange={setURL}
+			placeholder="https://..."
+			type="url"
+			bind:value={currentURL}
+		/>
+	</label>
+{/if}
 
 <label title="Width" class="flex min-h-[42px] items-center gap-2 pl-2">
 	<span class="hidden">Width</span>

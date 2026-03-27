@@ -46,6 +46,7 @@
 	/** @type {HTMLInputElement | null} */
 	let inputElement = $state(null);
 
+	/** @type {'new' | 'internal'} */
 	let currentImageType = $state('new');
 
 	let isLoading = $state(false);
