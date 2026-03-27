@@ -35,7 +35,10 @@
 
 <button
 	{disabled}
-	class="flex cursor-pointer items-center gap-1 text-start text-sm font-bold! text-red-600 underline"
+	class="
+		flex cursor-pointer items-center gap-1 text-start text-sm font-bold!
+		text-red-600 underline
+	"
 	title="Reset"
 	onclick={onClickResetWrapper}
 >

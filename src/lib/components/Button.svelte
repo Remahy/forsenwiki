@@ -16,7 +16,9 @@
 	type="button"
 	onclick={bubble('click')}
 	{...rest}
-	class="button flex min-h-10 min-w-10 cursor-pointer items-center justify-center gap-2 {className}"
+	class="
+		button flex min-h-10 min-w-10 cursor-pointer items-center justify-center gap-2
+		{className}"
 >
 	{@render children?.()}
 </button>

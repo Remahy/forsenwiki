@@ -187,11 +187,18 @@
 		<input
 			oninput={unsetError}
 			required
-			class="w-full rounded-sm p-2 {titleError && 'bg-red-200!'} input-color"
+			class="
+				w-full rounded-sm p-2
+				{titleError && 'bg-red-200!'}
+				input-color
+			"
 			bind:value={title.value}
 		/>
 		{#if titleError}
-			<strong class="text-red-600 dark:text-red-500">{titleError.message}</strong>
+			<strong class="
+				text-red-600
+				dark:text-red-500
+			">{titleError.message}</strong>
 		{:else}
 			<small
 				><span class="font-bold">URL:</span>
@@ -205,7 +212,10 @@
 	{/if}
 
 	{#if error}
-		<Box class="flex items-center bg-red-300! p-2 font-bold dark:text-black">
+		<Box class="
+			flex items-center bg-red-300! p-2 font-bold
+			dark:text-black
+		">
 			<p>
 				{(error.status || error.statusText) && `(${error.status} ${error.statusText})`}
 				{error.message}
@@ -225,8 +235,14 @@
 				<Spinner />
 			{/if}
 
-			<span class="hidden lg:inline" id="submit">Submit</span>
-			<FileUpIcon class="inline min-w-6 lg:hidden" />
+			<span class="
+				hidden
+				lg:inline
+			" id="submit">Submit</span>
+			<FileUpIcon class="
+				inline min-w-6
+				lg:hidden
+			" />
 		</Button>
 	</Box>
 

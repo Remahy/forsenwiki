@@ -10,9 +10,19 @@
 </script>
 
 {#if !hasSeenPrivacyUpdateNotice}
-	<Box class="rounded-none! bg-yellow-900/20! dark:bg-yellow-300/10!">
+	<Box
+		class="
+			rounded-none! bg-yellow-900/20!
+			dark:bg-yellow-300/10!
+		"
+	>
 		<div class="container mx-auto flex items-center gap-4 p-4">
-			<ScaleIcon class="hidden h-8 w-8 lg:block" />
+			<ScaleIcon
+				class="
+					hidden size-8
+					lg:block
+				"
+			/>
 			<div class="grow">
 				<a href={resolve('/privacy')}>
 					<p>

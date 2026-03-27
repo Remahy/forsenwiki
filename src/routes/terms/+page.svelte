@@ -8,7 +8,10 @@
 </svelte:head>
 
 <Container class="p-8">
-	<section class="prose prose-lg dark:prose-invert w-full max-w-[unset]">
+	<section class="
+		prose prose-lg w-full max-w-[unset]
+		dark:prose-invert
+	">
 		<h1>Terms & Conditions</h1>
 		<p>Effective date: April 12, 2026</p>
 
@@ -19,7 +22,11 @@
 		<ol>
 			<li
 				data-content="Primum non nocere."
-				class="change-me relative whitespace-pre after:absolute after:bottom-4 after:left-1 after:-z-10 after:pl-1 after:opacity-15 after:content-[attr(data-content)]"
+				class="
+					change-me relative whitespace-pre
+					after:absolute after:bottom-4 after:left-1 after:-z-10 after:pl-1
+					after:opacity-15 after:content-[attr(data-content)]
+				"
 			>
 				Do no harm.
 			</li>

@@ -20,7 +20,9 @@
 <a
 	{href}
 	data-sveltekit-reload={reload}
-	class="link-button {className}"
+	class="
+		link-button
+		{className}"
 	{...rest}
 	class:pointer-events-none={navigatingToInternalHref}
 >

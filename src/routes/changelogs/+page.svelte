@@ -12,9 +12,18 @@
 
 <Container>
 	<article class="relative flex grow flex-col gap-4">
-		<div class="flex grow flex-col gap-4 lg:flex-row">
-			<Box class="flex grow flex-col p-4 lg:mb-0">
-				<main class="article-root prose dark:prose-invert max-w-[unset] grow">
+		<div class="
+			flex grow flex-col gap-4
+			lg:flex-row
+		">
+			<Box class="
+				flex grow flex-col p-4
+				lg:mb-0
+			">
+				<main class="
+					article-root prose max-w-[unset] grow
+					dark:prose-invert
+				">
 					<h1>Changelogs</h1>
 
 					<p>Compared to forsen, this project actually attempts to improve itself.</p>
