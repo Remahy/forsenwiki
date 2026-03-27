@@ -1,12 +1,13 @@
 <script>
 	import { onMount } from 'svelte';
 	import {
-		FileQuestionIcon,
+		FileQuestionMarkIcon,
 		Heading1Icon,
 		Heading2Icon,
 		Heading3Icon,
 		Heading4Icon,
 		Heading5Icon,
+		ListCheckIcon,
 		ListIcon,
 		ListOrderedIcon,
 		PilcrowIcon,
@@ -50,7 +51,8 @@
 	/** @type {HTMLSelectElement | null} */
 	let elementTypeElement = $state(null);
 
-	let currentElementType = $state('');
+	/** @type {keyof blockTypeIcons} */
+	let currentElementType = $state('default');
 
 	let editor = $derived(getEditor?.());
 
@@ -103,11 +105,10 @@
 		quote: formatQuote,
 	};
 
-	/**
-	 * @type {{[x: string]: typeof import('svelte').SvelteComponent<any>}}
-	 */
 	const blockTypeIcons = {
-		default: FileQuestionIcon,
+		default: FileQuestionMarkIcon,
+		mixed: FileQuestionMarkIcon,
+		unknown: FileQuestionMarkIcon,
 		h1: Heading1Icon,
 		h2: Heading2Icon,
 		h3: Heading3Icon,
@@ -117,6 +118,8 @@
 		number: ListOrderedIcon,
 		paragraph: PilcrowIcon,
 		quote: QuoteIcon,
+		// Unused
+		check: ListCheckIcon,
 	};
 
 	/** @param {Event} e */
@@ -179,7 +182,7 @@
 					currentElementType = 'mixed';
 					return;
 				} else {
-					currentElementType = elementTypes[0];
+					currentElementType = /**@type {keyof blockTypeIcons} */ (elementTypes[0]);
 				}
 
 				let element =
@@ -207,7 +210,7 @@
 						const type = parentList ? parentList.getListType() : 'unknown';
 						currentElementType = type;
 					} else {
-						const type = isHeadingNode(element) ? element.getTag() : element.getType();
+						const type = /**@type {keyof blockTypeIcons} */ (isHeadingNode(element) ? element.getTag() : element.getType());
 						if (type in TYPES) {
 							currentElementType = type;
 						}

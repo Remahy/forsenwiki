@@ -63,6 +63,9 @@
 	let url = $derived(parsedSrc.url);
 	let title = $derived(parsedSrc.title);
 
+	// Used for showing errors for usercontent.
+	let error = $state(false);
+
 	/**
 	 * @param {MouseEvent} event
 	 * @returns {void}
@@ -207,24 +210,41 @@
 <div class="editor-image editor-video" bind:this={nodeRef} style={getWidthAndHeight(width, height)}>
 	<div
 		bind:this={embedRef}
-		class="element-placeholder-color overflow-hidden text-black"
+		class="element-placeholder-color relative overflow-hidden text-black"
 		class:focused={isFocused}
 		style={getWidthAndHeight(width, height)}
 	>
-		<iframe
-			class="pointer-events-none"
-			srcdoc={!url
-				? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform.toUpperCase()} embed.</strong></p>`
-				: undefined}
-			{width}
-			{height}
-			src={url}
-			frameBorder="0"
-			allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-			allowFullScreen={true}
-			{title}
-			style={getIframeStyle(width, height)}
-		></iframe>
+		{#if platform === 'usercontent'}
+			<video class="pointer-events-none" {width} {height} style={getIframeStyle(width, height)}>
+				<source
+					src={url}
+					onerror={() => {
+						error = true;
+					}}
+				/>
+			</video>
+			{#if error}
+				<div class="absolute top-0 p-2 flex flex-col gap-2 pointer-events-none">
+					<p class="text-white whitespace-break-spaces text-lg">Something went wrong loading this video.</p>
+					<p class="text-white whitespace-break-spaces"><strong>URL:</strong> <span>{url}</span></p>
+				</div>
+			{/if}
+		{:else}
+			<iframe
+				class="pointer-events-none"
+				srcdoc={!url
+					? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform.toUpperCase()} embed.</strong></p>`
+					: undefined}
+				{width}
+				{height}
+				src={url}
+				frameBorder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+				allowFullScreen={false}
+				{title}
+				style={getIframeStyle(width, height)}
+			></iframe>
+		{/if}
 	</div>
 
 	{#if resizable && isNodeSelection(selection) && isFocused}

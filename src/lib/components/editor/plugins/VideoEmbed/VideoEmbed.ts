@@ -20,7 +20,7 @@ import type {
 } from 'lexical';
 import { $applyNodeReplacement } from 'lexical';
 
-import { DOMAIN } from '$lib/environment/environment';
+import { DOMAIN, STATIC_DOMAIN } from '$lib/environment/environment';
 import {
 	VIDEO_CONSTANTS,
 	VIDEO_MIN_HEIGHT,
@@ -37,7 +37,7 @@ import {
 import { sanitizeUrl } from '../../utils/sanitizeUrl';
 import { getFormatType } from '../../utils/elementUtils';
 
-export type SupportedPlatforms = 'twitch' | 'youtube';
+export type SupportedPlatforms = 'twitch' | 'youtube' | 'usercontent';
 
 export type VideoEmbedComponentProps = Readonly<{
 	// className: Readonly<{
@@ -132,6 +132,14 @@ export const getURLAndTitle = (
 	src?: string,
 	parentUrl?: string
 ): { url: string; title: string } => {
+	if (platform === 'usercontent') {
+		const hash = src?.split('/').pop();
+		return {
+			title: 'User content',
+			url: `${STATIC_DOMAIN}/${hash}`,
+		};
+	}
+
 	try {
 		new URL('', src);
 	} catch {
@@ -253,10 +261,7 @@ export const getURLAndTitle = (
 	return { url: '', title: 'Unknown source' };
 };
 
-function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl: string) {
-	const element = document.createElement('iframe');
-
-	const { url, title } = getURLAndTitle(node.getPlatform(), node.getSrc(), parentUrl);
+const setVideoAttributes = (node: VideoEmbedNode, element: HTMLElement) => {
 	const { width: rawWidth, height: rawHeight } = node.getWidthAndHeight();
 
 	const width = typeof rawWidth === 'number' ? rawWidth.toString() : 'inherit';
@@ -264,6 +269,22 @@ function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl:
 
 	element.setAttribute('width', width);
 	element.setAttribute('height', height);
+
+	element.setAttribute(
+		'style',
+		getIframeStyle(
+			width as VideoEmbedPayload['width'],
+			height as VideoEmbedPayload['height'],
+			node.getFormatType()
+		)
+	);
+};
+
+function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl: string) {
+	const element = document.createElement('iframe');
+
+	const { url, title } = getURLAndTitle(node.getPlatform(), node.getSrc(), parentUrl);
+
 	element.setAttribute('src', url);
 	element.setAttribute('frameborder', '0');
 	element.setAttribute(
@@ -274,14 +295,7 @@ function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl:
 	element.setAttribute('title', title);
 	element.setAttribute('loading', 'lazy');
 
-	element.setAttribute(
-		'style',
-		getIframeStyle(
-			width as VideoEmbedPayload['width'],
-			height as VideoEmbedPayload['height'],
-			node.getFormatType()
-		)
-	);
+	setVideoAttributes(node, element);
 
 	return element;
 }
@@ -323,6 +337,35 @@ function generateTwitchIframe(node: VideoEmbedNode, parentUrl: string) {
 	return { element };
 }
 
+function generateCDNSrc(node: VideoEmbedNode, staticURL: string) {
+	const url = `${staticURL}/${node.getSrc()!}`;
+
+	/**
+	 * <video controls class="mx-auto min-h-32 aspect-video">
+	<source src={src} type={contentType} />
+</video>
+	 */
+
+	const element = document.createElement('video');
+	setVideoAttributes(node, element);
+
+	element.setAttribute('data-lexical-usercontent', node.getSrc()!);
+
+	element.controls = true;
+
+	const source = document.createElement('source');
+	source.src = url;
+
+	element.appendChild(source);
+
+	if (!url) {
+		const fallbackIframe = createBoilerplateVideoIframeAttributes(node, '');
+		setFallbackElement(fallbackIframe, node.getPlatform());
+	}
+
+	return { element };
+}
+
 function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput {
 	const width = domNode.getAttribute('width') ? Number(domNode.getAttribute('width')) : 'inherit';
 	const height = domNode.getAttribute('height')
@@ -343,6 +386,17 @@ function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput 
 	const twitchClipSrc = domNode.getAttribute('data-lexical-twitch');
 	if (twitchClipSrc) {
 		const node = $createVideoEmbedNode({ platform: 'twitch', src: twitchClipSrc, width, height });
+		return { node };
+	}
+
+	const userContentSrc = domNode.getAttribute('data-lexical-usercontent');
+	if (userContentSrc) {
+		const node = $createVideoEmbedNode({
+			platform: 'usercontent',
+			src: userContentSrc,
+			width,
+			height,
+		});
 		return { node };
 	}
 
@@ -490,6 +544,10 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 
 		if (this.__platform === 'twitch') {
 			return generateTwitchIframe(this, DOMAIN);
+		}
+
+		if (this.__platform === 'usercontent') {
+			return generateCDNSrc(this, STATIC_DOMAIN);
 		}
 
 		const element = document.createElement('a');

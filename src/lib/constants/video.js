@@ -1,6 +1,7 @@
 const PLATFORMS = Object.freeze({
 	youtube: 'YouTube',
 	twitch: 'Twitch',
+	usercontent: 'Uploaded content',
 });
 
 export const VIDEO_CONSTANTS = {

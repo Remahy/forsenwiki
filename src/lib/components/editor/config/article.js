@@ -31,11 +31,11 @@ const floatBoxShadow = '0px 0px 0px 1px #696969';
 export const articleTheme = {
 	image: 'image',
 	heading: {
-		h1: 'wrap-break-words',
-		h2: 'wrap-break-words',
-		h3: 'wrap-break-words',
-		h4: 'wrap-break-words',
-		h5: 'wrap-break-words',
+		h1: 'wrap-break-word',
+		h2: 'wrap-break-word',
+		h3: 'wrap-break-word',
+		h4: 'wrap-break-word',
+		h5: 'wrap-break-word',
 	},
 	floatBoxShadow,
 	floatResponsive: `${floatResponsive} [&_p:has(>br:only-child)]:hidden`,
