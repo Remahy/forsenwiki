@@ -1,6 +1,6 @@
 <script>
 	import {
-		FileQuestionIcon,
+		FileQuestionMarkIcon,
 		LinkIcon,
 		RectangleHorizontalIcon,
 		RectangleVerticalIcon,
@@ -46,7 +46,7 @@
 	const platformIcons = {
 		youtube: YouTube,
 		twitch: TwitchGlitch,
-		default: FileQuestionIcon,
+		default: FileQuestionMarkIcon,
 	};
 
 	const { PLATFORMS } = VIDEO_CONSTANTS;

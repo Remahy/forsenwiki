@@ -5,7 +5,6 @@
 	import { page } from '$app/stores';
 
 	import { changeName, deleteContent } from '$lib/api/content';
-	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 	import Box from '$lib/components/Box.svelte';
 	import Container from '$lib/components/Container.svelte';
 	import Button from '$lib/components/Button.svelte';
