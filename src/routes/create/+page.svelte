@@ -33,7 +33,6 @@
 	/** @type {Error & { status?: number, statusText?: string } | null} */
 	let error = $state(null);
 
-	// svelte-ignore non_reactive_update
 	let title = localStore('lastTitle', '');
 
 	/** @type {ComposerWritable} */

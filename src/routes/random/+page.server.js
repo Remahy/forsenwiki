@@ -10,7 +10,7 @@ export async function load() {
 	/**
 	 * @type {string}
 	 */
-	let randomURL = '';
+	let randomURL;
 
 	if (Math.random() >= 0.1) {
 		/**
