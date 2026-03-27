@@ -108,7 +108,7 @@ const uploadContentHandler = async (contentToUpload) => {
 			}
 		} catch (err) {
 			// @ts-ignore
-			error = `${presignRes.status}: ${err?.message || presignRes.statusText}`;
+			error = `${presignRes.status}: ${errorJSON.message || err?.message || presignRes.statusText}`;
 			console.error(err);
 		}
 

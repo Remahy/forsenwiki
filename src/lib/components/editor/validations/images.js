@@ -28,14 +28,14 @@ export const adjustImages = (editor) => {
 
 					if (src?.startsWith('data:')) {
 						return reject(
-							`Image index [${index}]: One of your images was uploaded as an encoded base64 string. Not allowed.`
+							`Image index [${index + 1}]: One of your images was uploaded as an encoded base64 string. Not allowed.`
 						);
 					}
 
 					// Unset any image that does not start with the cache service.
 					if (src?.startsWith('https://') || src?.startsWith('http://')) {
 						return reject(
-							`Image index [${index}]: One of your images is inserted as a link. Not allowed.`
+							`Image index [${index + 1}]: One of your images is inserted as a link. Not allowed.`
 						);
 					}
 

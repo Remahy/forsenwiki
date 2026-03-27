@@ -37,7 +37,7 @@ export const getPresignedURL = async (
 	const type = getType(contentType);
 
 	if (!type) {
-		const error = new ErrorWithCode(`Index [${index}]: Unsupported file type.`);
+		const error = new ErrorWithCode(`Index [${index + 1}]: Unsupported file type.`);
 		error.code = FileErrorCodes.GENERIC;
 		throw error;
 	}
@@ -45,7 +45,7 @@ export const getPresignedURL = async (
 	const fileSize = getFileSizeLimit(type, contentLength, isModerator);
 	if (!fileSize.allowed) {
 		const error = new ErrorWithCode(
-			`Index [${index}]: File size too large! Max is ${fileSize.max ? fileSize.max / 1_048_576 : '?'} MiB. Uploaded file size: ~${(contentLength / 1_048_576).toFixed(2)} MiB`
+			`Index [${index + 1}]: File size too large! Max is ${fileSize.max ? fileSize.max / 1_048_576 : '?'} MiB. Uploaded file size: ~${(contentLength / 1_048_576).toFixed(2)} MiB`
 		);
 		error.code = FileErrorCodes.TOO_LARGE;
 		throw error;
@@ -56,7 +56,7 @@ export const getPresignedURL = async (
 			await validateImageDimensions(base64ToUint8Array(fileSnippet));
 		} catch (err) {
 			if (err instanceof ErrorWithCode) {
-				err.message = `Index [${index}]: ${err.message}`;
+				err.message = `Index [${index + 1}]: ${err.message}`;
 			}
 
 			throw err;

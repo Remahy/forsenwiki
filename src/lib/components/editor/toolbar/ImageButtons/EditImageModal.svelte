@@ -215,7 +215,7 @@
 				return;
 			}
 
-			await saveContent(id, newHash, newFile);
+			await saveContent(id, newHash, new File([newFile], newSrcName, { type: newFile.type }));
 			onSubmit({ src: newHash, altText, width: Number(width), height: Number(height) });
 		} else if (newSrc) {
 			onSubmit({ src: newSrc, altText, width: Number(width), height: Number(height) });
@@ -370,6 +370,18 @@
 					</table>
 				</div>
 			</div>
+		{/if}
+
+		{#if newSrcName}
+			<label class="flex flex-col gap-2">
+				<div>
+					<strong>File name</strong>
+					<small class={newSrcName.length > 80 ? 'font-bold text-red-500' : ''}
+						>Max length 80 characters</small
+					>
+				</div>
+				<input class="input-color rounded-sm p-2" bind:value={newSrcName} maxlength="80" />
+			</label>
 		{/if}
 
 		{#if src || newSrc}

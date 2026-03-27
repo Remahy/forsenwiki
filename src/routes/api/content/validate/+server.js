@@ -35,7 +35,7 @@ export const _validateContent = async (files, isModerator) => {
 		if (!file.contentLength || !file.fileSnippet || !file.mimetype || !file.hash) {
 			errors.push({
 				index,
-				message: `Index [${index}] must be object: { mimetype: string, contentLength: number, hash: string, fileSnippet: string }`,
+				message: `Index [${index + 1}] must be object: { mimetype: string, contentLength: number, hash: string, fileSnippet: string }`,
 			});
 			continue;
 		}
@@ -66,7 +66,7 @@ export const _validateContent = async (files, isModerator) => {
 						file = null;
 						foundFilesError.push({
 							index,
-							message: `Index [${index}] is already uploaded as "${existingFile.name}".`,
+							message: `Index [${index + 1}] is already uploaded as "${existingFile.name}".`,
 						});
 					}
 

@@ -220,7 +220,7 @@
 											bind:value={name}
 											type="text"
 											name="query"
-											class="input-color w-full py-4 placeholder:text-inherit"
+											class="input-color w-full py-4 placeholder:text-inherit/25"
 											placeholder={result.name}
 										/>
 										<Button class="rounded-l-none! px-4" on:click={updateName} disabled={isUpdating}

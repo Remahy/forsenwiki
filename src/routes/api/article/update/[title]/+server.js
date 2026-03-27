@@ -132,7 +132,7 @@ export async function POST({ request, locals, params }) {
 		await pruneFailedUploads(failedUploads.map(({ hash }) => hash), session.user.id);
 
 		if (failedUploads.length) {
-			throw `FAILED_UPLOADS: ${failedUploads.map(({ index }) => `Image index [${index}] doesn't exist or failed to upload.`).join(' ')}`;
+			throw `FAILED_UPLOADS: ${failedUploads.map(({ index }) => `Image index [${index + 1}] doesn't exist or failed to upload.`).join(' ')}`;
 		}
 	} catch (err) {
 		if (typeof err === 'string') {

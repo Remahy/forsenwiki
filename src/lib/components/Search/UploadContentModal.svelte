@@ -242,21 +242,38 @@
 		<div class="flex flex-col gap-2">
 			<strong>Files to upload</strong>
 
-			<ul class="ml-4.5 list-disc">
+			<ol class="ml-4.5 list-decimal">
 				{#each content as entry, index (entry)}
 					<li>
-						<div class="flex items-baseline gap-4">
-							<span>{entry.name} ({entry.file.type})</span>
-							<Button
-								class="bg-transparent! p-0! text-red-500!"
-								onclick={() => cancelUploadByIndex(index)}
-							>
-								<span>Cancel</span>
-							</Button>
+						<div class="inline-flex w-full items-center gap-4">
+							<div class="grow">
+								<div>
+									<strong>File name</strong>
+									<small class={content[index].name.length > 80 ? 'text-red-500 font-bold' : ''}
+										>Max length 80 characters</small
+									>
+								</div>
+								<input
+									type="text"
+									class="input-color w-full py-4 placeholder:text-inherit/25"
+									placeholder={entry.file.name}
+									maxlength="80"
+									bind:value={content[index].name}
+								/>
+							</div>
+							<div>
+								<Button
+									class="bg-transparent! p-0! text-red-500!"
+									onclick={() => cancelUploadByIndex(index)}
+								>
+									<span>Cancel</span>
+								</Button>
+								<span>({entry.file.type})</span>
+							</div>
 						</div>
 					</li>
 				{/each}
-			</ul>
+			</ol>
 		</div>
 	</main>
 

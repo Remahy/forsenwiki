@@ -6,6 +6,7 @@ import { getPresignedURL } from '$lib/s3/index.server';
 import { createContent } from '$lib/db/content/create';
 import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
 import { CLOUDFLARE_R2_SECRET_ACCESS_KEY } from '$env/static/private';
+import { FileErrorCodes } from '$lib/components/editor/utils/handleNewFile';
 
 export async function POST({ request, locals }) {
 	const { isBlocked, isModerator, auth } = locals;
@@ -41,6 +42,12 @@ export async function POST({ request, locals }) {
 
 	for (let index = 0; index < files.length; index++) {
 		const file = files[index];
+
+		if (file.name.length > 80) {
+			const err = new ErrorWithCode(`Index [${index + 1}]: File name cannot be over 80 characters long.`);
+			err.code = FileErrorCodes.GENERIC;
+			return error(500, err.message);
+		}
 
 		/**
 		 * @type {{ userid: string, name: string, mimetype: string, dimensions?: string }}
@@ -82,6 +89,9 @@ export async function POST({ request, locals }) {
 			if (err instanceof ErrorWithCode) {
 				return error(500, err.message);
 			}
+
+			console.error(err);
+			return error(500, 'Something went wrong generating upload URLs');
 		}
 	}
 
