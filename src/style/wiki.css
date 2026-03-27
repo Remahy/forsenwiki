@@ -72,7 +72,7 @@ html.forsen-wiki-theme {
 	}
 
 	.select option:checked {
-		@apply bg-violet-600/50 dark:bg-violet-800/50 text-black dark:text-white;
+		@apply bg-violet-600/50 text-black dark:bg-violet-800/50 dark:text-white;
 	}
 
 	.editor-border {

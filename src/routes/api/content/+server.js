@@ -44,7 +44,9 @@ export async function POST({ request, locals }) {
 		const file = files[index];
 
 		if (file.name.length > 80) {
-			const err = new ErrorWithCode(`Index [${index + 1}]: File name cannot be over 80 characters long.`);
+			const err = new ErrorWithCode(
+				`Index [${index + 1}]: File name cannot be over 80 characters long.`
+			);
 			err.code = FileErrorCodes.GENERIC;
 			return error(500, err.message);
 		}

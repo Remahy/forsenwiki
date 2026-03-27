@@ -1,4 +1,3 @@
-
 export class ErrorWithCode extends Error {
 	/**
 	 * @type {string}

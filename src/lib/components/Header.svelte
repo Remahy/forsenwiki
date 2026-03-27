@@ -30,7 +30,7 @@
 
 <header class="header">
 	<nav class="container mx-auto flex items-center gap-4 p-4">
-		<a href={resolve("/")} class="hover:text-stone-500">
+		<a href={resolve('/')} class="hover:text-stone-500">
 			<div class="flex items-end gap-2">
 				<Logo width="64" height="64" />
 				<div class="flex flex-col justify-end">

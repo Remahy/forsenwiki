@@ -249,7 +249,7 @@
 							<div class="grow">
 								<div>
 									<strong>File name</strong>
-									<small class={content[index].name.length > 80 ? 'text-red-500 font-bold' : ''}
+									<small class={content[index].name.length > 80 ? 'font-bold text-red-500' : ''}
 										>Max length 80 characters</small
 									>
 								</div>

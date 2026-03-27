@@ -224,9 +224,11 @@
 				/>
 			</video>
 			{#if error}
-				<div class="absolute top-0 p-2 flex flex-col gap-2 pointer-events-none">
-					<p class="text-white whitespace-break-spaces text-lg">Something went wrong loading this video.</p>
-					<p class="text-white whitespace-break-spaces"><strong>URL:</strong> <span>{url}</span></p>
+				<div class="pointer-events-none absolute top-0 flex flex-col gap-2 p-2">
+					<p class="text-lg whitespace-break-spaces text-white">
+						Something went wrong loading this video.
+					</p>
+					<p class="whitespace-break-spaces text-white"><strong>URL:</strong> <span>{url}</span></p>
 				</div>
 			{/if}
 		{:else}

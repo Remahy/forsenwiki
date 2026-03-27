@@ -3,7 +3,11 @@
 
 	import { onMount } from 'svelte';
 	import { PlusIcon, MinusIcon, ArrowUpIcon, ArrowDownIcon, Rows3Icon } from '@lucide/svelte';
-	import { $isRangeSelection as isRangeSelection, $getSelection as getSelection, mergeRegister } from 'lexical';
+	import {
+		$isRangeSelection as isRangeSelection,
+		$getSelection as getSelection,
+		mergeRegister,
+	} from 'lexical';
 	import {
 		$insertTableRowAtSelection as insertTableRowAtSelection,
 		$deleteTableRowAtSelection as deleteTableRowAtSelection,

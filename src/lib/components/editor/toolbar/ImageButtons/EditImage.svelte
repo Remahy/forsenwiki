@@ -70,7 +70,7 @@
 
 <Button on:click={image} class="text-xs">Change image</Button>
 
-<label title="Width" class="flex min-h-[42px] items-center gap-2 pl-2">
+<label title="Width" class="flex min-h-10.5 items-center gap-2 pl-2">
 	<span class="hidden">Width</span>
 	<RectangleHorizontalIcon />
 
@@ -84,7 +84,7 @@
 	/>
 </label>
 
-<label title="Height" class="flex min-h-[42px] items-center gap-2 pl-2">
+<label title="Height" class="flex min-h-10.5 items-center gap-2 pl-2">
 	<span class="hidden">Height</span>
 	<RectangleVerticalIcon />
 

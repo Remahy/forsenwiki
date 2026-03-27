@@ -210,7 +210,9 @@
 						const type = parentList ? parentList.getListType() : 'unknown';
 						currentElementType = type;
 					} else {
-						const type = /**@type {keyof blockTypeIcons} */ (isHeadingNode(element) ? element.getTag() : element.getType());
+						const type = /**@type {keyof blockTypeIcons} */ (
+							isHeadingNode(element) ? element.getTag() : element.getType()
+						);
 						if (type in TYPES) {
 							currentElementType = type;
 						}
@@ -239,7 +241,7 @@
 		bind:ref={elementTypeElement}
 		on:change={elementType}
 		bind:value={currentElementType}
-		class="!-ml-10 !px-10"
+		class="-ml-10! px-10!"
 	>
 		<option value="mixed" hidden>Mixed</option>
 		<option value="unknown" hidden>Unknown</option>

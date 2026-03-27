@@ -129,7 +129,10 @@ export async function POST({ request, locals, params }) {
 		const newHashes = currentImageHashes.filter(({ hash }) => !oldImageHashes.includes(hash));
 		const failedUploads = await validateUploads(newHashes);
 		// Remove failed uploads from database.
-		await pruneFailedUploads(failedUploads.map(({ hash }) => hash), session.user.id);
+		await pruneFailedUploads(
+			failedUploads.map(({ hash }) => hash),
+			session.user.id
+		);
 
 		if (failedUploads.length) {
 			throw `FAILED_UPLOADS: ${failedUploads.map(({ index }) => `Image index [${index + 1}] doesn't exist or failed to upload.`).join(' ')}`;
