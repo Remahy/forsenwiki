@@ -128,7 +128,7 @@
 							{/if}
 
 							{#if result.html?.image}
-								<img src={getImageCacheURL(result.html.image).toString()} alt="" />
+								<img src={getImageCacheURL(result.html.image).toString()} alt="" loading="lazy" />
 							{/if}
 
 							{#if result.type === 'content'}
