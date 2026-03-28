@@ -215,7 +215,12 @@
 		style={getWidthAndHeight(width, height)}
 	>
 		{#if platform === 'usercontent'}
-			<video class="pointer-events-none" {width} {height} style={getIframeStyle(width, height)}>
+			<video
+				class="pointer-events-none"
+				{width}
+				{height}
+				style="{getIframeStyle(width, height)}margin:0!important;"
+			>
 				<source
 					src={url}
 					onerror={() => {
