@@ -207,6 +207,7 @@ export async function readAuthorsForYPostByTitle(title) {
 		},
 		select: {
 			name: true,
+			id: true,
 		},
 	});
 }

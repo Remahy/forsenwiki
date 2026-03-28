@@ -16,20 +16,18 @@
 	$effect(() => {
 		const { url } = $page;
 
-		if (url.pathname === '/search') {
-			const {
-				types: t,
-				options: { orderBy: o, contentTypes: ct },
-			} = parseSearchURL(url);
+		const {
+			types: t,
+			options: { orderBy: o, contentTypes: ct },
+		} = parseSearchURL(url);
 
-			types = t;
+		types = t;
 
-			// @ts-ignore
-			order = o;
+		// @ts-ignore
+		order = o;
 
-			if (t.includes('content') || t.includes('') || !t.length) {
-				contentTypes = ct;
-			}
+		if (t.includes('content') || t.includes('') || !t.length) {
+			contentTypes = ct;
 		}
 	});
 </script>

@@ -3,7 +3,7 @@ import { getPopularArticles } from '$lib/goatcounter.server';
 import { GOATCOUNTER_DISABLED } from '$env/static/private';
 
 /**
- * @typedef {{ rawTitle: string, title: string, createdTimestamp: string, author: string | null }} LatestArticle
+ * @typedef {{ rawTitle: string, title: string, createdTimestamp: string, author: string | null, authorId: string | null }} LatestArticle
  * @typedef {{ name: string | null }} LatestUser
  * @typedef {import('$lib/goatcounter.server').GoatCounterHit} GoatCounterHit
  */
@@ -55,6 +55,7 @@ const getLatest = async () => {
 							user: {
 								select: {
 									name: true,
+									id: true,
 								},
 							},
 						},
@@ -81,6 +82,7 @@ const getLatest = async () => {
 		title: post.title,
 		createdTimestamp: post.createdTimestamp.toString(),
 		author: post.postUpdates[0].metadata.user.name,
+		authorId: post.postUpdates[0].metadata.user.id,
 	}));
 
 	cache = {

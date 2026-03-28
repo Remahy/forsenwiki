@@ -193,8 +193,10 @@
 				<p>
 					<span><strong>Author{authors.length > 1 ? 's' : ''}:</strong></span>
 					<span>
-						{#each authors as author, index}
-							{author.name}{index < authors.length - 1 ? ', ' : ''}
+						{#each authors as author, index (author.id)}
+							<Link href="/user/{author.id}" target="_blank">{author.name}</Link>{index < authors.length - 1
+								? ', '
+								: ''}
 						{/each}
 					</span>
 				</p>

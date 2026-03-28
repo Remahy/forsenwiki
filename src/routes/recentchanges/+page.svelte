@@ -40,6 +40,7 @@
 				title: string
 				lastUpdated: string
 				author: string | null
+				authorId: string | null
 				byteLength: number
 				newTitle?: string
 				oldTitle?: string
@@ -172,7 +173,7 @@
 						locale: enGB,
 					})}&nbsp;</small
 				>
-				<span><small><span class="font-bold">By:</span> {update.author}</small></span>
+				<span><small><span class="font-bold">By:</span> <Link href="/user/{update.authorId}" target="_blank">{update.author}</Link></small></span>
 			</div>
 		{:else}
 			<span class="

@@ -8,6 +8,7 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Search from './Search/index.svelte';
 	import Announcement from './Announcement.svelte';
+	import Link from './Link.svelte';
 
 	let isLoading = $state(false);
 
@@ -69,9 +70,10 @@
 								alt="Twitch avatar"
 							/>
 						{/if}
-						<span
+						<Link
+							href="/user/{page.data.session.user.id}"
 							class="content-center overflow-hidden text-xs font-medium text-ellipsis"
-							title={page.data.session.user.name}>{page.data.session.user.name}</span
+							title={page.data.session.user.name}>{page.data.session.user.name}</Link
 						>
 					</div>
 

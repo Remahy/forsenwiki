@@ -1,3 +1,5 @@
+import { DRAFT_CONTENT_DB_PREFIX } from './content';
+
 /**
  * @param {string} name
  */
@@ -13,4 +15,12 @@ export const resetArticle = (name) => {
 			resolve(true);
 		};
 	});
+};
+
+export const listArticles = async () => {
+	const databases = await window.indexedDB.databases();
+
+	return databases
+		.map((e) => ({ name: e.name }))
+		.filter(({ name }) => !name?.startsWith(`${DRAFT_CONTENT_DB_PREFIX}-`));
 };

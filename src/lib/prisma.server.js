@@ -30,6 +30,7 @@ const prisma = /** @type {any} */ (
 						rawTitle: args.data.rawTitle,
 						createdTimestamp: args.data.createdTimestamp?.toString() || new Date().toString(),
 						author: user.name,
+						authorId: user.id,
 					});
 
 					// @ts-ignore

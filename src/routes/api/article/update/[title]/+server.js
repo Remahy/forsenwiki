@@ -214,6 +214,7 @@ export async function POST({ request, locals, params }) {
 		lastUpdated: updatedArticle?.createdTimestamp.toString(),
 		byteLength,
 		author: session.user.name,
+		authorId: session.user.id,
 	});
 
 	return json({
