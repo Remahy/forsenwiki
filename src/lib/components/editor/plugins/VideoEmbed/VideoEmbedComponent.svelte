@@ -219,7 +219,7 @@
 				class="pointer-events-none"
 				{width}
 				{height}
-				style="{getIframeStyle(width, height)}margin:0!important;"
+				style={getIframeStyle(width, height)}
 			>
 				<source
 					src={url}

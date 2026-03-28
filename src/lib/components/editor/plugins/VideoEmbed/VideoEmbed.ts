@@ -92,11 +92,11 @@ export const getIframeStyle = (
 
 	const heightStyle = height === 'inherit' ? 'height:auto;' : '';
 
-	const min = `min-width:${VIDEO_MIN_WIDTH}px;min-height:${VIDEO_MIN_HEIGHT};`;
+	const min = `min-width:${VIDEO_MIN_WIDTH}px;min-height:${VIDEO_MIN_HEIGHT}px;`;
 	const max = 'max-width:100vw;max-height:100vh;';
 	const aspectRatio = width === 'inherit' || height === 'inherit' ? 'aspect-ratio:16/9;' : '';
 
-	return `${min}${max}${aspectRatio}${widthStyle}${heightStyle}${formatType ? decoratorFormatToMarginStyle(formatType) : ''}`;
+	return `${min}${max}${aspectRatio}${widthStyle}${heightStyle}${formatType ? decoratorFormatToMarginStyle(formatType) : ''}margin-top: 0!important;margin-bottom:0!important;`;
 };
 
 const convertTtoSeconds = (tString: string) => {
@@ -272,11 +272,11 @@ const setVideoAttributes = (node: VideoEmbedNode, element: HTMLElement) => {
 
 	element.setAttribute(
 		'style',
-		`${getIframeStyle(
+		getIframeStyle(
 			width as VideoEmbedPayload['width'],
 			height as VideoEmbedPayload['height'],
 			node.getFormatType()
-		)}margin:0!important;`
+		)
 	);
 };
 
@@ -348,7 +348,7 @@ function generateCDNSrc(node: VideoEmbedNode, staticURL: string) {
 
 	const element = document.createElement('video');
 	setVideoAttributes(node, element);
-
+	element.setAttribute('controls', '')
 	element.setAttribute('data-lexical-usercontent', node.getSrc()!);
 
 	element.controls = true;
