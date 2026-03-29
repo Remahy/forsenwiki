@@ -1,6 +1,5 @@
 import prisma from '$lib/prisma.server.js';
 import { error } from '@sveltejs/kit';
-import { _getSearch, _parseSearchParamsForSearch } from '../../api/search/+server.js';
 import { SYSTEM } from '$lib/constants/constants.js';
 
 export async function load({ url, params }) {
@@ -15,19 +14,43 @@ export async function load({ url, params }) {
 		return error(404, 'User not found.');
 	}
 
-	/**
-	 * @type {import("../../api/search/+server.js").QueryResult[]}
-	 */
-	let results = [];
+	let results = {
+		editedArticles: 0,
+		uploadedContent: {
+			total: 0,
+			images: 0,
+			videos: 0,
+			audio: 0,
+			documents: 0,
+		},
+	};
 
 	if (url.searchParams.get('noload')) {
 		return { results, user };
 	}
 
 	if (id !== SYSTEM) {
-		const { query, types, options } = _parseSearchParamsForSearch(url);
-		const searchRes = await _getSearch(query, types, options);
-		results = searchRes.results;
+		results.editedArticles = await prisma.yPost.count({
+			where: { postUpdates: { some: { metadata: { userId: id } } } },
+		});
+
+		results.uploadedContent = {
+			total: await prisma.content.count({
+				where: { authorId: id },
+			}),
+			images: await prisma.content.count({
+				where: { authorId: id, type: 'image' },
+			}),
+			videos: await prisma.content.count({
+				where: { authorId: id, type: 'video' },
+			}),
+			audio: await prisma.content.count({
+				where: { authorId: id, type: 'audio' },
+			}),
+			documents: await prisma.content.count({
+				where: { authorId: id, type: 'document' },
+			}),
+		};
 	}
 
 	return { results, user };
