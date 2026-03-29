@@ -74,75 +74,79 @@
 			</div>
 			<div class="grow">
 				<h1 class="mb-2 text-4xl font-bold">{user.name}</h1>
-				<h2 class="mb-4 text-2xl">{results.editedArticles ? 'Editor' : 'Lurker'}</h2>
+				<h2 class="text-2xl">{results.editedArticles ? 'Editor' : 'Lurker'}</h2>
 
-				<div class="flex flex-col gap-2">
-					<p title={user.createdAt.toUTCString()}>
-						<strong>Registered:</strong>
-						<span>{formatRelative(user.createdAt, Date.now(), { locale: enGB })}</span>
-					</p>
-					{#if user.permissions.length}
-						<p>
-							<strong>Permissions:</strong>
-							<span>{user.permissions.map(({ type }) => type).join(', ')}</span>
+				<hr class="mb-4" />
+
+				<div class="flex flex-wrap gap-8">
+					<div class="flex grow flex-col gap-2">
+						<p title={user.createdAt.toUTCString()}>
+							<strong>Registered:</strong>
+							<span>{formatRelative(user.createdAt, Date.now(), { locale: enGB })}</span>
 						</p>
-					{/if}
-					{#if results.editedArticles}
-						<p>
-							<strong>Edited articles:</strong>
-							<Link href="/search?query={id}&type=article" target="blank"
-								>{results.editedArticles}</Link
-							>
-						</p>
-					{/if}
-					{#if results.uploadedContent.total}
-						<p>
-							<strong>Uploaded content:</strong>
-							<Link href="/search?query={id}&type=content" target="blank"
-								>{results.uploadedContent.total}</Link
-							>
-						</p>
-						<table class="table w-76 table-fixed">
-							<tbody>
-								<tr>
-									<td><strong>Images</strong></td>
-									<td>
-										<Link href="/search?query={id}&type=content&contenttype=image" target="blank"
-											>{results.uploadedContent.images}</Link
-										>
-									</td>
-								</tr>
+						{#if user.permissions.length}
+							<p>
+								<strong>Permissions:</strong>
+								<span>{user.permissions.map(({ type }) => type).join(', ')}</span>
+							</p>
+						{/if}
+						{#if results.editedArticles}
+							<p>
+								<strong>Edited articles:</strong>
+								<Link href="/search?query={id}&type=article" target="blank"
+									>{results.editedArticles}</Link
+								>
+							</p>
+						{/if}
+						{#if results.uploadedContent.total}
+							<p>
+								<strong>Uploaded content:</strong>
+								<Link href="/search?query={id}&type=content" target="blank"
+									>{results.uploadedContent.total}</Link
+								>
+							</p>
+							<table class="table w-76 table-fixed">
+								<tbody>
+									<tr>
+										<td><strong>Images</strong></td>
+										<td>
+											<Link href="/search?query={id}&type=content&contenttype=image" target="blank"
+												>{results.uploadedContent.images}</Link
+											>
+										</td>
+									</tr>
 
-								<tr>
-									<td><strong>Videos</strong></td>
-									<td>
-										<Link href="/search?query={id}&type=content&contenttype=video" target="blank"
-											>{results.uploadedContent.videos}</Link
-										>
-									</td>
-								</tr>
+									<tr>
+										<td><strong>Videos</strong></td>
+										<td>
+											<Link href="/search?query={id}&type=content&contenttype=video" target="blank"
+												>{results.uploadedContent.videos}</Link
+											>
+										</td>
+									</tr>
 
-								<tr>
-									<td><strong>Audio</strong></td>
-									<td>
-										<Link href="/search?query={id}&type=content&contenttype=audio" target="blank"
-											>{results.uploadedContent.audio}</Link
-										>
-									</td>
-								</tr>
+									<tr>
+										<td><strong>Audio</strong></td>
+										<td>
+											<Link href="/search?query={id}&type=content&contenttype=audio" target="blank"
+												>{results.uploadedContent.audio}</Link
+											>
+										</td>
+									</tr>
 
-								<tr>
-									<td><strong>Documents</strong></td>
-									<td>
-										<Link href="/search?query={id}&type=content&contenttype=document" target="blank"
-											>{results.uploadedContent.documents}</Link
-										>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					{/if}
-
+									<tr>
+										<td><strong>Documents</strong></td>
+										<td>
+											<Link
+												href="/search?query={id}&type=content&contenttype=document"
+												target="blank">{results.uploadedContent.documents}</Link
+											>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						{/if}
+					</div>
 					{#if isMe}
 						<div>
 							{#await localDrafts}
