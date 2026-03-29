@@ -81,6 +81,7 @@
 
 <svelte:head>
 	<title>{rawTitle || title} - Community Forsen Wiki</title>
+	<meta name="og:title" content="{rawTitle || title} - Community Forsen Wiki">
 
 	<meta property="og:site_name" content="Forsen Wiki" />
 

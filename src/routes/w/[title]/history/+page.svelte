@@ -22,6 +22,8 @@
 
 <svelte:head>
 	<title>&quot;{rawTitle}&quot; history - Community Forsen Wiki</title>
+	<meta name="og:title" content="&quot;{rawTitle}&quot; history - Community Forsen Wiki">
+
 	<meta name="description" content="History for &quot;{rawTitle}&quot; on forsen.wiki" />
 	<meta property="og:description" content="History for &quot;{rawTitle}&quot; on forsen.wiki" />
 

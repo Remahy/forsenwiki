@@ -181,6 +181,8 @@
 
 <svelte:head>
 	<title>Editing &quot;{rawTitle}&quot; - Community Forsen Wiki</title>
+	<meta name="og:title" content="Editing &quot;{rawTitle}&quot; - Community Forsen Wiki">
+
 	<meta name="description" content="Edit the &quot;{rawTitle}&quot; article on forsen.wiki" />
 	<meta
 		property="og:description"
