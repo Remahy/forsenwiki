@@ -108,7 +108,7 @@
 							<table class="table w-76 table-fixed">
 								<tbody>
 									<tr>
-										<td><strong>Images</strong></td>
+										<td>Images</td>
 										<td>
 											<Link href="/search?query={id}&type=content&contenttype=image" target="blank"
 												>{results.uploadedContent.images}</Link
@@ -117,7 +117,7 @@
 									</tr>
 
 									<tr>
-										<td><strong>Videos</strong></td>
+										<td>Videos</td>
 										<td>
 											<Link href="/search?query={id}&type=content&contenttype=video" target="blank"
 												>{results.uploadedContent.videos}</Link
@@ -126,7 +126,7 @@
 									</tr>
 
 									<tr>
-										<td><strong>Audio</strong></td>
+										<td>Audio</td>
 										<td>
 											<Link href="/search?query={id}&type=content&contenttype=audio" target="blank"
 												>{results.uploadedContent.audio}</Link
@@ -135,7 +135,7 @@
 									</tr>
 
 									<tr>
-										<td><strong>Documents</strong></td>
+										<td>Documents</td>
 										<td>
 											<Link
 												href="/search?query={id}&type=content&contenttype=document"
