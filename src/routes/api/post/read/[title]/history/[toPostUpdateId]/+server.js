@@ -1,5 +1,5 @@
 import { error, json } from '@sveltejs/kit';
-import { readYPostUpdatesWithIdByTitle } from '$lib/db/article/read';
+import { readYPostUpdatesWithIdByTitle } from '$lib/db/post/read';
 import { yPostUpdatesV2ToBase64 } from '$lib/yjs/utils';
 import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
 import { replacer } from '$lib/utils/json';

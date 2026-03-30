@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-import { _getYPostUpdate } from '../../../api/article/read/[title]/+server';
+import { _getYPostUpdate } from '../../../api/post/read/[title]/+server';
 import { isSystem } from '$lib/utils/isSystem';
 import prisma from '$lib/prisma.server';
 
@@ -15,7 +15,7 @@ export async function load({ params }) {
 		}
 
 		if (isSystem(res.post)) {
-			return error(400, 'This is a system article that cannot be edited.');
+			return error(400, 'This is a system post that cannot be edited.');
 		}
 
 		return { ...res };

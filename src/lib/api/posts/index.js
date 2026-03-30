@@ -1,12 +1,17 @@
 import { encodeYDocToUpdateV2ToBase64 } from '$lib/yjs/utils';
 
+/**
+ * @typedef {import('$lib/constants/constants').Y_POST_TYPES_VALUES} Y_POST_TYPES_VALUES
+ */
+
 const headers = new Headers({ 'content-type': 'application/json' });
 
 /**
  * @param {string} title
+ * @param {Y_POST_TYPES_VALUES} type
  * @param {YDoc} yDoc
  */
-export const createArticle = async (title, yDoc) => {
+export const createPost = async (title, type, yDoc) => {
 	const encodedContent = encodeYDocToUpdateV2ToBase64(yDoc);
 
 	const body = JSON.stringify({ title, content: encodedContent });
@@ -22,18 +27,19 @@ export const createArticle = async (title, yDoc) => {
 		throw error;
 	}
 
-	return fetch('/api/article/create', { method: 'POST', body, headers });
+	return fetch('/api/post/create', { method: 'POST', body, headers });
 };
 
 /**
  * @param {string} postTitle
+ * @param {Y_POST_TYPES_VALUES} type
  * @param {YDoc} yDoc
  * @param {string} newTitle
  */
-export const updateArticle = async (postTitle, yDoc, newTitle) => {
+export const updatePost = async (postTitle, type, yDoc, newTitle) => {
 	const encodedContent = encodeYDocToUpdateV2ToBase64(yDoc);
 
 	const body = JSON.stringify({ content: encodedContent, newTitle });
 
-	return fetch(`/api/article/update/${postTitle}`, { method: 'POST', body, headers });
+	return fetch(`/api/post/update/${postTitle}`, { method: 'POST', body, headers });
 };

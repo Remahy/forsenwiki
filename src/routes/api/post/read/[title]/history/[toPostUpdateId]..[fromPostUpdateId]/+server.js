@@ -10,7 +10,7 @@ import { diffConfig } from '$lib/components/editor/config/diff';
 import toHTML from '$lib/worker/toHTML';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 */
-import { readYPostUpdatesWithIdByTitle } from '$lib/db/article/read';
+import { readYPostUpdatesWithIdByTitle } from '$lib/db/post/read';
 import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
 import { replacer } from '$lib/utils/json';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';

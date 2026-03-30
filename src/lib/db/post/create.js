@@ -1,11 +1,10 @@
-import { Y_POST_TYPES } from '$lib/constants/constants';
 import prisma from '$lib/prisma.server';
 
 /**
  * @param {{ title: { raw: string, sanitized: string }, data: { content: string }, ids: string[] }} arg1
- * @param {{ user: { name: string, id: string }, byteLength: number }} metadata
+ * @param {{ user: { name: string, id: string }, byteLength: number, type: import('$lib/constants/constants').Y_POST_TYPES_VALUES }} metadata
  */
-export const createArticle = async ({ title, data, ids }, metadata) => {
+export const createPost = async ({ title, data, ids }, metadata) => {
 	const outRelations = ids.map((id) => ({ isSystem: false, toPostId: id }));
 
 	const { user, byteLength } = metadata;
@@ -21,7 +20,7 @@ export const createArticle = async ({ title, data, ids }, metadata) => {
 						data: [
 							{
 								isSystem: true,
-								toPostId: Y_POST_TYPES.ARTICLE,
+								toPostId: metadata.type,
 							},
 							...outRelations,
 						],

@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { isSystem } from '$lib/utils/isSystem';
-import { _getToYPostUpdateFromYPostUpdateByTitle } from '../../../../api/article/read/[title]/history/[toPostUpdateId]..[fromPostUpdateId]/+server';
+import { _getToYPostUpdateFromYPostUpdateByTitle } from '../../../../api/post/read/[title]/history/[toPostUpdateId]..[fromPostUpdateId]/+server';
 
 export async function load({ params }) {
 	const { title: rawTitle, toPostUpdateId, fromPostUpdateId } = params;
@@ -15,7 +15,7 @@ export async function load({ params }) {
 		);
 
 		if (isSystem({ id: res.post.title, outRelations: res.post.outRelations })) {
-			return error(400, 'This is a system article. It should not have any version history.');
+			return error(400, 'This is a system post. It should not have any version history.');
 		}
 
 		return res;

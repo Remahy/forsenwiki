@@ -80,10 +80,10 @@
 		}
 	};
 
-	const sseArticleUpdate = source('/api/adonis/frontpage').select('article:update');
+	const ssePostUpdate = source('/api/adonis/frontpage').select('post:update');
 
 	onMount(() => {
-		sseArticleUpdate.subscribe((v) => {
+		ssePostUpdate.subscribe((v) => {
 			if (v) {
 				const values = $latestUpdates;
 

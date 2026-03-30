@@ -10,15 +10,15 @@ import {
 } from '$lib/yjs/utils';
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { InvalidArticle } from '$lib/errors/InvalidArticle';
+import { InvalidPost } from '$lib/errors/InvalidPost';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
-import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/article/read';
-import { updateArticleTitle, updateArticleYPost } from '$lib/db/article/update';
-import { invalidateArticleCache } from '$lib/cloudflare.server';
-import { upsertHTML } from '$lib/db/article/html';
+import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/post/read';
+import { updatePostTitle, updatePost } from '$lib/db/post/update';
+import { invalidatePostCache } from '$lib/cloudflare.server';
+import { upsertHTML } from '$lib/db/post/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
-import { EDITOR_IS_READONLY } from '$lib/constants/constants';
+import { EDITOR_IS_READONLY, Y_POST_TYPES } from '$lib/constants/constants';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { isSystem } from '$lib/utils/isSystem';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
@@ -99,7 +99,7 @@ export async function POST({ request, locals, params }) {
 	}
 
 	if (isSystem(post)) {
-		return ForbiddenError('This is a system article that cannot be edited.');
+		return ForbiddenError('This is a system post that cannot be edited.');
 	}
 
 	// Current
@@ -139,7 +139,7 @@ export async function POST({ request, locals, params }) {
 		}
 	} catch (err) {
 		if (typeof err === 'string') {
-			return InvalidArticle(err);
+			return InvalidPost(err);
 		}
 
 		console.error(err);
@@ -183,7 +183,7 @@ export async function POST({ request, locals, params }) {
 		oldTitle: post.rawTitle,
 	};
 
-	const updatedArticle = await updateArticleYPost(body, metadata);
+	const updatedPost = await updatePost(body, metadata);
 
 	const { html, text, image } = await toHTML({
 		config: 'article',
@@ -192,26 +192,26 @@ export async function POST({ request, locals, params }) {
 
 	await upsertHTML(post.id, { content: html, text, image });
 
-	await invalidateArticleCache(post.title);
+	await invalidatePostCache(post.title);
 
 	let _post = { title: post.title, rawTitle: post.rawTitle };
 
 	if (potentialNewTitle) {
-		_post = await updateArticleTitle({ post, newTitle: potentialNewTitle });
+		_post = await updatePostTitle({ post, newTitle: potentialNewTitle });
 	}
 
-	_emit('article:update', {
+	_emit('post:update', {
 		title: _post.title,
 		rawTitle: _post.rawTitle,
-		id: updatedArticle?.id,
-		lastUpdated: updatedArticle?.createdTimestamp.toString(),
+		id: updatedPost?.id,
+		lastUpdated: updatedPost?.createdTimestamp.toString(),
 		byteLength,
 		author: session.user.name,
 		authorId: session.user.id,
 	});
 
 	return json({
-		...updatedArticle,
+		...updatedPost,
 		title: _post.title,
 		partialErrors: partialErrors.length ? partialErrors : undefined,
 	});

@@ -1,5 +1,5 @@
 import { error, json } from '@sveltejs/kit';
-import { readYPostUpdatesIdsByTitle } from '$lib/db/article/read';
+import { readYPostUpdatesIdsByTitle } from '$lib/db/post/read';
 import { replacer } from '$lib/utils/json';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 

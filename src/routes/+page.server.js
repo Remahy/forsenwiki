@@ -1,6 +1,7 @@
 import prisma from '$lib/prisma.server';
 import { getPopularArticles } from '$lib/goatcounter.server';
 import { GOATCOUNTER_DISABLED } from '$env/static/private';
+import { Y_POST_TYPES } from '$lib/constants/constants';
 
 /**
  * @typedef {{ rawTitle: string, title: string, createdTimestamp: string, author: string | null, authorId: string | null }} LatestArticle
@@ -44,6 +45,14 @@ const getLatest = async () => {
 	}
 
 	const yPosts = prisma.yPost.findMany({
+		where: {
+			outRelations: {
+				some: {
+					isSystem: true,
+					toPostId: Y_POST_TYPES.ARTICLE,
+				},
+			},
+		},
 		select: {
 			rawTitle: true,
 			title: true,
