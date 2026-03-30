@@ -43,6 +43,10 @@ const validateTitle = async (post, newTitle, partialErrors) => {
 		return undefined;
 	}
 
+	if (newTitle.toLowerCase().startsWith('user:')) {
+		return error(400, '"User:" prefix can only be used for user bio.');
+	}
+
 	const sanitizedTitle = sanitizeTitle(newTitle);
 	if (!sanitizedTitle.sanitized) {
 		partialErrors.push({
@@ -183,9 +187,8 @@ export async function POST({ request, locals, params }) {
 	const contentBase64 = uint8ArrayToBase64(combinedFinalDiff);
 
 	/** @type {{ raw: string, sanitized: string } | undefined} */
-	let potentialNewTitle = isModerator && newTitle
-		? await validateTitle(post, newTitle, partialErrors)
-		: undefined;
+	let potentialNewTitle =
+		isModerator && newTitle ? await validateTitle(post, newTitle, partialErrors) : undefined;
 
 	const body = { post, outRelations, content: contentBase64 };
 	const metadata = {

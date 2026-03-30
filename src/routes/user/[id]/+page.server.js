@@ -14,7 +14,7 @@ export async function load({ url, params }) {
 		return error(404, 'User not found.');
 	}
 
-	let results = {
+	let stats = {
 		editedArticles: 0,
 		uploadedContent: {
 			total: 0,
@@ -26,15 +26,15 @@ export async function load({ url, params }) {
 	};
 
 	if (url.searchParams.get('noload')) {
-		return { results, user };
+		return { stats, user };
 	}
 
 	if (id !== SYSTEM) {
-		results.editedArticles = await prisma.yPost.count({
+		stats.editedArticles = await prisma.yPost.count({
 			where: { postUpdates: { some: { metadata: { userId: id } } } },
 		});
 
-		results.uploadedContent = {
+		stats.uploadedContent = {
 			total: await prisma.content.count({
 				where: { authorId: id },
 			}),
@@ -53,5 +53,5 @@ export async function load({ url, params }) {
 		};
 	}
 
-	return { results, user };
+	return { stats, user };
 }

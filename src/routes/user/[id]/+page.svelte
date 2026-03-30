@@ -11,7 +11,7 @@
 
 	const id = $page.params.id;
 	/** @type {{ editedArticles: number, uploadedContent: { total: number, images: number, videos: number, audio: number, documents: number } }} */
-	let results = $state($page.data.results);
+	let stats = $state($page.data.stats);
 	/** @type {{ name: string, createdAt: Date, image: string, permissions: Array<{ type: string }> }} */
 	let user = $state($page.data.user);
 
@@ -41,10 +41,10 @@
 	<title>User: {user.name} - Community Forsen Wiki</title>
 	<meta name="og:title" content="User: {user.name} - Community Forsen Wiki" />
 
-	{#if results.editedArticles}
+	{#if stats.editedArticles}
 		<meta
 			name="description"
-			content="This Pepega has contributed to {results.editedArticles} articles and uploaded {results
+			content="This Pepega has contributed to {stats.editedArticles} articles and uploaded {stats
 				.uploadedContent.total} pieces of content."
 		/>
 	{:else}
@@ -74,7 +74,7 @@
 			</div>
 			<div class="grow">
 				<h1 class="mb-2 text-4xl font-bold">{user.name}</h1>
-				<h2 class="text-2xl">{results.editedArticles ? 'Editor' : 'Lurker'}</h2>
+				<h2 class="text-2xl">{stats.editedArticles ? 'Editor' : 'Lurker'}</h2>
 
 				<hr class="mb-4" />
 
@@ -90,19 +90,19 @@
 								<span>{user.permissions.map(({ type }) => type).join(', ')}</span>
 							</p>
 						{/if}
-						{#if results.editedArticles}
+						{#if stats.editedArticles}
 							<p>
 								<strong>Edited articles:</strong>
 								<Link href="/search?query={id}&type=article" target="blank"
-									>{results.editedArticles}</Link
+									>{stats.editedArticles}</Link
 								>
 							</p>
 						{/if}
-						{#if results.uploadedContent.total}
+						{#if stats.uploadedContent.total}
 							<p>
 								<strong>Uploaded content:</strong>
 								<Link href="/search?query={id}&type=content" target="blank"
-									>{results.uploadedContent.total}</Link
+									>{stats.uploadedContent.total}</Link
 								>
 							</p>
 							<table class="table w-76 table-fixed">
@@ -111,7 +111,7 @@
 										<td>Images</td>
 										<td>
 											<Link href="/search?query={id}&type=content&contenttype=image" target="blank"
-												>{results.uploadedContent.images}</Link
+												>{stats.uploadedContent.images}</Link
 											>
 										</td>
 									</tr>
@@ -120,7 +120,7 @@
 										<td>Videos</td>
 										<td>
 											<Link href="/search?query={id}&type=content&contenttype=video" target="blank"
-												>{results.uploadedContent.videos}</Link
+												>{stats.uploadedContent.videos}</Link
 											>
 										</td>
 									</tr>
@@ -129,7 +129,7 @@
 										<td>Audio</td>
 										<td>
 											<Link href="/search?query={id}&type=content&contenttype=audio" target="blank"
-												>{results.uploadedContent.audio}</Link
+												>{stats.uploadedContent.audio}</Link
 											>
 										</td>
 									</tr>
@@ -139,7 +139,7 @@
 										<td>
 											<Link
 												href="/search?query={id}&type=content&contenttype=document"
-												target="blank">{results.uploadedContent.documents}</Link
+												target="blank">{stats.uploadedContent.documents}</Link
 											>
 										</td>
 									</tr>

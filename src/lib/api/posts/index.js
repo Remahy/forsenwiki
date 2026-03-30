@@ -32,11 +32,10 @@ export const createPost = async (title, type, yDoc) => {
 
 /**
  * @param {string} postTitle
- * @param {Y_POST_TYPES_VALUES} type
  * @param {YDoc} yDoc
  * @param {string} newTitle
  */
-export const updatePost = async (postTitle, type, yDoc, newTitle) => {
+export const updatePost = async (postTitle, yDoc, newTitle) => {
 	const encodedContent = encodeYDocToUpdateV2ToBase64(yDoc);
 
 	const body = JSON.stringify({ content: encodedContent, newTitle });

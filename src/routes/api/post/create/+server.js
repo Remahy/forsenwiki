@@ -53,8 +53,8 @@ export async function POST({ request, locals }) {
 			return error(400, 'No title provided');
 		}
 
-		if (!isBio && title.sanitized.startsWith('User:')) {
-			return error(400,'This prefix is only applicable for user bio.');
+		if (!isBio && title.raw.startsWith('User:')) {
+			return error(400, 'This "User:" prefix can only be used for user bio.');
 		}
 
 		const foundTitle = await readYPostByTitle(title.sanitized);

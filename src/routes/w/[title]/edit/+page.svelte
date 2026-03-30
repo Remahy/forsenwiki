@@ -124,7 +124,7 @@
 			// Upload images to S3.
 			await uploadImages(editor, id);
 
-			res = await editor.read(() => updatePost(title, Y_POST_TYPES.ARTICLE, yjsDocMap, newTitle));
+			res = await editor.read(() => updatePost(title, yjsDocMap, newTitle));
 		} catch (err) {
 			console.error(err);
 			error = new Error(err?.toString());
