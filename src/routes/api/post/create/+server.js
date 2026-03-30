@@ -29,22 +29,32 @@ export async function POST({ request, locals }) {
 		return ForbiddenError();
 	}
 
-	const { title: rawTitle, content } = await request.json();
+	const { title: rawTitle, content, type: rawType } = await request.json();
 
 	/**
 	 * @type {import('$lib/constants/constants').Y_POST_TYPES_VALUES}
 	 */
-	let type = Y_POST_TYPES.ARTICLE;
+	let type = AVAILABLE_Y_POST_TYPES.includes(rawType) ? rawType : Y_POST_TYPES.ARTICLE;
+	const isBio = type === Y_POST_TYPES.BIO;
 
 	let editor;
 	let title;
 	let doc;
 	try {
-		title = sanitizeTitle(rawTitle);
+		title = isBio
+			? {
+					raw: `User:${session.user.name}`,
+					sanitized: `User:${sanitizeTitle(session.user.name).sanitized}`,
+				}
+			: sanitizeTitle(rawTitle);
 
 		if (!title.sanitized) {
 			// This throws, gets catched by isHttpError.
 			return error(400, 'No title provided');
+		}
+
+		if (!isBio && title.sanitized.startsWith('User:')) {
+			return error(400,'This prefix is only applicable for user bio.');
 		}
 
 		const foundTitle = await readYPostByTitle(title.sanitized);

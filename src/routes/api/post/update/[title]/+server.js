@@ -83,7 +83,10 @@ export async function POST({ request, locals, params }) {
 	 * @param {string} content
 	 * @param {string} newTitle - Skip this if user is not moderator.
 	 */
-	const { content, newTitle } = await request.json();
+	const { content, ...rest } = await request.json();
+
+	/** @type {{ newTitle: string | null }} */
+	let { newTitle } = rest;
 
 	const { sanitized: title } = sanitizeTitle(params.title);
 
@@ -100,6 +103,16 @@ export async function POST({ request, locals, params }) {
 
 	if (isSystem(post)) {
 		return ForbiddenError('This is a system post that cannot be edited.');
+	}
+
+	const systemRelations = await readSystemYPostRelations(post.id);
+
+	if (systemRelations.some(({ toPostId }) => toPostId === Y_POST_TYPES.BIO)) {
+		newTitle = null;
+
+		if (post.originalAuthorId !== session.user.id) {
+			return ForbiddenError("You're not allowed to edit someone else's bio.");
+		}
 	}
 
 	// Current
@@ -170,7 +183,7 @@ export async function POST({ request, locals, params }) {
 	const contentBase64 = uint8ArrayToBase64(combinedFinalDiff);
 
 	/** @type {{ raw: string, sanitized: string } | undefined} */
-	let potentialNewTitle = isModerator
+	let potentialNewTitle = isModerator && newTitle
 		? await validateTitle(post, newTitle, partialErrors)
 		: undefined;
 

@@ -31,6 +31,11 @@ export async function readYPostUpdatesByTitle(title) {
 			postUpdates: {
 				select: {
 					content: true,
+					metadata: {
+						select: {
+							userId: true,
+						}
+					}
 				},
 				orderBy: {
 					createdTimestamp: 'asc',

@@ -22,7 +22,9 @@ export const _getYPostByTitle = async (title) => {
 	// Important: We're destructuring away postUpdates to make sure we don't return it.
 	const { postUpdates, ..._post } = post;
 
-	return { ..._post, update: base64String };
+	const originalAuthorId = postUpdates[0].metadata.userId;
+
+	return { ..._post, update: base64String, originalAuthorId };
 };
 
 /**
