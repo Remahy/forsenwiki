@@ -6,6 +6,7 @@ export async function postYRelationDeleteByFromPostId(prisma, fromPostId) {
 	return prisma.yPostRelation.deleteMany({
 		where: {
 			fromPostId,
+			isSystem: false,
 		},
 	});
 }

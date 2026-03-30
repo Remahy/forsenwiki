@@ -161,13 +161,6 @@ export async function POST({ request, locals, params }) {
 	// Total size of the YDoc with the new update.
 	const { byteLength: totalByteLength } = mergePostUpdatesV2([currentUpdate, combinedFinalDiff]);
 
-	const systemRelations = await readSystemYPostRelations(post.id);
-
-	const transformedSystemRelations = systemRelations.map((sysRelation) => ({
-		isSystem: sysRelation.isSystem,
-		toPostId: sysRelation.toPostId,
-	}));
-
 	const internalIds = getInternalIds(editor);
 	const outRelations = internalIds.map((mentionPostId) => ({
 		isSystem: false,
@@ -181,7 +174,7 @@ export async function POST({ request, locals, params }) {
 		? await validateTitle(post, newTitle, partialErrors)
 		: undefined;
 
-	const body = { post, outRelations, transformedSystemRelations, content: contentBase64 };
+	const body = { post, outRelations, content: contentBase64 };
 	const metadata = {
 		user: { id: session.user.id },
 		byteLength,

@@ -1,11 +1,9 @@
 import prisma from '$lib/prisma.server';
-import { Y_POST_TYPES } from '$lib/constants/constants';
 import { postYRelationDeleteByFromPostId } from './delete';
 
 /**
  * @typedef {{ post: Pick<Prisma.YPost, 'id' | 'rawTitle' | 'title'>,
  *   outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[],
- *   systemRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[],
  *   metadata: { totalByteLength: number }
  * }} UpdateYPost
  */
@@ -14,7 +12,7 @@ import { postYRelationDeleteByFromPostId } from './delete';
  * @param {Prisma.PrismaClient | Prisma.Prisma.TransactionClient} tx
  * @param {UpdateYPost} arg2
  */
-const updateYPost = async (tx, { post, outRelations, systemRelations, metadata }) => {
+const updateYPost = async (tx, { post, outRelations, metadata }) => {
 	await postYRelationDeleteByFromPostId(tx, post.id);
 
 	await tx.yPost.update({
@@ -24,14 +22,7 @@ const updateYPost = async (tx, { post, outRelations, systemRelations, metadata }
 		data: {
 			outRelations: {
 				createMany: {
-					data: [
-						{
-							isSystem: true,
-							toPostId: Y_POST_TYPES.ARTICLE,
-						},
-						...systemRelations,
-						...outRelations,
-					],
+					data: outRelations,
 					skipDuplicates: true,
 				},
 			},
@@ -71,17 +62,16 @@ const createYPostUpdate = async (tx, data, metadata) => {
 };
 
 /**
- * @param {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], transformedSystemRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], content: string }} data
+ * @param {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], content: string }} data
  * @param {{ user: { id: string }, byteLength: number, totalByteLength: number, newTitle?: string, oldTitle?: string }} metadata
  */
 export const updateArticleYPost = async (data, metadata) => {
-	const { post, outRelations, transformedSystemRelations, content } = data;
+	const { post, outRelations, content } = data;
 
 	return prisma.$transaction(async (tx) => {
 		await updateYPost(tx, {
 			post,
 			outRelations,
-			systemRelations: transformedSystemRelations,
 			metadata,
 		});
 
