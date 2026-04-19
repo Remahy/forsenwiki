@@ -2,6 +2,7 @@
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
 	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
 	import Box from '$lib/components/Box.svelte';
 	import { listArticles, resetArticle } from '$lib/utils/indexedDb/article';
 	import Spinner from '$lib/components/Spinner.svelte';
@@ -17,7 +18,7 @@
 
 	const isMe = user.name === $page.data.session?.user?.name;
 
-	let localDrafts = $state(listArticles());
+	let localDrafts = $state(browser ? listArticles() : []);
 
 	/**
 	 * @param {string} name
