@@ -1,5 +1,5 @@
-import prisma from '$lib/prisma.server.js';
 import { error } from '@sveltejs/kit';
+import prisma from '$lib/prisma.server.js';
 import { SYSTEM } from '$lib/constants/constants.js';
 
 export async function load({ url, params }) {
@@ -25,7 +25,7 @@ export async function load({ url, params }) {
 		},
 	};
 
-	if (url.searchParams.get('noload')) {
+	if (url.searchParams.has('noload')) {
 		return { stats, user };
 	}
 
