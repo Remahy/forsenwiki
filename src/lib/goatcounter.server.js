@@ -91,7 +91,7 @@ export const getPopularArticles = async () => {
 	 */
 	const data = await res.json();
 
-	const filteredResults = filterArticlePages(data.hits);
+	const filteredResults = filterArticlePages(data.hits || []);
 
 	const parsedResults = await parseResults(filteredResults);
 
