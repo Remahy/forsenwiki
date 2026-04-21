@@ -197,7 +197,7 @@
 					<h2 class="text-2xl">New users</h2>
 				</div>
 
-				{#each $latestUsers as user (user.name)}
+				{#each $latestUsers as user (user)}
 					<div class="p-2 pl-0">
 						<span title={user.name} class="font-bold">{user.name}</span>
 					</div>

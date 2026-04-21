@@ -195,6 +195,7 @@
 										title="This will anonymize your account, delete any personally identifiably information and disconnect your Twitch account."
 										onclick={onClickAnonymizeAccountWrapper}>Delete account</Button
 									>
+									<Button>My data</Button>
 								</div>
 							</div>
 							{#await localDrafts}
