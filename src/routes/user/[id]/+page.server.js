@@ -2,8 +2,10 @@ import { error } from '@sveltejs/kit';
 import prisma from '$lib/prisma.server.js';
 import { SYSTEM } from '$lib/constants/constants.js';
 
-export async function load({ url, params }) {
+export async function load({ url, params, cookies }) {
 	const { id } = params;
+
+	const sessionId = cookies.get('authjs.session-token');
 
 	const user = await prisma.user.findUnique({
 		where: { id },
@@ -26,7 +28,7 @@ export async function load({ url, params }) {
 	};
 
 	if (url.searchParams.has('noload')) {
-		return { stats, user };
+		return { stats, user, sessionId };
 	}
 
 	if (id !== SYSTEM) {
@@ -53,5 +55,5 @@ export async function load({ url, params }) {
 		};
 	}
 
-	return { stats, user };
+	return { stats, user, sessionId };
 }

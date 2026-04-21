@@ -1,6 +1,7 @@
 <script>
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
+	import { signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 	import Box from '$lib/components/Box.svelte';
@@ -9,6 +10,9 @@
 	import Link from '$lib/components/Link.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { resetContent } from '$lib/utils/indexedDb/content';
+	import { deleteUser } from '$lib/api/user';
+
+	const sessionId = $page.data.sessionId;
 
 	const id = $page.params.id;
 	/** @type {{ editedArticles: number, uploadedContent: { total: number, images: number, videos: number, audio: number, documents: number } }} */
@@ -26,7 +30,7 @@
 	const onClickDeleteWrapper = (name) => {
 		setTimeout(async () => {
 			const ok = confirm(
-				'Are you sure? This will delete your local draft edit and its uploaded content.'
+				'This will delete your local draft edit and its uploaded content. Are you sure?'
 			);
 
 			if (ok) {
@@ -35,6 +39,34 @@
 				localDrafts = listArticles();
 			}
 		});
+	};
+
+	const onClickAnonymizeAccountWrapper = async () => {
+		const ok = confirm(
+			'This will delete your Twitch association and anonymize your account. This cannot be reverted. Are you sure? '
+		);
+
+		if (!ok) {
+			return;
+		}
+
+		const okOk = confirm('Press OK to start the deletion process.');
+
+		if (!okOk) {
+			return;
+		}
+
+		const draftArticleNames = await listArticles();
+
+		for (let index = 0; index < draftArticleNames.length; index++) {
+			const { name } = draftArticleNames[index];
+			await resetArticle(name);
+			await resetContent(name);
+		}
+
+		await deleteUser(sessionId);
+
+		await signOut({ redirect: true });
 	};
 </script>
 
@@ -70,7 +102,9 @@
 		"
 	>
 		<div class="flex flex-wrap gap-8">
-			<div class="forsen-wiki-theme-border self-start overflow-hidden rounded-lg border-2">
+			<div class="
+				self-start overflow-hidden rounded-lg border-2 forsen-wiki-theme-border
+			">
 				<img src={user.image} alt="" loading="lazy" />
 			</div>
 			<div class="grow">
@@ -150,15 +184,25 @@
 					</div>
 					{#if isMe}
 						<div>
+							<div class="mb-2 rounded-sm border p-2">
+								<p class="mb-2"><strong>Your data:</strong></p>
+								<div class="flex flex-col gap-2">
+									<Button
+										class="
+											h-fit min-h-0! bg-red-500! p-1! text-sm font-bold!
+											dark:bg-red-500/50!
+										"
+										title="This will anonymize your account, delete any personally identifiably information and disconnect your Twitch account."
+										onclick={onClickAnonymizeAccountWrapper}>Delete account</Button
+									>
+								</div>
+							</div>
 							{#await localDrafts}
 								<p class="inline-flex items-baseline gap-2">
 									<Spinner />
 									<span>Loading your drafts...</span>
 								</p>
 							{:then drafts}
-								{@const draftsWithName = /**@type {Array<{ name: string }>}*/ (
-									drafts.filter(({ name }) => typeof name === 'string')
-								)}
 								<p><strong>Your drafts:</strong></p>
 								<ul class="ml-5 list-disc">
 									{#each draftsWithName as draft (draft.name)}
