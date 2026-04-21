@@ -41,6 +41,7 @@
 				altText: selectedImageNode.getAltText(),
 				width: selectedImageNodeWidth,
 				height: selectedImageNodeHeight,
+				currentImageType: selectedImageNode.getSrc() ? 'internal' : 'new',
 				/** @param {import('../../plugins/Image/Image').ImagePayload} data */
 				onSubmit: (data) => {
 					editor.update(() => {

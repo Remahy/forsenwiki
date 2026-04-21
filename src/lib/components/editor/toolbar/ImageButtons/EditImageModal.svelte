@@ -25,6 +25,7 @@
 	 * @property {string} [altText]
 	 * @property {number | 'inherit'} [width]
 	 * @property {number | 'inherit'} [height]
+	 * @property {'internal' | 'new'} [currentImageType]
 	 * @property {(data: import('../../plugins/Image/Image').ImagePayload) => void} onSubmit
 	 */
 
@@ -34,6 +35,7 @@
 		altText = $bindable(''),
 		width = $bindable(IMAGE_MIN_WIDTH),
 		height = $bindable(IMAGE_MIN_HEIGHT),
+		currentImageType = $bindable('new'),
 		onSubmit,
 	} = $props();
 
@@ -46,9 +48,6 @@
 	/** @type {HTMLInputElement | null} */
 	let inputElement = $state(null);
 
-	/** @type {'new' | 'internal'} */
-	let currentImageType = $state('new');
-
 	let isLoading = $state(false);
 
 	let isValidImage = $state(false);
@@ -58,7 +57,7 @@
 	let originalImageHeight = $state(0);
 	let originalImageWidth = $state(0);
 
-	let searchQuery = $state('');
+	let searchQuery = $state(src);
 	let isSearching = $state(false);
 	/** @type {Array<{ title: string, rawTitle: string, lastUpdated: string, id: string }>} */
 	let searchResults = $state([]);
@@ -79,6 +78,8 @@
 		if (currentImageType === 'internal') {
 			return getImageCacheURL(value).toString();
 		}
+
+		debugger;
 
 		console.error('Failed loading image from IndexedDb');
 		return IMAGE_OFF;
@@ -261,21 +262,29 @@
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
-	<header class="
-		flex items-center justify-between border-b forsen-wiki-theme-border p-6
-	">
-		<h1 class="
-			text-xl font-semibold
-			lg:text-2xl
-		">Edit image</h1>
+	<header
+		class="
+			flex items-center justify-between border-b forsen-wiki-theme-border p-6
+		"
+	>
+		<h1
+			class="
+				text-xl font-semibold
+				lg:text-2xl
+			"
+		>
+			Edit image
+		</h1>
 		<Button class="ml-auto inline-flex items-center rounded-lg" on:click={cancel}>
 			<XIcon />
 		</Button>
 	</header>
 
-	<main class="
-		flex flex-col gap-16 overflow-hidden border-b forsen-wiki-theme-border p-6
-	">
+	<main
+		class="
+			flex flex-col gap-16 overflow-hidden border-b forsen-wiki-theme-border p-6
+		"
+	>
 		<label class="flex flex-col gap-2" for="select">
 			<strong>Image source</strong>
 			<div class="flex">
@@ -357,17 +366,23 @@
 					<strong>Results for "{searchQuery}"</strong>
 				{/if}
 
-				<div class="
-					relative prose mt-2 flex max-w-[unset]
-					dark:prose-invert
-				">
+				<div
+					class="
+						relative prose mt-2 flex max-w-[unset]
+						dark:prose-invert
+					"
+				>
 					<table class="w-full table-auto">
 						<tbody>
 							{#each searchResults as result (result.id)}
-								<tr class={newSrc === result.title ? `
-									bg-black/10
-									dark:bg-white/10
-								` : ''}>
+								<tr
+									class={newSrc === result.title
+										? `
+											bg-black/10
+											dark:bg-white/10
+										`
+										: ''}
+								>
 									<td class="max-w-xs">
 										<div class="truncate">
 											<Link href="/content/{result.id}" target="_blank">
