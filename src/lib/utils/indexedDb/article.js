@@ -20,7 +20,9 @@ export const resetArticle = (name) => {
 export const listArticles = async () => {
 	const databases = await window.indexedDB.databases();
 
-	return databases
-		.map((e) => ({ name: e.name }))
-		.filter(({ name }) => !name?.startsWith(`${DRAFT_CONTENT_DB_PREFIX}-`));
+	return /** @type {Array<{ name: string }>} */ (
+		databases
+			.map((e) => ({ name: e.name }))
+			.filter(({ name }) => !name?.startsWith(`${DRAFT_CONTENT_DB_PREFIX}-`))
+	);
 };

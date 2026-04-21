@@ -205,7 +205,7 @@
 							{:then drafts}
 								<p><strong>Your drafts:</strong></p>
 								<ul class="ml-5 list-disc">
-									{#each draftsWithName as draft (draft.name)}
+									{#each drafts as draft (draft.name)}
 										<li>
 											<div class="flex items-baseline gap-2">
 												{#if draft.name === 'new'}
