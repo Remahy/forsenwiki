@@ -103,11 +103,12 @@
 			<div class="editor-border sticky bottom-0 hidden w-full border-t-0 p-2 lg:block">
 				<Footer />
 			</div>
-			<div
-				class="editor-border sticky top-0 hidden h-full w-96 max-w-96 grow flex-col flex-wrap gap-4 p-2 lg:flex"
-			>
-				<ToolbarExtra />
-			</div>
 		</div>
-	</div></Composer
->
+
+		<div
+			class="editor-border sticky top-0 hidden h-full w-96 max-w-96 grow flex-col flex-wrap gap-4 p-2 lg:flex"
+		>
+			<ToolbarExtra />
+		</div>
+	</div>
+</Composer>
