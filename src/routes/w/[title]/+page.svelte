@@ -101,7 +101,10 @@
 		{/if}
 
 		{#if image?.length}
-			<meta property="og:image" content={getImageCacheURL(image).toString()} />
+			<meta
+				property="og:image"
+				content={getImageCacheURL(image, { quality: 'medium-low' }).toString()}
+			/>
 		{/if}
 
 		<meta property="article:published_time" content={createdTimestamp.toISOString()} />

@@ -119,7 +119,10 @@
 							{/if}
 
 							{#if result.html?.image}
-								<img src={getImageCacheURL(result.html.image).toString()} alt="" />
+								<img
+									src={getImageCacheURL(result.html.image, { quality: 'low' }).toString()}
+									alt=""
+								/>
 							{/if}
 
 							{#if result.type === 'content'}
