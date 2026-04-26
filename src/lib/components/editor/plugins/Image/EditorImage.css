@@ -86,3 +86,11 @@
 	max-width: 100%;
 	vertical-align: baseline;
 }
+
+@media (width <= 64rem /* 1024px */) {
+	.editor-shell *.editor-image {
+		img {
+			height: auto !important;
+		}
+	}
+}
