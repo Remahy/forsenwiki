@@ -62,7 +62,11 @@
 		JSON.stringify({
 			'@context': 'https://schema.org',
 			'@type': 'Article',
-			author: authors
+			author: {
+				'@type': 'Organization',
+				name: 'Community Forsen Wiki',
+			},
+			contributor: authors
 				.filter((author) => author.name !== null)
 				.map((author) => ({
 					'@type': 'Person',
