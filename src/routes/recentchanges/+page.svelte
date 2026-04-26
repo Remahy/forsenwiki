@@ -165,6 +165,7 @@
 						locale: enGB,
 					})}&nbsp;</small
 				>
+				<span><small><span class="font-bold">By:</span> {update.author}</small></span>
 			</div>
 		{:else}
 			<span class="bg-black/10 p-2 dark:bg-white/5">Nothing found.</span>
