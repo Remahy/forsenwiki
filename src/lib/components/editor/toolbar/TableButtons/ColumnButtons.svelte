@@ -143,15 +143,11 @@
 </script>
 
 <div
-	class="
-	forsen-wiki-theme-outline m-1.5 flex items-center gap-2 outline-offset-8
+	class="forsen-wiki-theme-outline m-1.5 flex items-center gap-2 outline-offset-8
 "
 >
 	<div
-		class="
-		flex flex-col items-center justify-center font-mono text-xs leading-none
-		select-none
-	"
+		class="flex flex-col items-center justify-center font-mono text-xs leading-none select-none"
 	>
 		<span>C</span>
 		<span>O</span>
@@ -159,11 +155,7 @@
 	</div>
 
 	<div
-		class="
-			forsen-wiki-theme-border flex rounded-sm border bg-violet-900 text-sm
-			text-white
-			dark:bg-violet-900/50
-		"
+		class="forsen-wiki-theme-border flex rounded-sm border bg-violet-900 text-sm text-white dark:bg-violet-900/50"
 	>
 		<div class="flex items-center gap-2 p-2" title="Add column">
 			<PlusIcon size="16" />

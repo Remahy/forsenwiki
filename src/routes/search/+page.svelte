@@ -65,22 +65,12 @@
 	/>
 </svelte:head>
 
-<section
-	class="
-	container mx-auto flex grow flex-col gap-4 p-4
-	lg:py-12
-"
->
+<section class="container mx-auto flex grow flex-col gap-4 p-4 lg:py-12">
 	<Button onclick={toggleUploadModal} class="self-start">
 		<UploadIcon /> <span>Upload content</span>
 	</Button>
 
-	<Box
-		class="
-		flex flex-col overflow-hidden p-4
-		lg:mb-0
-	"
-	>
+	<Box class="flex flex-col overflow-hidden p-4 lg:mb-0">
 		<div class="box-heading-wrapper mb-2">
 			<h2 class="text-2xl">Search</h2>
 		</div>
@@ -111,11 +101,8 @@
 					>
 						<div class="flex grow flex-col gap-2">
 							<span class="line-clamp-1" title={result.rawTitle}>
-								{#if !result.type}<span
-										class="
-									rounded-sm bg-black/10 p-1 text-xs
-									dark:bg-black
-								">Article</span
+								{#if !result.type}<span class="rounded-sm bg-black/10 p-1 text-xs dark:bg-black"
+										>Article</span
 									>{:else if result.type === 'content'}
 									<span class="rounded-sm bg-violet-500/25 p-1 text-xs">Content</span>
 								{/if}

@@ -224,10 +224,7 @@
 		<figure
 			style:width={widthCss}
 			style:height={heightCss}
-			class="
-				element-placeholder-color m-0! flex animate-pulse items-center
-				justify-center p-0
-			"
+			class="element-placeholder-color m-0! flex animate-pulse items-center justify-center p-0"
 			title="Loading image..."
 		>
 			<img

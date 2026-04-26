@@ -10,9 +10,7 @@
 </script>
 
 <div
-	class="
-	box rounded-sm
-	{className}"
+	class="box rounded-sm {className}"
 >
 	{@render children?.()}
 </div>

@@ -48,10 +48,7 @@
 	<Divider />
 
 	<div
-		class="
-		flex flex-col items-center justify-center font-mono text-xs leading-none
-		select-none
-	"
+		class="flex flex-col items-center justify-center font-mono text-xs leading-none select-none"
 	>
 		<span>I</span>
 		<span>M</span>

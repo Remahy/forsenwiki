@@ -17,9 +17,7 @@
 
 <a {href} {id} {style} {target}>
 	<Box
-		class="
-		link-box
-		{className}"
+		class="link-box {className}"
 	>
 		{@render children?.()}
 	</Box>

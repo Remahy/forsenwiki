@@ -88,17 +88,12 @@
 
 <div
 	use:tocAction
-	class="
-	hidden
-	lg:block lg:w-96 lg:min-w-96
+	class="hidden lg:block lg:w-96 lg:min-w-96
 "
 >
 	{#if toc}
 		<Box
-			class="
-			top-4 hidden flex-col overflow-hidden p-4 pr-0 pb-0 break-all
-			lg:sticky lg:flex
-		"
+			class="top-4 hidden flex-col overflow-hidden p-4 pr-0 pb-0 break-all lg:sticky lg:flex"
 		>
 			<div class="box-heading-wrapper">
 				<h2 class="text-2xl">Table of Contents</h2>
@@ -110,9 +105,7 @@
 		<img
 			src="/favicon.png"
 			alt="The face of Twitch"
-			class="
-			opacity-[.04] select-none
-		"
+			class="opacity-[.04] select-none"
 		/>
 	{/if}
 </div>

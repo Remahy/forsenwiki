@@ -15,9 +15,7 @@
 	{...rest}
 	{href}
 	data-sveltekit-reload={reload}
-	class="
-	link
-	{className}"
+	class="link {className}"
 >
 	{@render children?.()}
 </a>

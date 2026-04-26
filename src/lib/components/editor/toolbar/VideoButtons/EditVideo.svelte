@@ -133,10 +133,7 @@
 		<LinkIcon />
 
 		<input
-			class="
-				input-color -ml-10 h-full w-auto py-1 pr-0 pl-10 text-sm
-				lg:h-full
-			"
+			class="input-color -ml-10 h-full w-auto py-1 pr-0 pl-10 text-sm lg:h-full"
 			onchange={setURL}
 			placeholder="https://..."
 			type="url"

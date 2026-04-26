@@ -8,19 +8,9 @@
 	<meta name="description" content="Errors for ants." />
 </svelte:head>
 
-<div
-	class="
-	container mx-auto flex grow p-4
-	lg:py-12
-"
->
+<div class="container mx-auto flex grow p-4 lg:py-12">
 	<Box class="bg-error-color grow p-4 py-12">
-		<section
-			class="
-			prose prose-lg dark:prose-invert w-full
-			max-w-[unset]
-		"
-		>
+		<section class="prose prose-lg dark:prose-invert w-full max-w-[unset]">
 			<h1>OOPSIE WOOPSIE!!</h1>
 
 			<p>Something went wrong.</p>

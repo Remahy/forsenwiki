@@ -11,9 +11,7 @@
 
 <div
 	{...rest}
-	class="
-	suggestion-box mb-4 w-full
-	{className}"
+	class="suggestion-box mb-4 w-full {className}"
 >
 	{@render children?.()}
 </div>

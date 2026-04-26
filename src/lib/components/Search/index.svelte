@@ -53,9 +53,7 @@
 		{#if inline}
 			<Button
 				type="submit"
-				class="
-				forsen-wiki-theme-border h-full rounded-l-none! border
-			"
+				class="forsen-wiki-theme-border h-full rounded-l-none! border"
 			>
 				<SearchIcon />
 				<span class="hidden">Search</span>

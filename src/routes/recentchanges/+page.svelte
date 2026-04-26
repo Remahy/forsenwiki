@@ -102,10 +102,7 @@
 </script>
 
 <section
-	class="
-	container mx-auto flex grow flex-col gap-4 p-4
-	lg:py-12
-"
+	class="container mx-auto flex grow flex-col gap-4 p-4 lg:py-12"
 >
 	<noscript>
 		<Box class="bg-red-500! p-4 text-black">
@@ -114,10 +111,7 @@
 	</noscript>
 
 	<Box
-		class="
-		flex flex-col overflow-hidden p-4
-		lg:mb-0
-	"
+		class="flex flex-col overflow-hidden p-4 lg:mb-0"
 	>
 		<div class="box-heading-wrapper mb-2">
 			<h2 class="text-2xl">Recent Changes</h2>
@@ -143,19 +137,12 @@
 		</div>
 	</Box>
 	<Box
-		class="
-		flex grow flex-col overflow-hidden p-2
-		lg:mb-0
-	"
+		class="flex grow flex-col overflow-hidden p-2 lg:mb-0"
 	>
 		{#each $latestUpdates as update, index (update.id)}
 			<div
-				class="
-				p-2{!(index % 2)
-					? `
-					bg-black/10
-					dark:bg-white/5
-				`
+				class="p-2{!(index % 2)
+					? 'bg-black/10 dark:bg-white/5'
 					: ''}"
 			>
 				<span>
@@ -186,10 +173,7 @@
 			</div>
 		{:else}
 			<span
-				class="
-				bg-black/10 p-2
-				dark:bg-white/5
-			">Nothing found.</span
+				class="bg-black/10 p-2 dark:bg-white/5">Nothing found.</span
 			>
 		{/each}
 

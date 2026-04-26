@@ -13,10 +13,7 @@
 	<span>Content is licensed under</span>
 
 	<a
-		class="
-			inline-flex flex-wrap items-baseline gap-2 font-bold
-			hover:text-indigo-300
-		"
+		class="inline-flex flex-wrap items-baseline gap-2 font-bold hover:text-indigo-300"
 		href="https://creativecommons.org/licenses/by-sa/4.0/"
 		target="_blank"
 		rel="license noopener noreferrer"

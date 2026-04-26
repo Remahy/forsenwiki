@@ -177,15 +177,10 @@
 
 <div class="modal-color pointer-events-auto relative p-0">
 	<header
-		class="
-		forsen-wiki-theme-border flex items-center justify-between border-b p-6
-	"
+		class="forsen-wiki-theme-border flex items-center justify-between border-b p-6"
 	>
 		<h1
-			class="
-			text-xl font-semibold
-			lg:text-2xl
-		"
+			class="text-xl font-semibold lg:text-2xl"
 		>
 			Edit link
 		</h1>
@@ -199,15 +194,11 @@
 			<strong>Type of link</strong>
 			<div class="flex">
 				<Button
-					class="
-						grow rounded-r-none!
-						{currentLinkType === 'internal' ? '' : `opacity-50`}"
+					class="grow rounded-r-none! {currentLinkType === 'internal' ? '' : 'opacity-50'}"
 					on:click={() => linkType('internal')}>Internal</Button
 				>
 				<Button
-					class="
-						grow rounded-l-none!
-						{currentLinkType === 'external' ? '' : `opacity-50`}"
+					class="grow rounded-l-none! {currentLinkType === 'external' ? '' : 'opacity-50'}"
 					on:click={() => linkType('external')}>External</Button
 				>
 			</div>
@@ -251,10 +242,7 @@
 					{/if}
 
 					<div
-						class="
-						prose dark:prose-invert relative mt-2 flex
-						max-w-[unset]
-					"
+						class="prose dark:prose-invert relative mt-2 flex max-w-[unset]"
 					>
 						<table class="table-auto">
 							<tbody>
@@ -299,10 +287,7 @@
 	<footer class="flex items-center justify-end gap-2 p-6">
 		{#if hasLink}
 			<Button
-				class="
-				bg-red-600 font-bold
-				hover:bg-red-700
-			"
+				class="bg-red-600 font-bold hover:bg-red-700"
 				on:click={handleDeleteLink}
 			>
 				<Trash2Icon /> Delete

@@ -179,29 +179,14 @@
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
-	<header
-		class="
-		forsen-wiki-theme-border flex items-center justify-between border-b p-6
-	"
-	>
-		<h1
-			class="
-			text-xl font-semibold
-			lg:text-2xl
-		"
-		>
-			Upload content
-		</h1>
+	<header class="forsen-wiki-theme-border flex items-center justify-between border-b p-6">
+		<h1 class="text-xl font-semibold lg:text-2xl">Upload content</h1>
 		<Button class="ml-auto inline-flex items-center rounded-lg" on:click={cancel}>
 			<XIcon />
 		</Button>
 	</header>
 
-	<main
-		class="
-		forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6
-	"
-	>
+	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
 		<div class="flex flex-col gap-2">
 			<Box class="mb-4 bg-indigo-400/10! p-4 text-sm">
 				<p>
@@ -274,10 +259,7 @@
 								</div>
 								<input
 									type="text"
-									class="
-										input-color w-full py-4
-										placeholder:text-inherit/25
-									"
+									class="input-color w-full py-4 placeholder:text-inherit/25"
 									placeholder={entry.file.name}
 									maxlength="80"
 									bind:value={content[index].name}

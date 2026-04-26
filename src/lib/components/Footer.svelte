@@ -9,10 +9,7 @@
 
 <footer class="footer">
 	<div
-		class="
-		container mx-auto w-full items-stretch gap-2 gap-y-8 p-4
-		lg:flex lg:py-12
-	"
+		class="container mx-auto w-full items-stretch gap-2 gap-y-8 p-4 lg:flex lg:py-12"
 	>
 		<div class="bg-dark flex-1 grow overflow-hidden rounded-sm p-4">
 			<License />
@@ -37,10 +34,7 @@
 		</div>
 
 		<div
-			class="
-			bg-dark mt-2 flex-1 grow overflow-hidden rounded-sm p-4 text-right
-			lg:mt-0
-		"
+			class="bg-dark mt-2 flex-1 grow overflow-hidden rounded-sm p-4 text-right lg:mt-0"
 		>
 			<p>forsen.wiki - {version}</p>
 
@@ -59,10 +53,7 @@
 		</div>
 
 		<div
-			class="
-			bg-dark mt-2 flex flex-col justify-evenly gap-2 rounded-sm p-4
-			lg:mt-0 lg:gap-0
-		"
+			class="bg-dark mt-2 flex flex-col justify-evenly gap-2 rounded-sm p-4 lg:mt-0 lg:gap-0"
 		>
 			<a
 				href="https://discord.gg/yp7ST3BDYt"
