@@ -12,6 +12,8 @@ export const upsertHTML = (postId, { content, text, image }) => {
 		create: {
 			postId,
 			content,
+			text,
+			image,
 		},
 		update: {
 			content,

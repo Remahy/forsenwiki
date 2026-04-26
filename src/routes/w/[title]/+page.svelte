@@ -61,7 +61,12 @@
 	const authorsScriptContent = $derived(
 		JSON.stringify({
 			'@context': 'https://schema.org',
-			author: authors
+			'@type': 'Article',
+			author: {
+				'@type': 'Organization',
+				name: 'Community Forsen Wiki',
+			},
+			contributor: authors
 				.filter((author) => author.name !== null)
 				.map((author) => ({
 					'@type': 'Person',
