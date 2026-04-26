@@ -61,6 +61,7 @@
 	const authorsScriptContent = $derived(
 		JSON.stringify({
 			'@context': 'https://schema.org',
+			'@type': 'Article',
 			author: authors
 				.filter((author) => author.name !== null)
 				.map((author) => ({
