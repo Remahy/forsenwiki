@@ -45,6 +45,7 @@ export const saveContent = async (articleId, hash, file) => {
 
 	return new Promise((resolve, reject) => {
 		transaction.oncomplete = () => {
+			hashCache.delete(hash);
 			resolve(hash);
 		};
 

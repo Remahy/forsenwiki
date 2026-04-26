@@ -77,16 +77,8 @@
 
 		<CollaborationPlugin {id} {providerFactory} shouldBootstrap={false} />
 
-		<div class="
-			w-full
-			lg:w-148
-			xl:w-212
-			2xl:w-280
-		">
-			<div class="
-				editor-border sticky top-0 z-40 hidden w-full p-2
-				lg:block
-			">
+		<div class="w-full lg:w-148 xl:w-212 2xl:w-280">
+			<div class="editor-border sticky top-0 z-40 hidden w-full p-2 lg:block">
 				<div class="flex flex-wrap items-stretch gap-2">
 					<Toolbar />
 				</div>
@@ -94,10 +86,7 @@
 
 			<div class="overflow-hidden">
 				<article class="editor-border box flex min-h-96 grow flex-col">
-					<div class="
-						relative prose flex max-w-[unset] grow
-						dark:prose-invert
-					">
+					<div class="prose dark:prose-invert relative flex max-w-[unset] grow">
 						<ContentEditable
 							className="editor-shell m-0 grow overflow-hidden border-0 p-4 outline-0"
 						/>
@@ -105,29 +94,19 @@
 				</article>
 			</div>
 
-			<div class="
-				editor-border sticky bottom-0 z-40 block w-full p-2
-				lg:hidden
-			">
+			<div class="editor-border sticky bottom-0 z-40 block w-full p-2 lg:hidden">
 				<div class="flex flex-wrap items-stretch gap-2 text-sm">
 					<MobileToolbar />
 				</div>
 			</div>
 
-			<div class="
-				editor-border sticky bottom-0 hidden w-full border-t-0 p-2
-				lg:block
-			">
+			<div class="editor-border sticky bottom-0 hidden w-full border-t-0 p-2 lg:block">
 				<Footer />
 			</div>
 		</div>
 
 		<div
-			class="
-				editor-border sticky top-0 hidden h-full w-96 max-w-96 grow flex-col
-				flex-wrap gap-4 p-2
-				lg:flex
-			"
+			class="editor-border sticky top-0 hidden h-full w-96 max-w-96 grow flex-col flex-wrap gap-4 p-2 lg:flex"
 		>
 			<ToolbarExtra />
 		</div>

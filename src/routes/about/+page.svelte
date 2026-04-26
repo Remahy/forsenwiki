@@ -11,14 +11,8 @@
 	<meta name="description" content="Learn about the forsen... Wiki." />
 </svelte:head>
 
-<div class="
-	container mx-auto p-8
-	lg:py-12
-">
-	<section class="
-		prose prose-lg w-full max-w-[unset]
-		dark:prose-invert
-	">
+<div class="container mx-auto p-8 lg:py-12">
+	<section class="prose prose-lg dark:prose-invert w-full max-w-[unset]">
 		<h1>About</h1>
 		<p>
 			Forsen related wiki. Forsen mixes, news, big plays, tilts. Everything that is somewhat related
@@ -45,9 +39,7 @@
 		<h2>Links</h2>
 		<ul>
 			<li>
-				<a href="https://discord.gg/yp7ST3BDYt" target="discord.gg" class="
-					flex items-center gap-2
-				">
+				<a href="https://discord.gg/yp7ST3BDYt" target="discord.gg" class="flex items-center gap-2">
 					<Discord size="18" /> <span>Discord - The Fors Emotebank</span></a
 				>
 			</li>
