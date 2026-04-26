@@ -180,6 +180,12 @@
 		}
 	});
 
+	$effect(() => {
+		if (src) {
+			error = false;
+		}
+	});
+
 	onMount(() => {
 		let isMounted = true;
 		const rootElement = editor.getRootElement();
@@ -215,26 +221,28 @@
 		style={getWidthAndHeight(width, height)}
 	>
 		{#if platform === 'usercontent'}
-			<video
-				class="pointer-events-none"
-				{width}
-				{height}
-				style={getIframeStyle(width, height)}
-			>
-				<source
-					src={url}
-					onerror={() => {
-						error = true;
-					}}
-				/>
-			</video>
 			{#if error}
+				<div class="pointer-events-none" style={getIframeStyle(width, height)}></div>
 				<div class="pointer-events-none absolute top-0 flex flex-col gap-2 p-2">
 					<p class="text-lg whitespace-break-spaces text-white">
 						Something went wrong loading this video.
 					</p>
 					<p class="whitespace-break-spaces text-white"><strong>URL:</strong> <span>{url}</span></p>
 				</div>
+			{:else}
+				<video
+					class="pointer-events-none m-0!"
+					{width}
+					{height}
+					style={getIframeStyle(width, height)}
+				>
+					<source
+						src={url}
+						onerror={() => {
+							error = true;
+						}}
+					/>
+				</video>
 			{/if}
 		{:else}
 			<iframe

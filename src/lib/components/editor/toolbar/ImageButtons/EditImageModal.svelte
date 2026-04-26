@@ -25,6 +25,7 @@
 	 * @property {string} [altText]
 	 * @property {number | 'inherit'} [width]
 	 * @property {number | 'inherit'} [height]
+	 * @property {'internal' | 'new'} [currentImageType]
 	 * @property {(data: import('../../plugins/Image/Image').ImagePayload) => void} onSubmit
 	 */
 
@@ -34,9 +35,13 @@
 		altText = $bindable(''),
 		width = $bindable(IMAGE_MIN_WIDTH),
 		height = $bindable(IMAGE_MIN_HEIGHT),
+		currentImageType = $bindable('new'),
 		onSubmit,
 	} = $props();
 
+	/** @type {{ file: File, hash: string, url: string }?} */
+	let loadedImage = $state(null);
+	let autoSaved = $state(false);
 	let newSrc = $state('');
 	let newSrcName = $state('');
 	/** @type {File | null} */
@@ -45,9 +50,6 @@
 
 	/** @type {HTMLInputElement | null} */
 	let inputElement = $state(null);
-
-	/** @type {'new' | 'internal'} */
-	let currentImageType = $state('new');
 
 	let isLoading = $state(false);
 
@@ -58,7 +60,7 @@
 	let originalImageHeight = $state(0);
 	let originalImageWidth = $state(0);
 
-	let searchQuery = $state('');
+	let searchQuery = $state(src);
 	let isSearching = $state(false);
 	/** @type {Array<{ title: string, rawTitle: string, lastUpdated: string, id: string }>} */
 	let searchResults = $state([]);
@@ -73,10 +75,13 @@
 		const image = await loadContent(id, value);
 
 		if (image) {
+			loadedImage = image;
+			currentImageType = 'new';
+			newSrcName = image.file.name;
 			return image.url;
 		}
 
-		if (currentImageType === 'internal') {
+		if (value) {
 			return getImageCacheURL(value).toString();
 		}
 
@@ -226,6 +231,21 @@
 	};
 
 	$effect(() => {
+		autoSaved = false;
+		if (!loadedImage || newHash || newFile) {
+			return;
+		}
+
+		if (newSrcName !== loadedImage.file.name) {
+			const newFile = new File([loadedImage.file], newSrcName, { type: loadedImage.file.type });
+			(async () => {
+				await saveContent(id, loadedImage.hash, newFile);
+				autoSaved = true;
+			})();
+		}
+	});
+
+	$effect(() => {
 		if (!searchQuery) {
 			return;
 		}
@@ -261,44 +281,32 @@
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
-	<header class="
-		flex items-center justify-between border-b forsen-wiki-theme-border p-6
-	">
-		<h1 class="
-			text-xl font-semibold
-			lg:text-2xl
-		">Edit image</h1>
+	<header class="forsen-wiki-theme-border flex items-center justify-between border-b p-6">
+		<h1 class="text-xl font-semibold lg:text-2xl">Edit image</h1>
 		<Button class="ml-auto inline-flex items-center rounded-lg" on:click={cancel}>
 			<XIcon />
 		</Button>
 	</header>
 
-	<main class="
-		flex flex-col gap-16 overflow-hidden border-b forsen-wiki-theme-border p-6
-	">
-		<label class="flex flex-col gap-2" for="select">
+	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
+		<label class="flex flex-col gap-2" for="select-button">
 			<strong>Image source</strong>
 			<div class="flex">
 				<Button
-					class="
-						grow rounded-r-none!
-						{currentImageType === 'internal' ? '' : `opacity-50`}"
+					id="select-button"
+					class="grow rounded-r-none! {currentImageType === 'internal' ? '' : `opacity-50`}"
 					on:click={() => (currentImageType = 'internal')}>Browse</Button
 				>
 				<Button
-					class="
-						grow rounded-l-none!
-						{currentImageType === 'new' ? '' : 'opacity-50'}"
+					id="select-button"
+					class="grow rounded-l-none! {currentImageType === 'new' ? '' : 'opacity-50'}"
 					on:click={() => (currentImageType = 'new')}>Upload</Button
 				>
 			</div>
 
 			{#if src || newSrc}
 				<figure
-					class="
-						mx-auto flex min-h-50 min-w-50 items-center justify-center border
-						forsen-wiki-theme-border bg-dark
-					"
+					class="forsen-wiki-theme-border bg-dark mx-auto flex min-h-50 min-w-50 items-center justify-center border"
 				>
 					{#await previewImage}
 						<img class="animate-spin rounded-full" src={LUCIDE_ICON_LOADER} alt={altText} />
@@ -319,7 +327,7 @@
 				<input
 					type="file"
 					accept={mimetypes.image.flatMap((v) => v).join(', ')}
-					class="rounded-sm border forsen-wiki-theme-border p-2"
+					class="forsen-wiki-theme-border rounded-sm border p-2"
 					oninput={handleInputChange}
 					bind:this={inputElement}
 					onclick={() => inputElement?.dispatchEvent(new Event('change'))}
@@ -357,17 +365,18 @@
 					<strong>Results for "{searchQuery}"</strong>
 				{/if}
 
-				<div class="
-					relative prose mt-2 flex max-w-[unset]
-					dark:prose-invert
-				">
+				<div class="prose dark:prose-invert relative mt-2 flex max-w-[unset]">
 					<table class="w-full table-auto">
 						<tbody>
 							{#each searchResults as result (result.id)}
-								<tr class={newSrc === result.title ? `
-									bg-black/10
-									dark:bg-white/10
-								` : ''}>
+								<tr
+									class={newSrc === result.title
+										? `
+											bg-black/10
+											dark:bg-white/10
+										`
+										: ''}
+								>
 									<td class="max-w-xs">
 										<div class="truncate">
 											<Link href="/content/{result.id}" target="_blank">
@@ -402,6 +411,11 @@
 					>
 				</div>
 				<input class="input-color rounded-sm p-2" bind:value={newSrcName} maxlength="80" />
+				{#if autoSaved}
+					<div class="rounded-md bg-emerald-500/25 p-2">
+						<small>Successfully modified name.</small>
+					</div>
+				{/if}
 			</label>
 		{/if}
 

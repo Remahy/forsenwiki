@@ -348,7 +348,7 @@ function generateCDNSrc(node: VideoEmbedNode, staticURL: string) {
 
 	const element = document.createElement('video');
 	setVideoAttributes(node, element);
-	element.setAttribute('controls', '')
+	element.setAttribute('controls', '');
 	element.setAttribute('data-lexical-usercontent', node.getSrc()!);
 
 	element.controls = true;

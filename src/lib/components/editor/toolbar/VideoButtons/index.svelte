@@ -48,10 +48,7 @@
 {#if selectedVideoEmbedNode}
 	<Divider />
 
-	<div class="
-		flex flex-col items-center justify-center font-mono text-xs leading-none
-		select-none
-	">
+	<div class="flex flex-col items-center justify-center font-mono text-xs leading-none select-none">
 		<span>V</span>
 		<span>I</span>
 		<span>D</span>
