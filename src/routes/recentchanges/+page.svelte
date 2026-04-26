@@ -134,32 +134,37 @@
 	</Box>
 	<Box class="flex grow flex-col overflow-hidden p-2 lg:mb-0">
 		{#each $latestUpdates as update, index (update.id)}
-			<div class="p-2{!(index % 2) ? 'bg-black/10 dark:bg-white/5' : ''}">
+			{@const isNewArticle = update.newTitle && !update.oldTitle}
+			<div class="p-2 {!(index % 2) ? 'bg-black/10 dark:bg-white/5' : ''}">
 				<span>
-					<Link href="/w/{update.title}/history/{update.id}" target="_blank"
-						><span class="font-bold">{update.rawTitle}</span></Link
-					>&nbsp;
+					<Link href="/w/{update.title}/history/{update.id}" target="_blank">
+						<span class="font-bold">{update.rawTitle}</span>
+					</Link>&nbsp;
 				</span>
+				{#if isNewArticle}
+					<span class="rounded-sm bg-green-500/25 p-1 text-xs">New!</span>
+				{/if}
 				{#if update.newTitle}
 					<small
 						>(<span class="font-bold">Title change:</span>
 						"{update.newTitle}"{#if update.oldTitle}
-							{' '}<i>was "{update.oldTitle}"</i>
+							&nbsp;<i>was "{update.oldTitle}"</i>
 						{/if})&nbsp;</small
 					>
 				{/if}
 				<span><small class="opacity-50">({update.byteLength})&nbsp;</small></span>
-				<span>
-					<Link href="/w/{update.title}/history/{update.id}.." target="_blank"
-						>Compare with previous</Link
-					>&nbsp;</span
-				>
+				{#if !isNewArticle}
+					<span>
+						<Link href="/w/{update.title}/history/{update.id}.." target="_blank"
+							>Compare with previous</Link
+						>&nbsp;</span
+					>
+				{/if}
 				<small
 					>{formatRelative(update.lastUpdated, Date.now(), {
 						locale: enGB,
 					})}&nbsp;</small
 				>
-				<span><small><span class="font-bold">By:</span> {update.author}</small></span>
 			</div>
 		{:else}
 			<span class="bg-black/10 p-2 dark:bg-white/5">Nothing found.</span>

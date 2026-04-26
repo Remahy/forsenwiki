@@ -33,6 +33,8 @@ const getAllArticles = async () => {
 	return res.map((yPost) => ({ url: yPost.title, lastUpdated: yPost.lastUpdated.toISOString() }));
 };
 
+const lastUpdated = new Date().toISOString();
+
 /** @type {Array<{ url: string, lastUpdated: string }>} */
 let lastResults = [];
 
@@ -55,6 +57,34 @@ export async function GET() {
 			xmlns:video="http://www.google.com/schemas/sitemap-video/1.1"
 		>
 			${lastResults.map(siteMapEntry).join('')}
+			<url>
+				<loc>${DOMAIN}/create</loc>
+				<lastmod>${lastUpdated}</lastmod>
+			</url>
+			<url>
+				<loc>${DOMAIN}/search</loc>
+				<lastmod>${lastUpdated}</lastmod>
+			</url>
+			<url>
+				<loc>${DOMAIN}/recentchanges</loc>
+				<lastmod>${lastUpdated}</lastmod>
+			</url>
+			<url>
+				<loc>${DOMAIN}/about</loc>
+				<lastmod>${lastUpdated}</lastmod>
+			</url>
+			<url>
+				<loc>${DOMAIN}/terms</loc>
+				<lastmod>${lastUpdated}</lastmod>
+			</url>
+			<url>
+				<loc>${DOMAIN}/privacy</loc>
+				<lastmod>${lastUpdated}</lastmod>
+			</url>
+			<url>
+				<loc>${DOMAIN}/dmca</loc>
+				<lastmod>${lastUpdated}</lastmod>
+			</url>
 		</urlset>`.trim(),
 		{
 			headers: {
