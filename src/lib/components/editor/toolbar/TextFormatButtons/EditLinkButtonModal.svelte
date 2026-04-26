@@ -176,14 +176,8 @@
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
-	<header
-		class="forsen-wiki-theme-border flex items-center justify-between border-b p-6"
-	>
-		<h1
-			class="text-xl font-semibold lg:text-2xl"
-		>
-			Edit link
-		</h1>
+	<header class="forsen-wiki-theme-border flex items-center justify-between border-b p-6">
+		<h1 class="text-xl font-semibold lg:text-2xl">Edit link</h1>
 		<Button class="ml-auto inline-flex items-center rounded-lg" on:click={cancel}>
 			<XIcon />
 		</Button>
@@ -241,9 +235,7 @@
 						<strong>Results for "{searchQuery}"</strong>
 					{/if}
 
-					<div
-						class="prose dark:prose-invert relative mt-2 flex max-w-[unset]"
-					>
+					<div class="prose dark:prose-invert relative mt-2 flex max-w-[unset]">
 						<table class="table-auto">
 							<tbody>
 								{#each searchResults as result (result.id)}
@@ -286,10 +278,7 @@
 
 	<footer class="flex items-center justify-end gap-2 p-6">
 		{#if hasLink}
-			<Button
-				class="bg-red-600 font-bold hover:bg-red-700"
-				on:click={handleDeleteLink}
-			>
+			<Button class="bg-red-600 font-bold hover:bg-red-700" on:click={handleDeleteLink}>
 				<Trash2Icon /> Delete
 			</Button>
 		{/if}

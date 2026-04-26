@@ -94,9 +94,7 @@
 				</article>
 			</div>
 
-			<div
-				class="editor-border sticky bottom-0 z-40 block w-full p-2 lg:hidden"
-			>
+			<div class="editor-border sticky bottom-0 z-40 block w-full p-2 lg:hidden">
 				<div class="flex flex-wrap items-stretch gap-2 text-sm">
 					<MobileToolbar />
 				</div>

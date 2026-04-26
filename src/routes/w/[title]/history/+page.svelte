@@ -44,9 +44,7 @@
 				</LinkButton>
 
 				<LinkButton href="/w/{title}/edit" reload class="flex items-center gap-2 text-sm">
-					<SquarePenIcon size="16" /><span
-						class="hidden md:inline">Edit article</span
-					>
+					<SquarePenIcon size="16" /><span class="hidden md:inline">Edit article</span>
 				</LinkButton>
 			</div>
 		</div>

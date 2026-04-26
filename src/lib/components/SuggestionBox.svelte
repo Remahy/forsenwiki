@@ -9,9 +9,6 @@
 	let { class: className = '', children, ...rest } = $props();
 </script>
 
-<div
-	{...rest}
-	class="suggestion-box mb-4 w-full {className}"
->
+<div {...rest} class="suggestion-box mb-4 w-full {className}">
 	{@render children?.()}
 </div>

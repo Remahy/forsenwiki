@@ -17,19 +17,11 @@
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
-	<header
-		class="forsen-wiki-theme-border flex items-center justify-between border-b p-6"
-	>
-		<h1
-			class="text-xl font-semibold lg:text-2xl"
-		>
-			Uploading content
-		</h1>
+	<header class="forsen-wiki-theme-border flex items-center justify-between border-b p-6">
+		<h1 class="text-xl font-semibold lg:text-2xl">Uploading content</h1>
 	</header>
 
-	<main
-		class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6"
-	>
+	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
 		{#if uploading.count > 0}
 			<div>
 				<p>Uploading {uploading.count} files...</p>
@@ -49,11 +41,7 @@
 							class="forsen-wiki-theme-border bg-dark flex w-fit flex-col gap-2 overflow-hidden rounded-sm border"
 						>
 							{#if type === 'image'}
-								<ImagePreview
-									src={upload.url}
-									name=""
-									className="max-h-32 w-auto! max-w-32!"
-								/>
+								<ImagePreview src={upload.url} name="" className="max-h-32 w-auto! max-w-32!" />
 							{:else if type === 'audio'}
 								<AudioPreview src={upload.url} />
 							{:else if type === 'video'}
@@ -61,10 +49,8 @@
 							{:else if type === 'document'}
 								<span>Document {upload.url}</span>
 							{/if}
-							<LinkButton
-								href="/content/{upload.id}"
-								target="_blank"
-								class="self-start">View</LinkButton
+							<LinkButton href="/content/{upload.id}" target="_blank" class="self-start"
+								>View</LinkButton
 							>
 						</div>
 					{/each}

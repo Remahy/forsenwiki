@@ -16,9 +16,7 @@
 </script>
 
 <a {href} {id} {style} {target}>
-	<Box
-		class="link-box {className}"
-	>
+	<Box class="link-box {className}">
 		{@render children?.()}
 	</Box>
 </a>

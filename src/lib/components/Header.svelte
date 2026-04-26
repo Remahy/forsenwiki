@@ -40,12 +40,8 @@
 			</div>
 		</a>
 
-		<div
-			class="mt-auto grow px-2 lg:px-16"
-		>
-			<div
-				class="hidden sm:block"
-			>
+		<div class="mt-auto grow px-2 lg:px-16">
+			<div class="hidden sm:block">
 				<Search inline={true} />
 			</div>
 		</div>
@@ -53,9 +49,7 @@
 		<div class="mt-auto flex items-end overflow-hidden">
 			<div class="flex items-stretch justify-end overflow-hidden">
 				{#if page.data.session?.user}
-					<div
-						class="violet flex max-w-20 gap-2 overflow-hidden p-2 lg:max-w-40"
-					>
+					<div class="violet flex max-w-20 gap-2 overflow-hidden p-2 lg:max-w-40">
 						{#if cachedImage}
 							<img
 								src={cachedImage}
@@ -75,9 +69,7 @@
 						disabled={isLoading}
 						title="Log out"
 					>
-						<div
-							class="hidden lg:block"
-						>
+						<div class="hidden lg:block">
 							{#if isLoading}
 								<Spinner size="16" />
 								<span>Logging out...</span>
@@ -85,9 +77,7 @@
 								<span>Log out</span>
 							{/if}
 						</div>
-						<div
-							class="block lg:hidden"
-						>
+						<div class="block lg:hidden">
 							<LogOutIcon size="16" />
 							<span class="hidden">Log out</span>
 						</div>
@@ -98,11 +88,7 @@
 							<Spinner size="16" />
 							<span>Logging in...</span>
 						{:else}
-							<span>Login</span><span
-								class="-ml-1 hidden lg:inline"
-							>
-								with Twitch</span
-							>
+							<span>Login</span><span class="-ml-1 hidden lg:inline"> with Twitch</span>
 						{/if}
 					</Button>
 				{/if}

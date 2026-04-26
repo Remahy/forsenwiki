@@ -290,9 +290,7 @@
 	{/if}
 
 	{#if error}
-		<Box
-			class="flex items-center bg-red-200! p-4 text-xl font-medium dark:text-black"
-		>
+		<Box class="flex items-center bg-red-200! p-4 text-xl font-medium dark:text-black">
 			<p>{error.message}</p>
 		</Box>
 	{/if}
