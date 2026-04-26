@@ -81,6 +81,7 @@
 
 <svelte:head>
 	<title>{rawTitle || title} - Community Forsen Wiki</title>
+	<meta name="og:title" content="{rawTitle || title} - Community Forsen Wiki">
 
 	<meta property="og:site_name" content="Forsen Wiki" />
 
@@ -193,8 +194,10 @@
 				<p>
 					<span><strong>Author{authors.length > 1 ? 's' : ''}:</strong></span>
 					<span>
-						{#each authors as author, index}
-							{author.name}{index < authors.length - 1 ? ', ' : ''}
+						{#each authors as author, index (author.id)}
+							<Link href="/user/{author.id}" target="_blank">{author.name}</Link>{index < authors.length - 1
+								? ', '
+								: ''}
 						{/each}
 					</span>
 				</p>

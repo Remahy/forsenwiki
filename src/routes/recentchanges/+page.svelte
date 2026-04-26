@@ -40,6 +40,7 @@
 				title: string
 				lastUpdated: string
 				author: string | null
+				authorId: string | null
 				byteLength: number
 				newTitle?: string
 				oldTitle?: string
@@ -79,10 +80,10 @@
 		}
 	};
 
-	const sseArticleUpdate = source('/api/adonis/frontpage').select('article:update');
+	const ssePostUpdate = source('/api/adonis/frontpage').select('post:update');
 
 	onMount(() => {
-		sseArticleUpdate.subscribe((v) => {
+		ssePostUpdate.subscribe((v) => {
 			if (v) {
 				const values = $latestUpdates;
 
@@ -142,7 +143,7 @@
 					</Link>&nbsp;
 				</span>
 				{#if isNewArticle}
-					<span class="rounded-sm bg-green-500/25 p-1 text-xs">New!</span>
+					<span class="rounded-sm bg-emerald-500/25 p-1 text-xs">New!</span>
 				{/if}
 				{#if update.newTitle}
 					<small
@@ -165,6 +166,12 @@
 						locale: enGB,
 					})}&nbsp;</small
 				>
+				<span>
+					<small>
+						<span class="font-bold">By:</span>
+						<Link href="/user/{update.authorId}" target="_blank">{update.author}</Link>
+					</small>
+				</span>
 			</div>
 		{:else}
 			<span class="bg-black/10 p-2 dark:bg-white/5">Nothing found.</span>

@@ -25,18 +25,19 @@ const prisma = /** @type {any} */ (
 					// @ts-ignore
 					const { user } = args._metadata;
 
-					_emit('article:create', {
+					_emit('post:create', {
 						title: args.data.title,
 						rawTitle: args.data.rawTitle,
 						createdTimestamp: args.data.createdTimestamp?.toString() || new Date().toString(),
 						author: user.name,
+						authorId: user.id,
 					});
 
 					// @ts-ignore
 					delete args._metadata;
 					return query(args);
 				},
-				// See "src/routes/api/article/update/[title]/+server.js" for "article:update".
+				// See "src/routes/api/post/update/[title]/+server.js" for "post:update".
 			},
 		},
 	})

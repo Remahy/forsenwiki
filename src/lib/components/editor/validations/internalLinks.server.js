@@ -1,6 +1,6 @@
 import { WIKI_PATH } from '$lib/constants/constants';
 import { $nodesOfType as nodesOfType } from 'lexical';
-import { _getYPostsByIds } from '../../../../routes/api/article/read/[title]/+server';
+import { _getYPostsByIds } from '../../../../routes/api/post/read/[title]/+server';
 import { getInternalIds, getOnlyInternalLinks } from '../utils/getInternalIds';
 import { ALinkNode } from '$lib/lexical/custom';
 

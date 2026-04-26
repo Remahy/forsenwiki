@@ -8,7 +8,7 @@
 
 	import { resetContent } from '$lib/utils/indexedDb/content';
 	import { resetArticle } from '$lib/utils/indexedDb/article';
-	import { updateArticle } from '$lib/api/articles';
+	import { updatePost } from '$lib/api/posts';
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import Editor from '$lib/components/editor/editor.svelte';
@@ -19,7 +19,7 @@
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-	import { WIKI_PATH } from '$lib/constants/constants';
+	import { WIKI_PATH, Y_POST_TYPES } from '$lib/constants/constants';
 	import { uploadImages } from '$lib/s3/uploadContentHandlers';
 	import { uploadModal } from '$lib/stores/modal';
 	import UploadingContentModal from '$lib/components/UploadingContentModal.svelte';
@@ -124,7 +124,7 @@
 			// Upload images to S3.
 			await uploadImages(editor, id);
 
-			res = await editor.read(() => updateArticle(title, yjsDocMap, newTitle));
+			res = await editor.read(() => updatePost(title, yjsDocMap, newTitle));
 		} catch (err) {
 			console.error(err);
 			error = new Error(err?.toString());
@@ -181,6 +181,8 @@
 
 <svelte:head>
 	<title>Editing &quot;{rawTitle}&quot; - Community Forsen Wiki</title>
+	<meta name="og:title" content="Editing &quot;{rawTitle}&quot; - Community Forsen Wiki">
+
 	<meta name="description" content="Edit the &quot;{rawTitle}&quot; article on forsen.wiki" />
 	<meta
 		property="og:description"

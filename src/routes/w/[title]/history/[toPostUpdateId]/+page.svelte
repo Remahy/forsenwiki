@@ -31,6 +31,8 @@
 
 <svelte:head>
 	<title>{displayTitle} - Community Forsen Wiki</title>
+	<meta name="og:title" content="{displayTitle} - Community Forsen Wiki">
+
 	<meta name="description" content="{displayTitle} on forsen.wiki" />
 	<meta property="og:description" content="{displayTitle} on forsen.wiki" />
 
