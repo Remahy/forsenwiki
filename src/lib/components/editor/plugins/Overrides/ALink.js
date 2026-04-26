@@ -9,6 +9,7 @@ import { LinkNode } from '$lib/lexical/index';
 
 /**
  * @typedef {import('@lexical/link').LinkAttributes} LinkAttributes
+ * @typedef {import('lexical').EditorConfig} EditorConfig
  */
 
 export class ALinkNode extends LinkNode {
@@ -104,6 +105,20 @@ export class ALinkNode extends LinkNode {
 			__internalId: this.__internalId,
 			type: ALinkNode.getType(),
 		};
+	}
+
+	/**
+	 * @param {EditorConfig} config
+	 */
+	createDOM(config) {
+		const dom = super.createDOM(config);
+
+		// For internal links, we need to reload the page to make the ToC update.
+		if (!dom.getAttribute('target')) {
+			dom.setAttribute('data-sveltekit-reload', 'true');
+		}
+
+		return dom;
 	}
 }
 
