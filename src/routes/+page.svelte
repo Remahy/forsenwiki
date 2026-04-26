@@ -101,7 +101,7 @@
 					<h2 class="text-2xl">Latest articles</h2>
 				</div>
 				{#each $latestArticles as article, index (article.title)}
-					<div class="p-2{index % 2 ? 'bg-black/10 dark:bg-white/5' : ''}">
+					<div class="p-2 {index % 2 ? 'bg-black/10 dark:bg-white/5' : ''}">
 						<Link href="/w/{article.title}" class="inline-block min-w-32">
 							<strong>{article.rawTitle}</strong>
 						</Link>
@@ -123,7 +123,7 @@
 						<Link href="https://stats.forsen.wiki/" target="_blank">STATS.FORSEN.WIKI</Link>
 					</div>
 					{#each $popularArticles as article, index (article.path)}
-						<div class="p-2{index % 2 ? 'bg-black/10 dark:bg-white/5' : ''}">
+						<div class="p-2 {index % 2 ? 'bg-black/10 dark:bg-white/5' : ''}">
 							<Link href={article.path} class="inline-block min-w-32"
 								><strong>{article.title}</strong></Link
 							>

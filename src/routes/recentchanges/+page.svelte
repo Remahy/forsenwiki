@@ -135,7 +135,7 @@
 	<Box class="flex grow flex-col overflow-hidden p-2 lg:mb-0">
 		{#each $latestUpdates as update, index (update.id)}
 			{@const isNewArticle = update.newTitle && !update.oldTitle}
-			<div class="p-2{!(index % 2) ? 'bg-black/10 dark:bg-white/5' : ''}">
+			<div class="p-2 {!(index % 2) ? 'bg-black/10 dark:bg-white/5' : ''}">
 				<span>
 					<Link href="/w/{update.title}/history/{update.id}" target="_blank">
 						<span class="font-bold">{update.rawTitle}</span>
