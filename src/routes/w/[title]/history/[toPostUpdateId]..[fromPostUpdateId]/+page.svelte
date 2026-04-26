@@ -53,10 +53,7 @@
 						title="View live article"
 					>
 						<FileIcon size="16" />
-						<span class="
-							hidden
-							lg:inline
-						">View live article</span>
+						<span class="hidden lg:inline">View live article</span>
 					</LinkButton>
 
 					<LinkButton
@@ -65,10 +62,7 @@
 						title="Return to history list"
 					>
 						<HistoryIcon size="16" />
-						<span class="
-							hidden
-							lg:inline
-						">Return to history list</span>
+						<span class="hidden lg:inline">Return to history list</span>
 					</LinkButton>
 				</div>
 			</div>
@@ -97,10 +91,7 @@
 			<p class="p-1 text-red-500 outline">
 				<span><span class="font-bold">Red:</span> Deleted &#40;-&#41;</span>
 			</p>
-			<p class="
-				p-1 text-orange-500 outline outline-dashed
-				dark:text-orange-300
-			">
+			<p class="p-1 text-orange-500 outline outline-dashed dark:text-orange-300">
 				<span><span class="font-bold">Orange:</span> Modified &#40;~&#41;</span>
 			</p>
 			<p class="p-1 text-green-500 outline">
@@ -108,27 +99,16 @@
 			</p>
 			<p>
 				When available, hover over the question mark <span
-					class="
-						mx-1 rounded-full bg-blue-500/50 px-2 py-1 font-bold outline outline-white
-					">?</span
+					class="mx-1 rounded-full bg-blue-500/50 px-2 py-1 font-bold outline outline-white">?</span
 				> to read what fields were modified.
 			</p>
 		</div>
 
-		<div class="
-			flex grow flex-col gap-4
-			lg:flex-row
-		">
-			<Box class="
-				flex grow flex-col overflow-hidden p-4
-				lg:mb-0
-			">
+		<div class="flex grow flex-col gap-4 lg:flex-row">
+			<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
 				{#if html?.html}
-					<main class="
-						article-root prose max-w-[unset] grow
-						dark:prose-invert
-					">
-						<div class="mb-2 border-b-2 forsen-wiki-theme-border pb-2">
+					<main class="article-root prose dark:prose-invert max-w-[unset] grow">
+						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>
 
@@ -139,10 +119,7 @@
 				{/if}
 			</Box>
 
-			<div class="
-				hidden
-				lg:block lg:w-96 lg:min-w-96
-			"></div>
+			<div class="hidden lg:block lg:w-96 lg:min-w-96"></div>
 		</div>
 	</article>
 </Container>

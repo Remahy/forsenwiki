@@ -9,10 +9,7 @@
 </svelte:head>
 
 <Container class="p-8">
-	<section class="
-		prose prose-lg w-full max-w-[unset]
-		dark:prose-invert
-	">
+	<section class="prose prose-lg dark:prose-invert w-full max-w-[unset]">
 		<h1 id="privacy">Privacy Policy</h1>
 		<p>🐦</p>
 		<p>Effective date: April 12, 2026</p>

@@ -203,30 +203,19 @@
 		</div>
 
 		<div class="flex shrink-0 items-start gap-2">
-			<LinkButton href="/w/{title}/history" class="
-				flex items-center gap-2 text-sm
-			">
-				<HistoryIcon size="16" /><span class="
-					hidden
-					md:inline
-				">History</span>
+			<LinkButton href="/w/{title}/history" class="flex items-center gap-2 text-sm">
+				<HistoryIcon size="16" /><span class="hidden md:inline">History</span>
 			</LinkButton>
 
 			<LinkButton href="/w/{title}" class="flex items-center gap-2 text-sm">
-				<FileIcon size="16" /><span class="
-					hidden
-					md:inline
-				">View article</span>
+				<FileIcon size="16" /><span class="hidden md:inline">View article</span>
 			</LinkButton>
 		</div>
 	</Box>
 
 	{#if $page.data.isModerator}
 		<Box class="p-4">
-			<div class="
-				mb-5 border-b border-black/25
-				dark:border-white/25
-			">
+			<div class="mb-5 border-b border-black/25 dark:border-white/25">
 				<strong>Moderation tools</strong>
 			</div>
 
@@ -236,18 +225,11 @@
 					<input
 						oninput={unsetError}
 						required
-						class="
-							w-full rounded-sm p-2
-							{titleError && 'bg-red-200!'}
-							input-color
-						"
+						class="w-full rounded-sm p-2 {titleError ? 'bg-red-200!' : ''} input-color"
 						bind:value={newTitle}
 					/>
 					{#if titleError}
-						<strong class="
-							text-red-600
-							dark:text-red-500
-						">{titleError.message}</strong>
+						<strong class="text-red-600 dark:text-red-500">{titleError.message}</strong>
 					{:else}
 						<small
 							><span class="font-bold">URL:</span>
@@ -264,10 +246,7 @@
 	{/if}
 
 	{#if error}
-		<Box class="
-			flex items-center bg-red-300! p-2
-			dark:text-black
-		">
+		<Box class="flex items-center bg-red-300! p-2 dark:text-black">
 			<p>{error.message}</p>
 		</Box>
 	{/if}
@@ -300,14 +279,8 @@
 				<Spinner />
 			{/if}
 
-			<span class="
-				hidden
-				lg:inline
-			" id="submit">Submit</span>
-			<FileUpIcon class="
-				inline min-w-6
-				lg:hidden
-			" />
+			<span class="hidden lg:inline" id="submit">Submit</span>
+			<FileUpIcon class="inline min-w-6 lg:hidden" />
 		</Button>
 	</Box>
 

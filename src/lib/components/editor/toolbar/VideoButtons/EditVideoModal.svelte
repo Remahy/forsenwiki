@@ -94,44 +94,30 @@
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
-	<header class="
-		flex items-center justify-between border-b forsen-wiki-theme-border p-6
-	">
-		<h1 class="
-			text-xl font-semibold
-			lg:text-2xl
-		">Edit image</h1>
+	<header class="forsen-wiki-theme-border flex items-center justify-between border-b p-6">
+		<h1 class="text-xl font-semibold lg:text-2xl">Edit image</h1>
 		<Button class="ml-auto inline-flex items-center rounded-lg" on:click={cancel}>
 			<XIcon />
 		</Button>
 	</header>
 
-	<main class="
-		flex flex-col gap-16 overflow-hidden border-b forsen-wiki-theme-border p-6
-	">
+	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
 		<label class="flex flex-col gap-2" for="select">
 			<strong>Video source</strong>
 			<div class="flex">
 				<Button
-					class="
-						grow rounded-r-none!
-						{currentVideoType === 'internal' ? '' : `opacity-50`}"
+					class="grow rounded-r-none! {currentVideoType === 'internal' ? '' : 'opacity-50'}"
 					on:click={() => (currentVideoType = 'internal')}>Browse</Button
 				>
 				<Button
-					class="
-						grow rounded-l-none!
-						{currentVideoType === 'new' ? '' : 'opacity-50'}"
+					class="grow rounded-l-none! {currentVideoType === 'new' ? '' : 'opacity-50'}"
 					on:click={() => (currentVideoType = 'new')}>Upload</Button
 				>
 			</div>
 
 			{#if newSrc || src}
 				<figure
-					class="
-						mx-auto flex min-h-50 min-w-50 items-center justify-center border
-						forsen-wiki-theme-border bg-dark
-					"
+					class="forsen-wiki-theme-border bg-dark mx-auto flex min-h-50 min-w-50 items-center justify-center border"
 				>
 					<video>
 						<source src="{STATIC_DOMAIN}/{newSrc || src}" />
@@ -170,17 +156,18 @@
 					<strong>Results for "{searchQuery}"</strong>
 				{/if}
 
-				<div class="
-					relative prose mt-2 flex max-w-[unset]
-					dark:prose-invert
-				">
+				<div class="prose dark:prose-invert relative mt-2 flex max-w-[unset]">
 					<table class="w-full table-auto">
 						<tbody>
 							{#each searchResults as result (result.id)}
-								<tr class={newSrc === result.title ? `
+								<tr
+									class={newSrc === result.title
+										? `
 									bg-black/10
 									dark:bg-white/10
-								` : ''}>
+								`
+										: ''}
+								>
 									<td class="max-w-xs">
 										<div class="truncate">
 											<Link href="/content/{result.id}" target="_blank">

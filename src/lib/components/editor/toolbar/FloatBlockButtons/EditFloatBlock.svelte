@@ -127,11 +127,7 @@
 	<RectangleHorizontalIcon />
 
 	<input
-		class="
-			input-color -ml-10 h-full w-28 p-0 pl-10 text-sm
-			disabled:opacity-50
-			disabled:hover:cursor-not-allowed
-		"
+		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm disabled:opacity-50 disabled:hover:cursor-not-allowed"
 		placeholder={placeholderWidthText}
 		bind:value={width}
 		onchange={onChange}
@@ -144,11 +140,7 @@
 	<RectangleVerticalIcon />
 
 	<input
-		class="
-			input-color -ml-10 h-full w-28 p-0 pl-10 text-sm
-			disabled:opacity-50
-			disabled:hover:cursor-not-allowed
-		"
+		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm disabled:opacity-50 disabled:hover:cursor-not-allowed"
 		placeholder={placeholderHeightText}
 		bind:value={height}
 		onchange={onChange}

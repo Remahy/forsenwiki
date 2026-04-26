@@ -116,7 +116,7 @@ export const _getSearch = async (query, types = [], options) => {
 	}
 
 	let rawRawTitleContains = null;
-	let rawMetadataUserName = null;
+	let rawMetadata = null;
 
 	if ((types.length && types.includes('article')) || types.length === 0) {
 		rawRawTitleContains = prisma.yPost.findMany({
@@ -158,7 +158,7 @@ export const _getSearch = async (query, types = [], options) => {
 			take: 50,
 		});
 
-		rawMetadataUserName = prisma.yPost.findMany({
+		rawMetadata = prisma.yPost.findMany({
 			where: {
 				postUpdates: {
 					some: {
@@ -197,9 +197,9 @@ export const _getSearch = async (query, types = [], options) => {
 		});
 	}
 
-	let rawContentUserName = null;
+	let rawContent = null;
 	if ((types.length && types.includes('content')) || types.length === 0) {
-		rawContentUserName = prisma.content.findMany({
+		rawContent = prisma.content.findMany({
 			where: {
 				OR: [
 					{
@@ -218,6 +218,11 @@ export const _getSearch = async (query, types = [], options) => {
 							mode: 'insensitive',
 						},
 					},
+					{
+						hash: {
+							equals: query.toLowerCase(),
+						},
+					},
 				],
 
 				type: contentTypes?.length
@@ -233,23 +238,23 @@ export const _getSearch = async (query, types = [], options) => {
 
 	/** @type {QueryResult[]} */
 	const results = [];
-	const [rawTitleContains, metadataUserName, contentUserName] = await Promise.all([
+	const [titleContains, metadata, content] = await Promise.all([
 		rawRawTitleContains,
-		rawMetadataUserName,
-		rawContentUserName,
+		rawMetadata,
+		rawContent,
 	]);
 
-	if (rawTitleContains) {
-		results.push(...rawTitleContains);
+	if (titleContains) {
+		results.push(...titleContains);
 	}
 
-	if (metadataUserName) {
-		results.push(...metadataUserName);
+	if (metadata) {
+		results.push(...metadata);
 	}
 
-	if (contentUserName) {
-		for (let index = 0; index < contentUserName.length; index++) {
-			const entry = contentUserName[index];
+	if (content) {
+		for (let index = 0; index < content.length; index++) {
+			const entry = content[index];
 			results.push(contentEntry(entry));
 		}
 	}

@@ -10,10 +10,7 @@
 </svelte:head>
 
 <Container class="p-8">
-	<section class="
-		prose prose-sm w-full max-w-[unset]
-		dark:prose-invert
-	">
+	<section class="prose prose-sm dark:prose-invert w-full max-w-[unset]">
 		<p>forsen.wiki is a user-generated content platform.</p>
 
 		<hr />

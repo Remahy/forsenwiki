@@ -42,19 +42,11 @@
 
 			<div class="flex shrink-0 items-start gap-2">
 				<LinkButton href="/w/{title}" class="flex items-center gap-2 text-sm">
-					<FileIcon size="16" /><span class="
-						hidden
-						md:inline
-					">View article</span>
+					<FileIcon size="16" /><span class="hidden md:inline">View article</span>
 				</LinkButton>
 
-				<LinkButton href="/w/{title}/edit" reload class="
-					flex items-center gap-2 text-sm
-				">
-					<SquarePenIcon size="16" /><span class="
-						hidden
-						md:inline
-					">Edit article</span>
+				<LinkButton href="/w/{title}/edit" reload class="flex items-center gap-2 text-sm">
+					<SquarePenIcon size="16" /><span class="hidden md:inline">Edit article</span>
 				</LinkButton>
 			</div>
 		</div>
@@ -71,22 +63,15 @@
 			</div>
 		{/if}
 
-		<div class="
-			prose mt-3 max-w-[unset]
-			dark:prose-invert
-		">
+		<div class="prose dark:prose-invert mt-3 max-w-[unset]">
 			<ul>
 				{#each postUpdates as postUpdate, index (postUpdate.id)}
 					<li
 						class:mt-3={index !== 0}
 						class:outline-dashed={index === to || index === from}
 						class:outline-1={index === to || index === from}
-						class="{index === to || index === from ? 'dark:outline-white/25' : ''}
-							p-2{index % 2
-							? `
-								bg-black/10
-								dark:bg-white/5
-							`
+						class="{index === to || index === from ? 'dark:outline-white/25' : ''} p-2 {index % 2
+							? 'bg-black/10 dark:bg-white/5'
 							: ''}"
 					>
 						<div class="flex items-center">
