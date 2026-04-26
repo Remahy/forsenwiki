@@ -179,21 +179,29 @@
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
-	<header class="
-		flex items-center justify-between border-b forsen-wiki-theme-border p-6
-	">
-		<h1 class="
+	<header
+		class="
+		forsen-wiki-theme-border flex items-center justify-between border-b p-6
+	"
+	>
+		<h1
+			class="
 			text-xl font-semibold
 			lg:text-2xl
-		">Upload content</h1>
+		"
+		>
+			Upload content
+		</h1>
 		<Button class="ml-auto inline-flex items-center rounded-lg" on:click={cancel}>
 			<XIcon />
 		</Button>
 	</header>
 
-	<main class="
-		flex flex-col gap-16 overflow-hidden border-b forsen-wiki-theme-border p-6
-	">
+	<main
+		class="
+		forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6
+	"
+	>
 		<div class="flex flex-col gap-2">
 			<Box class="mb-4 bg-indigo-400/10! p-4 text-sm">
 				<p>
@@ -232,7 +240,7 @@
 				multiple
 				accept={supportedMimeTypes.join(', ')}
 				oninput={handleInputChange}
-				class="rounded-sm border forsen-wiki-theme-border p-2"
+				class="forsen-wiki-theme-border rounded-sm border p-2"
 			/>
 
 			{#if isLoading}
@@ -256,10 +264,12 @@
 							<div class="grow">
 								<div>
 									<strong>File name</strong>
-									<small class={content[index].name.length > 80 ? `
+									<small
+										class={content[index].name.length > 80
+											? `
 										font-bold text-red-500
-									` : ''}
-										>Max length 80 characters</small
+									`
+											: ''}>Max length 80 characters</small
 									>
 								</div>
 								<input

@@ -195,14 +195,18 @@
 <Container class="overflow-hidden">
 	<RandomButton />
 
-	<div class="
+	<div
+		class="
 		items-start gap-8
 		xl:flex
-	">
-		<div class="
+	"
+	>
+		<div
+			class="
 			mb-4
 			xl:mb-0 xl:w-fit
-		">
+		"
+		>
 			<Box class="xl:min-h-96 xl:max-w-3xl xl:min-w-96">
 				{#if SvelteComponent && SvelteComponentProps}
 					<SvelteComponent {...SvelteComponentProps} />
@@ -299,10 +303,12 @@
 	{/if}
 
 	{#if error}
-		<Box class="
+		<Box
+			class="
 			flex items-center bg-red-200! p-4 text-xl font-medium
 			dark:text-black
-		">
+		"
+		>
 			<p>{error.message}</p>
 		</Box>
 	{/if}

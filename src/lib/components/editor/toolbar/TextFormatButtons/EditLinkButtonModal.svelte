@@ -176,19 +176,25 @@
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
-	<header class="
-		flex items-center justify-between border-b forsen-wiki-theme-border p-6
-	">
-		<h1 class="
+	<header
+		class="
+		forsen-wiki-theme-border flex items-center justify-between border-b p-6
+	"
+	>
+		<h1
+			class="
 			text-xl font-semibold
 			lg:text-2xl
-		">Edit link</h1>
+		"
+		>
+			Edit link
+		</h1>
 		<Button class="ml-auto inline-flex items-center rounded-lg" on:click={cancel}>
 			<XIcon />
 		</Button>
 	</header>
 
-	<main class="flex flex-col gap-16 border-b forsen-wiki-theme-border p-6">
+	<main class="forsen-wiki-theme-border flex flex-col gap-16 border-b p-6">
 		<label class="flex flex-col gap-2" for="select">
 			<strong>Type of link</strong>
 			<div class="flex">
@@ -244,17 +250,23 @@
 						<strong>Results for "{searchQuery}"</strong>
 					{/if}
 
-					<div class="
-						relative prose mt-2 flex max-w-[unset]
-						dark:prose-invert
-					">
+					<div
+						class="
+						prose dark:prose-invert relative mt-2 flex
+						max-w-[unset]
+					"
+					>
 						<table class="table-auto">
 							<tbody>
 								{#each searchResults as result (result.id)}
-									<tr class={internalId === result.id ? `
+									<tr
+										class={internalId === result.id
+											? `
 										bg-black/10
 										dark:bg-white/10
-									` : ''}>
+									`
+											: ''}
+									>
 										<td>
 											<Link href="/w/{result.title}" target="_blank">
 												<strong>{result.rawTitle}</strong>
@@ -286,10 +298,13 @@
 
 	<footer class="flex items-center justify-end gap-2 p-6">
 		{#if hasLink}
-			<Button class="
+			<Button
+				class="
 				bg-red-600 font-bold
 				hover:bg-red-700
-			" on:click={handleDeleteLink}>
+			"
+				on:click={handleDeleteLink}
+			>
 				<Trash2Icon /> Delete
 			</Button>
 		{/if}

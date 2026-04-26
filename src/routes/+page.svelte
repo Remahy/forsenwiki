@@ -94,24 +94,32 @@
 		</p>
 	</SuggestionBox>
 
-	<div class="
+	<div
+		class="
 		block grow gap-4
 		lg:flex
-	">
-		<div class="
+	"
+	>
+		<div
+			class="
 			mb-4 flex grow flex-col
 			lg:mb-0
-		">
+		"
+		>
 			<Box class="grow p-4">
 				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">Latest articles</h2>
 				</div>
 				{#each $latestArticles as article, index (article.title)}
-					<div class="
-						p-2{index % 2 ? `
+					<div
+						class="
+						p-2{index % 2
+							? `
 							bg-black/10
 							dark:bg-white/5
-						` : ''}">
+						`
+							: ''}"
+					>
 						<Link href="/w/{article.title}" class="inline-block min-w-32">
 							<strong>{article.rawTitle}</strong>
 						</Link>
@@ -133,11 +141,15 @@
 						<Link href="https://stats.forsen.wiki/" target="_blank">STATS.FORSEN.WIKI</Link>
 					</div>
 					{#each $popularArticles as article, index (article.path)}
-						<div class="
-							p-2{index % 2 ? `
+						<div
+							class="
+							p-2{index % 2
+								? `
 								bg-black/10
 								dark:bg-white/5
-							` : ''}">
+							`
+								: ''}"
+						>
 							<Link href={article.path} class="inline-block min-w-32"
 								><strong>{article.title}</strong></Link
 							>
@@ -148,14 +160,18 @@
 			{/if}
 		</div>
 
-		<div class="
+		<div
+			class="
 			block flex-col gap-4
 			lg:flex lg:w-96 lg:min-w-96
-		">
-			<Box class="
+		"
+		>
+			<Box
+				class="
 				mb-4 flex flex-col gap-2 p-4
 				lg:mb-0
-			">
+			"
+			>
 				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">Navigation</h2>
 				</div>

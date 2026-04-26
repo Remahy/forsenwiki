@@ -16,9 +16,11 @@
 </script>
 
 <a {href} {id} {style} {target}>
-	<Box class="
+	<Box
+		class="
 		link-box
-		{className}">
+		{className}"
+	>
 		{@render children?.()}
 	</Box>
 </a>

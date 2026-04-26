@@ -40,19 +40,27 @@
 
 			<div class="flex shrink-0 items-start gap-2">
 				<LinkButton href="/w/{title}" class="flex items-center gap-2 text-sm">
-					<FileIcon size="16" /><span class="
+					<FileIcon size="16" /><span
+						class="
 						hidden
 						md:inline
-					">View article</span>
+					">View article</span
+					>
 				</LinkButton>
 
-				<LinkButton href="/w/{title}/edit" reload class="
+				<LinkButton
+					href="/w/{title}/edit"
+					reload
+					class="
 					flex items-center gap-2 text-sm
-				">
-					<SquarePenIcon size="16" /><span class="
+				"
+				>
+					<SquarePenIcon size="16" /><span
+						class="
 						hidden
 						md:inline
-					">Edit article</span>
+					">Edit article</span
+					>
 				</LinkButton>
 			</div>
 		</div>
@@ -69,10 +77,12 @@
 			</div>
 		{/if}
 
-		<div class="
-			prose mt-3 max-w-[unset]
-			dark:prose-invert
-		">
+		<div
+			class="
+			prose dark:prose-invert mt-3
+			max-w-[unset]
+		"
+		>
 			<ul>
 				{#each postUpdates as postUpdate, index (postUpdate.id)}
 					<li

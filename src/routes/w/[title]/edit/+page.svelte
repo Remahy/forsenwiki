@@ -201,30 +201,39 @@
 		</div>
 
 		<div class="flex shrink-0 items-start gap-2">
-			<LinkButton href="/w/{title}/history" class="
+			<LinkButton
+				href="/w/{title}/history"
+				class="
 				flex items-center gap-2 text-sm
-			">
-				<HistoryIcon size="16" /><span class="
+			"
+			>
+				<HistoryIcon size="16" /><span
+					class="
 					hidden
 					md:inline
-				">History</span>
+				">History</span
+				>
 			</LinkButton>
 
 			<LinkButton href="/w/{title}" class="flex items-center gap-2 text-sm">
-				<FileIcon size="16" /><span class="
+				<FileIcon size="16" /><span
+					class="
 					hidden
 					md:inline
-				">View article</span>
+				">View article</span
+				>
 			</LinkButton>
 		</div>
 	</Box>
 
 	{#if $page.data.isModerator}
 		<Box class="p-4">
-			<div class="
+			<div
+				class="
 				mb-5 border-b border-black/25
 				dark:border-white/25
-			">
+			"
+			>
 				<strong>Moderation tools</strong>
 			</div>
 
@@ -242,10 +251,12 @@
 						bind:value={newTitle}
 					/>
 					{#if titleError}
-						<strong class="
+						<strong
+							class="
 							text-red-600
 							dark:text-red-500
-						">{titleError.message}</strong>
+						">{titleError.message}</strong
+						>
 					{:else}
 						<small
 							><span class="font-bold">URL:</span>
@@ -262,10 +273,12 @@
 	{/if}
 
 	{#if error}
-		<Box class="
+		<Box
+			class="
 			flex items-center bg-red-300! p-2
 			dark:text-black
-		">
+		"
+		>
 			<p>{error.message}</p>
 		</Box>
 	{/if}
@@ -298,14 +311,19 @@
 				<Spinner />
 			{/if}
 
-			<span class="
+			<span
+				class="
 				hidden
 				lg:inline
-			" id="submit">Submit</span>
-			<FileUpIcon class="
+			"
+				id="submit">Submit</span
+			>
+			<FileUpIcon
+				class="
 				inline min-w-6
 				lg:hidden
-			" />
+			"
+			/>
 		</Button>
 	</Box>
 

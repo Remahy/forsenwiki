@@ -283,7 +283,7 @@
 <div class="modal-color pointer-events-auto relative p-0">
 	<header
 		class="
-			flex items-center justify-between border-b forsen-wiki-theme-border p-6
+			forsen-wiki-theme-border flex items-center justify-between border-b p-6
 		"
 	>
 		<h1
@@ -299,11 +299,7 @@
 		</Button>
 	</header>
 
-	<main
-		class="
-			flex flex-col gap-16 overflow-hidden border-b forsen-wiki-theme-border p-6
-		"
-	>
+	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
 		<label class="flex flex-col gap-2" for="select-button">
 			<strong>Image source</strong>
 			<div class="flex">
@@ -324,8 +320,8 @@
 			{#if src || newSrc}
 				<figure
 					class="
-						mx-auto flex min-h-50 min-w-50 items-center justify-center border
-						forsen-wiki-theme-border bg-dark
+						forsen-wiki-theme-border bg-dark mx-auto flex min-h-50 min-w-50 items-center
+						justify-center border
 					"
 				>
 					{#await previewImage}
@@ -347,7 +343,7 @@
 				<input
 					type="file"
 					accept={mimetypes.image.flatMap((v) => v).join(', ')}
-					class="rounded-sm border forsen-wiki-theme-border p-2"
+					class="forsen-wiki-theme-border rounded-sm border p-2"
 					oninput={handleInputChange}
 					bind:this={inputElement}
 					onclick={() => inputElement?.dispatchEvent(new Event('change'))}
@@ -387,8 +383,8 @@
 
 				<div
 					class="
-						relative prose mt-2 flex max-w-[unset]
-						dark:prose-invert
+						prose dark:prose-invert relative mt-2 flex
+						max-w-[unset]
 					"
 				>
 					<table class="w-full table-auto">

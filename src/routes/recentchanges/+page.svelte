@@ -101,20 +101,24 @@
 	});
 </script>
 
-<section class="
+<section
+	class="
 	container mx-auto flex grow flex-col gap-4 p-4
 	lg:py-12
-">
+"
+>
 	<noscript>
 		<Box class="bg-red-500! p-4 text-black">
 			<span class="font-bold">This page requires JavaScript to function.</span>
 		</Box>
 	</noscript>
 
-	<Box class="
+	<Box
+		class="
 		flex flex-col overflow-hidden p-4
 		lg:mb-0
-	">
+	"
+	>
 		<div class="box-heading-wrapper mb-2">
 			<h2 class="text-2xl">Recent Changes</h2>
 		</div>
@@ -138,16 +142,22 @@
 			<Button class="self-start" on:click={handleFilterSearch}>Apply filter</Button>
 		</div>
 	</Box>
-	<Box class="
+	<Box
+		class="
 		flex grow flex-col overflow-hidden p-2
 		lg:mb-0
-	">
+	"
+	>
 		{#each $latestUpdates as update, index (update.id)}
-			<div class="
-				p-2{!(index % 2) ? `
+			<div
+				class="
+				p-2{!(index % 2)
+					? `
 					bg-black/10
 					dark:bg-white/5
-				` : ''}">
+				`
+					: ''}"
+			>
 				<span>
 					<Link href="/w/{update.title}/history/{update.id}" target="_blank"
 						><span class="font-bold">{update.rawTitle}</span></Link
@@ -175,10 +185,12 @@
 				<span><small><span class="font-bold">By:</span> {update.author}</small></span>
 			</div>
 		{:else}
-			<span class="
+			<span
+				class="
 				bg-black/10 p-2
 				dark:bg-white/5
-			">Nothing found.</span>
+			">Nothing found.</span
+			>
 		{/each}
 
 		{#if !done && $latestUpdates.length}

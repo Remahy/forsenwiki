@@ -195,10 +195,12 @@
 			bind:value={title.value}
 		/>
 		{#if titleError}
-			<strong class="
+			<strong
+				class="
 				text-red-600
 				dark:text-red-500
-			">{titleError.message}</strong>
+			">{titleError.message}</strong
+			>
 		{:else}
 			<small
 				><span class="font-bold">URL:</span>
@@ -212,10 +214,12 @@
 	{/if}
 
 	{#if error}
-		<Box class="
+		<Box
+			class="
 			flex items-center bg-red-300! p-2 font-bold
 			dark:text-black
-		">
+		"
+		>
 			<p>
 				{(error.status || error.statusText) && `(${error.status} ${error.statusText})`}
 				{error.message}
@@ -235,14 +239,19 @@
 				<Spinner />
 			{/if}
 
-			<span class="
+			<span
+				class="
 				hidden
 				lg:inline
-			" id="submit">Submit</span>
-			<FileUpIcon class="
+			"
+				id="submit">Submit</span
+			>
+			<FileUpIcon
+				class="
 				inline min-w-6
 				lg:hidden
-			" />
+			"
+			/>
 		</Button>
 	</Box>
 

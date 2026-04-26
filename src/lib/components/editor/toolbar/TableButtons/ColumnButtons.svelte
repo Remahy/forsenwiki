@@ -142,13 +142,17 @@
 	});
 </script>
 
-<div class="
-	m-1.5 flex items-center gap-2 forsen-wiki-theme-outline outline-offset-8
-">
-	<div class="
+<div
+	class="
+	forsen-wiki-theme-outline m-1.5 flex items-center gap-2 outline-offset-8
+"
+>
+	<div
+		class="
 		flex flex-col items-center justify-center font-mono text-xs leading-none
 		select-none
-	">
+	"
+	>
 		<span>C</span>
 		<span>O</span>
 		<span>L</span>
@@ -156,7 +160,7 @@
 
 	<div
 		class="
-			flex rounded-sm border forsen-wiki-theme-border bg-violet-900 text-sm
+			forsen-wiki-theme-border flex rounded-sm border bg-violet-900 text-sm
 			text-white
 			dark:bg-violet-900/50
 		"

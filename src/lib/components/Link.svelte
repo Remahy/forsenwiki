@@ -11,8 +11,13 @@
 	let { href, class: className = '', children, reload, ...rest } = $props();
 </script>
 
-<a {...rest} {href} data-sveltekit-reload={reload} class="
+<a
+	{...rest}
+	{href}
+	data-sveltekit-reload={reload}
+	class="
 	link
-	{className}">
+	{className}"
+>
 	{@render children?.()}
 </a>

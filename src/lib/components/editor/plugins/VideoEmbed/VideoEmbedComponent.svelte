@@ -243,7 +243,6 @@
 						}}
 					/>
 				</video>
-				
 			{/if}
 		{:else}
 			<iframe

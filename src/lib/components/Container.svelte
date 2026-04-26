@@ -9,9 +9,11 @@
 	let { class: className = '', children } = $props();
 </script>
 
-<div class="
+<div
+	class="
 	container mx-auto flex grow flex-col gap-4 p-4
 	lg:py-12
-	{className}">
+	{className}"
+>
 	{@render children?.()}
 </div>

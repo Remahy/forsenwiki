@@ -47,10 +47,12 @@
 {#if selectedImageNode}
 	<Divider />
 
-	<div class="
+	<div
+		class="
 		flex flex-col items-center justify-center font-mono text-xs leading-none
 		select-none
-	">
+	"
+	>
 		<span>I</span>
 		<span>M</span>
 		<span>G</span>
