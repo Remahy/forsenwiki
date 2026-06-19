@@ -2,6 +2,8 @@ import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { Y } from './index.mjs';
 
+export const UndoManager = Y.UndoManager;
+
 /**
  * @param {YDoc} yDoc
  */
@@ -105,4 +107,21 @@ export function diffUpdateUsingStateVector(newUpdate, existingStateVector) {
  */
 export function getStateVectorFromUpdate(update) {
 	return Y.encodeStateVectorFromUpdate(update);
+}
+
+/**
+ * @param {Y.AbstractType<any>} type
+ * @param {number} index
+ * @param {number | undefined} assoc
+ */
+export function createRelativePositionFromTypeIndex(type, index, assoc) {
+	return Y.createRelativePositionFromTypeIndex(type, index, assoc);
+}
+
+
+/**
+ * @param {Y.RelativePosition} rpos
+ */
+export function encodeRelativePosition (rpos) {
+	return Y.encodeRelativePosition(rpos);
 }

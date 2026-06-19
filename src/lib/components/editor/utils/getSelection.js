@@ -7,6 +7,8 @@ import {
 	$createNodeSelection as createNodeSelection,
 	$getNodeByKey as getNodeByKey,
 	$setSelection as setSelection,
+	$getRoot as getRoot,
+	$createRangeSelection as createRangeSelection,
 } from 'lexical';
 import { $findMatchingParent as findMatchingParent } from '@lexical/utils';
 import { $isAtNodeEnd as isAtNodeEnd } from '@lexical/selection';
@@ -143,4 +145,56 @@ export function createNodeSelectionStore(editor, nodeKey) {
 			});
 		},
 	};
+}
+
+/**
+ * @param {LexicalEditor} editor
+ * @param {number} startChar
+ * @param {number} endChar
+ */
+export function selectByCharacterRange(editor, startChar, endChar) {
+	return editor.read(() => {
+		const root = getRoot();
+		const textNodes = root.getAllTextNodes();
+
+		let currentPos = 0;
+
+		let anchorNode = null;
+		let anchorOffset = 0;
+
+		let focusNode = null;
+		let focusOffset = 0;
+
+		for (const node of textNodes) {
+			const text = node.getTextContent();
+			const length = text.length;
+
+			// Find start position
+			if (anchorNode === null && startChar >= currentPos && startChar <= currentPos + length) {
+				anchorNode = node;
+				anchorOffset = startChar - currentPos;
+			}
+
+			// Find end position
+			if (focusNode === null && endChar >= currentPos && endChar <= currentPos + length) {
+				focusNode = node;
+				focusOffset = endChar - currentPos;
+				break;
+			}
+
+			currentPos += length;
+		}
+
+		if (anchorNode && focusNode) {
+			const selection = createRangeSelection();
+
+			selection.anchor.set(anchorNode.getKey(), anchorOffset, 'text');
+
+			selection.focus.set(focusNode.getKey(), focusOffset, 'text');
+
+			return selection;
+		}
+
+		return null;
+	});
 }
