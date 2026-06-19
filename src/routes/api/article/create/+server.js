@@ -3,7 +3,7 @@ import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { InvalidArticle } from '$lib/errors/InvalidArticle';
+import { ArticleError } from '$lib/errors/ArticleError';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { createArticle } from '$lib/db/article/create';
@@ -70,7 +70,7 @@ export async function POST({ request, locals }) {
 		}
 	} catch (err) {
 		if (typeof err === 'string') {
-			return InvalidArticle(err);
+			return ArticleError(err);
 		}
 
 		if (isHttpError(err)) {

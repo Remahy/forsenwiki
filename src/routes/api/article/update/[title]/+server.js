@@ -10,7 +10,7 @@ import {
 } from '$lib/yjs/utils';
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { InvalidArticle } from '$lib/errors/InvalidArticle';
+import { ArticleError } from '$lib/errors/ArticleError';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/article/read';
 import { updateArticleTitle, updateArticleYPost } from '$lib/db/article/update';
@@ -139,7 +139,7 @@ export async function POST({ request, locals, params }) {
 		}
 	} catch (err) {
 		if (typeof err === 'string') {
-			return InvalidArticle(err);
+			return ArticleError(err);
 		}
 
 		console.error(err);

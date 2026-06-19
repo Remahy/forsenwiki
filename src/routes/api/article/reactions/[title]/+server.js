@@ -6,7 +6,7 @@ import { isSystem } from '$lib/utils/isSystem.js';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor.js';
 import { articleConfig } from '$lib/components/editor/config/article.js';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants.js';
-import { InvalidArticle } from '$lib/errors/InvalidArticle.js';
+import { ArticleError } from '$lib/errors/ArticleError.js';
 import { selectByCharacterRange } from '$lib/components/editor/utils/getSelection.js';
 import { createRelativeRange } from '$lib/components/editor/utils/createRelativeRange.js';
 import { encodeRelativePosition } from '$lib/yjs/utils.js';
@@ -100,7 +100,7 @@ export const POST = async ({ params, locals, request }) => {
 		return json(id);
 	} catch (err) {
 		if (typeof err === 'string') {
-			return InvalidArticle(err);
+			return ArticleError(err);
 		}
 
 		return error(400);
