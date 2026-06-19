@@ -23,7 +23,7 @@
 	function tocAction(element) {
 		const doc = element.ownerDocument;
 
-		const article = doc.querySelector('main.article-root');
+		const article = doc.querySelector('main .article-root');
 
 		if (!article) {
 			return;
