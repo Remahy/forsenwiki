@@ -82,15 +82,15 @@ export async function POST({ request, locals }) {
 	}
 
 	// By this point, we have probably modified the editor. Let's recreate the content.
-	const backendUpdate = encodeYDocToUpdateV2(doc);
+	const fullYDocUpdate = encodeYDocToUpdateV2(doc);
 
-	const { byteLength } = backendUpdate;
+	const { byteLength } = fullYDocUpdate;
 
-	const backendContent = uint8ArrayToBase64(backendUpdate);
+	const contentBase64 = uint8ArrayToBase64(fullYDocUpdate);
 
 	const internalIds = getInternalIds(editor);
 
-	const body = { title, data: { content: backendContent }, ids: internalIds };
+	const body = { title, data: { content: contentBase64 }, ids: internalIds };
 	const metadata = {
 		user: { name: session.user.name, id: session.user.id },
 		byteLength,
@@ -98,7 +98,7 @@ export async function POST({ request, locals }) {
 
 	const createdArticle = await createArticle(body, metadata);
 
-	const { html, text, image } = await toHTML({ config: 'article', update: backendContent });
+	const { html, text, image } = await toHTML({ config: 'article', update: contentBase64 });
 
 	await upsertHTML(createdArticle.id, { content: html, text, image });
 

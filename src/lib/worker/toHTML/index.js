@@ -6,7 +6,7 @@ import { dev } from '$app/environment';
 import workerPath from './worker?modulePath';
 
 /**
- * @param {{ config: 'article' | 'diff', update?: string, content?: string }} workerData
+ * @param {{ config: 'article' | 'diff', update?: string }} workerData
  * @returns {Promise<{ html: string, text: string, image: string }>}
  */
 export default async function toHTML(workerData) {

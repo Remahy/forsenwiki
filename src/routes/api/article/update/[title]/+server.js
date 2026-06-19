@@ -69,15 +69,15 @@ export async function POST({ request, locals, params }) {
 		return ForbiddenError();
 	}
 
-	/**
-	 * @type {PartialErrors}
-	 */
-	const partialErrors = [];
-
 	const session = await auth();
 	if (!session?.user?.id || !session?.user?.name) {
 		return ForbiddenError();
 	}
+
+	/**
+	 * @type {PartialErrors}
+	 */
+	const partialErrors = [];
 
 	/**
 	 * @param {string} content
@@ -156,10 +156,12 @@ export async function POST({ request, locals, params }) {
 
 	const combinedFinalDiff = mergePostUpdatesV2([initialDiff, finalDiff]);
 
+	// The size of this update.
 	const { byteLength } = combinedFinalDiff;
 
-	// Total size of the YDoc with the new update.
-	const { byteLength: totalByteLength } = mergePostUpdatesV2([currentUpdate, combinedFinalDiff]);
+	const fullYDocUpdate = mergePostUpdatesV2([currentUpdate, combinedFinalDiff]);
+	// New total size of the YDoc.
+	const { byteLength: totalByteLength } = fullYDocUpdate;
 
 	const systemRelations = await readSystemYPostRelations(post.id);
 
@@ -194,7 +196,7 @@ export async function POST({ request, locals, params }) {
 
 	const { html, text, image } = await toHTML({
 		config: 'article',
-		content: JSON.stringify(editor.getEditorState().toJSON()),
+		update: uint8ArrayToBase64(fullYDocUpdate),
 	});
 
 	await upsertHTML(post.id, { content: html, text, image });
