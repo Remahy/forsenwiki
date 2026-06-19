@@ -16,7 +16,7 @@ const usersQuery = {
 	orderBy: {
 		createdAt: 'desc',
 	},
-	take: 18,
+	take: 15,
 };
 
 /** @type {{
