@@ -12,7 +12,7 @@ import { encodeYDocToUpdateV2 } from '$lib/yjs/utils';
 import { upsertHTML } from '$lib/db/article/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
-import { EDITOR_IS_READONLY } from '$lib/constants/constants';
+import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages.js';
 import { pruneFailedUploads, validateUploads } from '$lib/s3/validateUploads.server.js';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server.js';
@@ -49,7 +49,7 @@ export async function POST({ request, locals }) {
 		}
 
 		const data = getYjsAndEditor(
-			articleConfig(null, EDITOR_IS_READONLY, null),
+			articleConfig(null, EDITOR_IS_EDITABLE, null),
 			base64ToUint8Array(content)
 		);
 		editor = data.editor;

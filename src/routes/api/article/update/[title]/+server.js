@@ -18,7 +18,7 @@ import { invalidateArticleCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/article/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
-import { EDITOR_IS_READONLY } from '$lib/constants/constants';
+import { EDITOR_IS_EDITABLE, EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { isSystem } from '$lib/utils/isSystem';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
@@ -117,7 +117,7 @@ export async function POST({ request, locals, params }) {
 
 	let e;
 	try {
-		e = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), combinedInitialUpdate);
+		e = getYjsAndEditor(articleConfig(null, EDITOR_IS_EDITABLE, null), combinedInitialUpdate);
 		const editor = e.editor;
 
 		await serverRunValidations(editor);

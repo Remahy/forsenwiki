@@ -10,7 +10,7 @@ import { base64ToUint8Array } from 'uint8array-extras';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { diffConfig } from '$lib/components/editor/config/diff';
-import { EDITOR_IS_READONLY } from '$lib/constants/constants';
+import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
 import { ImageNode } from '$lib/lexical/custom';
 import { migrations } from '$lib/components/editor/migrations';
 
@@ -54,10 +54,10 @@ export const toHTMLWorker = async (data) => {
 	 */
 	let editor;
 	if (update) {
-		const eY = getYjsAndEditor(cfg(null, EDITOR_IS_READONLY, null), base64ToUint8Array(update));
+		const eY = getYjsAndEditor(cfg(null, EDITOR_IS_EDITABLE, null), base64ToUint8Array(update));
 		editor = eY.editor;
 	} else {
-		editor = createHeadlessEditor(cfg(null, EDITOR_IS_READONLY, null));
+		editor = createHeadlessEditor(cfg(null, EDITOR_IS_EDITABLE, null));
 
 		editor.setEditorState(editor.parseEditorState(content));
 
