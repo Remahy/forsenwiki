@@ -198,3 +198,42 @@ export function selectByCharacterRange(editor, startChar, endChar) {
 		return null;
 	});
 }
+
+/**
+ * @param {BaseSelection} selection
+ */
+export function getGlobalOffsets(selection) {
+	if (!isRangeSelection(selection)) {
+		return null;
+	}
+
+	const textNodes = getRoot().getAllTextNodes();
+
+	let pos = 0;
+	let anchorOffset = -1;
+	let focusOffset = -1;
+
+	for (const node of textNodes) {
+		const len = node.getTextContentSize();
+		const key = node.getKey();
+
+		if (key === selection.anchor.key) {
+			anchorOffset = pos + selection.anchor.offset;
+		}
+
+		if (key === selection.focus.key) {
+			focusOffset = pos + selection.focus.offset;
+		}
+
+		if (anchorOffset !== -1 && focusOffset !== -1) {
+			break;
+		}
+
+		pos += len;
+	}
+
+	return {
+		start: Math.min(anchorOffset, focusOffset),
+		end: Math.max(anchorOffset, focusOffset),
+	};
+}

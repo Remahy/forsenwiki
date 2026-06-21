@@ -12,7 +12,10 @@ import {
 	$isRangeSelection as isRangeSelection,
 	$isTextNode as isTextNode,
 } from 'lexical';
-import { createRelativePositionFromTypeIndex } from '$lib/yjs/utils';
+import {
+	createAbsolutePositionFromRelativePosition,
+	createRelativePositionFromTypeIndex,
+} from '$lib/yjs/utils';
 
 /**
  * @param {import('lexical').Point} point
@@ -88,6 +91,120 @@ export function createRelativeRange(binding, selection) {
 		const focusPos = createRelativePosition(selection.focus, binding, focusAssoc);
 
 		return { anchorPos, focusPos };
+	}
+
+	return null;
+}
+
+/**
+ * @param {ElementNode} node
+ * @param {number} offset
+ * @param {boolean} boundaryIsEdge
+ */
+function getPositionFromElementAndOffset(node, offset, boundaryIsEdge) {
+	let index = 0;
+	let i = 0;
+	// @ts-ignore
+	const children = node._children;
+	const childrenLength = children.length;
+
+	for (; i < childrenLength; i++) {
+		const child = children[i];
+		const childOffset = index;
+		const size = child.getSize();
+		index += size;
+		const exceedsBoundary = boundaryIsEdge ? index >= offset : index > offset;
+
+		if (exceedsBoundary && child.constructor.name === 'CollabTextNode') {
+			let textOffset = offset - childOffset - 1;
+
+			if (textOffset < 0) {
+				textOffset = 0;
+			}
+
+			const diffLength = index - offset;
+			return {
+				length: diffLength,
+				node: child,
+				nodeIndex: i,
+				offset: textOffset,
+			};
+		}
+
+		if (index > offset) {
+			return {
+				length: 0,
+				node: child,
+				nodeIndex: i,
+				offset: childOffset,
+			};
+		} else if (i === childrenLength - 1) {
+			return {
+				length: 0,
+				node: null,
+				nodeIndex: i + 1,
+				offset: childOffset + 1,
+			};
+		}
+	}
+
+	return {
+		length: 0,
+		node: null,
+		nodeIndex: 0,
+		offset: 0,
+	};
+}
+
+/**
+ * @param {any} sharedType
+ * @param {number} offset
+ */
+function getCollabNodeAndOffset(sharedType, offset) {
+	const collabNode = sharedType._collabNode;
+
+	if (collabNode === undefined) {
+		return [null, 0];
+	}
+
+	if (collabNode.constructor.name === 'CollabElementNode') {
+		const { node, offset: collabNodeOffset } = getPositionFromElementAndOffset(
+			collabNode,
+			offset,
+			true
+		);
+
+		if (node === null) {
+			return [collabNode, collabNode._children.length];
+		} else {
+			return [node, collabNodeOffset];
+		}
+	}
+
+	return [null, 0];
+}
+
+/**
+ * @param {import('yjs').Doc} doc
+ * @param {{ anchor: import('yjs').RelativePosition, focus: import('yjs').RelativePosition }} yjsRange
+ */
+export function createAbsoluteRange(doc, yjsRange) {
+	const anchorAbsPos = createAbsolutePositionFromRelativePosition(yjsRange.anchor, doc);
+	const focusAbsPos = createAbsolutePositionFromRelativePosition(yjsRange.focus, doc);
+
+	if (anchorAbsPos !== null && focusAbsPos !== null) {
+		const [anchorNode, anchorOffset] = getCollabNodeAndOffset(
+			anchorAbsPos.type,
+			anchorAbsPos.index
+		);
+		const [focusNode, focusOffset] = getCollabNodeAndOffset(focusAbsPos.type, focusAbsPos.index);
+
+		return {
+			anchorNode,
+			anchorOffset,
+			focusNode,
+			focusOffset,
+		};
 	}
 
 	return null;

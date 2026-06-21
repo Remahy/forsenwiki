@@ -118,10 +118,24 @@ export function createRelativePositionFromTypeIndex(type, index, assoc) {
 	return Y.createRelativePositionFromTypeIndex(type, index, assoc);
 }
 
-
 /**
  * @param {Y.RelativePosition} rpos
  */
-export function encodeRelativePosition (rpos) {
+export function encodeRelativePosition(rpos) {
 	return Y.encodeRelativePosition(rpos);
+}
+
+/**
+ * @param {Uint8Array} eRpos
+ */
+export function decodeRelativePosition(eRpos) {
+	return Y.decodeRelativePosition(eRpos);
+}
+
+/**
+ * @param {Y.RelativePosition} relativePosition
+ * @param {Y.Doc} doc
+ */
+export function createAbsolutePositionFromRelativePosition(relativePosition, doc) {
+	return Y.createAbsolutePositionFromRelativePosition(relativePosition, doc);
 }

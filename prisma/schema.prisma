@@ -156,7 +156,7 @@ model YPostRelativeRange {
 
 
   post   YPost  @relation(fields: [postId], references: [id])
-  postId String @unique
+  postId String
 
   type PostRangeType
 
