@@ -7,6 +7,7 @@
 	import React1 from './reactions/React_1.svelte';
 	import React2 from './reactions/React_2.svelte';
 	import { reactions } from './reactions/reactions';
+	import { reactionGlobals } from './store.svelte';
 
 	const { title = '' } = $props();
 
@@ -229,6 +230,10 @@
 		}
 
 		await addReaction(title, { openTime, reaction: name, offset });
+
+		reactionGlobals.refreshReactions();
+
+		menu.visible = false;
 	}
 </script>
 

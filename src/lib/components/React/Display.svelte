@@ -1,11 +1,13 @@
 <script>
 	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 	import { readReactions } from '$lib/api/articles';
 	import { debounce } from '$lib/utils/debounce';
 	import { reactions as reactionsMap } from './reactions/reactions';
 	import React from './reactions/React.svelte';
 	import React1 from './reactions/React_1.svelte';
 	import React2 from './reactions/React_2.svelte';
+	import { reactionGlobals } from './store.svelte';
 
 	const { title = '' } = $props();
 
@@ -187,7 +189,11 @@
 
 		window.addEventListener('resize', debouncedResize);
 
-		loadReactions();
+		if (browser) {
+			loadReactions();
+		}
+
+		reactionGlobals.refreshReactions = loadReactions;
 
 		return () => {
 			window.removeEventListener('resize', debouncedResize);
