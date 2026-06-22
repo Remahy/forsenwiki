@@ -17,6 +17,7 @@
 	import FloatingReact from '$lib/components/React/index.svelte';
 	import { isSystem } from '$lib/utils/isSystem.js';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL.js';
+	import Display from '$lib/components/React/Display.svelte';
 
 	const submitErrors = $derived.by(() => {
 		try {
@@ -158,7 +159,7 @@
 			</SuggestionBox>
 
 			<div class="article-wrapper relative flex grow flex-col gap-4 lg:flex-row">
-				<FloatingReact title={title} />
+				<FloatingReact {title} />
 
 				<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
 					<main class="prose dark:prose-invert relative max-w-[unset] grow wrap-break-word">
@@ -171,6 +172,8 @@
 						</div>
 					</main>
 				</Box>
+
+				<Display {title} />
 
 				<ToC />
 			</div>

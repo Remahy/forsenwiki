@@ -164,7 +164,7 @@ export const GET = async ({ params }) => {
 	}
 
 	/**
-	 * @type {Map<string, { [x: string]: Array<{ id: string, name: string, reactionId: string }> } >}
+	 * @type {Map<string, Reaction>}
 	 */
 	let res = new Map();
 
@@ -206,7 +206,7 @@ export const GET = async ({ params }) => {
 				const entries = entry[data.reaction] || [];
 
 				// @ts-ignore
-				entries.push({ id: range.user.id, name: range.user.name, reactionId: range.id });
+				entries.push({ id: range.user.id, name: range.user.name, rangeId: range.id });
 
 				entry[data.reaction] = entries;
 			}
