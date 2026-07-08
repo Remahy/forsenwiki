@@ -60,7 +60,7 @@
 
 					{#if !current}
 						<LinkButton
-							href="/w/{title}/history/{toPostUpdateId}..{recentPostUpdateId}"
+							href="/w/{title}/history/{toPostUpdateId}-{recentPostUpdateId}"
 							class="flex items-center gap-2 text-sm"
 							title="Compare to live article"
 						>
