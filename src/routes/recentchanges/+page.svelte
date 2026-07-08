@@ -155,7 +155,7 @@
 				<span><small class="opacity-50">({update.byteLength})&nbsp;</small></span>
 				{#if !isNewArticle}
 					<span>
-						<Link href="/w/{update.title}/history/{update.id}.." target="_blank"
+						<Link href="/w/{update.title}/history/{update.id}-" target="_blank"
 							>Compare with previous</Link
 						>&nbsp;</span
 					>

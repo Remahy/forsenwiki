@@ -16,7 +16,7 @@
 	let from = $state(0);
 
 	let link = $derived(
-		postUpdates.length > 1 ? `history/${postUpdates[to].id}..${postUpdates[from].id}` : null
+		postUpdates.length > 1 ? `history/${postUpdates[to].id}-${postUpdates[from].id}` : null
 	);
 </script>
 
