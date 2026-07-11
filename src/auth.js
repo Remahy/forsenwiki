@@ -35,8 +35,24 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 		error: '/auth-error',
 	},
 	events: {
-		async createUser() {
+		async createUser(message) {
 			// TODO: Create user bio page.
+
+			// Creates user settings on user creation
+			const {
+				user: { id },
+			} = message;
+
+			if(!id) {
+				throw new Error('User ID is missing in createUser event.');
+			}
+			
+			const newUserSettings = await prisma.userSettings.create({
+				data: {
+					userId: id,
+					streamerMode: false,
+				},
+			});
 		},
 		async signIn(message) {
 			const {
