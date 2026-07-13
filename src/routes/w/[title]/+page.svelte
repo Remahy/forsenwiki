@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { SquarePenIcon, HistoryIcon } from '@lucide/svelte';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
@@ -16,7 +17,8 @@
 	import Link from '$lib/components/Link.svelte';
 	import { isSystem } from '$lib/utils/isSystem.js';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL.js';
-	import { onMount, tick } from 'svelte';
+
+	let streamerMode = $state(page.data.session?.user?.userSettings?.streamerMode);
 
 	const submitErrors = $derived.by(() => {
 		try {
@@ -84,7 +86,6 @@
 		return { $bigint: this.toString() };
 	};
 
-	let streamerMode = $state(page.data.userSettings?.streamerMode ?? false);
 	let processed = $state(false);
 
 	const observers: ResizeObserver[] = [];

@@ -7,7 +7,7 @@ export const load = async (event) => {
 				user: {
 					name: session.user?.name,
 					image: session.user?.image,
-					userSettings: event.locals.userSettings,
+					userSettings: session.user?.userSettings,
 				},
 			}
 		: null;
@@ -15,6 +15,5 @@ export const load = async (event) => {
 	return {
 		session: sanitizedSessionData,
 		isModerator: event.locals.isModerator,
-		userSettings: event.locals.userSettings,
 	};
 };

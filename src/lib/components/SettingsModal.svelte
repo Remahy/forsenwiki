@@ -2,7 +2,7 @@
 	import { modal } from '$lib/stores/modal';
 	import { page } from '$app/state';
 
-	let streamerMode = $state(page.data.userSettings?.streamerMode ?? false);
+	let streamerMode = $state(page.data.session?.user?.userSettings?.streamerMode);
 
 	/**
 	 * @param {boolean} enabled

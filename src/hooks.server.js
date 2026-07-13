@@ -34,11 +34,6 @@ async function authorizationHandle({ event, resolve }) {
 		const permission = await prisma.permission.findFirst({ where: { userId: session.user.id } });
 		event.locals.isModerator = permission?.type === Permissions.MODERATE || false;
 		event.locals.isBlocked = permission?.type === Permissions.BLOCKED || false;
-
-		const userSettings = await prisma.userSettings.findUnique({
-			where: { userId: session.user.id },
-		});
-		event.locals.userSettings = userSettings;
 	}
 
 	return resolve(event);
