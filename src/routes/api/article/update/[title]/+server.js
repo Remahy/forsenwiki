@@ -10,7 +10,7 @@ import {
 } from '$lib/yjs/utils';
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { InvalidArticle } from '$lib/errors/InvalidArticle';
+import { ArticleError } from '$lib/errors/ArticleError';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/article/read';
 import { updateArticleTitle, updateArticleYPost } from '$lib/db/article/update';
@@ -18,7 +18,7 @@ import { invalidateArticleCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/article/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
-import { EDITOR_IS_READONLY } from '$lib/constants/constants';
+import { EDITOR_IS_EDITABLE, EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { isSystem } from '$lib/utils/isSystem';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
@@ -69,15 +69,15 @@ export async function POST({ request, locals, params }) {
 		return ForbiddenError();
 	}
 
-	/**
-	 * @type {PartialErrors}
-	 */
-	const partialErrors = [];
-
 	const session = await auth();
 	if (!session?.user?.id || !session?.user?.name) {
 		return ForbiddenError();
 	}
+
+	/**
+	 * @type {PartialErrors}
+	 */
+	const partialErrors = [];
 
 	/**
 	 * @param {string} content
@@ -117,7 +117,7 @@ export async function POST({ request, locals, params }) {
 
 	let e;
 	try {
-		e = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), combinedInitialUpdate);
+		e = getYjsAndEditor(articleConfig(null, EDITOR_IS_EDITABLE, null), combinedInitialUpdate);
 		const editor = e.editor;
 
 		await serverRunValidations(editor);
@@ -139,7 +139,7 @@ export async function POST({ request, locals, params }) {
 		}
 	} catch (err) {
 		if (typeof err === 'string') {
-			return InvalidArticle(err);
+			return ArticleError(err);
 		}
 
 		console.error(err);
@@ -156,10 +156,12 @@ export async function POST({ request, locals, params }) {
 
 	const combinedFinalDiff = mergePostUpdatesV2([initialDiff, finalDiff]);
 
+	// The size of this update.
 	const { byteLength } = combinedFinalDiff;
 
-	// Total size of the YDoc with the new update.
-	const { byteLength: totalByteLength } = mergePostUpdatesV2([currentUpdate, combinedFinalDiff]);
+	const fullYDocUpdate = mergePostUpdatesV2([currentUpdate, combinedFinalDiff]);
+	// New total size of the YDoc.
+	const { byteLength: totalByteLength } = fullYDocUpdate;
 
 	const systemRelations = await readSystemYPostRelations(post.id);
 
@@ -194,7 +196,7 @@ export async function POST({ request, locals, params }) {
 
 	const { html, text, image } = await toHTML({
 		config: 'article',
-		content: JSON.stringify(editor.getEditorState().toJSON()),
+		update: uint8ArrayToBase64(fullYDocUpdate),
 	});
 
 	await upsertHTML(post.id, { content: html, text, image });

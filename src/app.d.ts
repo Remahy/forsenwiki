@@ -45,6 +45,12 @@ declare global {
 		fileSnippet: string;
 		name: string;
 	};
+
+	type ReactionAuthorEntry = { id: string, name: string, rangeId: string };
+	type ReactionId = string
+	export type Reaction = { [x: ReactionId]: Array<ReactionAuthorEntry> }
+	type ReactionRange = string;
+	export type Reactions = { [x: ReactionRange]: Reaction }
 }
 
 export {};

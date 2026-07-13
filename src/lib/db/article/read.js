@@ -2,8 +2,9 @@ import prisma from '$lib/prisma.server';
 
 /**
  * @param {string} title
+ * @param {Date} [timestamp]
  */
-export async function readYPostUpdatesByTitle(title) {
+export async function readYPostUpdatesByTitle(title, timestamp) {
 	return prisma.yPost.findFirst({
 		where: {
 			title: {
@@ -29,6 +30,11 @@ export async function readYPostUpdatesByTitle(title) {
 				},
 			},
 			postUpdates: {
+				where: timestamp ? {
+					createdTimestamp: {
+						lte: timestamp,
+					}
+				} : undefined,
 				select: {
 					content: true,
 				},

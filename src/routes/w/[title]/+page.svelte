@@ -14,8 +14,10 @@
 	import RandomButton from '$lib/components/RandomButton.svelte';
 	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
 	import Link from '$lib/components/Link.svelte';
+	import FloatingReact from '$lib/components/React/index.svelte';
 	import { isSystem } from '$lib/utils/isSystem.js';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL.js';
+	import Display from '$lib/components/React/Display.svelte';
 
 	const submitErrors = $derived.by(() => {
 		try {
@@ -156,16 +158,22 @@
 				</header>
 			</SuggestionBox>
 
-			<div class="flex grow flex-col gap-4 lg:flex-row">
+			<div class="article-wrapper relative flex grow flex-col gap-4 lg:flex-row">
+				<FloatingReact {title} />
+
 				<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
-					<main class="article-root prose dark:prose-invert max-w-[unset] grow wrap-break-word">
+					<main class="prose dark:prose-invert relative max-w-[unset] grow wrap-break-word">
 						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>
 
-						{@html html}
+						<div class="article-root relative">
+							{@html html}
+						</div>
 					</main>
 				</Box>
+
+				<Display {title} />
 
 				<ToC />
 			</div>

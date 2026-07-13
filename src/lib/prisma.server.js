@@ -1,7 +1,11 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { building } from '$app/environment';
 import { DATABASE_URL } from '$env/static/private';
-import { PrismaClient, Permissions as Perm } from '../generated/prisma/client';
+import {
+	PrismaClient,
+	Permissions as Perm,
+	PostRangeType as PRT,
+} from '../generated/prisma/client';
 import { _emit } from '../routes/api/adonis/frontpage/+server';
 import { Y_POST_TYPES } from './constants/constants';
 
@@ -60,3 +64,4 @@ if (!building) {
 export default prisma;
 
 export const Permissions = Perm;
+export const PostRangeType = PRT;

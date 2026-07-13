@@ -7,7 +7,7 @@
 	import { getContext, onMount } from 'svelte';
 
 	import Divider from '$lib/components/Divider.svelte';
-	import { isDefined } from '$lib/utils/index';
+	import { isDefined } from '$lib/utils/isDefined';
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
