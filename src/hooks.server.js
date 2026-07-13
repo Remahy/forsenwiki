@@ -1,11 +1,15 @@
 import { sequence } from '@sveltejs/kit/hooks';
 import prisma, { Permissions } from '$lib/prisma.server';
 import { CLOUDFLARE_API_TOKEN, CLOUDFLARE_ZONE_ID } from '$env/static/private';
+import { STATIC_DOMAIN } from '$lib/environment/environment';
 import { validateToken } from '$lib/cloudflare.server';
-import '../static';
 import { handle as authenticationHandle } from './auth';
 
 import '$lib/goatcounter.server';
+
+if (!STATIC_DOMAIN) {
+	throw new Error('Environment value VITE_STATIC_DOMAIN has not been set.');
+}
 
 if (CLOUDFLARE_API_TOKEN && CLOUDFLARE_ZONE_ID) {
 	const result = await validateToken();

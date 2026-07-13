@@ -1,6 +1,6 @@
+import { GOATCOUNTER_API_KEY, GOATCOUNTER_DISABLED } from '$env/static/private';
 import prisma from '$lib/prisma.server';
 import { getPopularArticles } from '$lib/goatcounter.server';
-import { GOATCOUNTER_DISABLED } from '$env/static/private';
 
 /**
  * @typedef {{ rawTitle: string, title: string, createdTimestamp: string, author: string | null }} LatestArticle
@@ -38,7 +38,7 @@ const getLatest = async () => {
 	try {
 		popularArticles = await getPopularArticles();
 	} catch (err) {
-		if (!GOATCOUNTER_DISABLED) {
+		if (GOATCOUNTER_API_KEY && !GOATCOUNTER_DISABLED) {
 			console.error(err);
 		}
 	}
