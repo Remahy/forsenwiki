@@ -9,6 +9,7 @@ declare global {
 		interface Locals {
 			isModerator: boolean;
 			isBlocked: boolean;
+			userSettings: P.UserSettings | null;
 		}
 		// interface PageData {}
 		// interface PageState {}

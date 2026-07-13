@@ -1,5 +1,5 @@
 <script>
-	import { LogOutIcon } from '@lucide/svelte';
+	import { LogOutIcon, Settings } from '@lucide/svelte';
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
@@ -9,11 +9,22 @@
 	import Search from './Search/index.svelte';
 	import Announcement from './Announcement.svelte';
 
+	import { modal } from '$lib/stores/modal';
+	import SettingsModal from '$lib/components/SettingsModal.svelte';
+
 	let isLoading = $state(false);
 
 	const signInWrapper = () => {
 		isLoading = true;
 		signIn('twitch', { redirect: true });
+	};
+
+	const openSettings = () => {
+		$modal = {
+			isOpen: true,
+			component: SettingsModal,
+			disableClose: false,
+		};
 	};
 
 	const signOutWrapper = () => {
@@ -62,6 +73,10 @@
 							title={page.data.session.user.name}>{page.data.session.user.name}</span
 						>
 					</div>
+
+					<button class="rounded p-2 hover:bg-stone-100" onclick={openSettings} title="Settings">
+						<Settings size="18" />
+					</button>
 
 					<Button
 						on:click={signOutWrapper}
