@@ -2,7 +2,6 @@
 	import { SquarePenIcon, HistoryIcon } from '@lucide/svelte';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
-	//import { page } from '$app/stores';
 	import { page } from '$app/state';
 
 	import '$lib/components/editor/Article.css';
