@@ -1,19 +1,23 @@
-import prisma from '$lib/prisma.server';
 import { json } from '@sveltejs/kit';
+import prisma from '$lib/prisma.server';
+import { ForbiddenError } from '$lib/errors/Forbidden.js';
 
 export async function POST({ request, locals }) {
-	const session = await locals.auth();
+	const { auth } = locals;
 
-	if (!session?.user?.id) {
-		return json({ error: 'Unauthorized' }, { status: 401 });
+	const session = await auth();
+	if (!session?.user?.id || !session?.user?.name) {
+		return ForbiddenError();
 	}
 
 	const { streamerMode } = await request.json();
 
-	const updatedSettings = await prisma.userSettings.update({
+	const updatedSettings = await prisma.userSettings.upsert({
 		where: { userId: session.user.id },
-		data: { streamerMode },
+		update: { streamerMode },
+		create: { userId: session.user.id, streamerMode },
+		select: { streamerMode: true },
 	});
 
-	return json({ success: true, settings: updatedSettings });
+	return json(updatedSettings);
 }

@@ -1,24 +1,21 @@
 <script>
 	import { modal } from '$lib/stores/modal';
-	import { page } from '$app/state';
+	import { saveUserSettings } from '$lib/api/usersettings';
 
 	let streamerMode = $state(page.data.session?.user?.userSettings?.streamerMode);
+	let loading = $state(false);
 
 	/**
-	 * @param {boolean} enabled
+	 * @param {boolean} [streamerMode]
 	 */
+	async function saveStreamerMode(streamerMode) {
+		loading = true;
 
-	async function saveStreamerMode(enabled) {
-		const response = await fetch('/api/user/settings', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ streamerMode: enabled }),
-		});
+		const response = await saveUserSettings({ streamerMode });
 
 		if (!response.ok) {
 			console.error('Failed to save user settings');
+			loading = false;
 		} else {
 			window.location.reload();
 		}

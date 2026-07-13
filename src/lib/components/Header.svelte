@@ -19,12 +19,11 @@
 		signIn('twitch', { redirect: true });
 	};
 
-	const openSettings = () => {
-		$modal = {
+	const openSettingsModal = () => {
+		modal.set({
 			isOpen: true,
 			component: SettingsModal,
-			disableClose: false,
-		};
+		});
 	};
 
 	const signOutWrapper = () => {
@@ -74,9 +73,9 @@
 						>
 					</div>
 
-					<button class="rounded p-2 hover:bg-stone-100" onclick={openSettings} title="Settings">
+					<Button class="rounded-r-none! px-2! text-xs" onclick={openSettingsModal} title="Settings">
 						<Settings size="18" />
-					</button>
+					</Button>
 
 					<Button
 						on:click={signOutWrapper}
