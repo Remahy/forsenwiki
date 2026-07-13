@@ -1,6 +1,9 @@
 <script>
+	import { XIcon } from '@lucide/svelte';
+	import { page } from '$app/state';
 	import { modal } from '$lib/stores/modal';
 	import { saveUserSettings } from '$lib/api/usersettings';
+	import Button from './Button.svelte';
 
 	let streamerMode = $state(page.data.session?.user?.userSettings?.streamerMode);
 	let loading = $state(false);
@@ -21,46 +24,33 @@
 		}
 	}
 
-	const close = () => {
+	const cancel = () => {
 		$modal.isOpen = false;
 	};
 </script>
 
-<div class="modal-color pointer-events-auto w-full max-w-md p-6 shadow-sm">
-	<div class="box-heading-wrapper mb-5 flex items-center justify-between">
-		<div>
-			<h2 class="text-lg font-semibold">Settings</h2>
-			<p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Customize your experience</p>
-		</div>
-
-		<button
-			class="rounded-sm p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-			onclick={close}
-			aria-label="Close settings"
+<div class="modal-color pointer-events-auto relative p-0">
+	<header class="forsen-wiki-theme-border flex items-center justify-between border-b p-6">
+		<h1 class="text-xl font-semibold lg:text-2xl">User settings</h1>
+		<Button
+			disabled={loading}
+			class="ml-auto inline-flex items-center rounded-lg"
+			on:click={cancel}
 		>
-			✕
-		</button>
-	</div>
+			<XIcon />
+		</Button>
+	</header>
 
-	<div
-		class="rounded-sm border border-slate-300 bg-slate-100/80 p-4 dark:border-slate-800 dark:bg-slate-900/60"
-	>
-		<label class="flex items-center justify-between gap-3">
-			<div>
-				<span class="block text-sm font-medium text-slate-700 dark:text-slate-200"
-					>Streamer mode</span
-				>
-				<span class="mt-1 block text-xs text-slate-500 dark:text-slate-400">
-					Hide sensitive content while streaming
-				</span>
-			</div>
-
+	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
+		<label class="flex items-baseline gap-2">
 			<input
 				type="checkbox"
-				class="h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
+				name="type"
 				bind:checked={streamerMode}
+				disabled={loading}
 				onchange={() => saveStreamerMode(streamerMode)}
 			/>
+			<span>Streamer mode</span>
 		</label>
-	</div>
+	</main>
 </div>
