@@ -90,95 +90,86 @@
 
 	const observers: ResizeObserver[] = [];
 
-	onMount(async () => {
-		if (!streamerMode) {
+	onMount(() => {
+		let observers: ResizeObserver[] = [];
+
+		(async () => {
+			if (!streamerMode) {
+				processed = true;
+				return;
+			}
+
 			processed = true;
-			return;
-		}
+			await tick();
 
-		processed = true;
-		await tick();
+			const images = document.querySelectorAll<HTMLImageElement>('.article-root > img');
 
-		const images = document.querySelectorAll<HTMLImageElement>('.article-root > img');
-		const observers: ResizeObserver[] = [];
+			images.forEach((img) => {
+				img.classList.add('cursor-pointer');
 
-		images.forEach((img) => {
-			img.classList.add('cursor-pointer');
+				const parent = img.parentElement!;
+				parent.style.position = 'relative';
 
-			const parent = img.parentElement!;
-			parent.style.position = 'relative';
+				const overlay = document.createElement('div');
+				overlay.textContent = 'Press to show';
 
-			const overlay = document.createElement('div');
-			overlay.textContent = 'Press to show';
+				overlay.classList.add('backdrop-blur-3xl');
 
-			overlay.classList.add('backdrop-blur-3xl');
+				Object.assign(overlay.style, {
+					position: 'absolute',
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					color: 'white',
+					backgroundColor: 'rgba(1, 1, 1, 0.5)',
+					zIndex: '10',
+					pointerEvents: 'none',
+					whiteSpace: 'nowrap',
+					width: `${img.offsetWidth}px`,
+					height: `${img.offsetHeight}px`,
+				});
 
-			Object.assign(overlay.style, {
-				position: 'absolute',
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				color: 'white',
-				backgroundColor: 'rgba(1, 1, 1, 0.5)',
-				zIndex: '10',
-				pointerEvents: 'none',
-				whiteSpace: 'nowrap',
-				width: `${img.offsetWidth}px`,
-				height: `${img.offsetHeight}px`,
-			});
+				const positionOverlay = () => {
+					overlay.style.left = `${img.offsetLeft + img.offsetWidth / 2 - 1}px`;
+					overlay.style.top = `${img.offsetTop + img.offsetHeight / 2 - 1}px`;
+					overlay.style.width = `${img.offsetWidth + 1}px`;
+					overlay.style.height = `${img.offsetHeight + 1}px`;
+					overlay.style.transform = 'translate(-50%, -50%)';
+				};
 
-			const positionOverlay = () => {
-				overlay.style.left = `${img.offsetLeft + img.offsetWidth / 2 - 1}px`;
-				overlay.style.top = `${img.offsetTop + img.offsetHeight / 2 - 1}px`;
-				overlay.style.width = `${img.offsetWidth + 1}px`;
-				overlay.style.height = `${img.offsetHeight + 1}px`;
-				overlay.style.transform = 'translate(-50%, -50%)';
-			};
-
-			positionOverlay();
-			parent.appendChild(overlay);
-
-			const ro = new ResizeObserver(() => {
 				positionOverlay();
+				parent.appendChild(overlay);
+
+				const ro = new ResizeObserver(positionOverlay);
+				ro.observe(img);
+				observers.push(ro);
+
+				let hidden = true;
+
+				const reveal = () => {
+					if (hidden) {
+						overlay.remove();
+						hidden = false;
+					} else {
+						positionOverlay();
+						parent.appendChild(overlay);
+						hidden = true;
+					}
+				};
+
+				img.addEventListener('click', reveal);
 			});
-			ro.observe(img);
-			observers.push(ro);
-
-			let hidden = true;
-
-			const reveal = () => {
-				if (hidden) {
-					overlay.remove();
-					hidden = false;
-				} else {
-					positionOverlay();
-					parent.appendChild(overlay);
-					hidden = true;
-				}
-			};
-
-			img.addEventListener('click', reveal);
-		});
+		})();
 
 		return () => {
 			observers.forEach((ro) => ro.disconnect());
 		};
 	});
 
-	let revealedAuthors = $state(new Set<number>());
+	let revealAuthor = $state(false);
 
-	function toggleAuthor(index: number) {
-		if (revealedAuthors.has(index)) {
-			revealedAuthors.delete(index);
-		} else {
-			revealedAuthors.add(index);
-		}
-
-		revealedAuthors = new Set(revealedAuthors);
-	}
-
-	function censorName(name: string) {
-		return name.replace(/./g, '#');
+	function toggleAuthor() {
+		revealAuthor = !revealAuthor;
 	}
 </script>
 
@@ -261,39 +252,6 @@
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>
 						{#if processed}
-							<img
-								src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmcGqVnD1Zioghm9EushC9aRPz3J_ZyEt29KlhLPzQ5g&s"
-							/>
-							Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vitae quae quia voluptatibus hic,
-							nam dicta quisquam obcaecati, quasi, labore inventore quas est minus itaque sunt debitis.
-							Sint animi obcaecati repudiandae. Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-							Minus eveniet numquam et voluptatem. Incidunt, velit. Earum hic ab, facilis, magni quis,
-							aliquam beatae a at porro ullam perferendis eaque nam? Facilis sapiente consequuntur a modi
-							aliquam! Vero dolorem dolore quaerat explicabo eos tempore aliquid officia. Alias vel ab
-							deserunt. Officiis perferendis est esse ut aliquam soluta, alias quaerat ab ex. Quidem quia,
-							adipisci incidunt a error, doloribus velit cumque inventore ullam, aliquid veniam sequi.
-							Eligendi deleniti ea atque debitis, porro enim asperiores doloremque nemo nulla ipsum quis
-							quae. Laborum, repellat. Nihil est sequi tempore vitae minus quae eligendi alias vel nostrum,
-							magni quidem facilis quos odio aspernatur corrupti qui illo laborum soluta dolore, quas
-							sunt rerum autem facere. Est, fuga? Et eum culpa dolorem quod, vitae aperiam molestiae quia,
-							natus repellendus similique iure, temporibus saepe facere placeat nesciunt non eligendi
-							labore id exercitationem veritatis? Laborum distinctio unde impedit sapiente quam. Modi
-							provident velit unde, qui consequatur odio eligendi totam officiis odit laboriosam, distinctio
-							placeat assumenda ad magnam quibusdam, similique voluptatibus. Quae, rerum. Quisquam, voluptate
-							minima illo rem eaque deserunt optio! Libero laborum dicta a autem architecto labore eius
-							in quo quaerat id ipsa nesciunt, at quia quasi dignissimos nisi illum sint explicabo quas
-							esse amet excepturi. Magni eveniet laborum excepturi. Officiis obcaecati ex ipsam, fugiat
-							laborum illum repudiandae a, facilis ipsa, eveniet vel eos inventore. Doloremque ex placeat
-							unde, a vel quod veniam, corporis velit sed minima nam, labore libero? A consequatur cum
-							veniam, in ex illum nulla perferendis non fugit, cumque totam nobis quisquam earum quam
-							fuga harum? Architecto vero molestiae autem cupiditate veniam. Temporibus libero consequuntur
-							quaerat incidunt! Temporibus, dignissimos magnam mollitia incidunt voluptates odit itaque
-							fugiat nihil quibusdam, quos cupiditate similique explicabo quae ad iste expedita unde eaque.
-							Accusantium laboriosam nostrum dignissimos sed deleniti sunt quibusdam voluptatibus?
-							<img
-								src="https://www.aaha.org/wp-content/uploads/2024/09/kitten-lying-in-blanket.jpg"
-							/>
-
 							{@html html}
 						{/if}
 					</main>
@@ -334,11 +292,13 @@
 					<span><strong>Author{authors.length > 1 ? 's' : ''}:</strong></span>
 					<span>
 						{#each authors as author, index}
-							{#if !streamerMode || revealedAuthors.has(index)}
+							{#if !streamerMode || revealAuthor}
 								{author.name}
 							{:else}
-								<button type="button" onclick={() => toggleAuthor(index)}>
-									{censorName(author.name || '')}
+								<button type="button" onclick={() => toggleAuthor()} class="underline">
+									{#if index === 0}
+										Press here to reveal (Streamer mode)
+									{/if}
 								</button>
 							{/if}
 

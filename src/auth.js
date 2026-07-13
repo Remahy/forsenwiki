@@ -43,10 +43,10 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 				user: { id },
 			} = message;
 
-			if(!id) {
+			if (!id) {
 				throw new Error('User ID is missing in createUser event.');
 			}
-			
+
 			const newUserSettings = await prisma.userSettings.create({
 				data: {
 					userId: id,

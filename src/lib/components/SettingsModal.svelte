@@ -1,16 +1,20 @@
-<script lang="ts">
+<script>
 	import { modal } from '$lib/stores/modal';
 	import { page } from '$app/state';
 
 	let streamerMode = $state(page.data.userSettings?.streamerMode ?? false);
 
-	async function saveStreamerMode(value: boolean) {
+	/**
+	 * @param {boolean} enabled
+	 */
+
+	async function saveStreamerMode(enabled) {
 		const response = await fetch('/api/user/settings', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ streamerMode: value }),
+			body: JSON.stringify({ streamerMode: enabled }),
 		});
 
 		if (!response.ok) {
