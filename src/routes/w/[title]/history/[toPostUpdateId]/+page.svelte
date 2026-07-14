@@ -2,12 +2,13 @@
 	import { FileIcon, GitCompareIcon, HistoryIcon } from '@lucide/svelte';
 	import { page } from '$app/stores';
 
+	import '$lib/components/editor/Article.css';
+
 	import Container from '$lib/components/Container.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import Box from '$lib/components/Box.svelte';
 	import Article from '$lib/components/Article.svelte';
-
-	import '$lib/components/editor/Article.css';
+	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
 
 	let { data } = $props();
 
@@ -89,9 +90,11 @@
 				{/if}
 				<p>
 					<span class="font-bold">Version author:</span>
-					<span>
-						{authorName}
-					</span>
+					<StreamerModeShow>
+						<span>
+							{authorName}
+						</span>
+					</StreamerModeShow>
 				</p>
 				<p><span>Update length:</span> {byteLength} bytes.</p>
 			</div>

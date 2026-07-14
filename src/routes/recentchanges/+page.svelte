@@ -7,6 +7,7 @@
 	import { page } from '$app/stores';
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';
+	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
 	import {
 		getRecentChangesFilters,
 		MINIMUM_LIMIT,
@@ -28,6 +29,7 @@
 
 	const handleFilterSearch = () => {
 		const searchParams = createRecentChangesParams({ authors, limit });
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity
 		const url = new URL($page.url);
 		url.search = `?${searchParams.toString()}`;
 		window.location.href = url.toString();
@@ -165,7 +167,7 @@
 						locale: enGB,
 					})}&nbsp;</small
 				>
-				<span><small><span class="font-bold">By:</span> {update.author}</small></span>
+				<span><small><span class="font-bold">By:</span> <StreamerModeShow>{update.author}</StreamerModeShow></small></span>
 			</div>
 		{:else}
 			<span class="bg-black/10 p-2 dark:bg-white/5">Nothing found.</span>

@@ -10,6 +10,7 @@
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 	import Container from '$lib/components/Container.svelte';
+	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
 
 	let streamerMode = $state($page.data.session?.user?.userSettings?.streamerMode);
 
@@ -117,10 +118,10 @@
 						>
 							{new Date(article.createdTimestamp).toDateString()}&nbsp;
 						</span>
-						{#if !streamerMode}
-							<small class="inline-block"><span class="font-bold">By:</span> {article.author}</small
-							>
-						{/if}
+						<small class="inline-block"
+							><span class="font-bold">By:</span>
+							<StreamerModeShow>{article.author}</StreamerModeShow></small
+						>
 					</div>
 				{/each}
 			</Box>
@@ -162,19 +163,19 @@
 				</LinkButton>
 			</Box>
 
-			{#if !streamerMode}
-				<Box class="overflow-hidden p-4">
-					<div class="box-heading-wrapper mb-2">
-						<h2 class="text-2xl">New users</h2>
-					</div>
+			<Box class="overflow-hidden p-4">
+				<div class="box-heading-wrapper mb-2">
+					<h2 class="text-2xl">New users</h2>
+				</div>
 
-					{#each $latestUsers as user (user)}
-						<div class="p-2 pl-0">
-							<span title={user.name} class="font-bold">{user.name}</span>
-						</div>
-					{/each}
-				</Box>
-			{/if}
+				{#each $latestUsers as user (user)}
+					<div class="p-2 pl-0">
+						<StreamerModeShow
+							><span title={user.name} class="font-bold">{user.name}</span></StreamerModeShow
+						>
+					</div>
+				{/each}
+			</Box>
 		</div>
 	</div>
 </Container>

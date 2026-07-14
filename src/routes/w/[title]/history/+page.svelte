@@ -7,6 +7,7 @@
 	import Link from '$lib/components/Link.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
+	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
 
 	let { data } = $props();
 
@@ -94,7 +95,7 @@
 									{new Date(postUpdate.createdTimestamp).toLocaleString()}
 								</Link>
 
-								<span>by {postUpdate.metadata.user.name}</span>
+								<span>by <StreamerModeShow>{postUpdate.metadata.user.name}</StreamerModeShow></span>
 
 								{#if postUpdate.metadata.byteLength}
 									<span class="opacity-50">({postUpdate.metadata.byteLength})</span>

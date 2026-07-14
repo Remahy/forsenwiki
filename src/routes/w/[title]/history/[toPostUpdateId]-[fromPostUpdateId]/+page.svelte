@@ -2,11 +2,13 @@
 	import { FileIcon, HistoryIcon } from '@lucide/svelte';
 	import { page } from '$app/stores';
 
+	import '$lib/components/editor/Article.css';
+
 	import Container from '$lib/components/Container.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import Box from '$lib/components/Box.svelte';
 	import Article from '$lib/components/Article.svelte';
-	import '$lib/components/editor/Article.css';
+	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
 
 	let { data } = $props();
 
@@ -68,16 +70,20 @@
 			<div class="mt-4">
 				<p>
 					<span class="font-bold">&quot;{tD}&quot; version author:</span>
-					<span>
-						{toAuthor?.name || '?'}
-					</span>
+					<StreamerModeShow>
+						<span>
+							{toAuthor?.name || '?'}
+						</span>
+					</StreamerModeShow>
 				</p>
 
 				<p>
 					<span class="font-bold">&quot;{fD}&quot; version author:</span>
-					<span>
-						{fromAuthor?.name || '?'}
-					</span>
+					<StreamerModeShow>
+						<span>
+							{fromAuthor?.name || '?'}
+						</span>
+					</StreamerModeShow>
 				</p>
 			</div>
 		</header>

@@ -18,9 +18,7 @@
 	import { isSystem } from '$lib/utils/isSystem.js';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL.js';
 	import Article from '$lib/components/Article.svelte';
-
-	let streamerMode = $state(page.data.session?.user?.userSettings?.streamerMode);
-	let showAuthors = $state(false);
+	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
 
 	const submitErrors = $derived.by(() => {
 		try {
@@ -93,10 +91,6 @@
 	BigInt.prototype.toJSON = function () {
 		return { $bigint: this.toString() };
 	};
-
-	function toggleAuthor() {
-		showAuthors = !showAuthors;
-	}
 </script>
 
 <svelte:head>
@@ -215,22 +209,15 @@
 			{#if authors.length}
 				<p>
 					<span><strong>Author{authors.length > 1 ? 's' : ''}:</strong></span>
-					<span>
-						{#if !streamerMode || showAuthors}
+					<StreamerModeShow>
+						<span>
 							{#each authors as author, index (author.name)}
 								{author.name}
 
 								{index < authors.length - 1 ? ', ' : ''}
 							{/each}
-						{:else}
-							<Button
-								onclick={() => toggleAuthor()}
-								class="inline-block h-[unset]! bg-transparent! p-0! underline"
-							>
-								(Streamer mode) Show authors
-							</Button>
-						{/if}
-					</span>
+						</span>
+					</StreamerModeShow>
 				</p>
 			{/if}
 		</footer>
