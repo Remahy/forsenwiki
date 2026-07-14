@@ -6,12 +6,12 @@
 	import Logo from '$lib/components/Logo.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import { modal } from '$lib/stores/modal';
+	import SettingsModal from '$lib/components/SettingsModal.svelte';
+
 	import Search from './Search/index.svelte';
 	// import Announcement from './Announcement.svelte';
 	import Link from './Link.svelte';
-
-	import { modal } from '$lib/stores/modal';
-	import SettingsModal from '$lib/components/SettingsModal.svelte';
 
 	let isLoading = $state(false);
 
