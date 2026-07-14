@@ -11,6 +11,8 @@
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 	import Container from '$lib/components/Container.svelte';
 
+	let streamerMode = $state($page.data.session?.user?.userSettings?.streamerMode);
+
 	/**
 	 * @typedef {import('./+page.server').LatestArticle} LatestArticle
 	 * @typedef {import('./+page.server').LatestUser} LatestUser
@@ -91,6 +93,10 @@
 			<span class="font-bold">ForsenWiki</span>
 			<span> - </span>
 			<span>Forsen lore, news, big plays, tilts. Forsen's past and the bajs' future.</span>
+			{#if streamerMode}
+				<br />
+				<strong>Streamer mode is enabled.</strong>
+			{/if}
 		</p>
 	</SuggestionBox>
 
@@ -111,7 +117,10 @@
 						>
 							{new Date(article.createdTimestamp).toDateString()}&nbsp;
 						</span>
-						<small class="inline-block"><span class="font-bold">By:</span> {article.author}</small>
+						{#if !streamerMode}
+							<small class="inline-block"><span class="font-bold">By:</span> {article.author}</small
+							>
+						{/if}
 					</div>
 				{/each}
 			</Box>
@@ -153,17 +162,19 @@
 				</LinkButton>
 			</Box>
 
-			<Box class="overflow-hidden p-4">
-				<div class="box-heading-wrapper mb-2">
-					<h2 class="text-2xl">New users</h2>
-				</div>
-
-				{#each $latestUsers as user (user)}
-					<div class="p-2 pl-0">
-						<span title={user.name} class="font-bold">{user.name}</span>
+			{#if !streamerMode}
+				<Box class="overflow-hidden p-4">
+					<div class="box-heading-wrapper mb-2">
+						<h2 class="text-2xl">New users</h2>
 					</div>
-				{/each}
-			</Box>
+
+					{#each $latestUsers as user (user)}
+						<div class="p-2 pl-0">
+							<span title={user.name} class="font-bold">{user.name}</span>
+						</div>
+					{/each}
+				</Box>
+			{/if}
 		</div>
 	</div>
 </Container>
