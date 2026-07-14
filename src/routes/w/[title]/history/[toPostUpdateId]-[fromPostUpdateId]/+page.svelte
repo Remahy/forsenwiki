@@ -5,7 +5,7 @@
 	import Container from '$lib/components/Container.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import Box from '$lib/components/Box.svelte';
-
+	import Article from '$lib/components/Article.svelte';
 	import '$lib/components/editor/Article.css';
 
 	let { data } = $props();
@@ -110,7 +110,7 @@
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>
 
-						{@html html.html}
+						<Article html={html.html} />
 					</main>
 				{:else}
 					<i>Error: No HTML returned.</i>
