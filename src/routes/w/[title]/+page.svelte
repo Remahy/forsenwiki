@@ -1,8 +1,9 @@
-<script lang="ts">
+<script>
+	/* eslint-disable svelte/no-at-html-tags */
 	import { SquarePenIcon, HistoryIcon } from '@lucide/svelte';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
 	import '$lib/components/editor/Article.css';
 
@@ -16,18 +17,24 @@
 	import Link from '$lib/components/Link.svelte';
 	import { isSystem } from '$lib/utils/isSystem.js';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL.js';
+	import Article from '$lib/components/Article.svelte';
+	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
 
 	const submitErrors = $derived.by(() => {
 		try {
-			const rawErrors: Array<{ code: string; field: string; value?: string }> | null = JSON.parse(
-				$page.url.searchParams.get('partialErrors') || ''
-			);
+			/**
+			 * @type {Array<{ code: string; field: string; value?: string }> | null}
+			 */
+			const rawErrors = JSON.parse(page.url.searchParams.get('partialErrors') || '');
 			if (!rawErrors || !(rawErrors instanceof Array)) {
 				return [];
 			}
 
 			// We don't want to display messages verbatim from the URL to make sure users don't modify it.
-			const ERROR_CONSTANT: { [key: string]: string } = {
+			/**
+			 * @type {{ [key: string]: string }}
+			 */
+			const ERROR_CONSTANT = {
 				'EMPTY-newTitle': 'New title submission is empty. Given value: %',
 				'ILLEGAL-newTitle': 'New title submission failed sanitization. Given value: %',
 				'EXISTS-newTitle':
@@ -61,15 +68,22 @@
 	const authorsScriptContent = $derived(
 		JSON.stringify({
 			'@context': 'https://schema.org',
-			author: authors
+			'@type': 'Article',
+			author: {
+				'@type': 'Organization',
+				name: 'Community Forsen Wiki',
+			},
+			contributor: authors
 				.filter((author) => author.name !== null)
 				.map((author) => ({
 					'@type': 'Person',
-					name: author.name!.replace(/[^\w]/g, ''),
+					// @ts-ignore
+					name: author.name.replace(/[^\w]/g, ''),
 				})),
 		})
 	);
 	const authorsHTML = $derived(
+		// eslint-disable-next-line no-useless-escape
 		`<script type="application/ld+json">${authorsScriptContent}<\/script>`
 	);
 
@@ -81,13 +95,13 @@
 
 <svelte:head>
 	<title>{rawTitle || title} - Community Forsen Wiki</title>
-	<meta name="og:title" content="{rawTitle || title} - Community Forsen Wiki">
+	<meta name="og:title" content="{rawTitle || title} - Community Forsen Wiki" />
 
 	<meta property="og:site_name" content="Forsen Wiki" />
 
 	{#if !isArticleSystem}
-		<link rel="canonical" href="{$page.url.origin}/w/{title}" />
-		<meta property="og:url" content="{$page.url.origin}/w/{title}" />
+		<link rel="canonical" href="{page.url.origin}/w/{title}" />
+		<meta property="og:url" content="{page.url.origin}/w/{title}" />
 
 		<meta property="og:type" content="article" />
 
@@ -97,13 +111,16 @@
 		{/if}
 
 		{#if image?.length}
-			<meta property="og:image" content={getImageCacheURL(image).toString()} />
+			<meta
+				property="og:image"
+				content={getImageCacheURL(image, { quality: 'medium-low' }).toString()}
+			/>
 		{/if}
 
 		<meta property="article:published_time" content={createdTimestamp.toISOString()} />
 		<meta property="article:modified_time" content={lastUpdated.toISOString()} />
 
-		{#each authors as author}
+		{#each authors as author (author.name)}
 			{#if author.name}
 				<meta property="article:author" content={author.name} />
 			{/if}
@@ -120,7 +137,7 @@
 		{#if submitErrors.length}
 			<Box class="bg-yellow-300/75! p-4 text-black">
 				<strong>Partial submit error(s)</strong>
-				{#each submitErrors as error}
+				{#each submitErrors as error (error)}
 					<p>{error}</p>
 				{/each}
 			</Box>
@@ -156,7 +173,7 @@
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>
 
-						{@html html}
+						<Article {html} />
 					</main>
 				</Box>
 
@@ -193,13 +210,16 @@
 			{#if authors.length}
 				<p>
 					<span><strong>Author{authors.length > 1 ? 's' : ''}:</strong></span>
-					<span>
-						{#each authors as author, index (author.id)}
-							<Link href="/user/{author.id}" target="_blank">{author.name}</Link>{index < authors.length - 1
-								? ', '
-								: ''}
-						{/each}
-					</span>
+					<StreamerModeShow>
+						<span>
+							{#each authors as author, index (author.id)}
+								<Link href="/user/{author.id}" target="_blank">{author.name}</Link>{index <
+								authors.length - 1
+									? ', '
+									: ''}
+							{/each}
+						</span>
+					</StreamerModeShow>
 				</p>
 			{/if}
 		</footer>
@@ -209,7 +229,7 @@
 				<p>
 					<span><strong>Article{relatedPosts.length > 1 ? 's' : ''} linking here:</strong></span>
 					<span>
-						{#each relatedPosts as post, index}
+						{#each relatedPosts as post, index (post.title)}
 							<Link href={post.title} reload>{post.rawTitle}</Link>{index < relatedPosts.length - 1
 								? ', '
 								: ''}

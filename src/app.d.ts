@@ -1,6 +1,7 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 
+import type { DefaultSession } from '@auth/sveltekit';
 import * as P from '../src/generated/prisma/client';
 
 declare global {
@@ -45,6 +46,20 @@ declare global {
 		fileSnippet: string;
 		name: string;
 	};
+}
+
+declare module '@auth/sveltekit' {
+	interface Session {
+		user: {
+			userSettings: Omit<P.UserSettings, 'userId' | 'id'>;
+			/**
+			 * By default, TypeScript merges new interface properties and overwrites existing ones.
+			 * In this case, the default session user properties will be overwritten,
+			 * with the new ones defined above. To keep the default session user properties,
+			 * you need to add them back into the newly declared interface.
+			 */
+		} & DefaultSession['user'];
+	}
 }
 
 export {};

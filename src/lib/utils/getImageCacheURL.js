@@ -5,7 +5,7 @@ export const cacheServiceBaseURLWithStatic = STATIC_DOMAIN;
 
 /**
  * @param {string} hash
- * @param {{ width?: 'inherit' | number, height?: 'inherit' | number }} [opts]
+ * @param {{ width?: 'inherit' | number, height?: 'inherit' | number, quality?: 'low' | 'medium-low' }} [opts]
  */
 export const getImageCacheURL = (hash, opts) => {
 	// This is the Cloudflare Images endpoint. Hardcoded for now.
@@ -15,11 +15,15 @@ export const getImageCacheURL = (hash, opts) => {
 	if (opts) {
 		const newOpts = [];
 		if (typeof opts.width === 'number' && opts.width < IMAGE_MAX_WIDTH) {
-			newOpts.push(`width=${opts.width}`);
+			newOpts.push(`w=${opts.width}`);
 		}
 
 		if (typeof opts.height === 'number' && opts.height < IMAGE_MAX_HEIGHT) {
-			newOpts.push(`height=${opts.height}`);
+			newOpts.push(`h=${opts.height}`);
+		}
+
+		if (typeof opts.quality === 'string') {
+			newOpts.push(`q=${opts.quality}`);
 		}
 
 		for (let index = 0; index < newOpts.length; index++) {

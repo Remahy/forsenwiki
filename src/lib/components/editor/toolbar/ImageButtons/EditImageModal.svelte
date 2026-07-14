@@ -43,7 +43,8 @@
 	let loadedImage = $state(null);
 	let autoSaved = $state(false);
 	let newSrc = $state('');
-	let newSrcName = $state('');
+	/** @type {string?} */
+	let newSrcName = $state(null);
 	/** @type {File | null} */
 	let newFile = $state(null);
 	let newHash = $state('');
@@ -192,7 +193,7 @@
 
 		if (newHash && newFile) {
 			try {
-				const fileUploadObject = await createFileUploadObject(newFile, newSrcName, newHash);
+				const fileUploadObject = await createFileUploadObject(newFile, newSrcName || 'Uploaded image', newHash);
 
 				const res = await validateContent([fileUploadObject]);
 
@@ -221,7 +222,7 @@
 				return;
 			}
 
-			await saveContent(id, newHash, new File([newFile], newSrcName, { type: newFile.type }));
+			await saveContent(id, newHash, new File([newFile], newSrcName || 'Uploaded image', { type: newFile.type }));
 			onSubmit({ src: newHash, altText, width: Number(width), height: Number(height) });
 		} else if (newSrc) {
 			onSubmit({ src: newSrc, altText, width: Number(width), height: Number(height) });
@@ -237,7 +238,7 @@
 		}
 
 		if (newSrcName !== loadedImage.file.name) {
-			const newFile = new File([loadedImage.file], newSrcName, { type: loadedImage.file.type });
+			const newFile = new File([loadedImage.file], newSrcName || 'Uploaded image', { type: loadedImage.file.type });
 			(async () => {
 				await saveContent(id, loadedImage.hash, newFile);
 				autoSaved = true;
@@ -402,7 +403,7 @@
 			</div>
 		{/if}
 
-		{#if newSrcName}
+		{#if typeof newSrcName === 'string'}
 			<label class="flex flex-col gap-2">
 				<div>
 					<strong>File name</strong>

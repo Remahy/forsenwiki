@@ -4,7 +4,8 @@ export const IMAGE_AUDIO_FILE_SIZE = 25 * 1024 * 1024; // 25MiB
 export const DOCUMENT_FILE_SIZE = 10 * 1024 * 1024; // 10MiB
 
 export const mimetypes = {
-	image: [['image/avif'], ['image/gif'], ['image/jpeg'], ['image/png'], ['image/webp']],
+	// Cloudflare Images only supports (animated) AVIF for Enterprise, so let's just disable it altogether.
+	image: [/*['image/avif'], */ ['image/gif'], ['image/jpeg'], ['image/png'], ['image/webp']],
 	video: [['video/mp4'], ['video/webm']],
 	audio: [['audio/aac'], ['audio/mpeg'], ['audio/webm']],
 	document: [

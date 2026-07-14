@@ -1,6 +1,7 @@
 import { $applyNodeReplacement, $getNodeByKey, $isRootNode } from 'lexical';
 
 import { TableNode } from '$lib/lexical/index';
+
 /**
  * @typedef {import('lexical').NodeKey} NodeKey
  * @typedef {import('lexical').SerializedElementNode} SerializedElementNode

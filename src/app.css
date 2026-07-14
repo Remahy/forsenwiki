@@ -10,3 +10,4 @@
 @plugin '@tailwindcss/typography';
 
 @import './style/wiki.css';
+@import './style/streamerMode.css'
