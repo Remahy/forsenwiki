@@ -1,4 +1,5 @@
-<script lang="ts">
+<script>
+	/* eslint-disable svelte/no-at-html-tags */
 	import { onMount } from 'svelte';
 	import { SquarePenIcon, HistoryIcon } from '@lucide/svelte';
 	import { formatRelative } from 'date-fns';
@@ -24,15 +25,19 @@
 
 	const submitErrors = $derived.by(() => {
 		try {
-			const rawErrors: Array<{ code: string; field: string; value?: string }> | null = JSON.parse(
-				page.url.searchParams.get('partialErrors') || ''
-			);
+			/**
+			 * @type {Array<{ code: string; field: string; value?: string }> | null}
+			 */
+			const rawErrors = JSON.parse(page.url.searchParams.get('partialErrors') || '');
 			if (!rawErrors || !(rawErrors instanceof Array)) {
 				return [];
 			}
 
 			// We don't want to display messages verbatim from the URL to make sure users don't modify it.
-			const ERROR_CONSTANT: { [key: string]: string } = {
+			/**
+			 * @type {{ [key: string]: string }}
+			 */
+			const ERROR_CONSTANT = {
 				'EMPTY-newTitle': 'New title submission is empty. Given value: %',
 				'ILLEGAL-newTitle': 'New title submission failed sanitization. Given value: %',
 				'EXISTS-newTitle':
@@ -75,11 +80,13 @@
 				.filter((author) => author.name !== null)
 				.map((author) => ({
 					'@type': 'Person',
-					name: author.name!.replace(/[^\w]/g, ''),
+					// @ts-ignore
+					name: author.name.replace(/[^\w]/g, ''),
 				})),
 		})
 	);
 	const authorsHTML = $derived(
+		// eslint-disable-next-line no-useless-escape
 		`<script type="application/ld+json">${authorsScriptContent}<\/script>`
 	);
 
@@ -93,18 +100,21 @@
 	}
 
 	onMount(() => {
-		let observers: ResizeObserver[] = [];
+		/**
+		 * @type {ResizeObserver[]}
+		 */
+		let observers = [];
 
 		if (!streamerMode) {
 			return;
 		}
 
-		const streamerModeItems = [
-			...document.querySelectorAll<HTMLImageElement>('.article-root img'),
-			...document.querySelectorAll<HTMLImageElement>('.article-root [data-lexical-youtube]'),
-			...document.querySelectorAll<HTMLImageElement>('.article-root [data-lexical-twitch]'),
-			...document.querySelectorAll<HTMLImageElement>('.article-root video'),
-		];
+		const streamerModeItems = /** @type {HTMLElement[]}*/ ([
+			...document.querySelectorAll('.article-root img'),
+			...document.querySelectorAll('.article-root [data-lexical-youtube]'),
+			...document.querySelectorAll('.article-root [data-lexical-twitch]'),
+			...document.querySelectorAll('.article-root video'),
+		]);
 
 		for (let index = 0; index < streamerModeItems.length; index++) {
 			const item = streamerModeItems[index];
@@ -191,7 +201,7 @@
 		<meta property="article:published_time" content={createdTimestamp.toISOString()} />
 		<meta property="article:modified_time" content={lastUpdated.toISOString()} />
 
-		{#each authors as author}
+		{#each authors as author (author.name)}
 			{#if author.name}
 				<meta property="article:author" content={author.name} />
 			{/if}
@@ -208,7 +218,7 @@
 		{#if submitErrors.length}
 			<Box class="bg-yellow-300/75! p-4 text-black">
 				<strong>Partial submit error(s)</strong>
-				{#each submitErrors as error}
+				{#each submitErrors as error (error)}
 					<p>{error}</p>
 				{/each}
 			</Box>
@@ -283,7 +293,7 @@
 					<span><strong>Author{authors.length > 1 ? 's' : ''}:</strong></span>
 					<span>
 						{#if !streamerMode || showAuthors}
-							{#each authors as author, index}
+							{#each authors as author, index (author.name)}
 								{author.name}
 
 								{index < authors.length - 1 ? ', ' : ''}
@@ -306,7 +316,7 @@
 				<p>
 					<span><strong>Article{relatedPosts.length > 1 ? 's' : ''} linking here:</strong></span>
 					<span>
-						{#each relatedPosts as post, index}
+						{#each relatedPosts as post, index (post.title)}
 							<Link href={post.title} reload>{post.rawTitle}</Link>{index < relatedPosts.length - 1
 								? ', '
 								: ''}
