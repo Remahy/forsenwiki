@@ -248,7 +248,7 @@
 				<CacheBustButton />
 				<LinkButton
 					class="mt-2 min-h-[unset] min-w-[unset] p-1! text-xs"
-					href="/api/article/read/{title}">API request</LinkButton
+					href="/api/post/read/{title}">API request</LinkButton
 				>
 			</div>
 		</details>
