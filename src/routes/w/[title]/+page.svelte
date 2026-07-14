@@ -14,11 +14,13 @@
 	import ToC from '$lib/components/ToC.svelte';
 	import RandomButton from '$lib/components/RandomButton.svelte';
 	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import { isSystem } from '$lib/utils/isSystem.js';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL.js';
 
 	let streamerMode = $state(page.data.session?.user?.userSettings?.streamerMode);
+	let showAuthors = $state(false);
 
 	const submitErrors = $derived.by(() => {
 		try {
@@ -86,91 +88,81 @@
 		return { $bigint: this.toString() };
 	};
 
-	let processed = $state(false);
-
-	const observers: ResizeObserver[] = [];
+	function toggleAuthor() {
+		showAuthors = !showAuthors;
+	}
 
 	onMount(() => {
 		let observers: ResizeObserver[] = [];
 
-		(async () => {
-			if (!streamerMode) {
-				processed = true;
-				return;
+		if (!streamerMode) {
+			return;
+		}
+
+		const streamerModeItems = [
+			...document.querySelectorAll<HTMLImageElement>('.article-root img'),
+			...document.querySelectorAll<HTMLImageElement>('.article-root [data-lexical-youtube]'),
+			...document.querySelectorAll<HTMLImageElement>('.article-root [data-lexical-twitch]'),
+			...document.querySelectorAll<HTMLImageElement>('.article-root video'),
+		];
+
+		for (let index = 0; index < streamerModeItems.length; index++) {
+			const item = streamerModeItems[index];
+
+			const parent = item.parentElement;
+
+			if (!parent) {
+				continue;
 			}
 
-			processed = true;
-			await tick();
+			parent.classList.add('relative');
 
-			const images = document.querySelectorAll<HTMLImageElement>('.article-root > img');
+			const overlay = document.createElement('div');
+			overlay.innerHTML = 'Show';
 
-			images.forEach((img) => {
-				img.classList.add('cursor-pointer');
+			overlay.classList.add(
+				'absolute',
+				'flex',
+				'cursor-pointer',
+				'items-center',
+				'justify-center',
+				'text-white',
+				'bg-black/50',
+				'whitespace-nowrap',
+				'z-10'
+			);
 
-				const parent = img.parentElement!;
-				parent.style.position = 'relative';
+			overlay.style.width = `${item.offsetWidth + 2}px`;
+			overlay.style.height = `${item.offsetHeight + 2}px`;
 
-				const overlay = document.createElement('div');
-				overlay.textContent = 'Press to show';
+			const positionOverlay = () => {
+				overlay.style.left = `${item.offsetLeft + item.offsetWidth / 2}px`;
+				overlay.style.top = `${item.offsetTop + item.offsetHeight / 2}px`;
+				overlay.style.width = `${item.offsetWidth + 2}px`;
+				overlay.style.height = `${item.offsetHeight + 2}px`;
+				overlay.style.transform = 'translate(-50%, -50%)';
+			};
 
-				overlay.classList.add('backdrop-blur-3xl');
+			item.insertAdjacentElement('afterend', overlay);
+			positionOverlay();
 
-				Object.assign(overlay.style, {
-					position: 'absolute',
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					color: 'white',
-					backgroundColor: 'rgba(1, 1, 1, 0.5)',
-					zIndex: '10',
-					pointerEvents: 'none',
-					whiteSpace: 'nowrap',
-					width: `${img.offsetWidth}px`,
-					height: `${img.offsetHeight}px`,
-				});
+			const ro = new ResizeObserver(positionOverlay);
+			ro.observe(parent);
+			observers.push(ro);
 
-				const positionOverlay = () => {
-					overlay.style.left = `${img.offsetLeft + img.offsetWidth / 2 - 1}px`;
-					overlay.style.top = `${img.offsetTop + img.offsetHeight / 2 - 1}px`;
-					overlay.style.width = `${img.offsetWidth + 1}px`;
-					overlay.style.height = `${img.offsetHeight + 1}px`;
-					overlay.style.transform = 'translate(-50%, -50%)';
-				};
+			const reveal = () => {
+				item.classList.add('streamer-mode-disable');
+				overlay.removeEventListener('click', reveal);
+				overlay.remove();
+			};
 
-				positionOverlay();
-				parent.appendChild(overlay);
-
-				const ro = new ResizeObserver(positionOverlay);
-				ro.observe(img);
-				observers.push(ro);
-
-				let hidden = true;
-
-				const reveal = () => {
-					if (hidden) {
-						overlay.remove();
-						hidden = false;
-					} else {
-						positionOverlay();
-						parent.appendChild(overlay);
-						hidden = true;
-					}
-				};
-
-				img.addEventListener('click', reveal);
-			});
-		})();
+			overlay.addEventListener('click', reveal);
+		}
 
 		return () => {
 			observers.forEach((ro) => ro.disconnect());
 		};
 	});
-
-	let revealAuthor = $state(false);
-
-	function toggleAuthor() {
-		revealAuthor = !revealAuthor;
-	}
 </script>
 
 <svelte:head>
@@ -209,7 +201,7 @@
 	{/if}
 </svelte:head>
 
-<Container>
+<Container class={streamerMode ? 'streamer-mode' : ''}>
 	<article class="relative flex grow flex-col gap-4">
 		<RandomButton />
 
@@ -251,9 +243,8 @@
 						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>
-						{#if processed}
-							{@html html}
-						{/if}
+
+						{@html html}
 					</main>
 				</Box>
 
@@ -291,19 +282,20 @@
 				<p>
 					<span><strong>Author{authors.length > 1 ? 's' : ''}:</strong></span>
 					<span>
-						{#each authors as author, index}
-							{#if !streamerMode || revealAuthor}
+						{#if !streamerMode || showAuthors}
+							{#each authors as author, index}
 								{author.name}
-							{:else}
-								<button type="button" onclick={() => toggleAuthor()} class="underline">
-									{#if index === 0}
-										Press here to reveal (Streamer mode)
-									{/if}
-								</button>
-							{/if}
 
-							{index < authors.length - 1 ? ', ' : ''}
-						{/each}
+								{index < authors.length - 1 ? ', ' : ''}
+							{/each}
+						{:else}
+							<Button
+								onclick={() => toggleAuthor()}
+								class="inline-block h-[unset]! bg-transparent! p-0! underline"
+							>
+								(Streamer mode) Show authors
+							</Button>
+						{/if}
 					</span>
 				</p>
 			{/if}

@@ -73,7 +73,7 @@
 						>
 					</div>
 
-					<Button class="rounded-r-none! px-2! text-xs" onclick={openSettingsModal} title="Settings">
+					<Button class="rounded-r-none! rounded-l-none! px-2! text-xs" onclick={openSettingsModal} title="Settings">
 						<Settings size="18" />
 					</Button>
 
