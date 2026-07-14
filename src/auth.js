@@ -28,6 +28,13 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 				session.user.id = user.id;
 			}
 
+			const userSettings = await prisma.userSettings.findUnique({
+				where: { userId: user.id },
+				omit: { id: true, userId: true },
+			});
+
+			session.user.userSettings = userSettings || { streamerMode: false };
+
 			return session;
 		},
 	},
@@ -35,8 +42,21 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 		error: '/auth-error',
 	},
 	events: {
-		async createUser() {
+		async createUser(message) {
 			// TODO: Create user bio page.
+
+			const {
+				user: { id },
+			} = message;
+
+			if (id) {
+				await prisma.userSettings.create({
+					data: {
+						userId: id,
+						streamerMode: false,
+					},
+				});
+			}
 		},
 		async signIn(message) {
 			const {
@@ -45,6 +65,9 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 			const newName = message.profile?.name;
 			const newPicture = message.profile?.picture;
 
+			/**
+			 * @type {{ name?: string, image?: string }}
+			 */
 			const updateObj = {};
 
 			if (newName && newName !== name) {
