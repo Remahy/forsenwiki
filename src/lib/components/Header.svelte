@@ -7,7 +7,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Search from './Search/index.svelte';
-	import Announcement from './Announcement.svelte';
+	// import Announcement from './Announcement.svelte';
 
 	import { modal } from '$lib/stores/modal';
 	import SettingsModal from '$lib/components/SettingsModal.svelte';
@@ -110,5 +110,5 @@
 		</div>
 	</nav>
 
-	<Announcement />
+	<!-- <Announcement /> -->
 </header>
