@@ -213,7 +213,7 @@
 					<StreamerModeShow>
 						<span>
 							{#each authors as author, index (author.id)}
-								<Link href="/user/{author.id}" target="_blank">{author.name}</Link>{index <
+								<Link href="/user/{author.id}" target="_blank" class="decoration-1!">{author.name}</Link>{index <
 								authors.length - 1
 									? ', '
 									: ''}

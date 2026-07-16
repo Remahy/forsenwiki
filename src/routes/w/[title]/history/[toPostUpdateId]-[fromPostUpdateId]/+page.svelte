@@ -9,6 +9,7 @@
 	import Box from '$lib/components/Box.svelte';
 	import Article from '$lib/components/Article.svelte';
 	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+	import Link from '$lib/components/Link.svelte';
 
 	let { data } = $props();
 
@@ -29,7 +30,7 @@
 
 <svelte:head>
 	<title>{displayTitle} - Community Forsen Wiki</title>
-	<meta name="og:title" content="{displayTitle} - Community Forsen Wiki">
+	<meta name="og:title" content="{displayTitle} - Community Forsen Wiki" />
 
 	<meta name="description" content="{displayTitle} on forsen.wiki" />
 	<meta property="og:description" content="{displayTitle} on forsen.wiki" />
@@ -73,18 +74,18 @@
 				<p>
 					<span class="font-bold">&quot;{tD}&quot; version author:</span>
 					<StreamerModeShow>
-						<span>
-							{toAuthor?.name || '?'}
-						</span>
+						<Link href="/user/{toAuthor?.id}" target="_blank" class="decoration-1!"
+							>{toAuthor?.name}</Link
+						>
 					</StreamerModeShow>
 				</p>
 
 				<p>
 					<span class="font-bold">&quot;{fD}&quot; version author:</span>
 					<StreamerModeShow>
-						<span>
-							{fromAuthor?.name || '?'}
-						</span>
+						<Link href="/user/{fromAuthor?.id}" target="_blank" class="decoration-1!"
+							>{fromAuthor?.name}</Link
+						>
 					</StreamerModeShow>
 				</p>
 			</div>

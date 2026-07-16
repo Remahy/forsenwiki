@@ -9,6 +9,7 @@
 	import Box from '$lib/components/Box.svelte';
 	import Article from '$lib/components/Article.svelte';
 	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+	import Link from '$lib/components/Link.svelte';
 
 	let { data } = $props();
 
@@ -27,13 +28,11 @@
 	const date = $derived(new Date(createdTimestamp));
 
 	const displayTitle = $derived(`"${date.toLocaleString()}" version for "${rawTitle}" article`);
-
-	const authorName = $derived(author?.name || '?');
 </script>
 
 <svelte:head>
 	<title>{displayTitle} - Community Forsen Wiki</title>
-	<meta name="og:title" content="{displayTitle} - Community Forsen Wiki">
+	<meta name="og:title" content="{displayTitle} - Community Forsen Wiki" />
 
 	<meta name="description" content="{displayTitle} on forsen.wiki" />
 	<meta property="og:description" content="{displayTitle} on forsen.wiki" />
@@ -93,9 +92,9 @@
 				<p>
 					<span class="font-bold">Version author:</span>
 					<StreamerModeShow>
-						<span>
-							{authorName}
-						</span>
+						<Link href="/user/{author?.id}" target="_blank" class="decoration-1!"
+							>{author?.name}</Link
+						>
 					</StreamerModeShow>
 				</p>
 				<p><span>Update length:</span> {byteLength} bytes.</p>

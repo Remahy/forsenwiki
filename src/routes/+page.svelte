@@ -118,13 +118,12 @@
 						>
 							{new Date(post.createdTimestamp).toDateString()}&nbsp;
 						</span>
-						<small class="inline-block"
-							><span class="font-bold">By:</span>
-							<StreamerModeShow
-								><Link href="/user/{post.authorId}" target="_blank">{post.author}</Link
-								></StreamerModeShow
-							></small
-						>
+						<small class="inline-block">
+							<span class="font-bold">By:</span>
+							<StreamerModeShow>
+								<Link href="/user/{post.authorId}" target="_blank" class="decoration-1!">{post.author}</Link>
+							</StreamerModeShow>
+						</small>
 					</div>
 				{/each}
 			</Box>

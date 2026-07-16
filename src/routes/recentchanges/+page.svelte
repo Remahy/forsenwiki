@@ -155,7 +155,7 @@
 						{/if})&nbsp;</small
 					>
 				{/if}
-				<span><small class="opacity-50">({update.byteLength})&nbsp;</small></span>
+				<span><small class="opacity-85">({update.byteLength})&nbsp;</small></span>
 				{#if !isNewArticle}
 					<span>
 						<Link href="/w/{update.title}/history/{update.id}-" target="_blank"
@@ -172,7 +172,9 @@
 					<small>
 						<span class="font-bold">By:</span>
 						<StreamerModeShow>
-							<Link href="/user/{update.authorId}" target="_blank">{update.author}</Link>
+							<Link href="/user/{update.authorId}" target="_blank" class="decoration-1!"
+								>{update.author}</Link
+							>
 						</StreamerModeShow>
 					</small>
 				</span>
