@@ -2,7 +2,7 @@
 	import { Trash2Icon } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
 	import { changeName, deleteContent } from '$lib/api/content';
 	import Box from '$lib/components/Box.svelte';
@@ -16,23 +16,40 @@
 	import DocumentPreview from '$lib/components/content/DocumentPreview.svelte';
 	import Link from '$lib/components/Link.svelte';
 
-	const result = $page.data.result;
-	/** @type {string} */
-	const hash = result.hash;
-	/** @type {string} */
-	const contentType = result.contentType;
-	/** @type {string} */
-	const fileType = result.type;
-	/** @type {string | undefined} */
-	const id = $page.params.id;
+	const id = page.params.id;
 
-	/** @type {{ name: string }} */
-	const author = result.author;
+	/**
+	 * @type {import('./$types').PageProps}
+	 */
+	let { data } = $props();
 
-	const allowModify = $page.data.isModerator || author.name === $page.data.session?.user?.name;
+	const result = $derived(data.result);
+	const hash = $derived(result.hash);
+	const contentType = $derived(result.contentType);
+	const contentLength = $derived(result.contentLength);
+	const fileType = $derived.by(() => result.type || '');
 
-	/** @type {string} */
-	let name = $state(result.name);
+	const metadata = $derived.by(() => {
+		if (
+			typeof result.metadata !== 'object' ||
+			result.metadata instanceof Array ||
+			!result.metadata
+		) {
+			return null;
+		}
+
+		return result.metadata;
+	});
+
+	const author = $derived(result.author);
+
+	const allowModify = $derived(
+		data.isModerator || author.name === data.session?.user?.name
+	);
+
+	let initialName = $derived(result.name);
+
+	let name = $derived(initialName);
 
 	/** @type {Error | null} */
 	let error = $state(null);
@@ -46,12 +63,12 @@
 
 		try {
 			if (!id) {
-				error = new Error('Error: ID is unknown.');
+				error = new Error('ID is unknown.');
 				throw error;
 			}
 
 			if (!name || !name.length || name === result.name) {
-				error = new Error('Error: Name is unchanged or not set!');
+				error = new Error('Name is unchanged or not set!');
 				throw error;
 			}
 
@@ -81,7 +98,7 @@
 		let res;
 		try {
 			if (!id) {
-				error = new Error('Error: ID is unknown.');
+				error = new Error('ID is unknown.');
 				throw error;
 			}
 
@@ -98,6 +115,7 @@
 		}
 
 		if (res.status === 200) {
+			// eslint-disable-next-line svelte/no-navigation-without-resolve
 			goto(`${resolve('/search')}?query=${result.name}`);
 		} else if (res.status >= 400) {
 			error = await res.json();
@@ -134,8 +152,15 @@
 		},
 	};
 
+	// @ts-ignore
 	const SvelteComponent = $derived(fileType && PreviewComponents[fileType].component);
+	// @ts-ignore
 	const SvelteComponentProps = $derived(fileType && PreviewComponents[fileType].props());
+
+	// @ts-ignore
+	BigInt.prototype.toJSON = function () {
+		return { $bigint: this.toString() };
+	};
 </script>
 
 <svelte:head>
@@ -195,6 +220,12 @@
 <Container class="overflow-hidden">
 	<RandomButton />
 
+	{#if error}
+		<Box class="flex items-center bg-red-200! p-4 text-xl font-medium dark:text-black">
+			<p>{error.message}</p>
+		</Box>
+	{/if}
+
 	<div class="items-start gap-8 xl:flex">
 		<div class="mb-4 xl:mb-0 xl:w-fit">
 			<Box class="xl:min-h-96 xl:max-w-3xl xl:min-w-96">
@@ -214,7 +245,7 @@
 							<td class="p-4"><strong>Name</strong></td>
 							{#if allowModify}
 								<td class="pl-4">
-									<div class="mt-1 mr-1 flex">
+									<div class="mt-0.5 mr-0.5 flex">
 										<input
 											bind:value={name}
 											type="text"
@@ -222,7 +253,7 @@
 											class="input-color w-full py-4 placeholder:text-inherit/25"
 											placeholder={result.name}
 										/>
-										<Button class="rounded-l-none! px-4" on:click={updateName} disabled={isUpdating}
+										<Button class="rounded-none! px-4" on:click={updateName} disabled={isUpdating}
 											>Save</Button
 										>
 									</div>
@@ -233,24 +264,40 @@
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Uploader</strong></td>
-							<td class="p-4">{author.name}</td>
+							<td class="p-4"
+								><Link href="/user/{author.id}" target="_blank" class="decoration-1!"
+									>{author.name}</Link
+								></td
+							>
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Type</strong></td>
 							<td class="p-4">{fileType} <strong>({contentType})</strong></td>
 						</tr>
-						<tr>
-							<td class="p-4"><strong>Metadata</strong></td>
-							<td class="p-4 wrap-break-word">
-								<details>
-									<summary class="cursor-pointer">Toggle expand</summary>
-									<small>
-										<div>{result.metadata.mimetype}</div>
-										<div>{result.metadata.dimensions}</div>
-									</small>
-								</details>
-							</td>
-						</tr>
+						{#if contentLength}
+							<tr>
+								<td class="p-4"><strong>Length</strong></td>
+								<td class="p-4">~{contentLength / 1_048_576n} MiB ({contentLength})</td>
+							</tr>
+						{/if}
+						{#if metadata}
+							<tr>
+								<td class="p-4"><strong>Metadata</strong></td>
+								<td class="p-4 wrap-break-word">
+									<details>
+										<summary class="cursor-pointer">Toggle expand</summary>
+										<small>
+											{#if metadata.mimetype}
+												<div>{metadata.mimetype}</div>
+											{/if}
+											{#if metadata.dimensions}
+												<div>{metadata.dimensions}</div>
+											{/if}
+										</small>
+									</details>
+								</td>
+							</tr>
+						{/if}
 						<tr>
 							<td class="p-4"><strong>Created at</strong></td>
 							<td class="p-4" title={new Date(result.createdTimestamp).toUTCString()}
@@ -287,11 +334,5 @@
 		<div>
 			<Button on:click={removeContent}><Trash2Icon /> Delete</Button>
 		</div>
-	{/if}
-
-	{#if error}
-		<Box class="flex items-center bg-red-200! p-4 text-xl font-medium dark:text-black">
-			<p>{error.message}</p>
-		</Box>
 	{/if}
 </Container>
