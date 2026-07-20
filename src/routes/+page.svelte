@@ -93,7 +93,7 @@
 		<p class="m-0 text-center leading-10">
 			<span class="font-bold">ForsenWiki</span>
 			<span> - </span>
-			<span>Forsen lore, news, big plays, tilts. Forsen's past and the bajs' future.</span>
+			<span>Forsen lore, news, big plays, tilts.</span>
 			{#if streamerMode}
 				<br />
 				<strong>Streamer mode is enabled.</strong>
@@ -121,7 +121,9 @@
 						<small class="inline-block">
 							<span class="font-bold">By:</span>
 							<StreamerModeShow>
-								<Link href="/user/{post.authorId}" target="_blank" class="decoration-1!">{post.author}</Link>
+								<Link href="/user/{post.authorId}" target="_blank" class="decoration-1!"
+									>{post.author}</Link
+								>
 							</StreamerModeShow>
 						</small>
 					</div>
