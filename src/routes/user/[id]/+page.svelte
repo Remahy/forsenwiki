@@ -10,7 +10,9 @@
 	import Link from '$lib/components/Link.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { resetContent } from '$lib/utils/indexedDb/content';
-	import { deleteUser } from '$lib/api/user';
+	import { deleteUser, getUserData } from '$lib/api/user';
+	import MyDataModal from '$lib/components/MyDataModal/index.svelte';
+	import { modal } from '$lib/stores/modal';
 
 	const sessionId = $page.data.sessionId;
 
@@ -23,6 +25,8 @@
 	const isMe = user.name === $page.data.session?.user?.name;
 
 	let localDrafts = $state(browser ? listArticles() : []);
+
+	let isRetrievingUserData = $state(false);
 
 	/**
 	 * @param {string} name
@@ -43,7 +47,7 @@
 
 	const onClickAnonymizeAccountWrapper = async () => {
 		const ok = confirm(
-			'This will delete your Twitch association and anonymize your account. This cannot be reverted. Are you sure? '
+			'This will delete your Twitch association and anonymize your account. This cannot be reverted. Are you sure?'
 		);
 
 		if (!ok) {
@@ -64,9 +68,51 @@
 			await resetContent(name);
 		}
 
-		await deleteUser(sessionId);
+		try {
+			await deleteUser(sessionId);
+		} catch (err) {
+			alert(
+				// @ts-ignore
+				`Please refresh your session by logging out and logging back in again before attempting this action. ${err?.message || ''}`
+			);
+			console.error(err);
+		}
 
 		await signOut({ redirect: true });
+	};
+
+	const onClickDownloadMyData = async () => {
+		isRetrievingUserData = true;
+
+		const ok = confirm(
+			'You must stay on this page to download all of your files. Leaving this page will cancel the process. Do you wish to proceed?'
+		);
+
+		if (!ok) {
+			isRetrievingUserData = false;
+
+			return;
+		}
+
+		try {
+			const res = await getUserData(sessionId);
+
+			const data = await res.json();
+
+			modal.set({
+				isOpen: true,
+				component: MyDataModal,
+				data,
+			});
+		} catch (err) {
+			alert(
+				// @ts-ignore
+				`Something went wrong retrieving your data. Try again later or try logging out and logging back in again. ${err?.message || ''}`
+			);
+			console.error(err);
+		} finally {
+			isRetrievingUserData = false;
+		}
 	};
 </script>
 
@@ -89,22 +135,10 @@
 	{/if}
 </svelte:head>
 
-<section
-	class="
-		container mx-auto flex grow flex-col gap-4 p-4
-		lg:py-12
-	"
->
-	<Box
-		class="
-			flex max-w-[unset] flex-col overflow-hidden p-4
-			lg:mb-0
-		"
-	>
+<section class="container mx-auto flex grow flex-col gap-4 p-4 lg:py-12">
+	<Box class="flex max-w-[unset] flex-col overflow-hidden p-4 lg:mb-0">
 		<div class="flex flex-wrap gap-8">
-			<div class="
-				self-start overflow-hidden rounded-lg border-2 forsen-wiki-theme-border
-			">
+			<div class="forsen-wiki-theme-border self-start overflow-hidden rounded-lg border-2">
 				<img src={user.image} alt="" loading="lazy" />
 			</div>
 			<div class="grow">
@@ -188,14 +222,20 @@
 								<p class="mb-2"><strong>Your data:</strong></p>
 								<div class="flex flex-col gap-2">
 									<Button
-										class="
-											h-fit min-h-0! bg-red-500! p-1! text-sm font-bold!
-											dark:bg-red-500/50!
-										"
+										class="h-fit min-h-0! bg-red-500! p-1! text-sm font-bold! dark:bg-red-500/50!"
 										title="This will anonymize your account, delete any personally identifiably information and disconnect your Twitch account."
 										onclick={onClickAnonymizeAccountWrapper}>Delete account</Button
 									>
-									<Button>My data</Button>
+									<Button
+										title="Clicking this will give you a JSON file with all of your personal data."
+										onclick={onClickDownloadMyData}
+									>
+										{#if isRetrievingUserData}
+											<Spinner />
+										{/if}
+
+										<span>My data</span>
+									</Button>
 								</div>
 							</div>
 							{#await localDrafts}
