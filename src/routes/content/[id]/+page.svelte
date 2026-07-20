@@ -43,9 +43,7 @@
 
 	const author = $derived(result.author);
 
-	const allowModify = $derived(
-		data.isModerator || author.name === data.session?.user?.name
-	);
+	const allowModify = $derived(data.isModerator || author.name === data.session?.user?.name);
 
 	let initialName = $derived(result.name);
 
@@ -277,7 +275,9 @@
 						{#if contentLength}
 							<tr>
 								<td class="p-4"><strong>Length</strong></td>
-								<td class="p-4">~{contentLength / 1_048_576n} MiB ({contentLength})</td>
+								<td class="p-4"
+									>~{Number(contentLength / 1_048_576n).toFixed(2)} MiB ({contentLength})</td
+								>
 							</tr>
 						{/if}
 						{#if metadata}
