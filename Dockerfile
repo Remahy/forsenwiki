@@ -32,10 +32,10 @@ WORKDIR /app
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/prisma.config.ts ./prisma.config.ts
 COPY --from=build /app/src/generated ./src/generated
+COPY --from=build /app/src/lib/version.txt ./src/lib/version.txt
 COPY --from=build /app/src/lib/constants/constants.js ./src/lib/constants/constants.js
 
 COPY --from=build /app/build ./build
-COPY --from=build /app/version ./version
 COPY --from=build /app/.env ./.env
 COPY --from=build /app/package*.json .
 COPY --from=build /app/node_modules ./node_modules

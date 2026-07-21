@@ -3,7 +3,7 @@
 	"version": "1.0.0-beta.16",
 	"type": "module",
 	"scripts": {
-		"add-version-file": "node -p \"require('./package.json').version\" > version && git rev-parse --short HEAD >> version",
+		"add-version-file": "node -p \"require('./package.json').version\" > ./src/lib/version.txt && git rev-parse --short HEAD >> ./src/lib/version.txt",
 		"copy-worker-files": "cp -a ./.svelte-kit/output/server/chunks/worker.js ./build/server/chunks/ && cp -a ./.svelte-kit/output/server/chunks/worker2.js ./build/server/chunks/ && cp -a ./.svelte-kit/output/server/chunks/worker3.js ./build/server/chunks/",
 		"build": "npm run prisma:generate && npm run add-version-file && svelte-kit sync && npm run build:workers && vite build && npm run copy-worker-files",
 		"build:workers": "node buildWorkers.js",
