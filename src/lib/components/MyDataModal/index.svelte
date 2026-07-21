@@ -82,7 +82,7 @@
 						{:then finishedChunks}
 							{#if finishedChunks.failed.length}
 								<tr>
-									<td>
+									<td colspan="4">
 										<div class="p-3 py-0">
 											<strong
 												>Some files failed to be included in chunks. Please download them manually:</strong
@@ -141,6 +141,7 @@
 																name={file.name}
 																download={file.name}
 																href={file.url}
+																target="_blank"
 															>
 																<span>Download</span>
 															</Link>
