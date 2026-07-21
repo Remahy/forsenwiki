@@ -19,7 +19,7 @@
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-	import { WIKI_PATH, Y_POST_TYPES } from '$lib/constants/constants';
+	import { WIKI_PATH } from '$lib/constants/constants';
 	import { uploadImages } from '$lib/s3/uploadContentHandlers';
 	import { uploadModal } from '$lib/stores/modal';
 	import UploadingContentModal from '$lib/components/UploadingContentModal.svelte';
@@ -181,7 +181,7 @@
 
 <svelte:head>
 	<title>Editing &quot;{rawTitle}&quot; - Community Forsen Wiki</title>
-	<meta name="og:title" content="Editing &quot;{rawTitle}&quot; - Community Forsen Wiki">
+	<meta name="og:title" content="Editing &quot;{rawTitle}&quot; - Community Forsen Wiki" />
 
 	<meta name="description" content="Edit the &quot;{rawTitle}&quot; article on forsen.wiki" />
 	<meta
