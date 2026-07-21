@@ -22,7 +22,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/package*.json .
 
 RUN npm run build
-RUN npm prune --production
+RUN npm prune --omit=dev
 
 FROM base AS runtime
 
