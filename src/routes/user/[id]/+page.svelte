@@ -217,8 +217,8 @@
 						{/if}
 					</div>
 					{#if isMe}
-						<div>
-							<div class="mb-2 rounded-sm border p-2">
+						<div class="w-full min-w-50 lg:w-[unset]">
+							<div class="forsen-wiki-theme-border mb-2 rounded-sm border p-2">
 								<p class="mb-2"><strong>Your data:</strong></p>
 								<div class="flex flex-col gap-2">
 									<Button
