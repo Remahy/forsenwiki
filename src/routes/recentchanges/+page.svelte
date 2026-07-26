@@ -42,6 +42,7 @@
 				title: string
 				lastUpdated: string
 				author: string | null
+				authorId: string | null
 				byteLength: number
 				newTitle?: string
 				oldTitle?: string
@@ -81,10 +82,10 @@
 		}
 	};
 
-	const sseArticleUpdate = source('/api/adonis/frontpage').select('article:update');
+	const ssePostUpdate = source('/api/adonis/frontpage').select('post:update');
 
 	onMount(() => {
-		sseArticleUpdate.subscribe((v) => {
+		ssePostUpdate.subscribe((v) => {
 			if (v) {
 				const values = $latestUpdates;
 
@@ -144,7 +145,7 @@
 					</Link>&nbsp;
 				</span>
 				{#if isNewArticle}
-					<span class="rounded-sm bg-green-500/25 p-1 text-xs">New!</span>
+					<span class="rounded-sm bg-emerald-500/25 p-1 text-xs">New!</span>
 				{/if}
 				{#if update.newTitle}
 					<small
@@ -154,7 +155,7 @@
 						{/if})&nbsp;</small
 					>
 				{/if}
-				<span><small class="opacity-50">({update.byteLength})&nbsp;</small></span>
+				<span><small class="opacity-85">({update.byteLength})&nbsp;</small></span>
 				{#if !isNewArticle}
 					<span>
 						<Link href="/w/{update.title}/history/{update.id}-" target="_blank"
@@ -167,7 +168,16 @@
 						locale: enGB,
 					})}&nbsp;</small
 				>
-				<span><small><span class="font-bold">By:</span> <StreamerModeShow>{update.author}</StreamerModeShow></small></span>
+				<span>
+					<small>
+						<span class="font-bold">By:</span>
+						<StreamerModeShow>
+							<Link href="/user/{update.authorId}" target="_blank" class="decoration-1!"
+								>{update.author}</Link
+							>
+						</StreamerModeShow>
+					</small>
+				</span>
 			</div>
 		{:else}
 			<span class="bg-black/10 p-2 dark:bg-white/5">Nothing found.</span>

@@ -4,7 +4,7 @@
 
 <svelte:head>
 	<title>Terms & Conditions</title>
-	<meta name="description" content="forsen.wiki" />
+	<meta name="description" content="forsen.wiki Terms & Conditions" />
 </svelte:head>
 
 <Container class="p-8">

@@ -1,3 +1,4 @@
+import { Y_POST_TYPES } from '$lib/constants/constants';
 import { DOMAIN } from '$lib/environment/environment';
 import prisma from '$lib/prisma.server';
 import { getShouldCacheBust } from '$lib/utils/cacheBust';
@@ -18,6 +19,14 @@ const siteMapEntry = ({ url, lastUpdated }) => {
 
 const getAllArticles = async () => {
 	const res = await prisma.yPost.findMany({
+		where: {
+			outRelations: {
+				some: {
+					isSystem: true,
+					toPostId: Y_POST_TYPES.ARTICLE,
+				},
+			},
+		},
 		orderBy: {
 			createdTimestamp: 'desc',
 		},

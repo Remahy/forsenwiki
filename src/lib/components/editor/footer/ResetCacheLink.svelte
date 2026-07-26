@@ -22,7 +22,7 @@
 		isLoading = true;
 
 		setTimeout(() => {
-			const ok = confirm('Are you sure? This will delete your local draft edit.');
+			const ok = confirm('This will delete your local draft edit. Are you sure?');
 
 			if (ok) {
 				onClickReset();

@@ -1,10 +1,5 @@
-let version = '';
+import rawVersion from '$lib/version.txt?raw';
 
-if (import.meta.env.PROD && !version) {
-	(async () => {
-		const v = await import('/version?raw');
-		version = v.default.trim().replace(/[\n]+/g, '-').replace(/ /g, '-');
-	})();
-}
+const version = rawVersion.trim().replace(/[\n]+/g, '-').replace(/ /g, '-');
 
 export { version };

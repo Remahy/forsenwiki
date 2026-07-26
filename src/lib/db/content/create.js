@@ -5,11 +5,11 @@ import prisma from '$lib/prisma.server';
  */
 
 /**
- * @param {{ name: string, hash: string, authorId: string, type: string, contentType: string, metadata: any }} CreateContentArg
+ * @param {{ name: string, hash: string, authorId: string, type: string, contentType: string, contentLength: number, metadata: any }} CreateContentArg
  * @param {PrismaTransaction} tx
  */
 export const createContent = async (
-	{ name, hash, authorId, type, contentType, metadata },
+	{ name, hash, authorId, type, contentType, contentLength, metadata },
 	tx = prisma
 ) => {
 	return tx.content.create({
@@ -20,6 +20,7 @@ export const createContent = async (
 			type,
 			contentType,
 			metadata,
+			contentLength,
 		},
 	});
 };

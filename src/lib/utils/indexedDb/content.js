@@ -1,4 +1,4 @@
-const DRAFT_CONTENT_DB_PREFIX = 'DraftContent';
+export const DRAFT_CONTENT_DB_PREFIX = 'DraftContent';
 const DRAFT_CONTENT_DB_KEY = 'content';
 
 const hashCache = new Map();
@@ -95,7 +95,7 @@ export const loadContent = (articleId, hash) => {
  * @param {string} articleId
  * @returns {Promise<boolean>}
  */
-export const resetContent = async (articleId) => {
+export const resetContent = (articleId) => {
 	return new Promise((resolve, reject) => {
 		const dbDelete = window.indexedDB.deleteDatabase(`${DRAFT_CONTENT_DB_PREFIX}-${articleId}`);
 

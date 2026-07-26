@@ -11,7 +11,7 @@ const url = `https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/pu
 /**
  * @param {string} title
  */
-export const invalidateArticleCache = async (title) => {
+export const invalidatePostCache = async (title) => {
 	if (!title || !CLOUDFLARE_API_TOKEN || !CLOUDFLARE_ZONE_ID) {
 		return;
 	}

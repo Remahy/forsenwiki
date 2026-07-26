@@ -95,6 +95,7 @@
 
 <svelte:head>
 	<title>{rawTitle || title} - Community Forsen Wiki</title>
+	<meta name="og:title" content="{rawTitle || title} - Community Forsen Wiki" />
 
 	<meta property="og:site_name" content="Forsen Wiki" />
 
@@ -211,10 +212,11 @@
 					<span><strong>Author{authors.length > 1 ? 's' : ''}:</strong></span>
 					<StreamerModeShow>
 						<span>
-							{#each authors as author, index (author.name)}
-								{author.name}
-
-								{index < authors.length - 1 ? ', ' : ''}
+							{#each authors as author, index (author.id)}
+								<Link href="/user/{author.id}" target="_blank" class="decoration-1!">{author.name}</Link>{index <
+								authors.length - 1
+									? ', '
+									: ''}
 							{/each}
 						</span>
 					</StreamerModeShow>
@@ -246,7 +248,7 @@
 				<CacheBustButton />
 				<LinkButton
 					class="mt-2 min-h-[unset] min-w-[unset] p-1! text-xs"
-					href="/api/article/read/{title}">API request</LinkButton
+					href="/api/post/read/{title}">API request</LinkButton
 				>
 			</div>
 		</details>

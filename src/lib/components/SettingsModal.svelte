@@ -17,7 +17,7 @@
 		const response = await saveUserSettings({ streamerMode });
 
 		if (!response.ok) {
-			console.error('Failed to save user settings');
+			console.error('Failed to save user settings.');
 			loading = false;
 		} else {
 			window.location.reload();

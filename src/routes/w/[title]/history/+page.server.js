@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { readYPostUpdatesIdsByTitle } from '$lib/db/article/read';
+import { readYPostUpdatesIdsByTitle } from '$lib/db/post/read';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle.js';
 
 export async function load({ params }) {

@@ -7,7 +7,7 @@ export async function load({ params }) {
 	const content = await prisma.content.findUnique({
 		where: { id },
 		include: {
-			author: { select: { name: true } },
+			author: { select: { name: true, id: true } },
 		},
 	});
 

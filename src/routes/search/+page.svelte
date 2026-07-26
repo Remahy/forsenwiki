@@ -122,6 +122,7 @@
 								<img
 									src={getImageCacheURL(result.html.image, { quality: 'low' }).toString()}
 									alt=""
+									loading="lazy"
 								/>
 							{/if}
 

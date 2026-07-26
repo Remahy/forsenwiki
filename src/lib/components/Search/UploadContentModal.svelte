@@ -164,7 +164,7 @@
 			}
 		}
 
-		uploadModal.set({ component: UploadingContentModal, isOpen: true });
+		uploadModal.set({ component: UploadingContentModal, isOpen: true, closable: true });
 
 		try {
 			await uploadFiles(filesToUpload);

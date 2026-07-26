@@ -163,9 +163,18 @@ export const _getSearch = async (query, types = [], options) => {
 				postUpdates: {
 					some: {
 						metadata: {
-							user: {
-								name: query.toLowerCase(),
-							},
+							OR: [
+								{
+									user: {
+										name: query.toLowerCase(),
+									},
+								},
+								{
+									user: {
+										id: query.toLowerCase(),
+									},
+								},
+							],
 						},
 					},
 				},
@@ -196,6 +205,11 @@ export const _getSearch = async (query, types = [], options) => {
 					{
 						author: {
 							name: query.toLowerCase(),
+						},
+					},
+					{
+						author: {
+							id: query.toLowerCase(),
 						},
 					},
 					{

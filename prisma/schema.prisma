@@ -160,11 +160,12 @@ model WhitelistedAccounts {
 model Content {
   id String @id @default(cuid())
 
-  hash        String  @unique
-  type        String?
-  contentType String?
-  metadata    Json    @default("{}")
-  name        String
+  hash          String  @unique
+  type          String?
+  contentType   String?
+  contentLength BigInt?
+  metadata      Json    @default("{}")
+  name          String
 
   author   User   @relation(fields: [authorId], references: [id])
   authorId String

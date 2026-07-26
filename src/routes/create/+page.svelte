@@ -9,7 +9,7 @@
 	import { localStore } from '$lib/localStore.svelte';
 	import { resetArticle } from '$lib/utils/indexedDb/article';
 	import { resetContent } from '$lib/utils/indexedDb/content';
-	import { createArticle } from '$lib/api/articles';
+	import { createPost } from '$lib/api/posts';
 	import Box from '$lib/components/Box.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Clown from '$lib/components/Clown.svelte';
@@ -19,7 +19,7 @@
 	import Container from '$lib/components/Container.svelte';
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-	import { WIKI_PATH } from '$lib/constants/constants';
+	import { WIKI_PATH, Y_POST_TYPES } from '$lib/constants/constants';
 	import { uploadImages } from '$lib/s3/uploadContentHandlers';
 	import { uploadModal } from '$lib/stores/modal';
 	import UploadingContentModal from '$lib/components/UploadingContentModal.svelte';
@@ -122,7 +122,7 @@
 			// Upload images to S3.
 			await uploadImages(editor, id);
 
-			res = await editor.read(() => createArticle(title.value, yjsDocMap));
+			res = await editor.read(() => createPost(title.value, Y_POST_TYPES.ARTICLE, yjsDocMap));
 		} catch (err) {
 			console.error(err);
 			error = new Error(err?.toString());

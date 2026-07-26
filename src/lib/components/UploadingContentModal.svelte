@@ -61,9 +61,11 @@
 		{/if}
 	</main>
 
-	{#if uploading.count > 0}
+	{#if uploading.count > 0 && $uploadModal.closable}
 		<footer class="flex items-center justify-end gap-2 p-6">
 			<Button on:click={cancel} disabled={uploaded.length < uploading.count}>OK</Button>
 		</footer>
+	{:else}
+		<div class="self-center"><Spinner /></div>
 	{/if}
 </div>
