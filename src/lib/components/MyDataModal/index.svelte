@@ -38,7 +38,7 @@
 	const chunks = $derived(prepareFiles(data?.uploads || []));
 
 	/**
-	 * @type {{ [x: string]: { files: Awaited<chunks>['chunks'][0] } }}
+	 * @type {{ [x: string]: { files: Awaited<chunks>['chunks'][0], progress: boolean } }}
 	 */
 	let failedToUpload = $state({});
 
@@ -47,19 +47,26 @@
 	 * @param {number} index
 	 */
 	const downloadZip = async (chunk, index) => {
-		const { blob, failed } = await createZip(chunk);
+		try {
+			failedToUpload[index] = { files: [], progress: true };
+			const { blob, failed } = await createZip(chunk);
 
-		failedToUpload[index] = { files: failed };
+			failedToUpload[index] = { files: failed, progress: false };
 
-		const url = URL.createObjectURL(blob);
+			const url = URL.createObjectURL(blob);
 
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = `wiki_user_content_${data?.id || 'User'}_${new Date().toISOString()}_${index}.zip`;
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `wiki_user_content_${data?.id || 'User'}_${new Date().toISOString()}_${index}.zip`;
 
-		a.click();
+			a.click();
 
-		URL.revokeObjectURL(url);
+			URL.revokeObjectURL(url);
+		} catch (err) {
+			console.error(err);
+			alert('Errored while creating user data ZIP. Please contact privacy@forsen.wiki for help.');
+			failedToUpload[index] = { files: [], progress: false };
+		}
 	};
 </script>
 
@@ -123,7 +130,12 @@
 										>~{Number(totalContentLength / 1_048_576n).toFixed(2)} MiB ({totalContentLength})</td
 									>
 									<td>
-										<Button onclick={() => downloadZip(chunk, index)}>Download</Button>
+										<Button onclick={() => downloadZip(chunk, index)}>
+											{#if failedToUpload[index]?.progress}
+												<Spinner />
+											{/if}
+											<span>Download</span>
+										</Button>
 										{#if failedToUpload[index]?.files?.length}
 											<div class="max-w-xs">
 												<strong
