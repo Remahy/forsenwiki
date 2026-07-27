@@ -3,16 +3,37 @@ import prisma from '$lib/prisma.server.js';
 import { SYSTEM } from '$lib/constants/constants.js';
 
 export async function load({ url, params }) {
-	const { id } = params;
+	const { idOrName } = params;
 
-	const user = await prisma.user.findUnique({
-		where: { id },
-		select: { name: true, createdAt: true, image: true, permissions: { select: { type: true } } },
+	let user = await prisma.user.findUnique({
+		where: { id: idOrName },
+		select: {
+			name: true,
+			createdAt: true,
+			image: true,
+			permissions: { select: { type: true } },
+			id: true,
+		},
 	});
+
+	if (!user) {
+		user = await prisma.user.findFirst({
+			where: { name: idOrName },
+			select: {
+				name: true,
+				createdAt: true,
+				image: true,
+				permissions: { select: { type: true } },
+				id: true,
+			},
+		});
+	}
 
 	if (!user) {
 		return error(404, 'User not found.');
 	}
+
+	const { id } = user;
 
 	let stats = {
 		editedArticles: 0,

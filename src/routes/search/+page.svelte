@@ -90,7 +90,7 @@
 			{#if $page.url.searchParams.get('query') === '' && (!$page.url.searchParams.get('order') || $page.url.searchParams.get('order') === 'desc')}
 				<p><strong>Recently created articles & content.</strong></p>
 			{/if}
-			<Masonry items={results} animate={false}>
+			<Masonry items={results} animate={false} order="row-first">
 				{#snippet children({ item: result })}
 					<LinkBox
 						href={!result.type ? `/w/${result.title}` : `/content/${result.id}`}
