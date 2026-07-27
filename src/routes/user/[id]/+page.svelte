@@ -162,7 +162,7 @@
 						{#if stats.editedArticles}
 							<p>
 								<strong>Edited articles:</strong>
-								<Link href="/search?query={id}&type=article" target="blank"
+								<Link href="/search?query={id}&type=article" target="_blank"
 									>{stats.editedArticles}</Link
 								>
 							</p>
@@ -170,7 +170,7 @@
 						{#if stats.uploadedContent.total}
 							<p>
 								<strong>Uploaded content:</strong>
-								<Link href="/search?query={id}&type=content" target="blank"
+								<Link href="/search?query={id}&type=content" target="_blank"
 									>{stats.uploadedContent.total}</Link
 								>
 							</p>
@@ -179,7 +179,7 @@
 									<tr>
 										<td>Images</td>
 										<td>
-											<Link href="/search?query={id}&type=content&contenttype=image" target="blank"
+											<Link href="/search?query={id}&type=content&contenttype=image" target="_blank"
 												>{stats.uploadedContent.images}</Link
 											>
 										</td>
@@ -188,7 +188,7 @@
 									<tr>
 										<td>Videos</td>
 										<td>
-											<Link href="/search?query={id}&type=content&contenttype=video" target="blank"
+											<Link href="/search?query={id}&type=content&contenttype=video" target="_blank"
 												>{stats.uploadedContent.videos}</Link
 											>
 										</td>
@@ -197,7 +197,7 @@
 									<tr>
 										<td>Audio</td>
 										<td>
-											<Link href="/search?query={id}&type=content&contenttype=audio" target="blank"
+											<Link href="/search?query={id}&type=content&contenttype=audio" target="_blank"
 												>{stats.uploadedContent.audio}</Link
 											>
 										</td>
@@ -208,7 +208,7 @@
 										<td>
 											<Link
 												href="/search?query={id}&type=content&contenttype=document"
-												target="blank">{stats.uploadedContent.documents}</Link
+												target="_blank">{stats.uploadedContent.documents}</Link
 											>
 										</td>
 									</tr>
