@@ -70,6 +70,7 @@
 						{/if}
 						<Link
 							href="/user/{page.data.session.user.id}"
+							reload
 							class="content-center overflow-hidden text-xs font-medium text-ellipsis"
 							title={page.data.session.user.name}>{page.data.session.user.name}</Link
 						>
