@@ -124,7 +124,7 @@
 									>
 									<td>
 										<Button onclick={() => downloadZip(chunk, index)}>Download</Button>
-										{#if failedToUpload[index]}
+										{#if failedToUpload[index]?.files?.length}
 											<div class="max-w-xs">
 												<strong
 													>Some files failed to compress. Please download them manually:</strong
