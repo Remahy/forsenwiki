@@ -27,6 +27,7 @@ const { createSession } = adapter;
 adapter.createSession = async (session) => {
 	await prisma.session.deleteMany({ where: { userId: session.userId } });
 
+	// Technically logs you out of other sessions when you login.
 	// @ts-ignore
 	return createSession(session);
 };
