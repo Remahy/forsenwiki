@@ -1,4 +1,6 @@
 <script>
+	import { XIcon } from '@lucide/svelte';
+	import { modal } from '$lib/stores/modal';
 	import Button from '../Button.svelte';
 	import Link from '../Link.svelte';
 	import Spinner from '../Spinner.svelte';
@@ -71,11 +73,18 @@
 			failedToUpload[index] = { files: [], progress: false };
 		}
 	};
+
+	const cancel = () => {
+		$modal.isOpen = false;
+	};
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
 	<header class="forsen-wiki-theme-border flex items-center justify-between border-b p-6">
 		<h1 class="text-xl font-semibold lg:text-2xl">My data</h1>
+		<Button class="ml-auto inline-flex items-center rounded-lg" on:click={cancel}>
+			<XIcon />
+		</Button>
 	</header>
 
 	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
@@ -133,7 +142,10 @@
 										>~{Number(totalContentLength / 1_048_576n).toFixed(2)} MiB ({totalContentLength})</td
 									>
 									<td>
-										<Button onclick={() => downloadZip(chunk, index)} disabled={failedToUpload[index]?.progress}>
+										<Button
+											onclick={() => downloadZip(chunk, index)}
+											disabled={failedToUpload[index]?.progress}
+										>
 											{#if failedToUpload[index]?.progress}
 												<Spinner />
 											{/if}
