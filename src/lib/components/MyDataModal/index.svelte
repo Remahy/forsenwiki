@@ -49,9 +49,10 @@
 	const downloadZip = async (chunk, index) => {
 		try {
 			failedToUpload[index] = { files: [], progress: true };
+
 			const { blob, failed } = await createZip(chunk);
 
-			failedToUpload[index] = { files: failed, progress: false };
+			failedToUpload[index] = { files: failed, progress: true };
 
 			const url = URL.createObjectURL(blob);
 
@@ -62,6 +63,8 @@
 			a.click();
 
 			URL.revokeObjectURL(url);
+
+			failedToUpload[index] = { files: failed, progress: false };
 		} catch (err) {
 			console.error(err);
 			alert('Errored while creating user data ZIP. Please contact privacy@forsen.wiki for help.');
@@ -130,7 +133,7 @@
 										>~{Number(totalContentLength / 1_048_576n).toFixed(2)} MiB ({totalContentLength})</td
 									>
 									<td>
-										<Button onclick={() => downloadZip(chunk, index)}>
+										<Button onclick={() => downloadZip(chunk, index)} disabled={failedToUpload[index]?.progress}>
 											{#if failedToUpload[index]?.progress}
 												<Spinner />
 											{/if}
