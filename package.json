@@ -1,6 +1,6 @@
 {
 	"name": "forsenwiki",
-	"version": "1.0.0-beta.16",
+	"version": "1.0.0-beta.17",
 	"type": "module",
 	"scripts": {
 		"add-version-file": "node -p \"require('./package.json').version\" > ./src/lib/version.txt && git rev-parse --short HEAD >> ./src/lib/version.txt",
