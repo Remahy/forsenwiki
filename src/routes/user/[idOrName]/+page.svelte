@@ -14,10 +14,9 @@
 	import MyDataModal from '$lib/components/MyDataModal/index.svelte';
 	import { modal } from '$lib/stores/modal';
 
-	const id = $page.params.id;
 	/** @type {{ editedArticles: number, uploadedContent: { total: number, images: number, videos: number, audio: number, documents: number } }} */
 	let stats = $state($page.data.stats);
-	/** @type {{ name: string, createdAt: Date, image: string, permissions: Array<{ type: string }> }} */
+	/** @type {{ name: string, createdAt: Date, image: string, permissions: Array<{ type: string }>, id: string }} */
 	let user = $state($page.data.user);
 
 	const isMe = user.name === $page.data.session?.user?.name;
@@ -143,7 +142,7 @@
 				<h1 class="mb-2 text-4xl font-bold">{user.name}</h1>
 				<h2 class="text-2xl">{stats.editedArticles ? 'Editor' : 'Lurker'}</h2>
 
-				<hr class="mb-4" />
+				<hr class="mb-4 forsen-wiki-theme-border" />
 
 				<div class="flex flex-wrap gap-8">
 					<div class="flex grow flex-col gap-2">
@@ -160,7 +159,7 @@
 						{#if stats.editedArticles}
 							<p>
 								<strong>Edited articles:</strong>
-								<Link href="/search?query={id}&type=article" target="_blank"
+								<Link href="/search?query={user.id}&type=article" target="_blank"
 									>{stats.editedArticles}</Link
 								>
 							</p>
@@ -168,7 +167,7 @@
 						{#if stats.uploadedContent.total}
 							<p>
 								<strong>Uploaded content:</strong>
-								<Link href="/search?query={id}&type=content" target="_blank"
+								<Link href="/search?query={user.id}&type=content" target="_blank"
 									>{stats.uploadedContent.total}</Link
 								>
 							</p>
@@ -177,7 +176,7 @@
 									<tr>
 										<td>Images</td>
 										<td>
-											<Link href="/search?query={id}&type=content&contenttype=image" target="_blank"
+											<Link href="/search?query={user.id}&type=content&contenttype=image" target="_blank"
 												>{stats.uploadedContent.images}</Link
 											>
 										</td>
@@ -186,7 +185,7 @@
 									<tr>
 										<td>Videos</td>
 										<td>
-											<Link href="/search?query={id}&type=content&contenttype=video" target="_blank"
+											<Link href="/search?query={user.id}&type=content&contenttype=video" target="_blank"
 												>{stats.uploadedContent.videos}</Link
 											>
 										</td>
@@ -195,7 +194,7 @@
 									<tr>
 										<td>Audio</td>
 										<td>
-											<Link href="/search?query={id}&type=content&contenttype=audio" target="_blank"
+											<Link href="/search?query={user.id}&type=content&contenttype=audio" target="_blank"
 												>{stats.uploadedContent.audio}</Link
 											>
 										</td>
@@ -205,7 +204,7 @@
 										<td>Documents</td>
 										<td>
 											<Link
-												href="/search?query={id}&type=content&contenttype=document"
+												href="/search?query={user.id}&type=content&contenttype=document"
 												target="_blank">{stats.uploadedContent.documents}</Link
 											>
 										</td>
