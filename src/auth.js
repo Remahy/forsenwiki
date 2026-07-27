@@ -19,6 +19,18 @@ if (!AUTH_TWITCH_ID || !AUTH_TWITCH_SECRET) {
 
 const adapter = PrismaAdapter(prisma);
 
+const { createSession } = adapter;
+
+/**
+ * @param {{ sessionToken: string, userId: string, expires: Date }} session
+ */
+adapter.createSession = async (session) => {
+	await prisma.session.deleteMany({ where: { userId: session.userId } });
+
+	// @ts-ignore
+	return createSession(session);
+};
+
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	trustHost: AUTH_TRUST_HOST === 'true' ? true : false,
 	adapter,

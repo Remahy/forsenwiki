@@ -14,7 +14,7 @@ let failedToCompress = [];
 const MAX_ZIP_SIZE = 400 * 1024 * 1024; // 400 MB
 
 /**
- * @typedef {import('../../../routes/api/user/[sessionId]/+server').Uploads} Uploads
+ * @typedef {import('../../../routes/api/user/+server').Uploads} Uploads
  */
 
 /**

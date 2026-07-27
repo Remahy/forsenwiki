@@ -10,7 +10,7 @@
 	 * @property {string} name
 	 * @property {string} image
 	 * @property {any[]} accounts
-	 * @property {import('../../../routes/api/user/[sessionId]/+server').Uploads} uploads
+	 * @property {import('../../../routes/api/user/+server').Uploads} uploads
 	 */
 
 	/**

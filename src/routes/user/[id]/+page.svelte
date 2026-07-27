@@ -14,8 +14,6 @@
 	import MyDataModal from '$lib/components/MyDataModal/index.svelte';
 	import { modal } from '$lib/stores/modal';
 
-	const sessionId = $page.data.sessionId;
-
 	const id = $page.params.id;
 	/** @type {{ editedArticles: number, uploadedContent: { total: number, images: number, videos: number, audio: number, documents: number } }} */
 	let stats = $state($page.data.stats);
@@ -69,7 +67,7 @@
 		}
 
 		try {
-			await deleteUser(sessionId);
+			await deleteUser();
 		} catch (err) {
 			alert(
 				// @ts-ignore
@@ -95,7 +93,7 @@
 		}
 
 		try {
-			const res = await getUserData(sessionId);
+			const res = await getUserData();
 
 			const data = await res.json();
 

@@ -27,9 +27,9 @@
 		});
 	};
 
-	const signOutWrapper = () => {
+	const signOutWrapper = async () => {
 		isLoading = true;
-		signOut({ redirect: true });
+		await signOut({ redirect: true });
 	};
 
 	let cachedImage = $state('');

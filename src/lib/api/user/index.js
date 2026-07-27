@@ -1,17 +1,11 @@
 const headers = new Headers({ 'content-type': 'application/json' });
 
-/**
- * @param {string} sessionId
- */
-export const getUserData = async (sessionId) => {
-	return fetch(`/api/user/${sessionId}`, { headers });
+export const getUserData = async () => {
+	return fetch(`/api/user`, { headers });
 };
 
-/**
- * @param {string} sessionId
- */
-export const deleteUser = async (sessionId) => {
-	return fetch(`/api/user/${sessionId}`, {
+export const deleteUser = async () => {
+	return fetch(`/api/user`, {
 		method: 'DELETE',
 	});
 };

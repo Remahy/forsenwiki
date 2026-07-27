@@ -37,7 +37,7 @@ const _isWithinLast24Hours = (date) => {
 	return diffMs >= 0 && diffMs <= oneDayMs;
 };
 
-export async function DELETE({ params, locals }) {
+export async function DELETE({ locals }) {
 	const { auth } = locals;
 
 	const session = await auth();
@@ -47,9 +47,10 @@ export async function DELETE({ params, locals }) {
 
 	const userId = session.user.id;
 
-	const { sessionId } = params;
-
-	const sessionEntry = await prisma.session.findUnique({ where: { sessionToken: sessionId } });
+	const sessionEntry = await prisma.session.findFirst({
+		where: { userId },
+		orderBy: { createdAt: 'desc' },
+	});
 
 	if (!sessionEntry || sessionEntry.userId !== userId) {
 		return ForbiddenError();
@@ -58,6 +59,8 @@ export async function DELETE({ params, locals }) {
 	if (!_isWithinLast24Hours(sessionEntry.createdAt)) {
 		return ForbiddenError();
 	}
+
+	const { sessionToken } = sessionEntry;
 
 	// Anonymize name.
 	await prisma.user.update({
@@ -76,11 +79,11 @@ export async function DELETE({ params, locals }) {
 
 	// Delete all sessions.
 	await prisma.session.deleteMany({
-		where: { userId: { equals: userId }, sessionToken: { not: sessionId } },
+		where: { userId: { equals: userId }, sessionToken: { not: sessionToken } },
 	});
 }
 
-export async function GET({ params, locals }) {
+export async function GET({ locals }) {
 	const { auth } = locals;
 
 	const session = await auth();
@@ -88,13 +91,14 @@ export async function GET({ params, locals }) {
 		return ForbiddenError();
 	}
 
-	const { id, image, name } = session.user;
+	const { id: userId, image, name } = session.user;
 
-	const { sessionId } = params;
+	const sessionEntry = await prisma.session.findFirst({
+		where: { userId },
+		orderBy: { createdAt: 'desc' },
+	});
 
-	const sessionEntry = await prisma.session.findUnique({ where: { sessionToken: sessionId } });
-
-	if (!sessionEntry || sessionEntry.userId !== id) {
+	if (!sessionEntry) {
 		return ForbiddenError();
 	}
 
@@ -103,14 +107,14 @@ export async function GET({ params, locals }) {
 	}
 
 	const accounts = await prisma.account.findMany({
-		where: { userId: id },
+		where: { userId },
 		select: { scope: true, provider: true, providerAccountId: true, type: true, createdAt: true },
 	});
 
-	const uploads = await getUploads(id);
+	const uploads = await getUploads(userId);
 
 	const data = {
-		id,
+		id: userId,
 		name,
 		image,
 		accounts,
