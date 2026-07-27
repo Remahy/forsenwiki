@@ -21,25 +21,31 @@ const MAX_ZIP_SIZE = 400 * 1024 * 1024; // 400 MB
  * @param {any} file
  */
 const getFileContentLength = async (file) => {
-	const response = await fetch(file.url, {
-		method: 'HEAD',
-	});
+	try {
+		const response = await fetch(file.url, {
+			method: 'HEAD',
+		});
 
-	if (!response.ok) {
+		if (!response.ok) {
+			failedToReadContentLength.push(file);
+			console.error(`Failed to get size for ${file.url}`);
+			return -1n;
+		}
+
+		const contentLength = response.headers.get('content-length');
+
+		if (!contentLength) {
+			failedToReadContentLength.push(file);
+			console.error(`Missing Content-Length for ${file.url}`);
+			return -1n;
+		}
+
+		return BigInt(contentLength);
+	} catch (err) {
 		failedToReadContentLength.push(file);
-		console.error(`Failed to get size for ${file.url}`);
+		console.error(`Failed to load ${file.url}`, err);
 		return -1n;
 	}
-
-	const contentLength = response.headers.get('content-length');
-
-	if (!contentLength) {
-		failedToReadContentLength.push(file);
-		console.error(`Missing Content-Length for ${file.url}`);
-		return -1n;
-	}
-
-	return BigInt(contentLength);
 };
 
 /**
