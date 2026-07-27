@@ -256,6 +256,22 @@ export const getURLAndTitle = (
 
 			return { url: playerTwitchURL.toString(), title: 'Twitch video' };
 		}
+
+		const isParsedPlayerVideoUrl = url.hostname === 'player.twitch.tv';
+		const parsedPlayerVideoId = url.searchParams.get('video');
+		if (isParsedPlayerVideoUrl && parsedPlayerVideoId) {
+			const playerTwitchURL = new URL('', 'https://player.twitch.tv/');
+			playerTwitchURL.searchParams.set('video', parsedPlayerVideoId);
+
+			const t = url.searchParams.get('t');
+			if (t) {
+				playerTwitchURL.searchParams.set('t', t);
+			}
+
+			playerTwitchURL.searchParams.set('parent', parent);
+
+			return { url: playerTwitchURL.toString(), title: 'Twitch video' };
+		}
 	}
 
 	return { url: '', title: 'Unknown source' };
