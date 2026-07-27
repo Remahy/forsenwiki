@@ -121,7 +121,7 @@
 						<small class="inline-block">
 							<span class="font-bold">By:</span>
 							<StreamerModeShow>
-								<Link href="/user/{post.authorId}" target="_blank" class="decoration-1!"
+								<Link href="/user/{post.authorId}" class="decoration-1!"
 									>{post.author}</Link
 								>
 							</StreamerModeShow>
