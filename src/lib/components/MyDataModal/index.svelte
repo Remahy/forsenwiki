@@ -183,6 +183,9 @@
 								<tr>
 									<th><p>You haven't uploaded anything.</p></th>
 								</tr>
+								<tr>
+									<th><p>If you believe this is a mistake, try to log in again.</p></th>
+								</tr>
 							{/each}
 						{/await}
 					</tbody>
