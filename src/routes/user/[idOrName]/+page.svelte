@@ -13,6 +13,7 @@
 	import { deleteUser, getUserData } from '$lib/api/user';
 	import MyDataModal from '$lib/components/MyDataModal/index.svelte';
 	import { modal } from '$lib/stores/modal';
+	import { reviver } from '$lib/utils/json';
 
 	/** @type {{ editedArticles: number, uploadedContent: { total: number, images: number, videos: number, audio: number, documents: number } }} */
 	let stats = $state($page.data.stats);
@@ -94,12 +95,12 @@
 		try {
 			const res = await getUserData();
 
-			const data = await res.json();
+			const data = await res.text();
 
 			modal.set({
 				isOpen: true,
 				component: MyDataModal,
-				data,
+				data: JSON.parse(data, reviver),
 			});
 		} catch (err) {
 			alert(
