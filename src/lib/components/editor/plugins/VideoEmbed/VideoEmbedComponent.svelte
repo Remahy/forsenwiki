@@ -254,7 +254,7 @@
 				{height}
 				src={url}
 				frameBorder="0"
-				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+				allow="autoplay 'none'; clipboard-write; encrypted-media; picture-in-picture"
 				allowFullScreen={false}
 				{title}
 				style={getIframeStyle(width, height)}
