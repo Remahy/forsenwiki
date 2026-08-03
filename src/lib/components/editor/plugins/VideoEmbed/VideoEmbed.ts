@@ -305,7 +305,7 @@ function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl:
 	element.setAttribute('frameborder', '0');
 	element.setAttribute(
 		'allow',
-		'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+		"autoplay 'none'; clipboard-write; encrypted-media; picture-in-picture;"
 	);
 	element.setAttribute('allowfullscreen', 'true');
 	element.setAttribute('title', title);
