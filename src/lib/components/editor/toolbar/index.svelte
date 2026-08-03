@@ -6,6 +6,7 @@
 	import ElementAlignmentSelect from './ElementAlignmentSelect.svelte';
 	import FontSelect from './FontSelect.svelte';
 	import ElementSelect from './ElementSelect.svelte';
+	import InsertButton from './InsertButton/index.svelte';
 </script>
 
 <HistoryButtons />
@@ -15,3 +16,5 @@
 <TextFormatButtons />
 <Divider />
 <ElementAlignmentSelect />
+<Divider />
+<InsertButton />

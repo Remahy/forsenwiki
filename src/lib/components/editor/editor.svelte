@@ -106,7 +106,7 @@
 		</div>
 
 		<div
-			class="editor-border sticky top-0 hidden h-full w-96 max-w-96 grow flex-col flex-wrap gap-4 p-2 lg:flex"
+			class="editor-border sticky max-h-screen top-0 hidden w-96 max-w-96 grow flex-col gap-4 lg:flex"
 		>
 			<ToolbarExtra />
 		</div>

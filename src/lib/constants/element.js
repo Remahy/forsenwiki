@@ -5,7 +5,7 @@ const ALIGNMENT = Object.freeze({
 	justify: 'Justify',
 });
 
-const TYPES = Object.freeze({
+const insertableTypeLabels = {
 	paragraph: 'Paragraph',
 	quote: 'Quote',
 	h1: 'Heading 1',
@@ -15,9 +15,24 @@ const TYPES = Object.freeze({
 	h5: 'Heading 5',
 	bullet: 'Bulleted List',
 	number: 'Numbered List',
-});
+};
+
+const TYPES = Object.freeze(insertableTypeLabels);
 
 export const ELEMENT_CONSTANTS = {
 	ALIGNMENT,
 	TYPES,
+};
+
+export const blockTypeLabels = {
+	default: 'Unknown',
+	... insertableTypeLabels,
+	mixed: 'Mixed',
+	listitem: 'List item',
+	tablerow: 'Row',
+	tablecell: 'Cell',
+	['a-table']: 'Table',
+	videoembed: 'Video',
+	image: 'Image',
+	['float-block']: 'Float block'
 };

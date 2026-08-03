@@ -1,0 +1,28 @@
+@reference "../../../../app.css";
+.stv__container {
+	--stv-body-color: var(--tw-prose-body);
+	--stv-bg: unset;
+}
+
+.stv__container {
+	@apply w-full;
+}
+
+.stv__node {
+}
+
+.stv__node .stv__node-content:hover {
+	@apply bg-violet-400 text-black/75 dark:bg-violet-800 dark:text-white/75;
+}
+
+.stv__node-row {
+	@apply h-8;
+}
+
+.stv__node-content.stv__clickable {
+	@apply p-2;
+}
+
+.stv__node-content--highlighted {
+	@apply forsen-wiki-theme-outline bg-violet-200 text-black dark:bg-violet-950 dark:text-white;
+}
