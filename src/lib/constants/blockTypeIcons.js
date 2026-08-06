@@ -1,4 +1,5 @@
 import {
+	CircleSmallIcon,
 	FileQuestionMarkIcon,
 	Heading1Icon,
 	Heading2Icon,
@@ -37,6 +38,7 @@ export const blockTypeIcons = {
 	text: null,
 	tablecell: VectorSquareIcon,
 	tablerow: Rows2Icon,
+	listitem: CircleSmallIcon,
 
 	// Unused
 	check: ListCheckIcon,

@@ -13,8 +13,8 @@ const insertableTypeLabels = {
 	h3: 'Heading 3',
 	h4: 'Heading 4',
 	h5: 'Heading 5',
-	bullet: 'Bulleted List',
-	number: 'Numbered List',
+	bullet: 'Bulleted list',
+	number: 'Numbered list',
 };
 
 const TYPES = Object.freeze(insertableTypeLabels);

@@ -14,10 +14,9 @@ import { blockTypeLabels } from '$lib/constants/element';
 /**
  * @param {TreeNode} node
  */
-const getLabelForNode = (node) => {
+const getTypeForNode = (node) => {
 	if (isTextNode(node.rawNode)) {
-		const textContent = node.rawNode.getTextContent();
-		return textContent.substring(0, 32);
+		return node.type;
 	}
 
 	if (isListNode(node.rawNode)) {
@@ -27,8 +26,21 @@ const getLabelForNode = (node) => {
 
 	const type = isHeadingNode(node.rawNode) ? node.rawNode.getTag() : node.rawNode.getType();
 
+	return type;
+};
+
+/**
+ * @param {TreeNode} node
+ */
+const getLabelForNode = (node) => {
+	if (isTextNode(node.rawNode)) {
+		const textContent = node.rawNode.getTextContent();
+
+		return textContent.substring(0, 32);
+	}
+
 	// @ts-ignore
-	return blockTypeLabels[type] ?? type;
+	return blockTypeLabels[node.type] ?? node.type;
 };
 
 /**
@@ -44,6 +56,7 @@ const createNodeObject = (_node, path) => {
 		rawNode: _node,
 		label: '',
 	};
+	node.type = getTypeForNode(node);
 	node.label = getLabelForNode(node);
 
 	node.Icon =
