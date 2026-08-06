@@ -12,8 +12,8 @@
 		KEY_ARROW_LEFT_COMMAND,
 		KEY_ARROW_RIGHT_COMMAND,
 		mergeRegister,
-		type PointType,
 		COMMAND_PRIORITY_CRITICAL,
+		type PointType,
 	} from 'lexical';
 	import { $insertNodeToNearestRoot as insertNodeToNearestRoot } from '@lexical/utils';
 	import {
@@ -113,6 +113,7 @@
 	let composer = $derived($c);
 	let editor = $derived(composer?.getEditor?.() as LexicalEditor);
 	const hasNestedTables = signal(true);
+	const hasFitNestedTables = signal(true);
 
 	const INSERT_BEFORE = true;
 	const INSERT_AFTER = false;
@@ -190,7 +191,7 @@
 
 			const editor = composer.getEditor();
 
-			registerTablePlugin(editor, { hasNestedTables });
+			registerTablePlugin(editor, { hasNestedTables, hasFitNestedTables });
 			registerTableSelectionObserver(editor, hasTabHandler);
 			setScrollableTablesActive(editor, hasHorizontalScroll);
 

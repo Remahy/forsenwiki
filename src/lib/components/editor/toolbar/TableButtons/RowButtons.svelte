@@ -24,7 +24,7 @@
 
 	/**
 	 * @typedef Props
-	 * @property {import('@lexical/table').TableNode | null} selectedTable
+	 * @property {import('$lib/lexical/custom').ATableNode | null} selectedTable
 	 */
 
 	/** @type {Props} */

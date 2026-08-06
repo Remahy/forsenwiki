@@ -57,7 +57,7 @@
 	});
 
 	/**
-	 * @type {{[x: string]: typeof import('svelte').SvelteComponent<any>}}
+	 * @type {{ [x: string]: import('svelte').Component<any> }}
 	 */
 	const floatValueIcons = {
 		left: ArrowLeftToLineIcon,
