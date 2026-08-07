@@ -235,6 +235,7 @@
 					{width}
 					{height}
 					style={getIframeStyle(width, height)}
+					loading="lazy"
 				>
 					<source
 						src={url}

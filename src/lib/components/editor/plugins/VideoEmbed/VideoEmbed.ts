@@ -366,8 +366,10 @@ function generateCDNSrc(node: VideoEmbedNode, staticURL: string) {
 	setVideoAttributes(node, element);
 	element.setAttribute('controls', '');
 	element.setAttribute('data-lexical-usercontent', node.getSrc()!);
+	element.setAttribute('loading', 'lazy');
 
 	element.controls = true;
+	element.playsInline = true;
 
 	const source = document.createElement('source');
 	source.src = url;
