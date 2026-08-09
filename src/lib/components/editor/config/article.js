@@ -28,6 +28,9 @@ import TableNodeDOMExport from './htmlExport/TableNodeDOMExport';
 const floatResponsive = 'max-sm:float-none! max-sm:w-full! max-sm:me-0! max-sm:ms-0!';
 const floatBoxShadow = '0px 0px 0px 1px #696969';
 
+/**
+ * @type {import('lexical').EditorThemeClasses}
+ */
 export const articleTheme = {
 	image: 'image',
 	heading: {
@@ -40,6 +43,11 @@ export const articleTheme = {
 	floatBoxShadow,
 	floatResponsive: `${floatResponsive} [&_p:has(>br:only-child)]:hidden`,
 	tableCell: 'tableCell',
+	list: {
+		ul: 'overflow-hidden',
+		ol: 'overflow-hidden'
+	},
+	quote: 'overflow-hidden'
 };
 
 export const editableTheme = {
