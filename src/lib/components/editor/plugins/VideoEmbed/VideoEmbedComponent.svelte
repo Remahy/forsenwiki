@@ -13,7 +13,6 @@
 		CLICK_COMMAND,
 		KEY_DELETE_COMMAND,
 		KEY_BACKSPACE_COMMAND,
-		// KEY_ENTER_COMMAND,
 		KEY_ESCAPE_COMMAND,
 		mergeRegister,
 	} from 'lexical';
@@ -99,17 +98,6 @@
 		return false;
 	};
 
-	// const onEnter = () => {
-	// 	const latestSelection = getSelection();
-	// 	if (
-	// 		$isSelected &&
-	// 		isNodeSelection(latestSelection) &&
-	// 		latestSelection.getNodes().length === 1
-	// 	) {
-	// 	}
-	// 	return false;
-	// };
-
 	const onEscape = () => {
 		clearSelection(editor);
 		isSelected.set(false);
@@ -190,16 +178,17 @@
 		let isMounted = true;
 		const rootElement = editor.getRootElement();
 		const unregister = mergeRegister(
-			editor.registerUpdateListener(({ editorState }) => {
-				if (isMounted) {
-					selection = editorState.read(() => getSelection());
+			editor.registerUpdateListener(() => {
+				if (!isMounted) {
+					return;
 				}
+
+				selection = editor.read(() => getSelection());
 			}),
 			editor.registerCommand(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(RIGHT_CLICK_VIDEOEMBED_COMMAND, onClick, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
-			// editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_ESCAPE_COMMAND, onEscape, COMMAND_PRIORITY_LOW)
 		);
 

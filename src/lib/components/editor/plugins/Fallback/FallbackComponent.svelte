@@ -93,26 +93,12 @@
 	};
 
 	onMount(() => {
-		// let isMounted = true;
-		const unregister = mergeRegister(
-			/*
-			editor.registerUpdateListener(({ editorState }) => {
-				if (isMounted) {
-					selection = editorState.read(() => getSelection());
-				}
-			}),
-			*/
+		return mergeRegister(
 			editor.registerCommand(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
-			// editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(KEY_ESCAPE_COMMAND, onEscape, COMMAND_PRIORITY_LOW)
 		);
-
-		return () => {
-			// isMounted = false;
-			unregister();
-		};
 	});
 </script>
 

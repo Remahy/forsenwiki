@@ -195,10 +195,12 @@
 		let isMounted = true;
 		const rootElement = editor.getRootElement();
 		const unregister = mergeRegister(
-			editor.registerUpdateListener(({ editorState }) => {
-				if (isMounted) {
-					selection = editorState.read(() => getSelection());
+			editor.registerUpdateListener(() => {
+				if (!isMounted) {
+					return;
 				}
+
+				selection = editor.read(() => getSelection());
 			}),
 			editor.registerCommand(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(RIGHT_CLICK_IMAGE_COMMAND, onClick, COMMAND_PRIORITY_LOW),
