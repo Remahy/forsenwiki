@@ -25,6 +25,7 @@
 	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 	import TablePlugin from './plugins/Overrides/Table/TablePlugin.svelte';
 	import FloatBlockPlugin from './plugins/FloatBlock/FloatBlockPlugin.svelte';
+	import SelectionOverrides from './plugins/SelectionOverrides.svelte';
 
 	/**
 	 * @typedef {Object} Props
@@ -76,6 +77,8 @@
 		<FloatBlockPlugin />
 
 		<CollaborationPlugin {id} {providerFactory} shouldBootstrap={false} />
+
+		<SelectionOverrides />
 
 		<div class="w-full lg:w-148 xl:w-212 2xl:w-280">
 			<div class="editor-border sticky top-0 z-40 hidden w-full p-2 lg:block">

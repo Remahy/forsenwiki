@@ -305,7 +305,7 @@ function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl:
 	element.setAttribute('frameborder', '0');
 	element.setAttribute(
 		'allow',
-		'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+		"autoplay 'none'; clipboard-write; encrypted-media; picture-in-picture;"
 	);
 	element.setAttribute('allowfullscreen', 'true');
 	element.setAttribute('title', title);
@@ -366,8 +366,10 @@ function generateCDNSrc(node: VideoEmbedNode, staticURL: string) {
 	setVideoAttributes(node, element);
 	element.setAttribute('controls', '');
 	element.setAttribute('data-lexical-usercontent', node.getSrc()!);
+	element.setAttribute('loading', 'lazy');
 
 	element.controls = true;
+	element.playsInline = true;
 
 	const source = document.createElement('source');
 	source.src = url;

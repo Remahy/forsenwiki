@@ -84,11 +84,8 @@
 	position: relative;
 	white-space: nowrap;
 	max-width: 100%;
-	vertical-align: baseline;
-
-	img {
-		white-space: nowrap; /* without this, image editor is having extra height (// TODO: see if still required after fully porting lexical) */
-	}
+	vertical-align: -webkit-baseline-middle;
+	vertical-align: -moz-middle-with-baseline;
 }
 
 @media (width <= 64rem /* 1024px */) {
