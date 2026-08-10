@@ -45,9 +45,9 @@ export const articleTheme = {
 	tableCell: 'tableCell',
 	list: {
 		ul: 'overflow-hidden',
-		ol: 'overflow-hidden'
+		ol: 'overflow-hidden',
 	},
-	quote: 'overflow-hidden'
+	quote: 'overflow-hidden',
 };
 
 export const editableTheme = {
