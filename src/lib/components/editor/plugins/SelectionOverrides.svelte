@@ -90,7 +90,7 @@
 			}
 
 			const parentSibling = parentNode[siblingFn]();
-			if (!parentSibling || !isDecoratorNode(parentNode)) {
+			if (!parentSibling || !isDecoratorNode(parentSibling)) {
 				return false;
 			}
 
