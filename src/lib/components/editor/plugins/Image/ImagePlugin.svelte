@@ -41,12 +41,12 @@
 	import EditImageModal from '../../toolbar/ImageButtons/EditImageModal.svelte';
 	import { editorGlobals } from '../../editorGlobals.svelte';
 	import { handleNewImage } from '../../utils/handleNewImage';
+	import { migrateWSRVImageUsingElement } from '../../migrations/migrateWSRVImages';
 	import {
 		$createImageNode as createImageNode,
 		$isImageNode as isImageNode,
 		ImageNode,
 	} from './Image';
-	import { migrateWSRVImageUsingElement } from '../../migrations/migrateWSRVImages';
 
 	const id = $derived(editorGlobals.articleId);
 
