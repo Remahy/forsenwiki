@@ -1,28 +1,19 @@
 @reference "../../../../app.css";
-.stv__container {
-	--stv-body-color: var(--tw-prose-body);
-	--stv-bg: unset;
-}
 
-.stv__container {
-	@apply w-full;
-}
+.tree {
+	.item {
+		@apply flex;
 
-.stv__node {
-}
+		.name {
+			@apply flex grow gap-2 p-2;
 
-.stv__node .stv__node-content:hover {
-	@apply bg-violet-400 text-black/75 dark:bg-violet-800 dark:text-white/75;
-}
+			&:hover {
+				@apply cursor-pointer bg-violet-400 text-black/75 dark:bg-violet-800 dark:text-white;
+			}
+		}
+	}
 
-.stv__node-row {
-	@apply h-8;
-}
-
-.stv__node-content.stv__clickable {
-	@apply p-2;
-}
-
-.stv__node-content--highlighted {
-	@apply forsen-wiki-theme-outline bg-violet-200 text-black dark:bg-violet-950 dark:text-white;
+	.selected {
+		@apply forsen-wiki-theme-outline bg-violet-200 text-black dark:bg-violet-950 dark:text-white/75;
+	}
 }

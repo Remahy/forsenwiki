@@ -1,11 +1,7 @@
 /**
- * @typedef {import("./utils").TreeNode} TreeNode
- */
-
-/**
- * @type {{ tree: TreeNode[], selected: import("@keenmate/svelte-treeview").LTreeNode<TreeNode> | null }}
+ * @type {{ tree: import('@headless-tree/core').TreeInstance<LexicalNode> | null, selected: LexicalNode | null }}
  */
 export const treeviewState = $state({
-	tree: [],
+	tree: null,
 	selected: null,
 });

@@ -4,21 +4,16 @@
 	import TableButtons from './TableButtons/index.svelte';
 	import FloatBlockButtons from './FloatBlockButtons/index.svelte';
 	import Treeview from '../Treeview/index.svelte';
+	import { treeviewState } from '../Treeview/treeviewState.svelte';
+
+	let selectedNode = $derived(treeviewState.selected);
 </script>
 
-<div class="flex flex-wrap items-stretch gap-2 overflow-y-auto p-2">
-	<Treeview />
-</div>
+<Treeview />
 
 <div class="flex flex-wrap items-stretch gap-2">
-	<FloatBlockButtons />
-</div>
-<div class="flex flex-wrap items-stretch gap-2">
-	<TableButtons />
-</div>
-<div class="flex flex-wrap items-stretch gap-2">
-	<ImageButtons />
-</div>
-<div class="flex flex-wrap items-stretch gap-2">
-	<VideoButtons />
+	<FloatBlockButtons {selectedNode} />
+	<TableButtons {selectedNode} />
+	<ImageButtons {selectedNode} />
+	<VideoButtons {selectedNode} />
 </div>

@@ -84,8 +84,7 @@
 	position: relative;
 	white-space: nowrap;
 	max-width: 100%;
-	vertical-align: -webkit-baseline-middle;
-	vertical-align: -moz-middle-with-baseline;
+	vertical-align: middle;
 }
 
 @media (width <= 64rem /* 1024px */) {

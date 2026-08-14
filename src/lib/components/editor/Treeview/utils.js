@@ -1,121 +1,55 @@
-import { $isTextNode as isTextNode, $getRoot as getRoot } from 'lexical';
+import { $isTextNode as isTextNode } from 'lexical';
 import { $getNearestNodeOfType as getNearestNodeOfType } from '@lexical/utils';
 import { $isListNode as isListNode } from '@lexical/list';
 import { $isHeadingNode as isHeadingNode } from '@lexical/rich-text';
 import { ListNode } from '$lib/lexical/index';
-
-import { blockTypeIcons } from '$lib/constants/blockTypeIcons';
 import { blockTypeLabels } from '$lib/constants/element';
 
 /**
- * @typedef {{ key: string, path: string, type: string, rawNode: LexicalNode, label: string, Icon?: import('svelte').Component<any> }} TreeNode
+ * @param {LexicalNode} node
  */
-
-/**
- * @param {TreeNode} node
- */
-const getTypeForNode = (node) => {
-	if (isTextNode(node.rawNode)) {
-		return node.type;
+export const getTypeForLNode = (node) => {
+	if (isTextNode(node)) {
+		return node.getType();
 	}
 
-	if (isListNode(node.rawNode)) {
-		const parentList = getNearestNodeOfType(node.rawNode, ListNode);
-		return parentList ? parentList.getListType() : node.rawNode.getListType();
+	if (isListNode(node)) {
+		const parentList = getNearestNodeOfType(node, ListNode);
+		return parentList ? parentList.getListType() : node.getListType();
 	}
 
-	const type = isHeadingNode(node.rawNode) ? node.rawNode.getTag() : node.rawNode.getType();
+	const type = isHeadingNode(node) ? node.getTag() : node.getType();
 
 	return type;
 };
 
 /**
- * @param {TreeNode} node
+ * @param {LexicalNode} node
  */
-const getLabelForNode = (node) => {
-	if (isTextNode(node.rawNode)) {
-		const textContent = node.rawNode.getTextContent();
+export const getLabelForLNode = (node) => {
+	if (isTextNode(node)) {
+		const textContent = node.getTextContent();
 
 		return textContent.substring(0, 32);
 	}
 
+	const type = getTypeForLNode(node);
+
 	// @ts-ignore
-	return blockTypeLabels[node.type] ?? node.type;
+	return blockTypeLabels[type] ?? type;
 };
 
 /**
- * @param {LexicalNode} _node
- * @param {string} path
+ * @param {import('@headless-tree/core').TreeInstance<LexicalNode>} tree
+ * @param {import('@headless-tree/core').ItemInstance<LexicalNode>} item
  */
-const createNodeObject = (_node, path) => {
-	/** @type {TreeNode} */
-	const node = {
-		path,
-		key: _node.getKey(),
-		type: _node.getType(),
-		rawNode: _node,
-		label: '',
-	};
-	node.type = getTypeForNode(node);
-	node.label = getLabelForNode(node);
+export const expandParents = (tree, item) => {
+	const parentKeys = item.getParentKeys().reverse();
 
-	node.Icon =
-		node.type in blockTypeIcons
-			? /** @type {any}*/ (blockTypeIcons)[node.type]
-			: blockTypeIcons.default;
-
-	return node;
-};
-
-/**
- * @param {TreeNode[]} res
- * @param {TreeNode} parentNode
- */
-const readChildren = (res, parentNode) => {
-	/** @type {LexicalNode[]} */
-	const children = /** @type {any} */ (parentNode.rawNode).getChildren();
-
-	for (let index = 0; index < children.length; index++) {
-		const _node = children[index];
-
-		const node = createNodeObject(_node, `${parentNode.path}.${index + 1}`);
-
-		res.push(node);
-
-		if ('getChildren' in node.rawNode) {
-			readChildren(res, node);
-		}
+	for (let index = 0; index < parentKeys.length; index++) {
+		const key = parentKeys[index];
+		tree.getItemInstance(key).expand();
 	}
-};
 
-/**
- * @param {LexicalEditor} editor
- */
-export const createTreeFromEditor = (editor) => {
-	return editor.read(() => {
-		/**
-		 * @type {TreeNode[]}
-		 */
-		const res = [];
-
-		const root = getRoot();
-		const children = root.getChildren();
-
-		for (let index = 0; index < children.length; index++) {
-			const _node = children[index];
-
-			/** @type {TreeNode} */
-			const node = createNodeObject(_node, `${String(index + 1)}`);
-
-			res.push(node);
-
-			if ('getChildren' in node.rawNode) {
-				readChildren(res, node);
-			}
-		}
-
-		console.log(res);
-
-		return res;
-	});
+	item.expand();
 };

@@ -101,7 +101,7 @@
 	};
 </script>
 
-<div class="flex min-h-10.5 items-center gap-2 pl-2">
+<div class="flex min-h-10.5 w-full items-center gap-2 pl-2">
 	<FloatIconComponent />
 
 	<Select
@@ -109,7 +109,7 @@
 		bind:ref={floatValueElement}
 		on:change={float}
 		bind:value={floatValue}
-		class="-ml-10! h-full px-10!"
+		class="-ml-10! h-full w-[stretch] px-10!"
 	>
 		<option value="unknown" hidden>Unknown</option>
 
@@ -122,31 +122,33 @@
 	</Select>
 </div>
 
-<label title="Width" class="flex min-h-10.5 items-center gap-2 pl-2">
-	<span class="hidden">Width</span>
-	<RectangleHorizontalIcon />
+<div class="flex">
+	<label title="Width" class="flex min-h-10.5 items-center gap-2 pl-2">
+		<span class="hidden">Width</span>
+		<RectangleHorizontalIcon />
 
-	<input
-		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm disabled:opacity-50 disabled:hover:cursor-not-allowed"
-		placeholder={placeholderWidthText}
-		bind:value={width}
-		onchange={onChange}
-		disabled={floatValue === 'clear'}
-	/>
-</label>
+		<input
+			class="input-color -ml-10 h-full w-full p-0 pl-10 text-sm disabled:opacity-50 disabled:hover:cursor-not-allowed"
+			placeholder={placeholderWidthText}
+			bind:value={width}
+			onchange={onChange}
+			disabled={floatValue === 'clear'}
+		/>
+	</label>
 
-<label title="Height" class="flex min-h-10.5 items-center gap-2 pl-2">
-	<span class="hidden">Height</span>
-	<RectangleVerticalIcon />
+	<label title="Height" class="flex min-h-10.5 items-center gap-2 pl-2">
+		<span class="hidden">Height</span>
+		<RectangleVerticalIcon />
 
-	<input
-		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm disabled:opacity-50 disabled:hover:cursor-not-allowed"
-		placeholder={placeholderHeightText}
-		bind:value={height}
-		onchange={onChange}
-		disabled={floatValue === 'clear'}
-	/>
-</label>
+		<input
+			class="input-color -ml-10 h-full w-full p-0 pl-10 text-sm disabled:opacity-50 disabled:hover:cursor-not-allowed"
+			placeholder={placeholderHeightText}
+			bind:value={height}
+			onchange={onChange}
+			disabled={floatValue === 'clear'}
+		/>
+	</label>
+</div>
 
 <EditorButton on:click={toggleHasBorder} isActive={!!currentHasBorder} title="Toggle border">
 	<SquareDashedIcon />
