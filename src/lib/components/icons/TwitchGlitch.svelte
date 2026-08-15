@@ -1,5 +1,5 @@
 <script>
-	const aspectRatio = 2800 / 2400;
+	const aspectRatio = 2400 / 2800;
 
 	/**
 	 * @typedef {Object} Props
@@ -10,13 +10,13 @@
 	/** @type {Props} */
 	let { size = '24', ...restProps } = $props();
 
-	let width = $derived(Number(size) / aspectRatio);
+	const height = $derived(Number(size) / aspectRatio);
 </script>
 
 <svg
 	version="1.1"
-	{width}
-	height={size}
+	width={size}
+	{height}
 	xmlns="http://www.w3.org/2000/svg"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
 	viewBox="0 0 2400 2800"
