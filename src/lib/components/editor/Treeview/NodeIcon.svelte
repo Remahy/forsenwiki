@@ -1,14 +1,12 @@
 <script>
-	import { blockTypeIcons } from "$lib/constants/blockTypeIcons";
-	import { getTypeForLNode } from "./utils";
+	import { getIconForLNode } from './utils';
 
 	/**
 	 * @type {{ editor: LexicalEditor, node: LexicalNode }}
 	 */
 	const { editor, node } = $props();
 
-	// @ts-ignore
-	const Icon = $derived(editor.read(() => blockTypeIcons[getTypeForLNode(node)]));
+	const Icon = $derived(editor.read(() => getIconForLNode(node)));
 </script>
 
 <Icon />

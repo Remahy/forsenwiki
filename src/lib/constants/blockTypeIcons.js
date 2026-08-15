@@ -10,11 +10,15 @@ import {
 	ListCheckIcon,
 	ListIcon,
 	ListOrderedIcon,
-	PilcrowIcon,
 	QuoteIcon,
 	Rows2Icon,
 	SquareSquareIcon,
 	TableIcon,
+	TextAlignCenterIcon,
+	TextAlignEndIcon,
+	TextAlignJustifyIcon,
+	TextAlignStartIcon,
+	TextInitialIcon,
 	VectorSquareIcon,
 	VideoIcon,
 } from '@lucide/svelte';
@@ -30,18 +34,25 @@ export const blockTypeIcons = {
 	h5: Heading5Icon,
 	bullet: ListIcon,
 	number: ListOrderedIcon,
-	paragraph: PilcrowIcon,
+	paragraph: TextAlignStartIcon,
 	quote: QuoteIcon,
 
 	'float-block': SquareSquareIcon,
 	'a-table': TableIcon,
 	videoembed: VideoIcon,
 	image: ImageIcon,
-	text: null,
 	tablecell: VectorSquareIcon,
 	tablerow: Rows2Icon,
 	listitem: CircleSmallIcon,
+	text: TextInitialIcon,
 
 	// Unused
 	check: ListCheckIcon,
+};
+
+export const alignmentIcons = {
+	default: TextAlignStartIcon,
+	right: TextAlignEndIcon,
+	center: TextAlignCenterIcon,
+	justify: TextAlignJustifyIcon,
 };

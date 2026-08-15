@@ -19,6 +19,10 @@
 	import NodeIcon from './NodeIcon.svelte';
 	import { expandParents } from './utils';
 
+	/**
+	 * @typedef {import('@headless-tree/core').ItemInstance<LexicalNode>} ItemInstance
+	 */
+
 	let tree = $derived(treeviewState.tree);
 
 	const editor = $state(getEditor?.());
@@ -26,7 +30,7 @@
 	/** @type {HTMLDivElement | null} */
 	let treeElement = $state(null);
 
-	/** @type {import('@headless-tree/core').ItemInstance<LexicalNode>[]} */
+	/** @type {ItemInstance[]} */
 	let items = $state([]);
 
 	let isJustSelection = $state(false);
@@ -38,6 +42,50 @@
 
 		items = tree.getItems();
 	}
+
+	/**
+	 * @param {MouseEvent} e
+	 * @param {ItemInstance} item
+	 */
+	const onClickNode = (e, item) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		isJustSelection = true;
+
+		const node = item.getItemData();
+
+		tree?.setSelectedItems([item.getId()]);
+
+		updateItems();
+
+		editor._rootElement?.focus({ preventScroll: true });
+
+		editor.update(
+			() => {
+				if (isParagraphNode(node) || isTextNode(node)) {
+					node.selectEnd();
+				} else {
+					const selection = createNodeSelection();
+					selection.add(node.getKey());
+					setSelection(selection);
+				}
+				treeviewState.selected = node;
+			},
+			{ discrete: true }
+		);
+
+		isJustSelection = false;
+	};
+
+	/**
+	 * @param {MouseEvent} _
+	 * @param {ItemInstance} item
+	 */
+	const onClickExpandNode = (_, item) => {
+		item.isExpanded() ? item.collapse() : item.expand();
+		updateItems();
+	};
 
 	onMount(() => {
 		tree = initTree(editor);
@@ -138,13 +186,7 @@
 				data-id={item.getId()}
 			>
 				{#if item.isFolder()}
-					<button
-						type="button"
-						onclick={() => {
-							item.isExpanded() ? item.collapse() : item.expand();
-							updateItems();
-						}}
-					>
+					<button type="button" onclick={(e) => onClickExpandNode(e, item)}>
 						{#if item.isExpanded()}
 							<ChevronDownIcon />
 						{:else}
@@ -155,32 +197,7 @@
 					<div class="w-6"></div>
 				{/if}
 
-				<button
-					class="name"
-					onclick={(e) => {
-						isJustSelection = true;
-						e.preventDefault();
-						e.stopPropagation();
-						const node = item.getItemData();
-						tree?.setSelectedItems([item.getId()]);
-						updateItems();
-						editor._rootElement?.focus({ preventScroll: true });
-						editor.update(
-							() => {
-								if (isParagraphNode(node) || isTextNode(node)) {
-									node.selectEnd();
-								} else {
-									const selection = createNodeSelection();
-									selection.add(node.getKey());
-									setSelection(selection);
-								}
-								treeviewState.selected = node;
-							},
-							{ discrete: true }
-						);
-						isJustSelection = false;
-					}}
-				>
+				<button class="name" onclick={(e) => onClickNode(e, item)}>
 					<NodeIcon {editor} node={item.getItemData()} />
 					{item.getItemName()}
 				</button>
