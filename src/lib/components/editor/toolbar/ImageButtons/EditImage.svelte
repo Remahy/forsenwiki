@@ -20,13 +20,16 @@
 
 	let currentWidth = $derived(selectedImageNode.__width);
 	let currentHeight = $derived(selectedImageNode.__height);
+	let currentAltText = $derived(selectedImageNode.__altText);
 
 	let width = $derived(currentWidth);
 	let height = $derived(currentHeight);
+	let altText = $derived(currentAltText);
 
 	const onChange = () => {
 		editor.update(() => {
 			selectedImageNode.setWidthAndHeight({ width, height });
+			selectedImageNode.setAltText(altText);
 		});
 	};
 
@@ -47,7 +50,7 @@
 						/** @type {import('../../plugins/Image/Image').ImageNode} */
 						const node = /** @type {any} */ (getNodeByKey(selectedImageNode.getKey()));
 
-						const { width, height, altText, src } = data;
+						const { width, height, src } = data;
 
 						if (typeof width === 'number' && width >= IMAGE_MIN_WIDTH) {
 							node.setWidthAndHeight({ width, height: node.getWidthAndHeight().height });
@@ -56,8 +59,6 @@
 						if (typeof height === 'number' && height >= IMAGE_MIN_HEIGHT) {
 							node.setWidthAndHeight({ width: node.getWidthAndHeight().width, height });
 						}
-
-						node.setAltText(altText);
 
 						node.setSrc(src);
 					});
@@ -68,32 +69,41 @@
 	};
 </script>
 
-<Button on:click={image} class="text-xs">Change image</Button>
+<div class="flex flex-col gap-4">
+	<Button on:click={image} class="text-xs">Change image</Button>
 
-<label title="Width" class="flex min-h-10.5 items-center gap-2 pl-2">
-	<span class="hidden">Width</span>
-	<RectangleHorizontalIcon />
+	<div class="flex gap-2">
+		<label title="Width" class="relative flex min-h-10.5 items-center gap-2">
+			<span class="hidden">Width</span>
+			<RectangleHorizontalIcon class="absolute left-4" />
 
-	<input
-		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		placeholder={height === 'inherit' ? 'Inherit' : ''}
-		onchange={onChange}
-		min={IMAGE_MIN_WIDTH}
-		type="number"
-		bind:value={width}
-	/>
-</label>
+			<input
+				class="input-color h-full w-full p-0 pl-12 text-sm"
+				placeholder={height === 'inherit' ? 'Inherit' : ''}
+				onchange={onChange}
+				min={IMAGE_MIN_WIDTH}
+				type="number"
+				bind:value={width}
+			/>
+		</label>
 
-<label title="Height" class="flex min-h-10.5 items-center gap-2 pl-2">
-	<span class="hidden">Height</span>
-	<RectangleVerticalIcon />
+		<label title="Height" class="relative flex min-h-10.5 items-center gap-2">
+			<span class="hidden">Height</span>
+			<RectangleVerticalIcon class="absolute left-4" />
 
-	<input
-		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		placeholder={height === 'inherit' ? 'Inherit' : ''}
-		onchange={onChange}
-		min={IMAGE_MIN_HEIGHT}
-		type="number"
-		bind:value={height}
-	/>
-</label>
+			<input
+				class="input-color h-full w-full p-0 pl-12 text-sm"
+				placeholder={height === 'inherit' ? 'Inherit' : ''}
+				onchange={onChange}
+				min={IMAGE_MIN_HEIGHT}
+				type="number"
+				bind:value={height}
+			/>
+		</label>
+	</div>
+
+	<label class="flex flex-col gap-2">
+		<strong>Alt text</strong>
+		<input class="input-color rounded-sm p-2" onchange={onChange} bind:value={altText} />
+	</label>
+</div>

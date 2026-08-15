@@ -22,7 +22,6 @@
 	/**
 	 * @typedef {Object} Props
 	 * @property {string} [src]
-	 * @property {string} [altText]
 	 * @property {number | 'inherit'} [width]
 	 * @property {number | 'inherit'} [height]
 	 * @property {'internal' | 'new'} [currentImageType]
@@ -32,7 +31,6 @@
 	/** @type {Props} */
 	let {
 		src = $bindable(''),
-		altText = $bindable(''),
 		width = $bindable(IMAGE_MIN_WIDTH),
 		height = $bindable(IMAGE_MIN_HEIGHT),
 		currentImageType = $bindable('new'),
@@ -223,9 +221,9 @@
 			}
 
 			await saveContent(id, newHash, new File([newFile], newSrcName || 'Uploaded image', { type: newFile.type }));
-			onSubmit({ src: newHash, altText, width: Number(width), height: Number(height) });
+			onSubmit({ src: newHash, width: Number(width), height: Number(height) });
 		} else if (newSrc) {
-			onSubmit({ src: newSrc, altText, width: Number(width), height: Number(height) });
+			onSubmit({ src: newSrc, width: Number(width), height: Number(height) });
 		}
 
 		$modal.isOpen = false;
@@ -310,11 +308,11 @@
 					class="forsen-wiki-theme-border bg-dark mx-auto flex min-h-50 min-w-50 items-center justify-center border"
 				>
 					{#await previewImage}
-						<img class="animate-spin rounded-full" src={LUCIDE_ICON_LOADER} alt={altText} />
+						<img class="animate-spin rounded-full" src={LUCIDE_ICON_LOADER} alt="" />
 					{:then result}
 						<img
 							src={result}
-							alt={altText || `${currentImageType === 'new' ? 'Uploaded ' : ''}image preview`}
+							alt={`${currentImageType === 'new' ? 'Uploaded ' : ''}image preview`}
 							class="max-h-100"
 						/>
 					{/await}
@@ -417,13 +415,6 @@
 						<small>Successfully modified name.</small>
 					</div>
 				{/if}
-			</label>
-		{/if}
-
-		{#if src || newSrc}
-			<label class="flex flex-col gap-2">
-				<strong>Alt text</strong>
-				<input class="input-color rounded-sm p-2" bind:value={altText} />
 			</label>
 		{/if}
 
