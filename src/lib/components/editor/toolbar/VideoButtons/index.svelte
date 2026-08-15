@@ -1,58 +1,19 @@
 <script>
-	import { onMount } from 'svelte';
-	import {
-		$getSelection as getSelection,
-		$isNodeSelection as isNodeSelection,
-		mergeRegister,
-	} from 'lexical';
-	import { getEditor } from 'svelte-lexical';
-
 	import { $isVideoEmbedNode as isVideoEmbedNode } from '$lib/lexical/custom';
-	import Divider from '$lib/components/Divider.svelte';
 	import EditVideo from './EditVideo.svelte';
 
-	/** @type {import('$lib/lexical/custom').VideoEmbedNode | null} */
-	let selectedVideoEmbedNode = $state(null);
-
-	const editor = getEditor();
-
-	const updateToolbar = () => {
-		editor.read(() => {
-			const selection = getSelection();
-
-			if (isNodeSelection(selection)) {
-				const [node] = selection.getNodes();
-
-				if (!isVideoEmbedNode(node)) {
-					selectedVideoEmbedNode = null;
-					return;
-				}
-
-				selectedVideoEmbedNode = node;
-				return;
-			}
-
-			selectedVideoEmbedNode = null;
-		});
-	};
-
-	onMount(() => {
-		return mergeRegister(
-			editor.registerUpdateListener(() => {
-				updateToolbar();
-			})
-		);
-	});
+	/**
+	 * @type {{ selectedNode: LexicalNode | null }}
+	 */
+	let { selectedNode = null } = $props();
 </script>
 
-{#if selectedVideoEmbedNode}
-	<Divider />
+{#if isVideoEmbedNode(selectedNode)}
+	<div class="flex w-full flex-col justify-items-stretch">
+		<div class="violet p-4 font-mono leading-none select-none" title="Video">Video</div>
 
-	<div class="flex flex-col items-center justify-center font-mono text-xs leading-none select-none">
-		<span>V</span>
-		<span>I</span>
-		<span>D</span>
+		<div class="min-h-32 p-2">
+			<EditVideo selectedNode={selectedNode} />
+		</div>
 	</div>
-
-	<EditVideo {selectedVideoEmbedNode} />
 {/if}

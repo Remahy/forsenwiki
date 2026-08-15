@@ -1,27 +1,28 @@
 <script>
-	const aspectRatio = 2400 / 2800;
+	const aspectRatio = 2800 / 2400;
 
 	/**
 	 * @typedef {Object} Props
 	 * @property {string} [size]
+	 * @property {string} [class]
 	 */
 
 	/** @type {Props} */
-	let { size = '24' } = $props();
+	let { size = '24', ...restProps } = $props();
 
-	const height = $derived(Number(size) / aspectRatio);
+	let width = $derived(Number(size) / aspectRatio);
 </script>
 
 <svg
 	version="1.1"
-	width={size}
-	{height}
+	{width}
+	height={size}
 	xmlns="http://www.w3.org/2000/svg"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
 	viewBox="0 0 2400 2800"
 	style="enable-background:new 0 0 2400 2800;"
 	xml:space="preserve"
-	class="text-white"
+	class="text-white {restProps.class}"
 >
 	<g>
 		<polygon

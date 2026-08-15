@@ -26,22 +26,22 @@
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {import('$lib/lexical/custom').VideoEmbedNode} selectedVideoEmbedNode
+	 * @property {import('$lib/lexical/custom').VideoEmbedNode} selectedNode
 	 */
 
 	/** @type {Props} */
-	let { selectedVideoEmbedNode } = $props();
+	let { selectedNode } = $props();
 
 	let editor = $derived(getEditor?.());
 
 	/** @type {HTMLSelectElement | null} */
 	let platformElement = $state(null);
 
-	let currentPlatform = $derived(selectedVideoEmbedNode.__platform);
-	let currentURL = $derived(selectedVideoEmbedNode.__src);
+	let currentPlatform = $derived(selectedNode.__platform);
+	let currentURL = $derived(selectedNode.__src);
 
-	let currentWidth = $derived(selectedVideoEmbedNode.__width);
-	let currentHeight = $derived(selectedVideoEmbedNode.__height);
+	let currentWidth = $derived(selectedNode.__width);
+	let currentHeight = $derived(selectedNode.__height);
 
 	let url = $derived(currentURL);
 
@@ -60,7 +60,7 @@
 
 	const onChange = () => {
 		editor.update(() => {
-			selectedVideoEmbedNode.setWidthAndHeight({ width, height });
+			selectedNode.setWidthAndHeight({ width, height });
 		});
 	};
 
@@ -71,13 +71,13 @@
 		const { value } = /** @type {HTMLSelectElement} */ (e.currentTarget);
 
 		editor.update(() => {
-			selectedVideoEmbedNode.setPlatform(value);
+			selectedNode.setPlatform(value);
 		});
 	};
 
 	const setURL = () => {
 		editor.update(() => {
-			selectedVideoEmbedNode.setSrc(getURLAndTitle(currentPlatform, url, DOMAIN).url || url || '');
+			selectedNode.setSrc(getURLAndTitle(currentPlatform, url, DOMAIN).url || url || '');
 		});
 	};
 
@@ -89,12 +89,12 @@
 		editor.read(() => {
 			modal.set({
 				component: EditVideoModal,
-				src: selectedVideoEmbedNode.getSrc(),
+				src: selectedNode.getSrc(),
 				/** @param {import('../../plugins/VideoEmbed/VideoEmbed').VideoEmbedPayload} data */
 				onSubmit: (data) => {
 					editor.update(() => {
 						/** @type {import('../../plugins/Image/Image').ImageNode} */
-						const node = /** @type {any} */ (getNodeByKey(selectedVideoEmbedNode.getKey()));
+						const node = /** @type {any} */ (getNodeByKey(selectedNode.getKey()));
 
 						const { src } = data;
 
@@ -107,66 +107,70 @@
 	};
 </script>
 
-<div class="flex min-h-10.5 items-center gap-2 pl-2">
-	<SvelteComponent />
+<div class="flex flex-col gap-4">
+	<div class="relative flex items-center w-full gap-2">
+		<SvelteComponent class="absolute left-4" />
 
-	<Select
-		title="Platform"
-		bind:ref={platformElement}
-		on:change={setPlatform}
-		bind:value={currentPlatform}
-		class="-ml-10! h-full px-10!"
-	>
-		<option value="unknown" hidden>Unknown</option>
+		<Select
+			title="Platform"
+			bind:ref={platformElement}
+			on:change={setPlatform}
+			bind:value={currentPlatform}
+			class="min-h-10.5 px-12! w-full"
+		>
+			<option value="unknown" hidden>Unknown</option>
 
-		{#each platformOptions as [value, label] (value)}
-			<option {value} class="text-lg">{label}</option>
-		{/each}
-	</Select>
+			{#each platformOptions as [value, label] (value)}
+				<option {value} class="text-lg">{label}</option>
+			{/each}
+		</Select>
+	</div>
+
+	{#if currentPlatform === 'usercontent'}
+		<Button on:click={video} class="text-xs">Select content</Button>
+	{:else}
+		<label title="URL" class="relative flex w-full items-center gap-2">
+			<span class="hidden">URL</span>
+			<LinkIcon class="absolute left-4" />
+
+			<input
+				class="input-color min-h-10.5 w-full py-1 pl-12 text-sm"
+				onchange={setURL}
+				placeholder="https://..."
+				type="url"
+				bind:value={currentURL}
+			/>
+		</label>
+	{/if}
+
+	<div class="flex gap-2">
+		<label title="Width" class="relative flex w-full items-center gap-2">
+			<span class="hidden">Width</span>
+			<RectangleHorizontalIcon class="absolute left-4" />
+
+			<input
+				class="input-color min-h-10.5 w-full pl-12 text-sm"
+				placeholder={width === 'inherit' ? 'Inherit' : ''}
+				bind:value={width}
+				onchange={onChange}
+				min={VIDEO_MIN_WIDTH}
+				type="number"
+			/>
+		</label>
+
+		<label title="Height" class="relative flex w-full items-center gap-2">
+			<span class="hidden">Height</span>
+			<RectangleVerticalIcon class="absolute left-4" />
+
+			<input
+				class="input-color min-h-10.5 w-full pl-12 text-sm"
+				placeholder={height === 'inherit' ? 'Inherit' : ''}
+				onchange={onChange}
+				min={VIDEO_MIN_HEIGHT}
+				max={VIDEO_MAX_HEIGHT}
+				type="number"
+				bind:value={height}
+			/>
+		</label>
+	</div>
 </div>
-
-{#if currentPlatform === 'usercontent'}
-	<Button on:click={video} class="text-xs">Select content</Button>
-{:else}
-	<label title="URL" class="flex min-h-10.5 items-center gap-2 pl-2">
-		<span class="hidden">URL</span>
-		<LinkIcon />
-
-		<input
-			class="input-color -ml-10 h-full w-auto py-1 pr-0 pl-10 text-sm lg:h-full"
-			onchange={setURL}
-			placeholder="https://..."
-			type="url"
-			bind:value={currentURL}
-		/>
-	</label>
-{/if}
-
-<label title="Width" class="flex min-h-10.5 items-center gap-2 pl-2">
-	<span class="hidden">Width</span>
-	<RectangleHorizontalIcon />
-
-	<input
-		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		placeholder={width === 'inherit' ? 'Inherit' : ''}
-		bind:value={width}
-		onchange={onChange}
-		min={VIDEO_MIN_WIDTH}
-		type="number"
-	/>
-</label>
-
-<label title="Height" class="flex min-h-10.5 items-center gap-2 pl-2">
-	<span class="hidden">Height</span>
-	<RectangleVerticalIcon />
-
-	<input
-		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm"
-		placeholder={height === 'inherit' ? 'Inherit' : ''}
-		onchange={onChange}
-		min={VIDEO_MIN_HEIGHT}
-		max={VIDEO_MAX_HEIGHT}
-		type="number"
-		bind:value={height}
-	/>
-</label>
