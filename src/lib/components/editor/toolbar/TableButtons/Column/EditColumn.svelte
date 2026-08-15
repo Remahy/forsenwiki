@@ -91,6 +91,10 @@
 
 	const updateToolbar = () => {
 		editor.read(() => {
+			if (!isTableCellNode(selectedCell)) {
+				return;
+			}
+
 			const style = selectedCell.getHeaderStyles();
 
 			if ([TableCellHeaderStates.COLUMN, TableCellHeaderStates.BOTH].includes(style)) {

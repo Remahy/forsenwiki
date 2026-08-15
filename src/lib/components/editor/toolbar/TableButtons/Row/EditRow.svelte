@@ -102,6 +102,10 @@
 
 	const updateToolbar = () => {
 		editor.read(() => {
+			if (!isTableRowNode(selectedNode)) {
+				return;
+			}
+
 			const lastDescendant = selectedNode.getLastDescendant();
 
 			if (!lastDescendant) {
