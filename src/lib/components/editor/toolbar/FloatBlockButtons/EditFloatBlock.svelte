@@ -149,9 +149,17 @@
 				disabled={floatValue === 'clear'}
 			/>
 		</label>
+	</div>
 
+	<div
+		class="forsen-wiki-theme-border flex items-center rounded-sm border bg-violet-900/25 text-sm text-white"
+	>
 		<EditorButton on:click={toggleHasBorder} isActive={!!currentHasBorder} title="Toggle border">
 			<SquareDashedIcon />
 		</EditorButton>
+
+		<div class="flex grow items-center gap-2 p-2" title="Toggle header">
+			<span>Toggle border</span>
+		</div>
 	</div>
 </div>
