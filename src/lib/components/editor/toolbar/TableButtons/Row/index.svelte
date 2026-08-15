@@ -3,9 +3,9 @@
 	import EditRow from './EditRow.svelte';
 
 	/**
-	 * @type {{ selectedTable: import('@lexical/table').TableNode, selectedNode: LexicalNode | null }}
+	 * @type {{ selectedTable: LexicalNode, selectedNode: LexicalNode }}
 	 */
-	let { selectedTable, selectedNode = null } = $props();
+	let { selectedTable, selectedNode } = $props();
 </script>
 
 {#if isTableRowNode(selectedNode) && isTableNode(selectedTable)}

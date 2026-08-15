@@ -3,9 +3,9 @@
 	import EditCell from './EditCell.svelte';
 
 	/**
-	 * @type {{ selectedTable: import('@lexical/table').TableNode, selectedNode: LexicalNode | null }}
+	 * @type {{ selectedTable: LexicalNode, selectedNode: LexicalNode }}
 	 */
-	let { selectedTable, selectedNode = null } = $props();
+	let { selectedTable, selectedNode } = $props();
 </script>
 
 {#if isTableCellNode(selectedNode) && isTableNode(selectedTable)}
@@ -13,7 +13,7 @@
 		<div class="violet p-4 font-mono leading-none select-none" title="Cell">Cell</div>
 
 		<div class="min-h-32 p-2">
-			<EditCell {selectedTable} selectedCell={selectedNode} />
+			<EditCell {selectedTable} selectedNode={selectedNode} />
 		</div>
 	</div>
 {/if}

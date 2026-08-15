@@ -4,16 +4,16 @@
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {import('$lib/lexical/custom').ATableNode | null} selectedTable
-	 * @property {import('$lib/lexical/custom').ATableCellNode | null} selectedCell
+	 * @property {import('$lib/lexical/custom').ATableNode} selectedTable
+	 * @property {import('$lib/lexical/custom').ATableCellNode} selectedNode
 	 */
 
 	/** @type {Props} */
-	let { selectedTable, selectedCell } = $props();
+	let { selectedTable, selectedNode } = $props();
 
 	const editor = getEditor();
 
-	let colIndex = $derived.by(() => editor.read(() => selectedCell?.getIndexWithinParent()));
+	let colIndex = $derived.by(() => editor.read(() => selectedNode?.getIndexWithinParent()));
 
 	let currentWidth = $derived.by(() =>
 		typeof colIndex === 'number'
