@@ -48,23 +48,16 @@
 	};
 </script>
 
-<div class="forsen-wiki-theme-outline m-1.5 flex items-center gap-2 outline-offset-8">
-	<div class="flex flex-col items-center justify-center font-mono text-xs leading-none select-none">
-		<span>C</span>
-		<span>L</span>
-		<span>L</span>
-	</div>
-	<label title="Relative width" class="flex min-h-10.5 items-center gap-2 pl-2">
-		<span class="hidden">Width</span>
-		<RectangleHorizontalIcon />
+<label title="Relative width" class="relative flex min-h-10.5 items-center gap-2">
+	<span class="hidden">Width</span>
+	<RectangleHorizontalIcon class="absolute left-4" />
 
-		<input
-			placeholder="Fill"
-			class="input-color -ml-10 h-10 w-28 p-0 pl-10 text-sm"
-			bind:value={width}
-			min={0}
-			max={100}
-			onchange={onChange}
-		/>
-	</label>
-</div>
+	<input
+		placeholder="Auto"
+		class="input-color h-10 w-full p-0 pl-12 text-sm"
+		bind:value={width}
+		min={0}
+		max={100}
+		onchange={onChange}
+	/>
+</label>

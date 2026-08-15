@@ -1,18 +1,20 @@
 <script>
 	import { onMount } from 'svelte';
 	import { $getSelection as getSelection, mergeRegister } from 'lexical';
-	import { $isTableCellNode as isTableCellNode, $isTableNode as isTableNode } from '@lexical/table';
+	import { $isTableNode as isTableNode } from '@lexical/table';
 	import { getEditor } from 'svelte-lexical';
 
-	import Divider from '$lib/components/Divider.svelte';
 	import RowButtons from './RowButtons.svelte';
 	import ColumnButtons from './ColumnButtons.svelte';
-	import EditCell from './EditCell.svelte';
+	import Cell from './Cell/index.svelte';
+
+	/**
+	 * @type {{ selectedNode: LexicalNode | null }}
+	 */
+	let { selectedNode = null } = $props();
 
 	/** @type {import('$lib/lexical/custom').ATableNode | null} */
 	let selectedTable = $state(null);
-	/** @type {import('$lib/lexical/custom').ATableCellNode | null} */
-	let selectedCell = $state(null);
 
 	const editor = getEditor();
 
@@ -39,15 +41,7 @@
 				return;
 			}
 
-			const closestCellNode = node.getParents().find((node) => isTableCellNode(node));
-
-			if (!closestCellNode) {
-				selectedCell = null;
-				return;
-			}
-
 			selectedTable = closestParentTable;
-			selectedCell = closestCellNode;
 		});
 	};
 
@@ -61,15 +55,7 @@
 </script>
 
 {#if selectedTable}
-	<Divider />
-
-	<div class="flex flex-col items-center justify-center font-mono text-xs leading-none select-none">
-		<span>T</span>
-		<span>B</span>
-		<span>L</span>
-	</div>
-
 	<RowButtons {selectedTable} />
 	<ColumnButtons {selectedTable} />
-	<EditCell {selectedTable} {selectedCell} />
+	<Cell {selectedTable} {selectedNode} />
 {/if}
