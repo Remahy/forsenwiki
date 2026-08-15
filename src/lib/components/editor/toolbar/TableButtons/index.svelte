@@ -4,7 +4,7 @@
 	import { $isTableNode as isTableNode } from '@lexical/table';
 	import { getEditor } from 'svelte-lexical';
 
-	import RowButtons from './RowButtons.svelte';
+	import Row from './Row/index.svelte';
 	import ColumnButtons from './ColumnButtons.svelte';
 	import Cell from './Cell/index.svelte';
 
@@ -55,7 +55,7 @@
 </script>
 
 {#if selectedTable}
-	<RowButtons {selectedTable} />
+	<Row {selectedTable} {selectedNode} />
 	<ColumnButtons {selectedTable} />
 	<Cell {selectedTable} {selectedNode} />
 {/if}
