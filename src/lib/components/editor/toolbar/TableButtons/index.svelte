@@ -1,11 +1,11 @@
 <script>
 	import { onMount } from 'svelte';
-	import { $getSelection as getSelection, mergeRegister } from 'lexical';
+	import { mergeRegister } from 'lexical';
 	import { $isTableNode as isTableNode } from '@lexical/table';
 	import { getEditor } from 'svelte-lexical';
 
 	import Row from './Row/index.svelte';
-	import ColumnButtons from './ColumnButtons.svelte';
+	import Column from './Column/index.svelte';
 	import Cell from './Cell/index.svelte';
 
 	/**
@@ -20,21 +20,12 @@
 
 	const updateToolbar = () => {
 		editor.read(() => {
-			const selection = getSelection();
-
-			if (!selection?.isCollapsed) {
+			if (!selectedNode) {
 				selectedTable = null;
 				return;
 			}
 
-			const [node] = selection.getNodes();
-
-			if (!node) {
-				selectedTable = null;
-				return;
-			}
-
-			const closestParentTable = node.getParents().find((node) => isTableNode(node));
+			const closestParentTable = selectedNode.getParents().find((node) => isTableNode(node));
 
 			if (!closestParentTable) {
 				selectedTable = null;
@@ -54,8 +45,8 @@
 	});
 </script>
 
-{#if selectedTable}
+{#if selectedTable && selectedNode}
 	<Row {selectedTable} {selectedNode} />
-	<ColumnButtons {selectedTable} />
+	<Column {selectedTable} {selectedNode} />
 	<Cell {selectedTable} {selectedNode} />
 {/if}
