@@ -39,7 +39,7 @@
 	<meta property="og:url" content="{$page.url.origin}/w/{title}" />
 </svelte:head>
 
-<Container>
+<Container class="-m-4">
 	<article class="relative flex grow flex-col gap-8">
 		<header class="bg-heading-message p-4">
 			<div class="flex w-full gap-2">
@@ -112,7 +112,7 @@
 		</div>
 
 		<div class="flex grow flex-col gap-4 lg:flex-row">
-			<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
+			<Box class="-mx-4 flex grow flex-col overflow-hidden p-4 sm:mx-0 lg:mb-0">
 				{#if html?.html}
 					<main class="article-root prose dark:prose-invert max-w-[unset] grow">
 						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
@@ -126,7 +126,7 @@
 				{/if}
 			</Box>
 
-			<div class="hidden lg:block lg:w-96 lg:min-w-96"></div>
+			<div class="hidden xl:block xl:w-96 xl:min-w-96"></div>
 		</div>
 	</article>
 </Container>

@@ -25,7 +25,7 @@ import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
 import TableNodeDOMExport from './htmlExport/TableNodeDOMExport';
 
-const floatResponsive = 'max-sm:float-none! max-sm:w-full! max-sm:me-0! max-sm:ms-0!';
+const floatResponsive = 'max-lg:float-none! max-lg:w-full! max-lg:me-0! max-lg:ms-0!';
 const floatBoxShadow = '0px 0px 0px 1px #696969';
 
 /**
