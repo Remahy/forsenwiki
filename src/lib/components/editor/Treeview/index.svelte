@@ -182,7 +182,7 @@
 	<div
 		bind:this={treeElement}
 		{...tree?.getContainerProps?.('Tree') ?? {}}
-		class="tree overflow-y-auto p-2"
+		class="tree overflow-y-auto grow p-2"
 	>
 		{#each items as item (item.getId())}
 			<div

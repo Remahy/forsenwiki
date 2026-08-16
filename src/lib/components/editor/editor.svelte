@@ -15,7 +15,7 @@
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
 	import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
 	import Toolbar from './toolbar/index.svelte';
-	import ToolbarExtra from './toolbar/Extra.svelte';
+	import TreeWrapper from './toolbar/TreeWrapper.svelte';
 	import MobileToolbar from './toolbar/MobileToolbar.svelte';
 	import Footer from './footer/index.svelte';
 	import { articleConfig, editableTheme } from './config/article';
@@ -58,7 +58,7 @@
 </script>
 
 <Composer {initialConfig} bind:this={composer}>
-	<div class="relative flex min-h-96 gap-2">
+	<div class="relative flex min-h-96 gap-4">
 		<RichTextPlugin />
 
 		<ListPlugin />
@@ -77,7 +77,7 @@
 
 		<SelectionOverrides />
 
-		<div class="w-full lg:w-148 xl:w-212 2xl:w-280">
+		<div class="w-full">
 			<div class="editor-border sticky top-0 z-40 hidden w-full p-2 lg:block">
 				<div class="flex flex-wrap items-stretch gap-2">
 					<Toolbar />
@@ -106,9 +106,9 @@
 		</div>
 
 		<div
-			class="editor-border sticky max-h-screen top-0 hidden w-96 max-w-96 grow flex-col gap-4 lg:flex"
+			class="editor-border sticky top-0 hidden max-h-screen grow flex-col gap-4 xl:flex xl:w-96 xl:min-w-96"
 		>
-			<ToolbarExtra />
+			<TreeWrapper />
 		</div>
 	</div>
 </Composer>

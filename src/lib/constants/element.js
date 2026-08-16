@@ -26,13 +26,14 @@ export const ELEMENT_CONSTANTS = {
 
 export const blockTypeLabels = {
 	default: 'Unknown',
-	... insertableTypeLabels,
+	...insertableTypeLabels,
 	mixed: 'Mixed',
 	listitem: 'List item',
 	tablerow: 'Row',
 	tablecell: 'Cell',
-	['a-table']: 'Table',
+	'a-table': 'Table',
 	videoembed: 'Video',
 	image: 'Image',
-	['float-block']: 'Float block'
+	'float-block': 'Float block',
+	'a-link': 'Link',
 };

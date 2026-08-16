@@ -7,6 +7,7 @@ import {
 	Heading4Icon,
 	Heading5Icon,
 	ImageIcon,
+	LinkIcon,
 	ListCheckIcon,
 	ListIcon,
 	ListOrderedIcon,
@@ -45,6 +46,7 @@ export const blockTypeIcons = {
 	tablerow: Rows2Icon,
 	listitem: CircleSmallIcon,
 	text: TextInitialIcon,
+	'a-link': LinkIcon,
 
 	// Unused
 	check: ListCheckIcon,
