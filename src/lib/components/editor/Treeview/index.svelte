@@ -70,6 +70,14 @@
 					selection.add(node.getKey());
 					setSelection(selection);
 				}
+
+				const element = editor.getElementByKey(node.getKey());
+				element?.scrollIntoView({
+					behavior: 'instant',
+					block: 'center',
+					inline: 'center'
+				});
+
 				treeviewState.selected = node;
 			},
 			{ discrete: true }
