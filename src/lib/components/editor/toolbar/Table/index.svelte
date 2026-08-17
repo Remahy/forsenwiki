@@ -25,6 +25,10 @@
 				return;
 			}
 
+			if (!selectedNode.isAttached()) {
+				return;
+			}
+
 			const closestParentTable = selectedNode.getParents().find((node) => isTableNode(node));
 
 			if (!closestParentTable) {
