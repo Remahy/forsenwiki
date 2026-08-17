@@ -13,7 +13,7 @@
 	<div class="flex w-full flex-col justify-items-stretch">
 		<Title {selectedNode} text="Video" />
 
-		<div class="min-h-32 p-2">
+		<div class="p-2">
 			<EditVideo {selectedNode} />
 		</div>
 	</div>
