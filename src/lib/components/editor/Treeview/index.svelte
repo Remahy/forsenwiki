@@ -18,6 +18,7 @@
 	import { initTree } from './tree';
 	import NodeIcon from './NodeIcon.svelte';
 	import { expandParents } from './utils';
+	import NameWrapper from './NameWrapper.svelte';
 
 	/**
 	 * @typedef {import('@headless-tree/core').ItemInstance<LexicalNode>} ItemInstance
@@ -75,7 +76,7 @@
 				element?.scrollIntoView({
 					behavior: 'instant',
 					block: 'center',
-					inline: 'center'
+					inline: 'center',
 				});
 
 				treeviewState.selected = node;
@@ -182,7 +183,7 @@
 	<div
 		bind:this={treeElement}
 		{...tree?.getContainerProps?.('Tree') ?? {}}
-		class="tree overflow-y-auto grow p-2"
+		class="tree grow overflow-y-auto p-2"
 	>
 		{#each items as item (item.getId())}
 			<div
@@ -207,7 +208,9 @@
 
 				<button class="name" onclick={(e) => onClickNode(e, item)}>
 					<NodeIcon {editor} node={item.getItemData()} />
-					{item.getItemName()}
+					<NameWrapper {editor} node={item.getItemData()}>
+						{item.getItemName()}
+					</NameWrapper>
 				</button>
 			</div>
 		{/each}
