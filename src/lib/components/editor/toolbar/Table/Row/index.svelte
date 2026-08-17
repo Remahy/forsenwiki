@@ -10,7 +10,7 @@
 
 {#if isTableRowNode(selectedNode) && isTableNode(selectedTable)}
 	<div class="flex w-full flex-col justify-items-stretch">
-		<div class="violet p-4 font-mono leading-none select-none" title="Row">Row</div>
+		<div class="violet px-2 py-4 font-mono leading-none select-none" title="Row">Row</div>
 
 		<div class="min-h-32 p-2">
 			<EditRow {selectedTable} {selectedNode} />

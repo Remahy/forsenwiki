@@ -10,9 +10,11 @@
 
 {#if isFloatBlockNode(selectedNode)}
 	<div class="flex w-full flex-col justify-items-stretch">
-		<div class="violet p-4 font-mono leading-none select-none" title="Float Block">Float block</div>
+		<div class="violet px-2 py-4 font-mono leading-none select-none" title="Float Block">
+			Float block
+		</div>
 
-		<div class="p-2 min-h-32">
+		<div class="min-h-32 p-2">
 			<EditFloatBlock selectedFloatBlockNode={selectedNode} />
 		</div>
 	</div>
