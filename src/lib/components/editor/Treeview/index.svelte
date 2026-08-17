@@ -6,6 +6,7 @@
 		$getSelection as getSelection,
 		$isParagraphNode as isParagraphNode,
 		$isTextNode as isTextNode,
+		$isRangeSelection as isRangeSelection,
 		mergeRegister,
 	} from 'lexical';
 	import { getEditor } from 'svelte-lexical';
@@ -115,8 +116,10 @@
 
 					const selection = getSelection();
 
-					if (!selection?.isCollapsed) {
+					if (!selection || (isRangeSelection(selection) && !selection?.isCollapsed())) {
 						updateItems();
+
+						tree.setSelectedItems([]);
 
 						treeviewState.selected = null;
 						return;
@@ -197,13 +200,11 @@
 				{#if item.isFolder()}
 					<button type="button" onclick={(e) => onClickExpandNode(e, item)}>
 						{#if item.isExpanded()}
-							<ChevronDownIcon />
+							<ChevronDownIcon size="16" />
 						{:else}
-							<ChevronRightIcon />
+							<ChevronRightIcon size="16" />
 						{/if}
 					</button>
-				{:else}
-					<div class="w-6"></div>
 				{/if}
 
 				<button class="name" onclick={(e) => onClickNode(e, item)}>

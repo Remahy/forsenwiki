@@ -4,7 +4,6 @@
 	import {
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,
-		$isNodeSelection as isNodeSelection,
 		mergeRegister,
 	} from 'lexical';
 	import { INSERT_TABLE_COMMAND } from '@lexical/table';
@@ -112,7 +111,7 @@
 		editor.read(() => {
 			const selection = getSelection();
 
-			if (isNodeSelection(selection) || (isRangeSelection(selection) && !selection.isCollapsed())) {
+			if (isRangeSelection(selection) && !selection.isCollapsed()) {
 				isDisabled = true;
 			} else {
 				isDisabled = false;

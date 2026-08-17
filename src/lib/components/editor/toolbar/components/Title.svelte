@@ -21,7 +21,7 @@
 	<span class="grow pl-2 select-none">{text}</span>
 	{@render children?.()}
 	<Button
-		class="m-0! rounded-none! bg-red-400! p-0! hover:bg-red-600!"
+		class="m-0! rounded-none! bg-red-400! p-0! hover:bg-red-600! dark:bg-red-600/50! dark:hover:bg-red-700!"
 		onclick={onClickDelete}
 		title="Delete node"
 	>

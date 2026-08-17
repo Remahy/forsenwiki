@@ -40,11 +40,11 @@ html.forsen-wiki-theme {
 	}
 
 	.button {
-		@apply rounded-sm bg-violet-600 px-4 py-2 font-medium text-white hover:bg-violet-800 disabled:opacity-25 disabled:hover:cursor-not-allowed;
+		@apply rounded-sm bg-violet-900 px-4 py-2 font-medium text-white hover:bg-violet-700 disabled:opacity-25 disabled:hover:cursor-not-allowed;
 
 		&.active {
-			@apply forsen-wiki-theme-border border bg-violet-700!;
-		}
+			@apply forsen-wiki-theme-border border bg-violet-600!;
+		}t
 
 		&.inactive {
 			@apply forsen-wiki-theme-border border bg-violet-900/50!;
