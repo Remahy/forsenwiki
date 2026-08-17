@@ -30,8 +30,13 @@
 		DROP_COMMAND,
 		getDOMSelectionFromTarget,
 		$getNodeFromDOMNode as getNodeFromDOMNode,
+		$isRangeSelection as isRangeSelection,
 	} from 'lexical';
-	import { $wrapNodeInElement as wrapNodeInElement, mergeRegister } from '@lexical/utils';
+	import {
+		$wrapNodeInElement as wrapNodeInElement,
+		mergeRegister,
+		$insertNodeToNearestRoot as insertNodeToNearestRoot,
+	} from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
 
 	import { modal } from '$lib/stores/modal';
@@ -312,8 +317,14 @@
 						node.setSrc(src);
 					}
 
-					insertNodes([node]);
-					if (isRootOrShadowRoot(node.getParentOrThrow())) {
+					const selection = getSelection();
+					if (isRangeSelection(selection)) {
+						insertNodes([node]);
+					} else {
+						insertNodeToNearestRoot(node);
+					}
+
+					if (isRootOrShadowRoot(node.getParent())) {
 						wrapNodeInElement(node, createParagraphNode).selectEnd();
 					}
 				});
