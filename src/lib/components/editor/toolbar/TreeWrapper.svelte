@@ -3,6 +3,7 @@
 	import VideoButtons from './VideoButtons/index.svelte';
 	import TableButtons from './TableButtons/index.svelte';
 	import FloatBlockButtons from './FloatBlockButtons/index.svelte';
+	import Link from './Link/index.svelte';
 	import Treeview from '../Treeview/index.svelte';
 	import { treeviewState } from '../Treeview/treeviewState.svelte';
 
@@ -16,4 +17,5 @@
 	<TableButtons {selectedNode} />
 	<ImageButtons {selectedNode} />
 	<VideoButtons {selectedNode} />
+	<Link {selectedNode} />
 </div>

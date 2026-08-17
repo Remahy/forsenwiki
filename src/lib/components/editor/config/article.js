@@ -50,6 +50,9 @@ export const articleTheme = {
 	quote: 'overflow-hidden',
 };
 
+/**
+ * @type {import('lexical').EditorThemeClasses}
+ */
 export const editableTheme = {
 	...articleTheme,
 	root: 'editor-shell',
@@ -62,6 +65,7 @@ export const editableTheme = {
 		bold: 'font-semibold',
 		italic: 'italic',
 	},
+	link: 'pointer-events-none'
 };
 
 export const htmlExport = new Map([
