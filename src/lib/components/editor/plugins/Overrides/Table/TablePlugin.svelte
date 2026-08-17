@@ -34,7 +34,7 @@
 	import { signal } from '@lexical/extension';
 
 	import { modal } from '$lib/stores/modal';
-	import InsertTableDialog from '$lib/components/editor/toolbar/TableButtons/InsertTableDialog.svelte';
+	import InsertTableDialog from '$lib/components/editor/toolbar/Table/InsertTableDialog.svelte';
 	import {
 		hasAdjacentNode,
 		insertFnc,

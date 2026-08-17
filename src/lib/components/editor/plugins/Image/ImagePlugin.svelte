@@ -38,7 +38,7 @@
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import { saveContent } from '$lib/utils/indexedDb/content';
 
-	import EditImageModal from '../../toolbar/ImageButtons/EditImageModal.svelte';
+	import EditImageModal from '../../toolbar/Image/EditImageModal.svelte';
 	import { editorGlobals } from '../../editorGlobals.svelte';
 	import { handleNewImage } from '../../utils/handleNewImage';
 	import { migrateWSRVImageUsingElement } from '../../migrations/migrateWSRVImages';
