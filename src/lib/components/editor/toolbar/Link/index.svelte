@@ -1,5 +1,6 @@
 <script>
 	import { $isALinkNode as isALinkNode } from '$lib/lexical/custom';
+	import Title from '../components/Title.svelte';
 	import EditLink from './EditLink.svelte';
 
 	/**
@@ -10,7 +11,7 @@
 
 {#if isALinkNode(selectedNode)}
 	<div class="flex w-full flex-col justify-items-stretch">
-		<div class="violet px-2 py-4 font-mono leading-none select-none" title="Link">Link</div>
+		<Title {selectedNode} text="Link" />
 
 		<div class="min-h-32 p-2">
 			<EditLink {selectedNode} />

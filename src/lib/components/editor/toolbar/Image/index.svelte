@@ -1,5 +1,6 @@
 <script>
 	import { $isImageNode as isImageNode } from '$lib/lexical/custom';
+	import Title from '../components/Title.svelte';
 	import EditImage from './EditImage.svelte';
 
 	/**
@@ -10,7 +11,7 @@
 
 {#if isImageNode(selectedNode)}
 	<div class="flex w-full flex-col justify-items-stretch">
-		<div class="violet px-2 py-4 font-mono leading-none select-none" title="Image">Image</div>
+		<Title {selectedNode} text="Image" />
 
 		<div class="min-h-32 p-2">
 			<EditImage selectedImageNode={selectedNode} />

@@ -1,5 +1,6 @@
 <script>
 	import { $isFloatBlockNode as isFloatBlockNode } from '$lib/lexical/custom';
+	import Title from '../components/Title.svelte';
 	import EditFloatBlock from './EditFloatBlock.svelte';
 
 	/**
@@ -10,9 +11,7 @@
 
 {#if isFloatBlockNode(selectedNode)}
 	<div class="flex w-full flex-col justify-items-stretch">
-		<div class="violet px-2 py-4 font-mono leading-none select-none" title="Float Block">
-			Float block
-		</div>
+		<Title {selectedNode} text="Float block" />
 
 		<div class="min-h-32 p-2">
 			<EditFloatBlock selectedFloatBlockNode={selectedNode} />

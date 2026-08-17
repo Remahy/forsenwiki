@@ -1,5 +1,6 @@
 <script>
 	import { $isVideoEmbedNode as isVideoEmbedNode } from '$lib/lexical/custom';
+	import Title from '../components/Title.svelte';
 	import EditVideo from './EditVideo.svelte';
 
 	/**
@@ -10,7 +11,7 @@
 
 {#if isVideoEmbedNode(selectedNode)}
 	<div class="flex w-full flex-col justify-items-stretch">
-		<div class="violet px-2 py-4 font-mono leading-none select-none" title="Video">Video</div>
+		<Title {selectedNode} text="Video" />
 
 		<div class="min-h-32 p-2">
 			<EditVideo {selectedNode} />

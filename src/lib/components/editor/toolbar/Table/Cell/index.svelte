@@ -1,5 +1,6 @@
 <script>
 	import { $isTableNode as isTableNode, $isTableCellNode as isTableCellNode } from '@lexical/table';
+	import Title from '../../components/Title.svelte';
 	import EditCell from './EditCell.svelte';
 
 	/**
@@ -10,7 +11,7 @@
 
 {#if isTableCellNode(selectedNode) && isTableNode(selectedTable)}
 	<div class="flex w-full flex-col justify-items-stretch">
-		<div class="violet px-2 py-4 font-mono leading-none select-none" title="Cell">Cell</div>
+		<Title {selectedNode} text="Cell" />
 
 		<div class="min-h-32 p-2">
 			<EditCell {selectedTable} {selectedNode} />
