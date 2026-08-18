@@ -18,7 +18,9 @@
 
 <div class="modal-color pointer-events-auto relative p-0">
 	<header class="forsen-wiki-theme-border flex items-center justify-between border-b p-6">
-		<h1 class="text-xl font-semibold lg:text-2xl">Uploading content</h1>
+		<h1 class="text-xl font-semibold lg:text-2xl">
+			{uploading.count ? 'Uploading' : 'Updating'} content
+		</h1>
 	</header>
 
 	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
@@ -65,7 +67,5 @@
 		<footer class="flex items-center justify-end gap-2 p-6">
 			<Button on:click={cancel} disabled={uploaded.length < uploading.count}>OK</Button>
 		</footer>
-	{:else}
-		<div class="self-center"><Spinner /></div>
 	{/if}
 </div>
