@@ -272,7 +272,7 @@
 					const node = getNodeFromDOMNode(element);
 
 					if (isImageNode(node)) {
-						node.setSrc('');
+						node.remove();
 					}
 				},
 				{ tag: 'history-merge' }
