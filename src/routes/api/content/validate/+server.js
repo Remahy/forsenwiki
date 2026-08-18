@@ -134,10 +134,6 @@ export const _validateContent = async (files, isModerator) => {
 		return { status: 400, errors: errors };
 	}
 
-	if (foundFilesError.length) {
-		return { status: 400, errors: foundFilesError };
-	}
-
 	return { status: 200, errors: [], files: nonExistingFiles };
 };
 
