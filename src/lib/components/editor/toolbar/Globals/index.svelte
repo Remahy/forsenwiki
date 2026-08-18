@@ -3,7 +3,7 @@
 </script>
 
 <div class="flex w-full flex-col justify-items-stretch">
-	<div class="bg-violet-900/25 px-2 py-4 font-mono leading-none select-none" title="Globals">
+	<div class="bg-violet-900/25 p-4 font-mono leading-none select-none" title="Globals">
 		Globals
 	</div>
 

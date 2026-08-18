@@ -25,6 +25,7 @@
 	import TablePlugin from './plugins/Overrides/Table/TablePlugin.svelte';
 	import FloatBlockPlugin from './plugins/FloatBlock/FloatBlockPlugin.svelte';
 	import SelectionOverrides from './plugins/SelectionOverrides.svelte';
+	import Box from '../Box.svelte';
 
 	/**
 	 * @typedef {Object} Props
@@ -56,6 +57,10 @@
 		};
 	});
 </script>
+
+<Box class="bg-blue-500/15! p-4">
+	<p><strong>New editor tree for nodes!</strong> There will be bugs! More features coming soon!</p>
+</Box>
 
 <Composer {initialConfig} bind:this={composer}>
 	<div class="relative flex min-h-96 gap-4">

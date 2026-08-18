@@ -59,6 +59,11 @@
 
 	const insertElementTypeOptions = [
 		{
+			value: 'paragraph',
+			label: blockTypeLabels.paragraph,
+			insertFunc: () => insertParagraph(editor),
+		},
+		{
 			value: 'image',
 			label: blockTypeLabels.image,
 			insertFunc: insertImage,
@@ -77,11 +82,6 @@
 			value: 'floatblock',
 			label: blockTypeLabels['float-block'],
 			insertFunc: insertFloatBlock,
-		},
-		{
-			value: 'paragraph',
-			label: blockTypeLabels.paragraph,
-			insertFunc: () => insertParagraph(editor),
 		},
 	];
 

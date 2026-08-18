@@ -95,6 +95,10 @@
 				return;
 			}
 
+			if (!selectedCell.isAttached()) {
+				return;
+			}
+
 			const style = selectedCell.getHeaderStyles();
 
 			if ([TableCellHeaderStates.COLUMN, TableCellHeaderStates.BOTH].includes(style)) {
