@@ -4,10 +4,11 @@
 	/**
 	 * @typedef {Object} Props
 	 * @property {string} [size]
+	 * @property {string} [class]
 	 */
 
 	/** @type {Props} */
-	let { size = '24' } = $props();
+	let { size = '24', class: className } = $props();
 
 	const height = $derived(Number(size) / aspectRatio);
 </script>
@@ -21,7 +22,7 @@
 	viewBox="0 0 2400 2800"
 	style="enable-background:new 0 0 2400 2800;"
 	xml:space="preserve"
-	class="text-white"
+	class="text-white {className}"
 >
 	<g>
 		<polygon

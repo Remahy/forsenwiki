@@ -167,7 +167,7 @@
 			</SuggestionBox>
 
 			<div class="flex grow flex-col gap-4 lg:flex-row">
-				<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
+				<Box class="-mx-4 flex grow flex-col overflow-hidden p-4 sm:mx-0 lg:mb-0">
 					<main class="article-root prose dark:prose-invert max-w-[unset] grow wrap-break-word">
 						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>
@@ -213,10 +213,9 @@
 					<StreamerModeShow>
 						<span>
 							{#each authors as author, index (author.id)}
-								<Link href="/user/{author.id}" target="_blank" class="decoration-1!">{author.name}</Link>{index <
-								authors.length - 1
-									? ', '
-									: ''}
+								<Link href="/user/{author.id}" target="_blank" class="decoration-1!"
+									>{author.name}</Link
+								>{index < authors.length - 1 ? ', ' : ''}
 							{/each}
 						</span>
 					</StreamerModeShow>

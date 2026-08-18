@@ -86,13 +86,9 @@
 	let toc = $state('');
 </script>
 
-<div
-	use:tocAction
-	class="hidden lg:block lg:w-96 lg:min-w-96
-"
->
+<div use:tocAction class="hidden xl:block xl:w-96 xl:min-w-96">
 	{#if toc}
-		<Box class="top-4 hidden flex-col overflow-hidden p-4 pr-0 pb-0 break-all lg:sticky lg:flex">
+		<Box class="sticky top-4 flex flex-col overflow-hidden p-4 pr-0 pb-0 break-all">
 			<div class="box-heading-wrapper">
 				<h2 class="text-2xl">Table of Contents</h2>
 			</div>

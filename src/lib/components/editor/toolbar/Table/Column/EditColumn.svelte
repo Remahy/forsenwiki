@@ -2,15 +2,14 @@
 	// Based on umaranis' svelte-lexical
 
 	import { onMount } from 'svelte';
-	import { PlusIcon, MinusIcon, ArrowLeftIcon, ArrowRightIcon, Columns3Icon } from '@lucide/svelte';
+	import { PlusIcon, ArrowLeftIcon, ArrowRightIcon, Columns3Icon } from '@lucide/svelte';
 	import {
-		$isRangeSelection as isRangeSelection,
-		$getSelection as getSelection,
+		$createNodeSelection as createNodeSelection,
+		$setSelection as setSelection,
 		mergeRegister,
 	} from 'lexical';
 	import {
 		$insertTableColumnAtSelection as insertTableColumnAtSelection,
-		$deleteTableColumnAtSelection as deleteTableColumnAtSelection,
 		$getTableNodeFromLexicalNodeOrThrow as getTableNodeFromLexicalNodeOrThrow,
 		$getTableColumnIndexFromTableCellNode as getTableColumnIndexFromTableCellNode,
 		$isTableRowNode as isTableRowNode,
@@ -20,15 +19,16 @@
 	import { getEditor } from 'svelte-lexical';
 
 	import Button from '$lib/components/Button.svelte';
-	import EditorButton from '../EditorButton.svelte';
+	import EditorButton from '../../EditorButton.svelte';
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {import('@lexical/table').TableNode | null} selectedTable
+	 * @property {import('$lib/lexical/custom').ATableNode} selectedTable
+	 * @property {import('$lib/lexical/custom').ATableCellNode} selectedCell
 	 */
 
 	/** @type {Props} */
-	let { selectedTable } = $props();
+	let { selectedTable, selectedCell } = $props();
 
 	let isColumnHeader = $state(false);
 
@@ -41,39 +41,21 @@
 				return;
 			}
 
+			selectedCell.selectEnd();
+
 			insertTableColumnAtSelection(insertAfter);
-		});
-	};
 
-	const onClickRemoveColumn = () => {
-		editor.update(() => {
-			if (!selectedTable) {
-				return;
-			}
-
-			deleteTableColumnAtSelection();
+			const selection = createNodeSelection();
+			selection.add(selectedCell.getKey());
+			setSelection(selection);
 		});
 	};
 
 	const toggleTableColumnIsHeader = () => {
 		editor.update(() => {
-			const selection = getSelection();
+			const tableNode = getTableNodeFromLexicalNodeOrThrow(selectedCell);
 
-			if (!selection) {
-				return;
-			}
-
-			const [node] = selection.getNodes();
-
-			const tableCellNode = node.getParents().find((n) => isTableCellNode(n));
-
-			if (!tableCellNode) {
-				return;
-			}
-
-			const tableNode = getTableNodeFromLexicalNodeOrThrow(tableCellNode);
-
-			const tableColumnIndex = getTableColumnIndexFromTableCellNode(tableCellNode);
+			const tableColumnIndex = getTableColumnIndexFromTableCellNode(selectedCell);
 
 			/** @type {import('@lexical/table').TableRowNode[]} */
 			const tableRows = tableNode.getChildren();
@@ -109,21 +91,15 @@
 
 	const updateToolbar = () => {
 		editor.read(() => {
-			const selection = getSelection();
-
-			if (!isRangeSelection(selection)) {
+			if (!isTableCellNode(selectedCell)) {
 				return;
 			}
 
-			const [node] = selection.getNodes();
-
-			const closestCell = node.getParents().find((n) => isTableCellNode(n));
-
-			if (!closestCell) {
+			if (!selectedCell.isAttached()) {
 				return;
 			}
 
-			const style = closestCell.getHeaderStyles();
+			const style = selectedCell.getHeaderStyles();
 
 			if ([TableCellHeaderStates.COLUMN, TableCellHeaderStates.BOTH].includes(style)) {
 				isColumnHeader = true;
@@ -134,6 +110,8 @@
 	};
 
 	onMount(() => {
+		updateToolbar();
+
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
 				updateToolbar();
@@ -142,23 +120,10 @@
 	});
 </script>
 
-<div
-	class="forsen-wiki-theme-outline m-1.5 flex items-center gap-2 outline-offset-8
-"
->
-	<div class="flex flex-col items-center justify-center font-mono text-xs leading-none select-none">
-		<span>C</span>
-		<span>O</span>
-		<span>L</span>
-	</div>
-
+<div class="flex flex-col gap-2">
 	<div
-		class="forsen-wiki-theme-border flex rounded-sm border bg-violet-900 text-sm text-white dark:bg-violet-900/50"
+		class="forsen-wiki-theme-border flex items-center rounded-sm border bg-violet-900/25 text-sm text-white"
 	>
-		<div class="flex items-center gap-2 p-2" title="Add column">
-			<PlusIcon size="16" />
-		</div>
-
 		<Button
 			on:click={() => onClickAddColumn(false)}
 			class="max-w-8! min-w-8! rounded-none! p-0!"
@@ -174,17 +139,23 @@
 		>
 			<ArrowRightIcon size="20" />
 		</Button>
+
+		<div class="flex grow items-center gap-2 p-2" title="Add column">
+			<PlusIcon size="16" /> <span>Add column</span>
+		</div>
 	</div>
-
-	<Button on:click={onClickRemoveColumn} class="p-0!" title="Remove column">
-		<MinusIcon size="20" />
-	</Button>
-
-	<EditorButton
-		on:click={toggleTableColumnIsHeader}
-		isActive={isColumnHeader}
-		title="Toggle header"
+	<div
+		class="forsen-wiki-theme-border flex items-center rounded-sm border bg-violet-900/25 text-sm text-white"
 	>
-		<Columns3Icon />
-	</EditorButton>
+		<EditorButton
+			on:click={toggleTableColumnIsHeader}
+			isActive={isColumnHeader}
+			title="Toggle header"
+		>
+			<Columns3Icon />
+		</EditorButton>
+		<div class="flex grow items-center gap-2 p-2" title="Toggle header">
+			<span>Toggle header</span>
+		</div>
+	</div>
 </div>

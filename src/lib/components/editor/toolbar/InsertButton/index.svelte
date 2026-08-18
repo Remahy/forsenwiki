@@ -4,7 +4,6 @@
 	import {
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,
-		$isNodeSelection as isNodeSelection,
 		mergeRegister,
 	} from 'lexical';
 	import { INSERT_TABLE_COMMAND } from '@lexical/table';
@@ -15,6 +14,8 @@
 	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
 	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 	import { INSERT_FLOATBLOCK_COMMAND } from '../../plugins/FloatBlock/FloatBlockPlugin.svelte';
+	import { blockTypeLabels } from '$lib/constants/element';
+	import { insertParagraph } from './insertParagraph';
 
 	let isDisabled = $state(false);
 
@@ -25,60 +26,61 @@
 
 	let editor = $derived(getEditor?.());
 
-	const insertImage = () => {
+	const insertImage = () =>
 		editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
 			altText: '',
 			src: '',
 			width: 'inherit',
 			height: 'inherit',
 		});
-	};
 
-	const insertVideo = () => {
+	const insertVideo = () =>
 		editor.dispatchCommand(INSERT_VIDEOEMBED_COMMAND, {
 			platform: 'youtube',
 			src: '',
 			width: 'inherit',
 			height: 'inherit',
 		});
-	};
 
-	const insertTable = () => {
+	const insertTable = () =>
 		editor.dispatchCommand(INSERT_TABLE_COMMAND, {
 			columns: '3',
 			rows: '3',
 			includeHeaders: false,
 		});
-	};
 
-	const insertFloatBlock = () => {
+	const insertFloatBlock = () =>
 		editor.dispatchCommand(INSERT_FLOATBLOCK_COMMAND, {
 			float: 'inline-start',
 			hasBorder: undefined,
 			width: undefined,
 			height: undefined,
 		});
-	};
 
 	const insertElementTypeOptions = [
 		{
+			value: 'paragraph',
+			label: blockTypeLabels.paragraph,
+			insertFunc: () => insertParagraph(editor),
+		},
+		{
 			value: 'image',
-			label: 'Image',
+			label: blockTypeLabels.image,
 			insertFunc: insertImage,
 		},
 		{
 			value: 'video',
-			label: 'Video',
+			label: blockTypeLabels.videoembed,
 			insertFunc: insertVideo,
 		},
 		{
 			value: 'table',
-			label: 'Table',
+			label: blockTypeLabels['a-table'],
 			insertFunc: insertTable,
 		},
 		{
 			value: 'floatblock',
-			label: 'Float Block',
+			label: blockTypeLabels['float-block'],
 			insertFunc: insertFloatBlock,
 		},
 	];
@@ -112,7 +114,7 @@
 		editor.read(() => {
 			const selection = getSelection();
 
-			if (isNodeSelection(selection) || (isRangeSelection(selection) && !selection.isCollapsed())) {
+			if (isRangeSelection(selection) && !selection.isCollapsed()) {
 				isDisabled = true;
 			} else {
 				isDisabled = false;

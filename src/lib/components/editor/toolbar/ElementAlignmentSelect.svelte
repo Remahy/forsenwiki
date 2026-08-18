@@ -1,22 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
-	import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from '@lucide/svelte';
 	import { COMMAND_PRIORITY_CRITICAL, FORMAT_ELEMENT_COMMAND, mergeRegister } from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 
 	import Select from '$lib/components/Select.svelte';
 	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
 	import { getSelectedElements } from '$lib/components/editor/utils/getSelection';
-
-	/**
-	 * @type {{[x: string]: typeof import('svelte').SvelteComponent<any>}}
-	 */
-	const alignmentIcons = {
-		default: AlignLeftIcon,
-		right: AlignRightIcon,
-		center: AlignCenterIcon,
-		justify: AlignJustifyIcon,
-	};
+	import { alignmentIcons } from '$lib/constants/blockTypeIcons';
 
 	const { ALIGNMENT } = ELEMENT_CONSTANTS;
 	const alignmentOptions = Object.entries(ALIGNMENT);
@@ -81,6 +71,7 @@
 		);
 	});
 
+	// @ts-ignore
 	const SvelteComponent = $derived(alignmentIcons[currentAlignment] || alignmentIcons.default);
 </script>
 

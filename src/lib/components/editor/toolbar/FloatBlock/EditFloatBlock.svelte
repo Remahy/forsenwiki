@@ -57,7 +57,7 @@
 	});
 
 	/**
-	 * @type {{[x: string]: typeof import('svelte').SvelteComponent<any>}}
+	 * @type {{ [x: string]: import('svelte').Component<any> }}
 	 */
 	const floatValueIcons = {
 		left: ArrowLeftToLineIcon,
@@ -101,53 +101,65 @@
 	};
 </script>
 
-<div class="flex min-h-10.5 items-center gap-2 pl-2">
-	<FloatIconComponent />
+<div class="flex flex-col gap-4">
+	<div class="relative flex w-full items-center gap-2">
+		<FloatIconComponent class="absolute left-4" />
 
-	<Select
-		title="Float"
-		bind:ref={floatValueElement}
-		on:change={float}
-		bind:value={floatValue}
-		class="-ml-10! h-full px-10!"
+		<Select
+			title="Float"
+			bind:ref={floatValueElement}
+			on:change={float}
+			bind:value={floatValue}
+			class="h-full min-h-10.5 w-[stretch] px-12! "
+		>
+			<option value="unknown" hidden>Unknown</option>
+
+			<option value="left" class="text-lg">Left</option>
+			<option value="right" class="text-lg">Right</option>
+			<option value="inline-start" class="text-lg">Start (Language aware)</option>
+			<option value="inline-end" class="text-lg">End (Language aware)</option>
+			<option value="clear" class="text-lg">Clear float</option>
+			<option value="none" class="text-lg">Block (Non-floating)</option>
+		</Select>
+	</div>
+
+	<div class="flex gap-2">
+		<label title="Width" class="relative flex min-h-10.5 items-center gap-2">
+			<span class="hidden">Width</span>
+			<RectangleHorizontalIcon class="absolute left-4" />
+
+			<input
+				class="input-color h-full w-full p-0 pl-12 text-sm disabled:opacity-50 disabled:hover:cursor-not-allowed"
+				placeholder={placeholderWidthText}
+				bind:value={width}
+				onchange={onChange}
+				disabled={floatValue === 'clear'}
+			/>
+		</label>
+
+		<label title="Height" class="relative flex min-h-10.5 items-center gap-2">
+			<span class="hidden">Height</span>
+			<RectangleVerticalIcon class="absolute left-4" />
+
+			<input
+				class="input-color h-full w-full p-0 pl-12 text-sm disabled:opacity-50 disabled:hover:cursor-not-allowed"
+				placeholder={placeholderHeightText}
+				bind:value={height}
+				onchange={onChange}
+				disabled={floatValue === 'clear'}
+			/>
+		</label>
+	</div>
+
+	<div
+		class="forsen-wiki-theme-border flex items-center rounded-sm border bg-violet-900/25 text-sm text-white"
 	>
-		<option value="unknown" hidden>Unknown</option>
+		<EditorButton on:click={toggleHasBorder} isActive={!!currentHasBorder} title="Toggle border">
+			<SquareDashedIcon />
+		</EditorButton>
 
-		<option value="left" class="text-lg">Left</option>
-		<option value="right" class="text-lg">Right</option>
-		<option value="inline-start" class="text-lg">Start (Language aware)</option>
-		<option value="inline-end" class="text-lg">End (Language aware)</option>
-		<option value="clear" class="text-lg">Clear float</option>
-		<option value="none" class="text-lg">Block (Non-floating)</option>
-	</Select>
+		<div class="flex grow items-center gap-2 p-2" title="Toggle header">
+			<span>Toggle border</span>
+		</div>
+	</div>
 </div>
-
-<label title="Width" class="flex min-h-10.5 items-center gap-2 pl-2">
-	<span class="hidden">Width</span>
-	<RectangleHorizontalIcon />
-
-	<input
-		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm disabled:opacity-50 disabled:hover:cursor-not-allowed"
-		placeholder={placeholderWidthText}
-		bind:value={width}
-		onchange={onChange}
-		disabled={floatValue === 'clear'}
-	/>
-</label>
-
-<label title="Height" class="flex min-h-10.5 items-center gap-2 pl-2">
-	<span class="hidden">Height</span>
-	<RectangleVerticalIcon />
-
-	<input
-		class="input-color -ml-10 h-full w-28 p-0 pl-10 text-sm disabled:opacity-50 disabled:hover:cursor-not-allowed"
-		placeholder={placeholderHeightText}
-		bind:value={height}
-		onchange={onChange}
-		disabled={floatValue === 'clear'}
-	/>
-</label>
-
-<EditorButton on:click={toggleHasBorder} isActive={!!currentHasBorder} title="Toggle border">
-	<SquareDashedIcon />
-</EditorButton>

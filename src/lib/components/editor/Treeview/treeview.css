@@ -1,0 +1,19 @@
+@reference "../../../../app.css";
+
+.tree {
+	.item {
+		@apply flex;
+
+		.name {
+			@apply flex grow gap-2 p-2 text-start;
+
+			&:hover {
+				@apply cursor-pointer bg-violet-400 text-black/75 dark:bg-violet-800 dark:text-white;
+			}
+		}
+	}
+
+	.selected {
+		@apply forsen-wiki-theme-outline bg-violet-200 text-black dark:bg-violet-950 dark:text-white/75;
+	}
+}

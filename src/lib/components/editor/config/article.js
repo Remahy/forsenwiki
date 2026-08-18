@@ -25,7 +25,7 @@ import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
 import TableNodeDOMExport from './htmlExport/TableNodeDOMExport';
 
-const floatResponsive = 'max-sm:float-none! max-sm:w-full! max-sm:me-0! max-sm:ms-0!';
+const floatResponsive = 'max-lg:float-none! max-lg:w-full! max-lg:me-0! max-lg:ms-0!';
 const floatBoxShadow = '0px 0px 0px 1px #696969';
 
 /**
@@ -50,6 +50,9 @@ export const articleTheme = {
 	quote: 'overflow-hidden',
 };
 
+/**
+ * @type {import('lexical').EditorThemeClasses}
+ */
 export const editableTheme = {
 	...articleTheme,
 	root: 'editor-shell',
@@ -62,6 +65,7 @@ export const editableTheme = {
 		bold: 'font-semibold',
 		italic: 'italic',
 	},
+	link: 'pointer-events-none'
 };
 
 export const htmlExport = new Map([

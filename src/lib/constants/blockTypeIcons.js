@@ -1,0 +1,60 @@
+import {
+	CircleSmallIcon,
+	FileQuestionMarkIcon,
+	Heading1Icon,
+	Heading2Icon,
+	Heading3Icon,
+	Heading4Icon,
+	Heading5Icon,
+	ImageIcon,
+	LinkIcon,
+	ListCheckIcon,
+	ListIcon,
+	ListOrderedIcon,
+	QuoteIcon,
+	Rows2Icon,
+	SquareSquareIcon,
+	TableIcon,
+	TextAlignCenterIcon,
+	TextAlignEndIcon,
+	TextAlignJustifyIcon,
+	TextAlignStartIcon,
+	TextInitialIcon,
+	VectorSquareIcon,
+	VideoIcon,
+} from '@lucide/svelte';
+
+export const blockTypeIcons = {
+	default: FileQuestionMarkIcon,
+	mixed: FileQuestionMarkIcon,
+	unknown: FileQuestionMarkIcon,
+	h1: Heading1Icon,
+	h2: Heading2Icon,
+	h3: Heading3Icon,
+	h4: Heading4Icon,
+	h5: Heading5Icon,
+	bullet: ListIcon,
+	number: ListOrderedIcon,
+	paragraph: TextAlignStartIcon,
+	quote: QuoteIcon,
+
+	'float-block': SquareSquareIcon,
+	'a-table': TableIcon,
+	videoembed: VideoIcon,
+	image: ImageIcon,
+	tablecell: VectorSquareIcon,
+	tablerow: Rows2Icon,
+	listitem: CircleSmallIcon,
+	text: TextInitialIcon,
+	'a-link': LinkIcon,
+
+	// Unused
+	check: ListCheckIcon,
+};
+
+export const alignmentIcons = {
+	default: TextAlignStartIcon,
+	right: TextAlignEndIcon,
+	center: TextAlignCenterIcon,
+	justify: TextAlignJustifyIcon,
+};

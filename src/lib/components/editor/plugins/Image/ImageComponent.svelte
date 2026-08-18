@@ -45,8 +45,8 @@
 	/** @type {Props} */
 	let { node, src, altText, nodeKey, width, height, resizable, editor } = $props();
 
-	let heightCss = $derived(height === 'inherit' ? 'inherit' : height + 'px');
-	let widthCss = $derived(width === 'inherit' ? 'inherit' : width + 'px');
+	let heightCss = $derived(height === 'inherit' ? 'inherit' : Math.max(IMAGE_MIN_HEIGHT, height) + 'px');
+	let widthCss = $derived(width === 'inherit' ? 'inherit' : Math.max(IMAGE_MIN_WIDTH, width) + 'px');
 
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);

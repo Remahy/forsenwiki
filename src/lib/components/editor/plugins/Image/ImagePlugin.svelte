@@ -30,15 +30,20 @@
 		DROP_COMMAND,
 		getDOMSelectionFromTarget,
 		$getNodeFromDOMNode as getNodeFromDOMNode,
+		$isRangeSelection as isRangeSelection,
 	} from 'lexical';
-	import { $wrapNodeInElement as wrapNodeInElement, mergeRegister } from '@lexical/utils';
+	import {
+		$wrapNodeInElement as wrapNodeInElement,
+		mergeRegister,
+		$insertNodeToNearestRoot as insertNodeToNearestRoot,
+	} from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
 
 	import { modal } from '$lib/stores/modal';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import { saveContent } from '$lib/utils/indexedDb/content';
 
-	import EditImageModal from '../../toolbar/ImageButtons/EditImageModal.svelte';
+	import EditImageModal from '../../toolbar/Image/EditImageModal.svelte';
 	import { editorGlobals } from '../../editorGlobals.svelte';
 	import { handleNewImage } from '../../utils/handleNewImage';
 	import { migrateWSRVImageUsingElement } from '../../migrations/migrateWSRVImages';
@@ -267,7 +272,7 @@
 					const node = getNodeFromDOMNode(element);
 
 					if (isImageNode(node)) {
-						node.setSrc('');
+						node.remove();
 					}
 				},
 				{ tag: 'history-merge' }
@@ -312,8 +317,14 @@
 						node.setSrc(src);
 					}
 
-					insertNodes([node]);
-					if (isRootOrShadowRoot(node.getParentOrThrow())) {
+					const selection = getSelection();
+					if (isRangeSelection(selection)) {
+						insertNodes([node]);
+					} else {
+						insertNodeToNearestRoot(node);
+					}
+
+					if (isRootOrShadowRoot(node.getParent())) {
 						wrapNodeInElement(node, createParagraphNode).selectEnd();
 					}
 				});
