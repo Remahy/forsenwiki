@@ -50,9 +50,6 @@ export const _validateContent = async (files, isModerator) => {
 		select: { hash: true, name: true },
 	});
 
-	/** @type {Array<{ index: number, message: string }>} */
-	const foundFilesError = [];
-
 	const nonExistingFiles =
 		/** @type {Array<FileUpload & { index: number, contentType: string, type: string, mimetypeMetadata: { source: string, metadata: any }, dimensionsMetadata: import('image-size/types/interface').ISizeCalculationResult }>} */ (
 			files
@@ -64,10 +61,6 @@ export const _validateContent = async (files, isModerator) => {
 					if (existingFile) {
 						// @ts-ignore
 						file = null;
-						foundFilesError.push({
-							index,
-							message: `Index [${index + 1}] is already uploaded as "${existingFile.name}".`,
-						});
 					}
 
 					return file;

@@ -36,10 +36,7 @@ export async function POST({ request, locals }) {
 		return json([]);
 	}
 
-	/**
-	 * @type {Array<{ url: string, index: number, contentType: string, metadata: any }>}
-	 */
-	let presignedUrls = [];
+	let readyFiles = [];
 
 	for (let index = 0; index < files.length; index++) {
 		const file = files[index];
@@ -65,9 +62,19 @@ export async function POST({ request, locals }) {
 			metadata.dimensions = JSON.stringify(file.dimensionsMetadata);
 		}
 
-		try {
-			await prisma.$transaction(async (tx) => {
-				const content = await createContent({ ...file, authorId: metadata.userid, metadata }, tx);
+		readyFiles.push({ ...file, authorId: metadata.userid, metadata });
+	}
+
+	/**
+	 * @type {Array<{ url: string, index: number, contentType: string, metadata: any }>}
+	 */
+	let presignedUrls = [];
+
+	try {
+		await prisma.$transaction(async (tx) => {
+			for (let index = 0; index < readyFiles.length; index++) {
+				const f = readyFiles[index];
+				const content = await createContent(f, tx);
 
 				if (!CLOUDFLARE_R2_SECRET_ACCESS_KEY) {
 					// TODO: If no S3, then upload locally.
@@ -75,27 +82,27 @@ export async function POST({ request, locals }) {
 				}
 
 				const { presignedUrl, metadata: finalMetadata } = await getPresignedURL(
-					file,
-					file.hash,
-					{ ...metadata, id: content.id },
+					f,
+					f.hash,
+					{ ...f.metadata, id: content.id },
 					{ isModerator }
 				);
 
 				presignedUrls.push({
-					index: /** @type {number} */ (file.index),
+					index: /** @type {number} */ (f.index),
 					url: presignedUrl,
-					contentType: file.contentType,
+					contentType: f.contentType,
 					metadata: finalMetadata,
 				});
-			});
-		} catch (err) {
-			if (err instanceof ErrorWithCode) {
-				return error(500, err.message);
 			}
-
-			console.error(err);
-			return error(500, 'Something went wrong generating upload URLs');
+		});
+	} catch (err) {
+		if (err instanceof ErrorWithCode) {
+			return error(500, err.message);
 		}
+
+		console.error(err);
+		return error(500, 'Something went wrong generating upload URLs');
 	}
 
 	return json(presignedUrls);
