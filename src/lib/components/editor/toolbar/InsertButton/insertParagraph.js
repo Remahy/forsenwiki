@@ -5,8 +5,12 @@ import {
 	$getSelection as getSelection,
 	$isParagraphNode as isParagraphNode,
 	$isTextNode as isTextNode,
+	$insertNodes as insertNodes,
+	$isInlineElementOrDecoratorNode as isInlineElementOrDecoratorNode,
+	$isRootNode as isRootNode,
 } from 'lexical';
 import { $insertNodeToNearestRoot as insertNodeToNearestRoot } from '@lexical/utils';
+import { $isListItemNode as isListItemNode } from '@lexical/list';
 
 /**
  * @param {LexicalEditor} editor
@@ -31,41 +35,61 @@ export const insertParagraph = (editor) =>
 
 		const node = createParagraphNode();
 
-		const rangeSelection = isRangeSelection(selection);
+		if (!isRangeSelection(selection)) {
+			if (isRootOrShadowRoot(nodeAtSelection)) {
+				const firstChild = nodeAtSelection.getFirstChild();
+				if (firstChild) {
+					firstChild.insertBefore(node);
+					node.selectStart();
+					return;
+				}
 
-		if (rangeSelection) {
-			const initialNode = selection.anchor.getNode();
-			const isLeaf = isTextNode(initialNode);
-
-			let isAtStart = false;
-			let isAtEnd = true;
-
-			if (isLeaf) {
-				const parent = initialNode.getParent();
-				isAtStart = selection.anchor.offset === 0 && parent?.getFirstChild() === initialNode;
-				isAtEnd = parent?.getLastChild() === initialNode;
-				initialNode.getParent()?.select();
-			}
-
-			const selectionNode = selection.anchor.getNode();
-
-			const previousSibling = selectionNode.getPreviousSibling();
-			if (isAtStart && previousSibling) {
-				previousSibling.selectEnd();
-				insertNodeToNearestRoot(node).selectStart();
-				return;
-			} else if (!previousSibling && isAtStart) {
-				selectionNode.insertBefore(node);
+				nodeAtSelection.selectStart();
+				insertNodes([node]);
 				node.selectStart();
 				return;
 			}
 
-			if (isAtEnd) {
-				selectionNode.insertAfter(node);
-				node.selectStart();
-				return;
+			insertNodeToNearestRoot(node).selectStart();
+			return;
+		}
+
+		const initialNode = selection.anchor.getNode();
+		const isLeaf = isTextNode(initialNode);
+
+		if (!isLeaf) {
+			return;
+		}
+
+		let isFirstInParentNode = false;
+		let rootParent;
+
+		const parents = initialNode.getParents().filter((n) => !isRootNode(n));
+		for (let index = 0; index < parents.length; index++) {
+			const parent = parents[index];
+
+			rootParent = parents[index - 1] || initialNode;
+
+			if (parent.getFirstChild() === rootParent) {
+				isFirstInParentNode = true;
+			} else {
+				isFirstInParentNode = false;
+				rootParent = parents.find((n) => !isInlineElementOrDecoratorNode(n));
+				break;
+			}
+
+			if (!isInlineElementOrDecoratorNode(parent) && !isListItemNode(parent)) {
+				rootParent = parent;
+				break;
 			}
 		}
 
-		insertNodeToNearestRoot(node).selectStart();
+		if (isFirstInParentNode && selection.anchor.offset === 0) {
+			rootParent?.insertBefore(node);
+			node.selectStart();
+			return;
+		}
+
+		rootParent?.insertAfter(node);
+		node.selectStart();
 	});
