@@ -7,6 +7,7 @@ import { createContent } from '$lib/db/content/create';
 import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
 import { CLOUDFLARE_R2_SECRET_ACCESS_KEY } from '$env/static/private';
 import { FileErrorCodes } from '$lib/components/editor/utils/handleNewFile';
+import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 
 export async function POST({ request, locals }) {
 	const { isBlocked, isModerator, auth } = locals;
@@ -56,7 +57,7 @@ export async function POST({ request, locals }) {
 		 */
 		const metadata = {
 			userid: session.user.id,
-			name: file.name,
+			name: sanitizeTitle(file.name).sanitized,
 			mimetype: JSON.stringify(file.mimetypeMetadata),
 		};
 
