@@ -11,9 +11,9 @@
 
 	import Select from '$lib/components/Select.svelte';
 
-	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
-	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';
-	import { INSERT_FLOATBLOCK_COMMAND } from '../../plugins/FloatBlock/FloatBlockPlugin.svelte';
+	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin';
+	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin';
+	import { INSERT_FLOATBLOCK_COMMAND } from '../../plugins/FloatBlock/FloatBlockPlugin';
 	import { blockTypeLabels } from '$lib/constants/element';
 	import { insertParagraph } from './insertParagraph';
 

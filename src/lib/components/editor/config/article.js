@@ -65,7 +65,7 @@ export const editableTheme = {
 		bold: 'font-semibold',
 		italic: 'italic',
 	},
-	link: 'pointer-events-none'
+	link: 'pointer-events-none',
 };
 
 export const htmlExport = new Map([
@@ -130,7 +130,7 @@ export const articleNodes = [
  * @param {boolean} editable
  * @param {any} editorState
  * @param {typeof onErrorDefault} onError
- * @returns {import('lexical').CreateEditorArgs}
+ * @returns {import('lexical').CreateEditorArgs & { namespace: string }}
  */
 export const articleConfig = (theme, editable, editorState, onError = onErrorDefault) => ({
 	theme: theme || articleTheme,
