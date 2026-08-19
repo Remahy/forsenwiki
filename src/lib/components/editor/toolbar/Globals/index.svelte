@@ -7,7 +7,7 @@
 		Globals
 	</div>
 
-	<div class="p-2">
+	<div class="p-2 flex flex-wrap gap-2">
 		<label title="Alignment" class="relative flex w-full items-center gap-2">
 			<span>Alignment</span>
 			<ElementAlignmentSelect />

@@ -25,6 +25,7 @@
 	import TablePlugin from './plugins/Overrides/Table/TablePlugin.svelte';
 	import FloatBlockPlugin from './plugins/FloatBlock/FloatBlockPlugin.svelte';
 	import SelectionOverrides from './plugins/SelectionOverrides.svelte';
+	import ImageFixerModal from './ImageFixer/index.svelte';
 	import Box from '../Box.svelte';
 
 	/**
@@ -116,4 +117,6 @@
 			<TreeWrapper />
 		</div>
 	</div>
+
+	<ImageFixerModal />
 </Composer>
