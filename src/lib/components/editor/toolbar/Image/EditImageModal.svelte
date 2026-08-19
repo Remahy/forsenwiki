@@ -191,7 +191,11 @@
 
 		if (newHash && newFile) {
 			try {
-				const fileUploadObject = await createFileUploadObject(newFile, newSrcName || 'Uploaded image', newHash);
+				const fileUploadObject = await createFileUploadObject(
+					newFile,
+					newSrcName || 'Uploaded image',
+					newHash
+				);
 
 				const res = await validateContent([fileUploadObject]);
 
@@ -220,7 +224,11 @@
 				return;
 			}
 
-			await saveContent(id, newHash, new File([newFile], newSrcName || 'Uploaded image', { type: newFile.type }));
+			await saveContent(
+				id,
+				newHash,
+				new File([newFile], newSrcName || 'Uploaded image', { type: newFile.type })
+			);
 			onSubmit({ src: newHash, width: Number(width), height: Number(height) });
 		} else if (newSrc) {
 			onSubmit({ src: newSrc, width: Number(width), height: Number(height) });
@@ -229,20 +237,30 @@
 		$modal.isOpen = false;
 	};
 
-	$effect(() => {
+	/**
+	 * @type {NodeJS.Timeout | undefined}
+	 */
+	let timer;
+	const onNameChange = () => {
+		clearTimeout(timer);
 		autoSaved = false;
+
 		if (!loadedImage || newHash || newFile) {
 			return;
 		}
 
-		if (newSrcName !== loadedImage.file.name) {
-			const newFile = new File([loadedImage.file], newSrcName || 'Uploaded image', { type: loadedImage.file.type });
+		let img = loadedImage;
+
+		timer = setTimeout(async () => {
+			const newFile = new File([img.file], newSrcName || 'Uploaded image', {
+				type: img.file.type,
+			});
 			(async () => {
-				await saveContent(id, loadedImage.hash, newFile);
+				await saveContent(id, img.hash, newFile);
 				autoSaved = true;
 			})();
-		}
-	});
+		}, 500);
+	};
 
 	$effect(() => {
 		if (!searchQuery) {
@@ -262,7 +280,6 @@
 				});
 				const json = await res.json();
 				searchResults = json;
-				console.log(json);
 			} catch (err) {
 				console.error(err);
 				error = 'Search returned an error.';
@@ -409,7 +426,12 @@
 						>Max length 80 characters</small
 					>
 				</div>
-				<input class="input-color rounded-sm p-2" bind:value={newSrcName} maxlength="80" />
+				<input
+					class="input-color rounded-sm p-2"
+					bind:value={newSrcName}
+					oninput={onNameChange}
+					maxlength="80"
+				/>
 				{#if autoSaved}
 					<div class="rounded-md bg-emerald-500/25 p-2">
 						<small>Successfully modified name.</small>
