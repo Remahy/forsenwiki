@@ -124,7 +124,7 @@
 			<Spinner />
 		{:then imageResult}
 			{#each imageResult as image (image.hash)}
-				<div class="">
+				<div class="flex flex-col gap-2">
 					<figure
 						class="forsen-wiki-theme-border bg-dark mx-auto flex min-h-50 min-w-50 items-center justify-center border"
 					>
@@ -146,7 +146,7 @@
 						/>
 					</label>
 					<Button
-						class="bg-transparent! p-0! text-red-500!"
+						class="bg-transparent! p-0! text-red-500! justify-start! text-left"
 						onclick={() => handleImageDelete(image)}
 					>
 						<span>Delete "{image.file.name}"</span>
