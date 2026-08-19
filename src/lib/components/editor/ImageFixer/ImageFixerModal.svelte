@@ -146,7 +146,7 @@
 						/>
 					</label>
 					<Button
-						class="bg-transparent! p-0! text-red-500! justify-start! text-left"
+						class="justify-start! bg-transparent! p-0! text-left text-red-500!"
 						onclick={() => handleImageDelete(image)}
 					>
 						<span>Delete "{image.file.name}"</span>
