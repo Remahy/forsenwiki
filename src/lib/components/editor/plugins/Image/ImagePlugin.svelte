@@ -31,6 +31,7 @@
 		getDOMSelectionFromTarget,
 		$getNodeFromDOMNode as getNodeFromDOMNode,
 		$isRangeSelection as isRangeSelection,
+		PASTE_COMMAND,
 	} from 'lexical';
 	import {
 		$wrapNodeInElement as wrapNodeInElement,
@@ -42,6 +43,7 @@
 	import { modal } from '$lib/stores/modal';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import { saveContent } from '$lib/utils/indexedDb/content';
+	import { getType } from '$lib/s3/limits';
 
 	import EditImageModal from '../../toolbar/Image/EditImageModal.svelte';
 	import { editorGlobals } from '../../editorGlobals.svelte';
@@ -210,6 +212,32 @@
 	}
 
 	/**
+	 * @param {string} src
+	 */
+	const fetchFile = async (src) => {
+		// Fetch the file as a Blob
+		const response = await fetch(src, {});
+		const lastModified = new Date(response.headers.get('Last-Modified') || Date.now()).getTime();
+		const etag = response.headers.get('Etag');
+		const contentType = response.headers.get('Content-Type') || '';
+
+		let name = src.split('/').pop()?.split('?')?.shift() || etag || 'pasted-image';
+
+		if (name.length > 80) {
+			name = name.substring(0, 80);
+		}
+
+		const blob = await response.blob();
+
+		const file = new File([blob], name, {
+			lastModified,
+			type: contentType,
+		});
+
+		return file;
+	};
+
+	/**
 	 * @param {HTMLElement} element
 	 */
 	const saveImageAsBlob = async (element) => {
@@ -229,24 +257,7 @@
 				return;
 			}
 
-			// Fetch the image as a Blob
-			const response = await fetch(src, {});
-			const lastModified = new Date(response.headers.get('Last-Modified') || Date.now()).getTime();
-			const etag = response.headers.get('Etag');
-			const contentType = response.headers.get('Content-Type') || '';
-
-			let name = src.split('/').pop()?.split('?')?.shift() || etag || 'pasted-image';
-
-			if (name.length > 80) {
-				name = name.substring(0, 80);
-			}
-
-			const blob = await response.blob();
-
-			const file = new File([blob], name, {
-				lastModified,
-				type: contentType,
-			});
+			const file = await fetchFile(src);
 
 			const imageData = await handleNewImage(file);
 
@@ -267,7 +278,7 @@
 				);
 			}
 
-			console.log(imageData);
+			console.warn(imageData);
 			throw new Error('Could not download image!');
 		} catch (err) {
 			console.error('Error turning image into blob', err);
@@ -413,6 +424,29 @@
 					return true;
 				},
 				COMMAND_PRIORITY_EDITOR
+			),
+
+			editor.registerCommand(
+				PASTE_COMMAND,
+				(payload) => {
+					if (payload instanceof ClipboardEvent) {
+						const files = payload.clipboardData?.files || [];
+
+						let promises = [];
+						for (const file of files) {
+							if (getType(file.type) !== 'image') {
+								continue;
+							}
+
+							promises.push(handleNewImage(file));
+						}
+
+						
+						return true;
+					}
+					return false;
+				},
+				COMMAND_PRIORITY_HIGH
 			),
 
 			editor.registerCommand(
