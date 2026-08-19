@@ -235,7 +235,11 @@
 			const etag = response.headers.get('Etag');
 			const contentType = response.headers.get('Content-Type') || '';
 
-			const name = src.split('/').pop() || etag || 'pasted-image';
+			let name = src.split('/').pop()?.split('?')?.shift() || etag || 'pasted-image';
+
+			if (name.length > 80) {
+				name = name.substring(0, 80);
+			}
 
 			const blob = await response.blob();
 
