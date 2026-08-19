@@ -31,7 +31,7 @@
 	let isValidVideo = $state(false);
 	let error = $state('');
 
-	let searchQuery = $state('');
+	let searchQuery = $state(src);
 	let isSearching = $state(false);
 	/** @type {Array<{ title: string, rawTitle: string, lastUpdated: string, id: string }>} */
 	let searchResults = $state([]);
@@ -76,7 +76,6 @@
 				});
 				const json = await res.json();
 				searchResults = json;
-				console.log(json);
 			} catch (err) {
 				console.error(err);
 				error = 'Search returned an error.';

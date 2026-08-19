@@ -220,14 +220,18 @@
 			or deleted. <Clown />
 		</small>
 
-		<Button disabled={!canEdit || isUploading || error} on:click={submit} title="Submit">
-			{#if isUploading}
-				<Spinner />
-			{/if}
+		{#if $page.data.session?.user}
+			<Button disabled={!canEdit || isUploading || error} on:click={submit} title="Submit">
+				{#if isUploading}
+					<Spinner />
+				{/if}
 
-			<span class="hidden lg:inline" id="submit">Submit</span>
-			<FileUpIcon class="inline min-w-6 lg:hidden" />
-		</Button>
+				<span class="hidden lg:inline" id="submit">Submit</span>
+				<FileUpIcon class="inline min-w-6 lg:hidden" />
+			</Button>
+		{:else}
+			<span class="forsen-wiki-theme-border border p-2">Login to submit.</span>
+		{/if}
 	</Box>
 
 	<div>
