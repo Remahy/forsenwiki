@@ -5,6 +5,7 @@
 		$deleteTableColumnAtSelection as deleteTableColumnAtSelection,
 	} from '@lexical/table';
 	import { getEditor } from 'svelte-lexical';
+	import Wrapper from '../../components/Wrapper.svelte';
 	import Title from '../../components/Title.svelte';
 	import DeleteNodeButton from '../../components/DeleteNodeButton.svelte';
 	import EditColumn from './EditColumn.svelte';
@@ -30,13 +31,17 @@
 </script>
 
 {#if isTableCellNode(selectedNode) && isTableNode(selectedTable)}
-	<div class="flex w-full flex-col justify-items-stretch">
-		<Title {selectedNode} text="Column" hasDefaultDelete={false}>
-			<DeleteNodeButton onClick={handleDeleteColumn} />
-		</Title>
+	<Wrapper>
+		{#snippet title()}
+			<Title {selectedNode} text="Column" hasDefaultDelete={false}>
+				<DeleteNodeButton onClick={handleDeleteColumn} />
+			</Title>
+		{/snippet}
 
-		<div class="p-2">
-			<EditColumn {selectedTable} selectedCell={selectedNode} />
-		</div>
-	</div>
+		{#snippet content()}
+			<div class="p-2">
+				<EditColumn {selectedTable} selectedCell={selectedNode} />
+			</div>
+		{/snippet}
+	</Wrapper>
 {/if}

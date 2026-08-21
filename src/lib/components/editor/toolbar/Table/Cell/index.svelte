@@ -1,5 +1,6 @@
 <script>
 	import { $isTableNode as isTableNode, $isTableCellNode as isTableCellNode } from '@lexical/table';
+	import Wrapper from '../../components/Wrapper.svelte';
 	import Title from '../../components/Title.svelte';
 	import EditCell from './EditCell.svelte';
 
@@ -10,11 +11,15 @@
 </script>
 
 {#if isTableCellNode(selectedNode) && isTableNode(selectedTable)}
-	<div class="flex w-full flex-col justify-items-stretch">
-		<Title {selectedNode} text="Cell" hasDefaultDelete={false} />
+	<Wrapper>
+		{#snippet title()}
+			<Title {selectedNode} text="Cell" hasDefaultDelete={false} />
+		{/snippet}
 
-		<div class="p-2">
-			<EditCell {selectedTable} {selectedNode} />
-		</div>
-	</div>
+		{#snippet content()}
+			<div class="p-2">
+				<EditCell {selectedTable} {selectedNode} />
+			</div>
+		{/snippet}
+	</Wrapper>
 {/if}

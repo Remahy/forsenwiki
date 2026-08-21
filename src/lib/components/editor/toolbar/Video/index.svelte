@@ -1,5 +1,6 @@
 <script>
 	import { $isVideoEmbedNode as isVideoEmbedNode } from '$lib/lexical/custom';
+	import Wrapper from '../components/Wrapper.svelte';
 	import Title from '../components/Title.svelte';
 	import EditVideo from './EditVideo.svelte';
 
@@ -10,11 +11,15 @@
 </script>
 
 {#if isVideoEmbedNode(selectedNode)}
-	<div class="flex w-full flex-col justify-items-stretch">
-		<Title {selectedNode} text="Video" />
+	<Wrapper>
+		{#snippet title()}
+			<Title {selectedNode} text="Video" />
+		{/snippet}
 
-		<div class="p-2">
-			<EditVideo {selectedNode} />
-		</div>
-	</div>
+		{#snippet content()}
+			<div class="p-2">
+				<EditVideo {selectedNode} />
+			</div>
+		{/snippet}
+	</Wrapper>
 {/if}

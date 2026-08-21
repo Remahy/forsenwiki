@@ -1,5 +1,6 @@
 <script>
 	import { $isFloatBlockNode as isFloatBlockNode } from '$lib/lexical/custom';
+	import Wrapper from '../components/Wrapper.svelte';
 	import Title from '../components/Title.svelte';
 	import EditFloatBlock from './EditFloatBlock.svelte';
 
@@ -10,11 +11,15 @@
 </script>
 
 {#if isFloatBlockNode(selectedNode)}
-	<div class="flex w-full flex-col justify-items-stretch">
-		<Title {selectedNode} text="Float block" />
+	<Wrapper>
+		{#snippet title()}
+			<Title {selectedNode} text="Float block" />
+		{/snippet}
 
-		<div class="p-2">
-			<EditFloatBlock selectedFloatBlockNode={selectedNode} />
-		</div>
-	</div>
+		{#snippet content()}
+			<div class="p-2">
+				<EditFloatBlock selectedFloatBlockNode={selectedNode} />
+			</div>
+		{/snippet}
+	</Wrapper>
 {/if}

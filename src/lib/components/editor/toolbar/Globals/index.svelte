@@ -1,16 +1,20 @@
 <script>
+	import Wrapper from '../components/Wrapper.svelte';
+	import Title from '../components/Title.svelte';
 	import ElementAlignmentSelect from '../ElementAlignmentSelect.svelte';
 </script>
 
-<div class="flex w-full flex-col justify-items-stretch">
-	<div class="bg-violet-900/25 p-4 font-mono leading-none select-none" title="Globals">
-		Globals
-	</div>
+<Wrapper>
+	{#snippet title()}
+		<Title text="Globals" />
+	{/snippet}
 
-	<div class="p-2 flex flex-wrap gap-2">
-		<label title="Alignment" class="relative flex w-full items-center gap-2">
-			<span>Alignment</span>
-			<ElementAlignmentSelect />
-		</label>
-	</div>
-</div>
+	{#snippet content()}
+		<div class="p-2">
+			<label title="Alignment" class="relative flex w-full items-center gap-2">
+				<span>Alignment</span>
+				<ElementAlignmentSelect />
+			</label>
+		</div>
+	{/snippet}
+</Wrapper>
