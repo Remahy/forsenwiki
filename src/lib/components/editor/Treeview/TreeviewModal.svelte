@@ -51,9 +51,7 @@
 		</Button>
 	</header>
 
-	<main
-		class="forsen-wiki-theme-border flex max-h-screen grow flex-col gap-4 overflow-hidden border-b"
-	>
+	<main class="forsen-wiki-theme-border flex max-h-screen grow flex-col overflow-hidden border-b">
 		<TreeviewWrapper />
 	</main>
 </div>

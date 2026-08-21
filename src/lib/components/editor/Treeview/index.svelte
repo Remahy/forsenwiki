@@ -9,6 +9,11 @@
 	import { handleOnClickTreeNode, updateItems } from './utils';
 
 	/**
+	 * @type {{ class?: string }}
+	 */
+	let { class: className = '' } = $props();
+
+	/**
 	 * @typedef {import('@headless-tree/core').ItemInstance<LexicalNode>} ItemInstance
 	 */
 
@@ -48,7 +53,7 @@
 	<div
 		bind:this={treeviewElement}
 		{...treeviewState.tree?.getContainerProps?.('Tree') ?? {}}
-		class="tree grow overflow-y-auto p-2"
+		class="tree grow overflow-y-auto p-2 {className}"
 	>
 		{#each treeviewState.items as item (item.getId())}
 			<div

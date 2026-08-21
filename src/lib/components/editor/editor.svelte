@@ -116,7 +116,7 @@
 		</div>
 
 		<div
-			class="editor-border sticky top-0 hidden max-h-screen grow flex-col gap-4 xl:flex xl:w-96 xl:min-w-96"
+			class="editor-border sticky top-0 hidden max-h-screen grow flex-col xl:flex xl:w-96 xl:min-w-96"
 		>
 			<TreeviewWrapper />
 		</div>
