@@ -1,30 +1,21 @@
 <script>
-	import { getEditor } from 'svelte-lexical';
-	import { Trash2Icon } from '@lucide/svelte';
-	import Button from '$lib/components/Button.svelte';
+	import DeleteNodeButton from './DeleteNodeButton.svelte';
 
 	/**
-	 * @type {{ selectedNode: LexicalNode, text: string, children?: import('svelte').Snippet }}
+	 * @typedef {{ text: string, children?: import('svelte').Snippet }} RequiredProps
+	 * @typedef {{ selectedNode?: LexicalNode, hasDefaultDelete?: boolean }} ConditionalProps
+	*/
+
+	/**
+	 * @type {RequiredProps & ConditionalProps}
 	 */
-	let { selectedNode, text, children } = $props();
-
-	const editor = $derived(getEditor());
-
-	const onClickDelete = () => {
-		editor.update(() => {
-			selectedNode.remove();
-		});
-	};
+	let { selectedNode, text, children, hasDefaultDelete = true } = $props();
 </script>
 
-<div class="violet flex items-center font-mono leading-none" title={text}>
-	<span class="grow pl-2 select-none">{text}</span>
+<div class="flex items-center font-mono leading-none" title={text}>
+	<span class="grow pl-2 py-3 select-none">{text}</span>
 	{@render children?.()}
-	<Button
-		class="m-0! rounded-none! bg-red-400! p-0! hover:bg-red-600! dark:bg-red-600/50! dark:hover:bg-red-700!"
-		onclick={onClickDelete}
-		title="Delete node"
-	>
-		<Trash2Icon />
-	</Button>
+	{#if selectedNode && hasDefaultDelete}
+		<DeleteNodeButton node={selectedNode} />
+	{/if}
 </div>

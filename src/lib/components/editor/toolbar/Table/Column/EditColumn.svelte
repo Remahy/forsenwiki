@@ -1,12 +1,10 @@
 <script>
 	// Based on umaranis' svelte-lexical
 
-	import { onMount } from 'svelte';
 	import { PlusIcon, ArrowLeftIcon, ArrowRightIcon, Columns3Icon } from '@lucide/svelte';
 	import {
 		$createNodeSelection as createNodeSelection,
 		$setSelection as setSelection,
-		mergeRegister,
 	} from 'lexical';
 	import {
 		$insertTableColumnAtSelection as insertTableColumnAtSelection,
@@ -109,14 +107,9 @@
 		});
 	};
 
-	onMount(() => {
+	$effect(() => {
 		updateToolbar();
-
-		return mergeRegister(
-			editor.registerUpdateListener(() => {
-				updateToolbar();
-			})
-		);
+		() => [selectedCell];
 	});
 </script>
 

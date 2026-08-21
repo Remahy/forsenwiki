@@ -16,10 +16,10 @@
 
 	import './treeview.css';
 	import { treeviewState } from './treeviewState.svelte';
+	import ItemIcon from './ItemIcon.svelte';
+	import ItemName from './ItemName.svelte';
 	import { initTree } from './tree';
-	import NodeIcon from './NodeIcon.svelte';
 	import { expandParents } from './utils';
-	import NameWrapper from './NameWrapper.svelte';
 
 	/**
 	 * @typedef {import('@headless-tree/core').ItemInstance<LexicalNode>} ItemInstance
@@ -35,7 +35,10 @@
 	/** @type {ItemInstance[]} */
 	let items = $state([]);
 
-	let isJustSelection = $state(false);
+	/**
+	 * Used to signal that this was not an actual editor selection, just a tree selection.
+	 */
+	let isTreeNodeSelection = $state(false);
 
 	function updateItems() {
 		if (!tree) {
@@ -53,7 +56,7 @@
 		e.preventDefault();
 		e.stopPropagation();
 
-		isJustSelection = true;
+		isTreeNodeSelection = true;
 
 		const node = item.getItemData();
 
@@ -85,7 +88,7 @@
 			{ discrete: true }
 		);
 
-		isJustSelection = false;
+		isTreeNodeSelection = false;
 	};
 
 	/**
@@ -102,9 +105,10 @@
 
 		const debouncer = useDebounce(
 			/**
+			 * @param {BaseSelection | null} selection
 			 * @param {boolean} shouldUpdateTree
 			 */
-			(shouldUpdateTree) => {
+			(selection, shouldUpdateTree) => {
 				editor.read(() => {
 					if (!tree) {
 						return;
@@ -113,8 +117,6 @@
 					if (shouldUpdateTree) {
 						tree.rebuildTree();
 					}
-
-					const selection = getSelection();
 
 					if (!selection || (isRangeSelection(selection) && !selection?.isCollapsed())) {
 						updateItems();
@@ -162,8 +164,10 @@
 			editor.registerUpdateListener((payload) => {
 				const shouldUpdateTree = payload.mutatedNodes?.size;
 
-				if (!isJustSelection) {
-					debouncer(!!shouldUpdateTree);
+				if (!isTreeNodeSelection) {
+					const selection = editor.read(() => getSelection());
+
+					debouncer(selection, !!shouldUpdateTree);
 				}
 			})
 		);
@@ -208,10 +212,8 @@
 				{/if}
 
 				<button class="name" onclick={(e) => onClickNode(e, item)}>
-					<NodeIcon {editor} node={item.getItemData()} />
-					<NameWrapper {editor} node={item.getItemData()}>
-						{item.getItemName()}
-					</NameWrapper>
+					<ItemIcon {editor} {item} />
+					<ItemName {editor} {item} />
 				</button>
 			</div>
 		{/each}

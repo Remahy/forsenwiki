@@ -1,7 +1,7 @@
 import { $isParagraphNode as isParagraphNode, $isTextNode as isTextNode } from 'lexical';
 import { $getNearestNodeOfType as getNearestNodeOfType } from '@lexical/utils';
-import { $isListNode as isListNode } from '@lexical/list';
-import { $isHeadingNode as isHeadingNode } from '@lexical/rich-text';
+import { $isListItemNode as isListItemNode, $isListNode as isListNode } from '@lexical/list';
+import { $isQuoteNode as isQuoteNode, $isHeadingNode as isHeadingNode } from '@lexical/rich-text';
 import { ListNode } from '$lib/lexical/index';
 import { blockTypeLabels } from '$lib/constants/element';
 import { alignmentIcons, blockTypeIcons } from '$lib/constants/blockTypeIcons';
@@ -9,7 +9,7 @@ import { alignmentIcons, blockTypeIcons } from '$lib/constants/blockTypeIcons';
 /**
  * @param {LexicalNode} node
  */
-export const getTypeForLNode = (node) => {
+export const getTypeForNode = (node) => {
 	if (isTextNode(node)) {
 		return node.getType();
 	}
@@ -24,20 +24,36 @@ export const getTypeForLNode = (node) => {
 	return type;
 };
 
+const textLikeNodes = [isTextNode, isHeadingNode, isParagraphNode, isListItemNode, isQuoteNode];
+
 /**
  * @param {LexicalNode} node
  */
-export const getLabelForLNode = (node) => {
-	if (isTextNode(node)) {
+const isTextLikeNode = (node) => {
+	return textLikeNodes.find((fn) => fn(node));
+};
+
+/**
+ * @param {LexicalNode} node
+ */
+export const getTypeLabelForNode = (node) => {
+	const type = getTypeForNode(node);
+
+	// @ts-ignore
+	return blockTypeLabels[type] ?? type;
+};
+
+/**
+ * @param {LexicalNode} node
+ */
+export const getLabelForNode = (node) => {
+	if (isTextLikeNode(node)) {
 		const textContent = node.getTextContent();
 
 		return textContent.length > 26 ? `${textContent.substring(0, 24)}...` : textContent;
 	}
 
-	const type = getTypeForLNode(node);
-
-	// @ts-ignore
-	return blockTypeLabels[type] ?? type;
+	return getTypeLabelForNode(node);
 };
 
 /**
@@ -52,7 +68,7 @@ export const getIconForLNode = (node) => {
 	}
 
 	// @ts-ignore
-	return blockTypeIcons[getTypeForLNode(node)];
+	return blockTypeIcons[getTypeForNode(node)];
 };
 
 /**

@@ -22,7 +22,7 @@
 	<Treeview />
 </div>
 
-<div class="flex flex-wrap items-stretch gap-2">
+<div class="flex flex-wrap items-stretch">
 	<FloatBlock {selectedNode} />
 	<Table {selectedNode} />
 	<Image {selectedNode} />

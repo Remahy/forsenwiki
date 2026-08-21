@@ -10,6 +10,10 @@
 	@apply dark:bg-slate-950/35!;
 }
 
+@utility button-bg {
+	@apply bg-violet-900 text-white hover:bg-violet-700;
+}
+
 html.forsen-wiki-theme {
 	@apply bg-slate-200 text-slate-600 dark:bg-slate-900 dark:text-slate-400;
 }
@@ -40,13 +44,12 @@ html.forsen-wiki-theme {
 	}
 
 	.button {
-		@apply rounded-sm bg-violet-900 px-4 py-2 font-medium text-white hover:bg-violet-700 disabled:opacity-25 disabled:hover:cursor-not-allowed;
+		@apply button-bg rounded-sm px-4 py-2 font-medium disabled:opacity-25 disabled:hover:cursor-not-allowed;
 
 		&.active {
 			@apply forsen-wiki-theme-border border bg-violet-600!;
-		}t
-
-		&.inactive {
+		}
+		t &.inactive {
 			@apply forsen-wiki-theme-border border bg-violet-900/50!;
 		}
 	}

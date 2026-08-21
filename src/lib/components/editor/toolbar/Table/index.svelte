@@ -1,7 +1,6 @@
 <script>
-	import { onMount } from 'svelte';
-	import { mergeRegister } from 'lexical';
-	import { $isTableNode as isTableNode } from '@lexical/table';
+	import { $getSelection as getSelection, $isRangeSelection as isRangeSelection } from 'lexical';
+	import { $isTableCellNode as isTableCellNode, $isTableNode as isTableNode } from '@lexical/table';
 	import { getEditor } from 'svelte-lexical';
 
 	import Row from './Row/index.svelte';
@@ -16,6 +15,9 @@
 	/** @type {import('$lib/lexical/custom').ATableNode | null} */
 	let selectedTable = $state(null);
 
+	/** @type {import('$lib/lexical/custom').ATableCellNode | null} */
+	let selectedCell = $state(null);
+
 	const editor = getEditor();
 
 	const updateToolbar = () => {
@@ -29,28 +31,52 @@
 				return;
 			}
 
-			const closestParentTable = selectedNode.getParents().find((node) => isTableNode(node));
+			const parents = selectedNode.getParents();
 
+			const closestParentTable = parents.find((node) => isTableNode(node));
 			if (!closestParentTable) {
 				selectedTable = null;
 				return;
 			}
 
 			selectedTable = closestParentTable;
+
+			if (isTableCellNode(selectedNode)) {
+				selectedCell = selectedNode;
+				return;
+			}
+
+			const cellIndex = parents.findIndex((node) => isTableCellNode(node));
+
+			if (cellIndex > 1) {
+				selectedTable = null;
+				selectedCell = null;
+				return;
+			}
+
+			const selection = getSelection();
+
+			if (isRangeSelection(selection)) {
+				selectedCell = /** @type {import('$lib/lexical/custom').ATableCellNode} */ (
+					parents[cellIndex]
+				);
+			} else {
+				selectedCell = null;
+			}
 		});
 	};
 
-	onMount(() => {
-		return mergeRegister(
-			editor.registerUpdateListener(() => {
-				updateToolbar();
-			})
-		);
+	$effect(() => {
+		updateToolbar();
+		() => [selectedNode];
 	});
 </script>
 
 {#if selectedTable && selectedNode}
 	<Row {selectedTable} {selectedNode} />
-	<Column {selectedTable} {selectedNode} />
-	<Cell {selectedTable} {selectedNode} />
+
+	{#if selectedCell}
+		<Column {selectedTable} selectedNode={selectedCell} />
+		<Cell {selectedTable} selectedNode={selectedCell} />
+	{/if}
 {/if}

@@ -1,12 +1,10 @@
 <script>
 	// Based on umaranis' svelte-lexical
 
-	import { onMount } from 'svelte';
 	import { PlusIcon, ArrowUpIcon, ArrowDownIcon, Rows3Icon } from '@lucide/svelte';
 	import {
 		$createNodeSelection as createNodeSelection,
 		$setSelection as setSelection,
-		mergeRegister,
 	} from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 	import {
@@ -106,6 +104,10 @@
 				return;
 			}
 
+			if (!selectedNode.isAttached()) {
+				return;
+			}
+
 			const lastDescendant = selectedNode.getLastDescendant();
 
 			if (!lastDescendant) {
@@ -128,14 +130,9 @@
 		});
 	};
 
-	onMount(() => {
+	$effect(() => {
 		updateToolbar();
-
-		return mergeRegister(
-			editor.registerUpdateListener(() => {
-				updateToolbar();
-			})
-		);
+		() => [selectedNode];
 	});
 </script>
 
