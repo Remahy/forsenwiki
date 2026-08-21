@@ -13,7 +13,7 @@ import {
 	$isRootOrShadowRoot as isRootOrShadowRoot,
 } from 'lexical';
 
-import { getLabelForLNode } from './utils';
+import { getLabelForNode } from './utils';
 
 declare module '@headless-tree/core' {
 	export interface ItemInstance<T> {
@@ -49,7 +49,7 @@ export const initTree = (editor: LexicalEditor) => {
 					return [];
 				}),
 		},
-		getItemName: (item) => editor.read(() => getLabelForLNode(item.getItemData())),
+		getItemName: (item) => editor.read(() => getLabelForNode(item.getItemData())),
 		isItemFolder: (item) => !!item.getChildren().length,
 
 		features: [syncDataLoaderFeature, selectionFeature, hotkeysCoreFeature, parentProps],

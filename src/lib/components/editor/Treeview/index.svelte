@@ -16,10 +16,10 @@
 
 	import './treeview.css';
 	import { treeviewState } from './treeviewState.svelte';
+	import ItemIcon from './ItemIcon.svelte';
+	import ItemName from './ItemName.svelte';
 	import { initTree } from './tree';
-	import NodeIcon from './NodeIcon.svelte';
 	import { expandParents } from './utils';
-	import NameWrapper from './NameWrapper.svelte';
 
 	/**
 	 * @typedef {import('@headless-tree/core').ItemInstance<LexicalNode>} ItemInstance
@@ -212,10 +212,8 @@
 				{/if}
 
 				<button class="name" onclick={(e) => onClickNode(e, item)}>
-					<NodeIcon {editor} node={item.getItemData()} />
-					<NameWrapper {editor} node={item.getItemData()}>
-						{item.getItemName()}
-					</NameWrapper>
+					<ItemIcon {editor} {item} />
+					<ItemName {editor} {item} />
 				</button>
 			</div>
 		{/each}
