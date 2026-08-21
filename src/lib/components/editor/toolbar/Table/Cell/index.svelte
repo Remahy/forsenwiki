@@ -11,7 +11,7 @@
 
 {#if isTableCellNode(selectedNode) && isTableNode(selectedTable)}
 	<div class="flex w-full flex-col justify-items-stretch">
-		<Title {selectedNode} text="Cell" />
+		<Title {selectedNode} text="Cell" hasDefaultDelete={false} />
 
 		<div class="p-2">
 			<EditCell {selectedTable} {selectedNode} />
