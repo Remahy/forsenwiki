@@ -35,7 +35,10 @@
 	/** @type {ItemInstance[]} */
 	let items = $state([]);
 
-	let isJustSelection = $state(false);
+	/**
+	 * Used to signal that this was not an actual editor selection, just a tree selection.
+	 */
+	let isTreeNodeSelection = $state(false);
 
 	function updateItems() {
 		if (!tree) {
@@ -53,7 +56,7 @@
 		e.preventDefault();
 		e.stopPropagation();
 
-		isJustSelection = true;
+		isTreeNodeSelection = true;
 
 		const node = item.getItemData();
 
@@ -85,7 +88,7 @@
 			{ discrete: true }
 		);
 
-		isJustSelection = false;
+		isTreeNodeSelection = false;
 	};
 
 	/**
@@ -113,8 +116,6 @@
 					if (shouldUpdateTree) {
 						tree.rebuildTree();
 					}
-
-					const selection = getSelection();
 
 					if (!selection || (isRangeSelection(selection) && !selection?.isCollapsed())) {
 						updateItems();
@@ -162,7 +163,7 @@
 			editor.registerUpdateListener((payload) => {
 				const shouldUpdateTree = payload.mutatedNodes?.size;
 
-				if (!isJustSelection) {
+				if (!isTreeNodeSelection) {
 					debouncer(!!shouldUpdateTree);
 				}
 			})
