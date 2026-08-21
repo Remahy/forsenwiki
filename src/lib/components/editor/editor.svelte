@@ -28,6 +28,7 @@
 	import FloatBlockPlugin from './plugins/FloatBlock/FloatBlockPlugin.svelte';
 	import SelectionOverrides from './plugins/SelectionOverrides.svelte';
 	import ImageFixerModalButton from './ImageFixer/index.svelte';
+	import TreeviewPlugin from './Treeview/TreeviewPlugin.svelte';
 
 	/**
 	 * @typedef {Object} Props
@@ -83,6 +84,8 @@
 		<CollaborationPlugin {id} {providerFactory} shouldBootstrap={false} />
 
 		<SelectionOverrides />
+
+		<TreeviewPlugin />
 
 		<div class="w-full">
 			<div class="editor-border sticky top-0 z-40 hidden w-full p-2 lg:block">
