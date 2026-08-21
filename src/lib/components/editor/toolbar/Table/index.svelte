@@ -1,5 +1,5 @@
 <script>
-	import { $isTableNode as isTableNode } from '@lexical/table';
+	import { $isTableCellNode as isTableCellNode, $isTableNode as isTableNode } from '@lexical/table';
 	import { getEditor } from 'svelte-lexical';
 
 	import Row from './Row/index.svelte';
@@ -27,9 +27,17 @@
 				return;
 			}
 
-			const closestParentTable = selectedNode.getParents().find((node) => isTableNode(node));
+			const parents = selectedNode.getParents();
 
+			const closestParentTable = parents.find((node) => isTableNode(node));
 			if (!closestParentTable) {
+				selectedTable = null;
+				return;
+			}
+
+			const cellIndex = parents.findIndex((node) => isTableCellNode(node));
+
+			if (cellIndex > 1) {
 				selectedTable = null;
 				return;
 			}
