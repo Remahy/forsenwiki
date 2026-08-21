@@ -88,7 +88,7 @@
 		<TreeviewPlugin />
 
 		<div class="w-full">
-			<div class="editor-border sticky top-0 z-40 hidden w-full p-2 lg:block">
+			<div class="editor-border sticky top-0 z-40 hidden w-full p-2 xl:block">
 				<div class="flex flex-wrap items-stretch gap-2">
 					<Toolbar />
 				</div>
@@ -104,13 +104,13 @@
 				</article>
 			</div>
 
-			<div class="editor-border sticky bottom-0 z-40 block w-full p-2 lg:hidden">
+			<div class="editor-border sticky bottom-0 z-40 block w-full p-2 xl:hidden">
 				<div class="flex flex-wrap items-stretch gap-1 text-sm">
 					<MobileToolbar />
 				</div>
 			</div>
 
-			<div class="editor-border sticky bottom-0 hidden w-full border-t-0 p-2 lg:block">
+			<div class="editor-border sticky bottom-0 hidden w-full border-t-0 p-2 xl:block">
 				<Footer />
 			</div>
 		</div>
