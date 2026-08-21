@@ -1,4 +1,5 @@
 <script>
+	import { $getSelection as getSelection, $isRangeSelection as isRangeSelection } from 'lexical';
 	import { $isTableCellNode as isTableCellNode, $isTableNode as isTableNode } from '@lexical/table';
 	import { getEditor } from 'svelte-lexical';
 
@@ -13,6 +14,9 @@
 
 	/** @type {import('$lib/lexical/custom').ATableNode | null} */
 	let selectedTable = $state(null);
+
+	/** @type {import('$lib/lexical/custom').ATableCellNode | null} */
+	let selectedCell = $state(null);
 
 	const editor = getEditor();
 
@@ -35,14 +39,30 @@
 				return;
 			}
 
+			selectedTable = closestParentTable;
+
+			if (isTableCellNode(selectedNode)) {
+				selectedCell = selectedNode;
+				return;
+			}
+
 			const cellIndex = parents.findIndex((node) => isTableCellNode(node));
 
 			if (cellIndex > 1) {
 				selectedTable = null;
+				selectedCell = null;
 				return;
 			}
 
-			selectedTable = closestParentTable;
+			const selection = getSelection();
+
+			if (isRangeSelection(selection)) {
+				selectedCell = /** @type {import('$lib/lexical/custom').ATableCellNode} */ (
+					parents[cellIndex]
+				);
+			} else {
+				selectedCell = null;
+			}
 		});
 	};
 
@@ -54,6 +74,9 @@
 
 {#if selectedTable && selectedNode}
 	<Row {selectedTable} {selectedNode} />
-	<Column {selectedTable} {selectedNode} />
-	<Cell {selectedTable} {selectedNode} />
+
+	{#if selectedCell}
+		<Column {selectedTable} selectedNode={selectedCell} />
+		<Cell {selectedTable} selectedNode={selectedCell} />
+	{/if}
 {/if}
