@@ -105,9 +105,10 @@
 
 		const debouncer = useDebounce(
 			/**
+			 * @param {BaseSelection | null} selection
 			 * @param {boolean} shouldUpdateTree
 			 */
-			(shouldUpdateTree) => {
+			(selection, shouldUpdateTree) => {
 				editor.read(() => {
 					if (!tree) {
 						return;
@@ -164,7 +165,9 @@
 				const shouldUpdateTree = payload.mutatedNodes?.size;
 
 				if (!isTreeNodeSelection) {
-					debouncer(!!shouldUpdateTree);
+					const selection = editor.read(() => getSelection());
+
+					debouncer(selection, !!shouldUpdateTree);
 				}
 			})
 		);
