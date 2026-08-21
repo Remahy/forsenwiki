@@ -106,6 +106,10 @@
 				return;
 			}
 
+			if (!selectedNode.isAttached()) {
+				return;
+			}
+
 			const lastDescendant = selectedNode.getLastDescendant();
 
 			if (!lastDescendant) {
