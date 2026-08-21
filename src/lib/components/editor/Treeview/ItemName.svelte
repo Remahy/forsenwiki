@@ -24,7 +24,7 @@
 	{#if label !== typeLabel && label.length}
 		<span title={typeLabel}>
 			<span>{typeLabel}</span>
-			<span class="text-xs opacity-65">{label}</span>
+			<span class="text-xs opacity-80">{label}</span>
 		</span>
 	{:else if label.length === 0}
 		<span class="italic">{typeLabel}</span>
