@@ -14,8 +14,10 @@
 
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
 	import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
+	import Box from '../Box.svelte';
+	import EditorModal from '../EditorModal.svelte';
 	import Toolbar from './toolbar/index.svelte';
-	import TreeWrapper from './toolbar/TreeWrapper.svelte';
+	import TreeviewWrapper from './toolbar/TreeviewWrapper.svelte';
 	import MobileToolbar from './toolbar/MobileToolbar.svelte';
 	import Footer from './footer/index.svelte';
 	import { articleConfig, editableTheme } from './config/article';
@@ -25,8 +27,8 @@
 	import TablePlugin from './plugins/Overrides/Table/TablePlugin.svelte';
 	import FloatBlockPlugin from './plugins/FloatBlock/FloatBlockPlugin.svelte';
 	import SelectionOverrides from './plugins/SelectionOverrides.svelte';
-	import ImageFixerModal from './ImageFixer/index.svelte';
-	import Box from '../Box.svelte';
+	import ImageFixerModalButton from './ImageFixer/index.svelte';
+	import TreeviewPlugin from './Treeview/TreeviewPlugin.svelte';
 
 	/**
 	 * @typedef {Object} Props
@@ -83,8 +85,10 @@
 
 		<SelectionOverrides />
 
+		<TreeviewPlugin />
+
 		<div class="w-full">
-			<div class="editor-border sticky top-0 z-40 hidden w-full p-2 lg:block">
+			<div class="editor-border sticky top-0 z-40 hidden w-full p-2 xl:block">
 				<div class="flex flex-wrap items-stretch gap-2">
 					<Toolbar />
 				</div>
@@ -100,23 +104,24 @@
 				</article>
 			</div>
 
-			<div class="editor-border sticky bottom-0 z-40 block w-full p-2 lg:hidden">
-				<div class="flex flex-wrap items-stretch gap-2 text-sm">
+			<div class="editor-border sticky bottom-0 z-40 block w-full p-2 xl:hidden">
+				<div class="flex flex-wrap items-stretch gap-1 text-sm">
 					<MobileToolbar />
 				</div>
 			</div>
 
-			<div class="editor-border sticky bottom-0 hidden w-full border-t-0 p-2 lg:block">
+			<div class="editor-border sticky bottom-0 hidden w-full border-t-0 p-2 xl:block">
 				<Footer />
 			</div>
 		</div>
 
 		<div
-			class="editor-border sticky top-0 hidden max-h-screen grow flex-col gap-4 xl:flex xl:w-96 xl:min-w-96"
+			class="editor-border sticky top-0 hidden max-h-screen grow flex-col xl:flex xl:w-96 xl:min-w-96"
 		>
-			<TreeWrapper />
+			<TreeviewWrapper />
 		</div>
 	</div>
 
-	<ImageFixerModal />
+	<EditorModal />
+	<ImageFixerModalButton />
 </Composer>

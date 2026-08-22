@@ -1,6 +1,6 @@
 <script>
 	import Divider from '../../Divider.svelte';
-	import InsertButton from './InsertButton/index.svelte';
+	import TreeviewModalButton from '../Treeview/TreeviewModalButton.svelte';
 	import Toolbar from './index.svelte';
 </script>
 
@@ -8,4 +8,4 @@
 
 <Divider />
 
-<InsertButton />
+<TreeviewModalButton />
