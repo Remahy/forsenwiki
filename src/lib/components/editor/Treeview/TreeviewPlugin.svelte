@@ -17,7 +17,7 @@
 	onMount(() => {
 		treeviewState.tree = initTree(editor);
 
-		const debouncer = useDebounce(
+		const updateTreeDebouncer = useDebounce(
 			/**
 			 * @param {BaseSelection | null} selection
 			 * @param {boolean} shouldUpdateTree
@@ -83,7 +83,7 @@
 				if (!treeviewState.isTreeNodeSelection) {
 					const selection = editor.read(() => getSelection());
 
-					debouncer(selection, !!shouldUpdateTree);
+					updateTreeDebouncer(selection, !!shouldUpdateTree);
 				}
 			})
 		);
