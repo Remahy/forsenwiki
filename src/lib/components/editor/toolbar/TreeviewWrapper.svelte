@@ -39,7 +39,7 @@
 	<Treeview class={isOpen ? '' : 'hidden'} />
 </div>
 
-<div class="items- flex flex-wrap">
+<div class="flex flex-wrap items-stretch">
 	<FloatBlock {selectedNode} />
 	<Table {selectedNode} />
 	<Image {selectedNode} />
