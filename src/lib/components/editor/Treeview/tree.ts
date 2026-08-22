@@ -49,7 +49,7 @@ export const initTree = (editor: LexicalEditor) => {
 					return [];
 				}),
 		},
-		getItemName: (item) => editor.read(() => getLabelForNode(item.getItemData())),
+		getItemName: (item) => editor.read(() => getNodeByKey(item.getId()) ?  getLabelForNode(item.getItemData()) : 'Unknown node'),
 		isItemFolder: (item) => !!item.getChildren().length,
 
 		features: [syncDataLoaderFeature, selectionFeature, hotkeysCoreFeature, parentProps],
