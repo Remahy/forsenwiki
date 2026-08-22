@@ -291,7 +291,7 @@
 		<ResetCacheLink
 			disabled={!canEdit || isUploading || !!error}
 			isLoading={isUploading}
-			onClickReset={reset}
+			onClickReset={() => reset()}
 		>
 			<span>Reset &quot;{title}&quot; draft cache</span>
 		</ResetCacheLink>

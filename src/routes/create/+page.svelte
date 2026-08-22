@@ -238,7 +238,7 @@
 		<ResetCacheLink
 			disabled={!canEdit || isUploading || !!error}
 			isLoading={isUploading}
-			onClickReset={reset}
+			onClickReset={() => reset()}
 		>
 			<div>
 				<p>Reset this draft cache</p>
