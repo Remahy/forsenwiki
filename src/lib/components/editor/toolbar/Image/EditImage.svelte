@@ -22,13 +22,45 @@
 	let currentHeight = $derived(selectedImageNode.__height);
 	let currentAltText = $derived(selectedImageNode.__altText);
 
-	let width = $derived(currentWidth);
-	let height = $derived(currentHeight);
+	let width = $derived(currentWidth === 'inherit' ? null : currentWidth);
+	let height = $derived(currentHeight === 'inherit' ? null : currentHeight);
 	let altText = $derived(currentAltText);
+
+	let widthPlaceholder = $derived.by(() => {
+		if (currentWidth === 'inherit' && currentHeight === 'inherit') {
+			return 'Inherit';
+		}
+
+		if (currentHeight !== 'inherit' && currentWidth === 'inherit') {
+			return 'Maintain aspect ratio';
+		}
+
+		if (currentWidth === 'inherit') {
+			return 'Inherit';
+		}
+
+		return '';
+	});
+
+	let heightPlaceholder = $derived.by(() => {
+		if (currentWidth === 'inherit' && currentHeight === 'inherit') {
+			return 'Inherit';
+		}
+
+		if (currentWidth !== 'inherit' && currentHeight === 'inherit') {
+			return 'Maintain aspect ratio';
+		}
+
+		if (currentHeight === 'inherit') {
+			return 'Inherit';
+		}
+
+		return '';
+	});
 
 	const onChange = () => {
 		editor.update(() => {
-			selectedImageNode.setWidthAndHeight({ width, height });
+			selectedImageNode.setWidthAndHeight({ width: width || 'inherit', height: height || 'inherit' });
 			selectedImageNode.setAltText(altText);
 		});
 	};
@@ -79,7 +111,7 @@
 
 			<input
 				class="input-color h-full w-full p-0 pl-12 text-sm"
-				placeholder={height === 'inherit' ? 'Inherit' : ''}
+				placeholder={widthPlaceholder}
 				onchange={onChange}
 				min={IMAGE_MIN_WIDTH}
 				type="number"
@@ -93,7 +125,7 @@
 
 			<input
 				class="input-color h-full w-full p-0 pl-12 text-sm"
-				placeholder={height === 'inherit' ? 'Inherit' : ''}
+				placeholder={heightPlaceholder}
 				onchange={onChange}
 				min={IMAGE_MIN_HEIGHT}
 				type="number"
