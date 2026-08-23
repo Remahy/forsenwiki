@@ -20,10 +20,12 @@
 		$getNodeByKey as getNodeByKey,
 		$getSelection as getSelection,
 		mergeRegister,
+		$isNodeSelection as isNodeSelection,
 	} from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 
 	import { getYouTubeClipURL } from '$lib/api/utils';
+	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
 	import { $createVideoEmbedNode as createVideoEmbedNode, VideoEmbedNode } from './VideoEmbed';
 
 	/**
@@ -73,6 +75,15 @@
 			const node = createVideoEmbedNode(payload);
 
 			const selection = getSelection();
+
+			if (isNodeSelection(selection)) {
+				const [selectedNode] = selection.getNodes();
+				if (isGalleryNode(selectedNode)) {
+					selectedNode.append(node);
+					return;
+				}
+			}
+
 			if (!selection?.isCollapsed()) {
 				return;
 			}
