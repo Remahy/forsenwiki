@@ -16,7 +16,7 @@
 	let isOpen = $state(true);
 </script>
 
-<div class="mb-auto p-2">
+<div class="p-2">
 	<InsertButton />
 </div>
 
