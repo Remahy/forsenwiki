@@ -26,6 +26,12 @@ export {
 	FloatBlockNode,
 } from '../components/editor/plugins/FloatBlock/FloatBlock';
 
+export {
+	$createGalleryNode,
+	GalleryNode,
+	$isGalleryNode,
+} from '../components/editor/plugins/Gallery/Gallery';
+
 export { DiffHeadingNode } from '../components/editor/plugins/Diff/Heading';
 export { DiffListNode } from '../components/editor/plugins/Diff/List';
 export { DiffListItemNode } from '../components/editor/plugins/Diff/ListItem';

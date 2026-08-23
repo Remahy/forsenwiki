@@ -20,6 +20,7 @@ import {
 	ATableCellNode,
 	ATableNode,
 	$createATableNode,
+	GalleryNode,
 } from '$lib/lexical/custom';
 import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
@@ -117,6 +118,8 @@ export const articleNodes = [
 	TableCellNode,
 	TableRowNode,
 	FloatBlockNode,
+
+	GalleryNode,
 
 	// Old nodes / Migration nodes
 	FallbackNode,

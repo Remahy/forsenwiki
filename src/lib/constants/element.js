@@ -36,4 +36,5 @@ export const blockTypeLabels = {
 	image: 'Image',
 	'float-block': 'Float block',
 	'a-link': 'Link',
+	gallery: 'Gallery',
 };

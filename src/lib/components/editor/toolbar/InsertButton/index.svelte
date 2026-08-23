@@ -10,11 +10,12 @@
 	import { getEditor } from 'svelte-lexical';
 
 	import Select from '$lib/components/Select.svelte';
+	import { blockTypeLabels } from '$lib/constants/element';
 
 	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
 	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 	import { INSERT_FLOATBLOCK_COMMAND } from '../../plugins/FloatBlock/FloatBlockPlugin.svelte';
-	import { blockTypeLabels } from '$lib/constants/element';
+	import { INSERT_GALLERY_COMMAND } from '../../plugins/Gallery/GalleryPlugin.svelte';
 	import { insertParagraph } from './insertParagraph';
 
 	let isDisabled = $state(false);
@@ -57,6 +58,8 @@
 			height: undefined,
 		});
 
+	const insertGallery = () => editor.dispatchCommand(INSERT_GALLERY_COMMAND, {});
+
 	const insertElementTypeOptions = [
 		{
 			value: 'paragraph',
@@ -72,6 +75,11 @@
 			value: 'video',
 			label: blockTypeLabels.videoembed,
 			insertFunc: insertVideo,
+		},
+		{
+			value: 'gallery',
+			label: blockTypeLabels['gallery'],
+			insertFunc: insertGallery,
 		},
 		{
 			value: 'table',

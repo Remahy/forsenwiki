@@ -21,14 +21,15 @@
 	import MobileToolbar from './toolbar/MobileToolbar.svelte';
 	import Footer from './footer/index.svelte';
 	import { articleConfig, editableTheme } from './config/article';
-	import { editorGlobals } from './editorGlobals.svelte';
 	import ImagePlugin from './plugins/Image/ImagePlugin.svelte';
 	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 	import TablePlugin from './plugins/Overrides/Table/TablePlugin.svelte';
 	import FloatBlockPlugin from './plugins/FloatBlock/FloatBlockPlugin.svelte';
 	import SelectionOverrides from './plugins/SelectionOverrides.svelte';
+	import GalleryPlugin from './plugins/Gallery/GalleryPlugin.svelte';
 	import ImageFixerModalButton from './ImageFixer/index.svelte';
 	import TreeviewPlugin from './Treeview/TreeviewPlugin.svelte';
+	import { editorGlobals } from './editorGlobals.svelte';
 
 	/**
 	 * @typedef {Object} Props
@@ -86,6 +87,8 @@
 		<SelectionOverrides />
 
 		<TreeviewPlugin />
+
+		<GalleryPlugin />
 
 		<div class="w-full">
 			<div class="editor-border sticky top-0 z-40 hidden w-full p-2 xl:block">
