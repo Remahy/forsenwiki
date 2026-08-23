@@ -42,11 +42,14 @@
 
 	let currentWidth = $derived(selectedNode.__width);
 	let currentHeight = $derived(selectedNode.__height);
+	let currentAltText = $derived(selectedNode.__altText);
 
 	let url = $derived(currentURL);
 
 	let width = $derived(currentWidth);
 	let height = $derived(currentHeight);
+
+	let altText = $derived(currentAltText);
 
 	const platformIcons = {
 		youtube: YouTube,
@@ -61,6 +64,7 @@
 	const onChange = () => {
 		editor.update(() => {
 			selectedNode.setWidthAndHeight({ width, height });
+			selectedNode.setAltText(altText);
 		});
 	};
 
@@ -108,7 +112,7 @@
 </script>
 
 <div class="flex flex-col gap-4">
-	<div class="relative flex items-center w-full gap-2">
+	<div class="relative flex w-full items-center gap-2">
 		<SvelteComponent class="absolute left-4" />
 
 		<Select
@@ -116,7 +120,7 @@
 			bind:ref={platformElement}
 			on:change={setPlatform}
 			bind:value={currentPlatform}
-			class="min-h-10.5 px-12! w-full"
+			class="min-h-10.5 w-full px-12!"
 		>
 			<option value="unknown" hidden>Unknown</option>
 
@@ -173,4 +177,9 @@
 			/>
 		</label>
 	</div>
+
+	<label class="flex flex-col gap-2">
+		<strong>Alt text</strong>
+		<input class="input-color rounded-sm p-2" onchange={onChange} bind:value={altText} />
+	</label>
 </div>

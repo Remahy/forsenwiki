@@ -32,7 +32,7 @@
 		}
 
 		if (currentHeight !== 'inherit' && currentWidth === 'inherit') {
-			return 'Maintain aspect ratio';
+			return 'Auto';
 		}
 
 		if (currentWidth === 'inherit') {
@@ -48,7 +48,7 @@
 		}
 
 		if (currentWidth !== 'inherit' && currentHeight === 'inherit') {
-			return 'Maintain aspect ratio';
+			return 'Auto';
 		}
 
 		if (currentHeight === 'inherit') {
