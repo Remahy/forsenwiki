@@ -41,8 +41,7 @@ export const initTree = (editor: LexicalEditor) => {
 						return [];
 					}
 
-					if (isRootOrShadowRoot(node) || 'getChildrenKeys' in node) {
-						// @ts-ignore
+					if ('getChildrenKeys' in node && typeof node.getChildrenKeys === 'function') {
 						return node.getChildrenKeys();
 					}
 
