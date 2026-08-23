@@ -39,17 +39,6 @@ import { getFormatType } from '../../utils/elementUtils';
 
 export type SupportedPlatforms = 'twitch' | 'youtube' | 'usercontent';
 
-export type VideoEmbedComponentProps = Readonly<{
-	// className: Readonly<{
-	// 	base: string;
-	// 	focus: string;
-	// }>;
-	format: ElementFormatType | null;
-	nodeKey: NodeKey;
-	platform: SupportedPlatforms;
-	src: string;
-}>;
-
 export type VideoEmbedPayload = {
 	platform?: SupportedPlatforms;
 	src?: string;
@@ -422,10 +411,10 @@ function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput 
 }
 
 export class VideoEmbedNode extends DecoratorBlockNode {
-	__platform?: SupportedPlatforms;
-	__src?: string;
-	__width?: 'inherit' | number;
-	__height?: 'inherit' | number;
+	__platform: SupportedPlatforms | undefined;
+	__src: string | undefined;
+	__width: 'inherit' | number | undefined;
+	__height: 'inherit' | number | undefined;
 
 	constructor(
 		platform?: SupportedPlatforms,
