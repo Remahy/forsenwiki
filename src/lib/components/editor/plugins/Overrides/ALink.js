@@ -15,7 +15,7 @@ import { LinkNode } from '$lib/lexical/index';
 export class ALinkNode extends LinkNode {
 	__isInternal = false;
 	/** @type {string | undefined} */
-	__internalId;
+	__internalId = undefined;
 
 	/**
 	 * @param {string} [url]

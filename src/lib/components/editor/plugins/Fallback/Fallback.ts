@@ -16,7 +16,7 @@ type FallbackNodeType = {
 };
 
 export class FallbackNode extends DecoratorBlockNode {
-	__data?: string;
+	__data: string | undefined;
 
 	constructor(data?: string, format?: ElementFormatType, key?: NodeKey) {
 		super(format, key);
