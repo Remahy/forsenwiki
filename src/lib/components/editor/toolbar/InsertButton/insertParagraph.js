@@ -14,8 +14,9 @@ import { $isListItemNode as isListItemNode } from '@lexical/list';
 
 /**
  * @param {LexicalEditor} editor
+ * @param {'after' | 'before' | undefined} [adjacent]
  */
-export const insertParagraph = (editor) =>
+export const insertParagraph = (editor, adjacent) =>
 	editor.update(() => {
 		const selection = getSelection();
 
@@ -36,7 +37,7 @@ export const insertParagraph = (editor) =>
 		const node = createParagraphNode();
 
 		if (!isRangeSelection(selection)) {
-			if (isRootOrShadowRoot(nodeAtSelection)) {
+			if (isRootOrShadowRoot(nodeAtSelection) && !adjacent) {
 				const firstChild = nodeAtSelection.getFirstChild();
 				if (firstChild) {
 					firstChild.insertBefore(node);
@@ -50,7 +51,12 @@ export const insertParagraph = (editor) =>
 				return;
 			}
 
-			insertNodeToNearestRoot(node).selectStart();
+			if (adjacent === 'before') {
+				nodeAtSelection.insertBefore(node);
+				node.selectStart();
+			} else {
+				insertNodeToNearestRoot(node).selectStart();
+			}
 			return;
 		}
 
