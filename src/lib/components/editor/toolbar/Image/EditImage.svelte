@@ -10,17 +10,17 @@
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {import('$lib/lexical/custom').ImageNode} selectedImageNode
+	 * @property {import('$lib/lexical/custom').ImageNode} selectedNode
 	 */
 
 	/** @type {Props} */
-	let { selectedImageNode } = $props();
+	let { selectedNode } = $props();
 
 	let editor = $derived(getEditor?.());
 
-	let currentWidth = $derived(selectedImageNode.__width);
-	let currentHeight = $derived(selectedImageNode.__height);
-	let currentAltText = $derived(selectedImageNode.__altText);
+	let currentWidth = $derived(selectedNode.__width);
+	let currentHeight = $derived(selectedNode.__height);
+	let currentAltText = $derived(selectedNode.__altText);
 
 	let width = $derived(currentWidth === 'inherit' ? null : currentWidth);
 	let height = $derived(currentHeight === 'inherit' ? null : currentHeight);
@@ -60,27 +60,27 @@
 
 	const onChange = () => {
 		editor.update(() => {
-			selectedImageNode.setWidthAndHeight({ width: width || 'inherit', height: height || 'inherit' });
-			selectedImageNode.setAltText(altText);
+			selectedNode.setWidthAndHeight({ width: width || 'inherit', height: height || 'inherit' });
+			selectedNode.setAltText(altText);
 		});
 	};
 
 	const image = () => {
 		editor.read(() => {
-			const { width: selectedImageNodeWidth, height: selectedImageNodeHeight } =
-				selectedImageNode.getWidthAndHeight();
+			const { width: selectedNodeWidth, height: selectedNodeHeight } =
+				selectedNode.getWidthAndHeight();
 
 			modal.set({
 				component: EditImageModal,
-				src: selectedImageNode.getSrc(),
-				altText: selectedImageNode.getAltText(),
-				width: selectedImageNodeWidth,
-				height: selectedImageNodeHeight,
+				src: selectedNode.getSrc(),
+				altText: selectedNode.getAltText(),
+				width: selectedNodeWidth,
+				height: selectedNodeHeight,
 				/** @param {import('../../plugins/Image/Image').ImagePayload} data */
 				onSubmit: (data) => {
 					editor.update(() => {
 						/** @type {import('../../plugins/Image/Image').ImageNode} */
-						const node = /** @type {any} */ (getNodeByKey(selectedImageNode.getKey()));
+						const node = /** @type {any} */ (getNodeByKey(selectedNode.getKey()));
 
 						const { width, height, src } = data;
 
