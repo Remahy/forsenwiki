@@ -20,9 +20,9 @@
 				<ul class="ml-5 list-disc">
 					<li>Use the "Insert" button to add supported items.</li>
 					<li>Drag the items in the treeview to change their order in the gallery.</li>
-					<li>
-						Each gallery item may also have supporting text, use each item's "Alt text" to modify
-						the supporting text.
+					<li class="opacity-50">
+						<span class="font-semibold">Coming soon:</span> Each gallery item may also have supporting
+						text, use each item's "Alt text" to modify the supporting text.
 					</li>
 				</ul>
 			</div>
