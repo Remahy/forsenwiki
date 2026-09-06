@@ -27,6 +27,7 @@
 	import { IMAGE_OFF, LUCIDE_ICON_LOADER, $isImageNode as isImageNode } from './Image';
 	import { loadContent } from '$lib/utils/indexedDb/content';
 	import { editorGlobals } from '../../editorGlobals.svelte';
+	import { $isGalleryNode as isGalleryNode } from '../Gallery/Gallery';
 
 	const id = $derived(editorGlobals.articleId);
 
@@ -45,8 +46,12 @@
 	/** @type {Props} */
 	let { node, src, altText, nodeKey, width, height, resizable, editor } = $props();
 
-	let heightCss = $derived(height === 'inherit' ? 'inherit' : Math.max(IMAGE_MIN_HEIGHT, height) + 'px');
-	let widthCss = $derived(width === 'inherit' ? 'inherit' : Math.max(IMAGE_MIN_WIDTH, width) + 'px');
+	let heightCss = $derived(
+		height === 'inherit' ? 'inherit' : Math.max(IMAGE_MIN_HEIGHT, height) + 'px'
+	);
+	let widthCss = $derived(
+		width === 'inherit' ? 'inherit' : Math.max(IMAGE_MIN_WIDTH, width) + 'px'
+	);
 
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);
@@ -56,6 +61,8 @@
 	let isResizing = $state(false);
 
 	let isFocused = $derived($isSelected || isResizing);
+
+	const isParentGallery = $derived(editor.read(() => isGalleryNode(node.getParent())));
 
 	let promise = $derived.by(async () => {
 		try {
@@ -246,7 +253,7 @@
 	{/await}
 </div>
 
-{#if resizable && isNodeSelection(selection) && isFocused}
+{#if resizable && isNodeSelection(selection) && isFocused && !isParentGallery}
 	<ImageResizer
 		{editor}
 		{imageRef}

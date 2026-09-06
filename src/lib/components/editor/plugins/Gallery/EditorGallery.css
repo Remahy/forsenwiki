@@ -3,3 +3,12 @@
 .embla__viewport > * {
 	@apply min-w-0 shrink-0 basis-full;
 }
+
+.embla__viewport {
+	@apply flex aspect-video overflow-hidden;
+
+	img,
+	iframe {
+		@apply aspect-video h-full! w-full! object-contain;
+	}
+}

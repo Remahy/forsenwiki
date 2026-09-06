@@ -79,7 +79,9 @@ const addToggleThumbButtonsActive = (emblaApiMain, emblaApiThumb) => {
 const toggleFullScreen = (element) => {
 	if (!document.fullscreenElement) {
 		element.requestFullscreen();
+		document.body.classList.add('embla-fullscreen');
 	} else if (document.exitFullscreen) {
+		document.body.classList.remove('embla-fullscreen');
 		document.exitFullscreen();
 	}
 };
@@ -117,7 +119,7 @@ export const initializeEmblaForArticle = (rootElement) => {
 			addToggleThumbButtonsActive(emblaApiMain, emblaApiThumbnail);
 		}
 
-		const fullscreenButton = element.querySelector('button.embla-fullscreen');
+		const fullscreenButton = element.querySelector('button.embla-fullscreen-button');
 
 		fullscreenButton?.addEventListener('click', () => toggleFullScreen(element));
 	}

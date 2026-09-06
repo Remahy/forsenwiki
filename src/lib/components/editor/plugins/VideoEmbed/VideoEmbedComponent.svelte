@@ -24,6 +24,7 @@
 	} from '$lib/components/editor/utils/getSelection';
 	import { VIDEO_MIN_HEIGHT, VIDEO_MIN_WIDTH } from '$lib/constants/video';
 	import ImageResizer from '../Image/ImageResizer.svelte';
+	import { $isGalleryNode as isGalleryNode } from '../Gallery/Gallery';
 	import {
 		getIframeStyle,
 		getURLAndTitle,
@@ -47,7 +48,8 @@
 	 */
 
 	/** @type {Props} */
-	let { node, src, platform, nodeKey, height, width, altText, resizable, format, editor } = $props();
+	let { node, src, platform, nodeKey, height, width, altText, resizable, format, editor } =
+		$props();
 
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);
@@ -65,6 +67,8 @@
 
 	// Used for showing errors for usercontent.
 	let error = $state(false);
+
+	const isParentGallery = $derived(editor.read(() => isGalleryNode(node.getParent())));
 
 	/**
 	 * @param {MouseEvent} event
@@ -254,7 +258,7 @@
 		{/if}
 	</div>
 
-	{#if resizable && isNodeSelection(selection) && isFocused}
+	{#if resizable && isNodeSelection(selection) && isFocused && !isParentGallery}
 		<ImageResizer
 			{editor}
 			imageRef={embedRef}
