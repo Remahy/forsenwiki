@@ -35,7 +35,7 @@ export default [
 				for (let index = 0; index < children.length; index++) {
 					const child = children[index];
 
-					const clonedChild = child.cloneNode();
+					const clonedChild = child.cloneNode(true);
 
 					const emblaSlideDiv = document.createElement('div');
 					emblaSlideDiv.classList.add('embla__slide');
@@ -71,9 +71,10 @@ export default [
 					/**
 					 * @type {HTMLElement}
 					 */
-					const clonedChild = /** @type {any} */ (child.cloneNode());
+					const clonedChild = /** @type {any} */ (child.cloneNode(true));
 
 					clonedChild.classList.add('pointer-events-none');
+					clonedChild.removeAttribute('controls');
 
 					const emblaSlideDiv = document.createElement('div');
 					emblaSlideDiv.classList.add('embla-thumbs__slide');
