@@ -90,7 +90,7 @@
 
 		<GalleryPlugin />
 
-		<div class="w-full">
+		<div class="min-w-0 flex-1">
 			<div class="editor-border sticky top-0 z-40 hidden w-full p-2 xl:block">
 				<div class="flex flex-wrap items-stretch gap-2">
 					<Toolbar />
@@ -119,7 +119,7 @@
 		</div>
 
 		<div
-			class="editor-border sticky top-0 hidden h-fit max-h-screen grow flex-col xl:flex xl:w-96 xl:min-w-96"
+			class="shrink-0 self-start editor-border sticky top-0 hidden h-fit max-h-screen flex-col xl:flex xl:w-96 xl:min-w-96"
 		>
 			<TreeviewWrapper />
 		</div>

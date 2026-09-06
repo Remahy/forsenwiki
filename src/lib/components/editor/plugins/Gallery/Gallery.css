@@ -38,12 +38,12 @@ button.embla-fullscreen-button {
 }
 
 .embla-thumbs__slide {
-	@apply forsen-wiki-theme-border flex min-w-0 flex-[0_0_25%] shrink cursor-pointer items-stretch justify-center rounded border-2;
+	@apply forsen-wiki-theme-border flex aspect-video h-full w-full min-w-0 flex-[0_0_25%] cursor-pointer items-stretch justify-center overflow-hidden rounded border-2 select-none;
 }
 
 .embla-fullscreen {
 	.embla-thumbs__slide {
-		@apply lg:flex-[0_0_10%];
+		@apply lg:flex-[0_0_15%];
 	}
 }
 
