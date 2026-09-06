@@ -1,4 +1,5 @@
 <script>
+	/* eslint-disable svelte/no-at-html-tags */
 	import Box from './Box.svelte';
 
 	/**
@@ -52,16 +53,13 @@
 			const level = Number(element.tagName.replace(/[A-Z]/g, ''));
 
 			const span = doc.createElement('span');
-			span.setAttribute('class', 'underline decoration-indigo-500 decoration-2 underline-offset-4');
+			span.setAttribute('class', 'underline decoration-indigo-500 decoration-1 underline-offset-2');
 			span.innerText = element.textContent || '';
 
 			const a = doc.createElement('a');
 			a.appendChild(span);
 			a.href = `#${element.id}`;
-			a.setAttribute(
-				'class',
-				'inline-flex flex-wrap items-baseline gap-2 font-bold hover:text-indigo-300'
-			);
+			a.setAttribute('class', 'inline-flex flex-wrap items-baseline gap-2 hover:text-indigo-300');
 
 			const li = doc.createElement('li');
 			li.setAttribute('class', 'leading-7');
