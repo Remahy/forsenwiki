@@ -68,7 +68,7 @@
 	// Used for showing errors for usercontent.
 	let error = $state(false);
 
-	const isParentGallery = $derived(editor.read(() => isGalleryNode(node.getParent())));
+	let isParentGallery = $derived(editor.read(() => isGalleryNode(node.getParent())));
 
 	/**
 	 * @param {MouseEvent} event

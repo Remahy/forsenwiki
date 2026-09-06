@@ -52,7 +52,7 @@
 
 	let altText = $derived(currentAltText);
 
-	const isParentGallery = $derived(editor.read(() => isGalleryNode(selectedNode.getParent())));
+	let isParentGallery = $derived(editor.read(() => isGalleryNode(selectedNode.getParent())));
 
 	const platformIcons = {
 		youtube: YouTube,

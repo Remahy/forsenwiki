@@ -62,7 +62,7 @@
 
 	let isFocused = $derived($isSelected || isResizing);
 
-	const isParentGallery = $derived(editor.read(() => isGalleryNode(node.getParent())));
+	let isParentGallery = $derived(editor.read(() => isGalleryNode(node.getParent())));
 
 	let promise = $derived.by(async () => {
 		try {

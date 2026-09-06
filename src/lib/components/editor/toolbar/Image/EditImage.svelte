@@ -59,7 +59,7 @@
 		return '';
 	});
 
-	const isParentGallery = $derived(editor.read(() => isGalleryNode(selectedNode.getParent())));
+	let isParentGallery = $derived(editor.read(() => isGalleryNode(selectedNode.getParent())));
 
 	const onChange = () => {
 		editor.update(() => {
@@ -107,7 +107,7 @@
 <div class="flex flex-col gap-4">
 	<Button on:click={image} class="text-xs">Change image</Button>
 
-	{#if isParentGallery}
+	{#if !isParentGallery}
 		<div class="flex gap-2">
 			<label title="Width" class="relative flex min-h-10.5 items-center gap-2">
 				<span class="hidden">Width</span>
