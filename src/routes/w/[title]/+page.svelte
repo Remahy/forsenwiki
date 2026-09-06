@@ -1,6 +1,7 @@
 <script>
 	/* eslint-disable svelte/no-at-html-tags */
-	import { SquarePenIcon, HistoryIcon } from '@lucide/svelte';
+	import { onMount } from 'svelte';
+	import { SquarePenIcon, RotateCcwClock } from '@lucide/svelte';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
 	import { page } from '$app/state';
@@ -19,6 +20,7 @@
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL.js';
 	import Article from '$lib/components/Article.svelte';
 	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+	import { initializeEmblaForArticle } from '$lib/components/editor/plugins/Gallery/embla.js';
 
 	const submitErrors = $derived.by(() => {
 		try {
@@ -91,6 +93,17 @@
 	BigInt.prototype.toJSON = function () {
 		return { $bigint: this.toString() };
 	};
+
+	onMount(() => {
+		/**
+		 * @type {HTMLElement}
+		 */
+		const article = /** @type {any} */ (document.querySelector('main.article-root'));
+
+		if (article) {
+			initializeEmblaForArticle(article);
+		}
+	});
 </script>
 
 <svelte:head>
@@ -155,7 +168,7 @@
 
 						<div class="flex shrink-0 items-start gap-2">
 							<LinkButton href="/w/{title}/history" class="flex items-center gap-2 text-sm">
-								<HistoryIcon size="16" /><span class="hidden md:inline">History</span>
+								<RotateCcwClock size="16" /><span class="hidden md:inline">History</span>
 							</LinkButton>
 
 							<LinkButton href="/w/{title}/edit" reload class="flex items-center gap-2 text-sm">

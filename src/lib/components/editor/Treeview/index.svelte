@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import { getEditor } from 'svelte-lexical';
 	import { ChevronDownIcon, ChevronRightIcon } from '@lucide/svelte';
 
@@ -6,7 +7,7 @@
 	import { treeviewState } from './treeviewState.svelte';
 	import ItemIcon from './ItemIcon.svelte';
 	import ItemName from './ItemName.svelte';
-	import { handleOnClickTreeNode, updateItems } from './utils';
+	import { handleOnClickTreeNode, styleObjectToString, updateItems } from './utils';
 
 	/**
 	 * @type {{ class?: string }}
@@ -31,7 +32,7 @@
 		updateItems(treeviewState);
 	};
 
-	$effect(() => {
+	onMount(() => {
 		if (!treeviewState.tree) {
 			return;
 		}
@@ -49,19 +50,31 @@
 	});
 </script>
 
-{#if editor}
+{#if editor && treeviewState.tree}
+	{@const { onDragOver, onDrop, ...restContainerProps } =
+		treeviewState.tree.getContainerProps('Treeview')}
 	<div
 		bind:this={treeviewElement}
-		{...treeviewState.tree?.getContainerProps?.('Tree') ?? {}}
-		class="tree grow overflow-y-auto p-2 {className}"
+		{...restContainerProps}
+		ondragover={onDragOver}
+		ondrop={onDrop}
+		class="tree grow overflow-y-auto p-2 relative {className}"
 	>
 		{#each treeviewState.items as item (item.getId())}
+			{@const { onDragEnter, onDragLeave, onDragOver, onDrop, ...restProps } =
+				item.getProps()}
+			{@const { draggable, onDragStart, onDragEnd, ...restDragHandleProps } =
+				item.getDragHandleProps()}
 			<div
-				{...item.getProps()}
+				{...restProps}
+				ondragenter={onDragEnter}
+				ondragleave={onDragLeave}
+				ondragover={onDragOver}
+				ondrop={onDrop}
 				class="item"
 				class:selected={item.isSelected()}
 				class:focused={item.isFocused()}
-				style={`margin-left: ${item.getItemMeta().level * 24}px`}
+				style:padding-left={`${item.getItemMeta().level * 24}px`}
 				data-id={item.getId()}
 			>
 				{#if item.isFolder()}
@@ -75,6 +88,7 @@
 				{/if}
 
 				<button
+					type="button"
 					class="name"
 					onclick={(e) => {
 						e.stopPropagation();
@@ -85,7 +99,22 @@
 					<ItemIcon {editor} {item} />
 					<ItemName {editor} {item} />
 				</button>
+
+				{#if item.isDraggable()}
+					<div
+						{...restDragHandleProps}
+						{draggable}
+						ondragstart={onDragStart}
+						ondragend={onDragEnd}
+						class="drag-handle flex items-center"
+						title="Drag handle - click and drag to move this item"
+					>
+						⋮
+					</div>
+				{/if}
 			</div>
 		{/each}
+
+		<div class="dragline" style={styleObjectToString(treeviewState.tree.getDragLineStyle())}></div>
 	</div>
 {/if}

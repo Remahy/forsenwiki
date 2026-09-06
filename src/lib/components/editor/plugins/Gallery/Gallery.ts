@@ -1,7 +1,6 @@
 import {
 	$applyNodeReplacement,
 	ElementNode,
-	type EditorConfig,
 	type NodeKey,
 	type SerializedElementNode,
 } from 'lexical';
@@ -42,14 +41,13 @@ export class GalleryNode extends ElementNode {
 
 	createDOM() {
 		const div = document.createElement('div');
-
-		div.classList.add('gallery');
+		div.classList.add('embla__viewport');
 
 		return div;
 	}
 
 	updateDOM() {
-		return true;
+		return false;
 	}
 
 	isShadowRoot() {

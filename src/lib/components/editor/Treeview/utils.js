@@ -181,3 +181,27 @@ export const handleOnClickTreeNode = (state, editor, item) => {
 
 	state.isTreeNodeSelection = false;
 };
+
+/**
+ * @param {Record<string, any>} obj
+ */
+export const styleObjectToString = (obj) => {
+	let str = '';
+
+	const keys = Object.keys(obj);
+
+	for (let index = 0; index < keys.length; index++) {
+		const key = keys[index];
+		const rawValue = obj[key];
+
+		let val = rawValue;
+
+		if (typeof val === 'number') {
+			val = rawValue + 'px';
+		}
+
+		str += `${key}: ${val};`;
+	}
+
+	return str;
+};

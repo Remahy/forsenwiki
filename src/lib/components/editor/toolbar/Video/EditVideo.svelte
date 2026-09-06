@@ -23,6 +23,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import EditVideoModal from './EditVideoModal.svelte';
 	import { modal } from '$lib/stores/modal';
+	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
 
 	/**
 	 * @typedef {Object} Props
@@ -50,6 +51,8 @@
 	let height = $derived(currentHeight);
 
 	let altText = $derived(currentAltText);
+
+	const isParentGallery = $derived(editor.read(() => isGalleryNode(selectedNode.getParent())));
 
 	const platformIcons = {
 		youtube: YouTube,
@@ -147,36 +150,38 @@
 		</label>
 	{/if}
 
-	<div class="flex gap-2">
-		<label title="Width" class="relative flex w-full items-center gap-2">
-			<span class="hidden">Width</span>
-			<RectangleHorizontalIcon class="absolute left-4" />
+	{#if !isParentGallery}
+		<div class="flex gap-2">
+			<label title="Width" class="relative flex w-full items-center gap-2">
+				<span class="hidden">Width</span>
+				<RectangleHorizontalIcon class="absolute left-4" />
 
-			<input
-				class="input-color min-h-10.5 w-full pl-12 text-sm"
-				placeholder={width === 'inherit' ? 'Inherit' : ''}
-				bind:value={width}
-				onchange={onChange}
-				min={VIDEO_MIN_WIDTH}
-				type="number"
-			/>
-		</label>
+				<input
+					class="input-color min-h-10.5 w-full pl-12 text-sm"
+					placeholder={width === 'inherit' ? 'Inherit' : ''}
+					bind:value={width}
+					onchange={onChange}
+					min={VIDEO_MIN_WIDTH}
+					type="number"
+				/>
+			</label>
 
-		<label title="Height" class="relative flex w-full items-center gap-2">
-			<span class="hidden">Height</span>
-			<RectangleVerticalIcon class="absolute left-4" />
+			<label title="Height" class="relative flex w-full items-center gap-2">
+				<span class="hidden">Height</span>
+				<RectangleVerticalIcon class="absolute left-4" />
 
-			<input
-				class="input-color min-h-10.5 w-full pl-12 text-sm"
-				placeholder={height === 'inherit' ? 'Inherit' : ''}
-				onchange={onChange}
-				min={VIDEO_MIN_HEIGHT}
-				max={VIDEO_MAX_HEIGHT}
-				type="number"
-				bind:value={height}
-			/>
-		</label>
-	</div>
+				<input
+					class="input-color min-h-10.5 w-full pl-12 text-sm"
+					placeholder={height === 'inherit' ? 'Inherit' : ''}
+					onchange={onChange}
+					min={VIDEO_MIN_HEIGHT}
+					max={VIDEO_MAX_HEIGHT}
+					type="number"
+					bind:value={height}
+				/>
+			</label>
+		</div>
+	{/if}
 
 	<label class="flex flex-col gap-2">
 		<strong>Alt text</strong>

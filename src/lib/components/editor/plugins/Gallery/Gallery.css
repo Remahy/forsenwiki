@@ -1,0 +1,41 @@
+@reference "../../../../../app.css";
+
+.gallery {
+	@apply min-h-0 flex flex-col gap-2 overflow-hidden;
+}
+
+.embla {
+	@apply min-h-0 relative grow;
+}
+
+.embla__viewport {
+	@apply flex h-full overflow-hidden;
+}
+
+.embla__container {
+	@apply flex w-full touch-pan-y touch-pinch-zoom;
+}
+
+.embla__slide {
+	@apply h-full w-full min-w-0 shrink-0 basis-full transform-[translate3d(0,0,0)];
+}
+
+button.embla-fullscreen {
+	@apply absolute top-2 left-2;
+}
+
+.embla-thumbs__viewport {
+	@apply overflow-hidden shrink-0;
+}
+
+.embla-thumbs__container {
+	@apply flex gap-2;
+}
+
+.embla-thumbs__slide {
+	@apply forsen-wiki-theme-border min-w-0 cursor-pointer rounded border-2;
+}
+
+.embla-thumbs__slide--selected {
+	@apply border-blue-500!;
+}

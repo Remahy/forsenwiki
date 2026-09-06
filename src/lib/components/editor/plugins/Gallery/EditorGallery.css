@@ -1,0 +1,5 @@
+@reference "../../../../../app.css";
+
+.embla__viewport > * {
+	@apply min-w-0 shrink-0 basis-full;
+}

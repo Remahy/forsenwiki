@@ -7,6 +7,7 @@
 	import { modal } from '$lib/stores/modal';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import EditImageModal from './EditImageModal.svelte';
+	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
 
 	/**
 	 * @typedef {Object} Props
@@ -58,6 +59,8 @@
 		return '';
 	});
 
+	const isParentGallery = $derived(editor.read(() => isGalleryNode(selectedNode.getParent())));
+
 	const onChange = () => {
 		editor.update(() => {
 			selectedNode.setWidthAndHeight({ width: width || 'inherit', height: height || 'inherit' });
@@ -104,35 +107,37 @@
 <div class="flex flex-col gap-4">
 	<Button on:click={image} class="text-xs">Change image</Button>
 
-	<div class="flex gap-2">
-		<label title="Width" class="relative flex min-h-10.5 items-center gap-2">
-			<span class="hidden">Width</span>
-			<RectangleHorizontalIcon class="absolute left-4" />
+	{#if isParentGallery}
+		<div class="flex gap-2">
+			<label title="Width" class="relative flex min-h-10.5 items-center gap-2">
+				<span class="hidden">Width</span>
+				<RectangleHorizontalIcon class="absolute left-4" />
 
-			<input
-				class="input-color h-full w-full p-0 pl-12 text-sm"
-				placeholder={widthPlaceholder}
-				onchange={onChange}
-				min={IMAGE_MIN_WIDTH}
-				type="number"
-				bind:value={width}
-			/>
-		</label>
+				<input
+					class="input-color h-full w-full p-0 pl-12 text-sm"
+					placeholder={widthPlaceholder}
+					onchange={onChange}
+					min={IMAGE_MIN_WIDTH}
+					type="number"
+					bind:value={width}
+				/>
+			</label>
 
-		<label title="Height" class="relative flex min-h-10.5 items-center gap-2">
-			<span class="hidden">Height</span>
-			<RectangleVerticalIcon class="absolute left-4" />
+			<label title="Height" class="relative flex min-h-10.5 items-center gap-2">
+				<span class="hidden">Height</span>
+				<RectangleVerticalIcon class="absolute left-4" />
 
-			<input
-				class="input-color h-full w-full p-0 pl-12 text-sm"
-				placeholder={heightPlaceholder}
-				onchange={onChange}
-				min={IMAGE_MIN_HEIGHT}
-				type="number"
-				bind:value={height}
-			/>
-		</label>
-	</div>
+				<input
+					class="input-color h-full w-full p-0 pl-12 text-sm"
+					placeholder={heightPlaceholder}
+					onchange={onChange}
+					min={IMAGE_MIN_HEIGHT}
+					type="number"
+					bind:value={height}
+				/>
+			</label>
+		</div>
+	{/if}
 
 	<label class="flex flex-col gap-2">
 		<strong>Alt text</strong>
