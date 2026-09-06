@@ -7,6 +7,7 @@ import {
 	Heading4Icon,
 	Heading5Icon,
 	ImageIcon,
+	ImagesIcon,
 	LinkIcon,
 	ListCheckIcon,
 	ListIcon,
@@ -47,6 +48,7 @@ export const blockTypeIcons = {
 	listitem: CircleSmallIcon,
 	text: TextInitialIcon,
 	'a-link': LinkIcon,
+	gallery: ImagesIcon,
 
 	// Unused
 	check: ListCheckIcon,

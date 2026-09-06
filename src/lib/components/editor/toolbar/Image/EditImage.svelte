@@ -7,20 +7,21 @@
 	import { modal } from '$lib/stores/modal';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import EditImageModal from './EditImageModal.svelte';
+	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {import('$lib/lexical/custom').ImageNode} selectedImageNode
+	 * @property {import('$lib/lexical/custom').ImageNode} selectedNode
 	 */
 
 	/** @type {Props} */
-	let { selectedImageNode } = $props();
+	let { selectedNode } = $props();
 
 	let editor = $derived(getEditor?.());
 
-	let currentWidth = $derived(selectedImageNode.__width);
-	let currentHeight = $derived(selectedImageNode.__height);
-	let currentAltText = $derived(selectedImageNode.__altText);
+	let currentWidth = $derived(selectedNode.__width);
+	let currentHeight = $derived(selectedNode.__height);
+	let currentAltText = $derived(selectedNode.__altText);
 
 	let width = $derived(currentWidth === 'inherit' ? null : currentWidth);
 	let height = $derived(currentHeight === 'inherit' ? null : currentHeight);
@@ -32,7 +33,7 @@
 		}
 
 		if (currentHeight !== 'inherit' && currentWidth === 'inherit') {
-			return 'Maintain aspect ratio';
+			return 'Auto';
 		}
 
 		if (currentWidth === 'inherit') {
@@ -48,7 +49,7 @@
 		}
 
 		if (currentWidth !== 'inherit' && currentHeight === 'inherit') {
-			return 'Maintain aspect ratio';
+			return 'Auto';
 		}
 
 		if (currentHeight === 'inherit') {
@@ -58,29 +59,31 @@
 		return '';
 	});
 
+	const isParentGallery = $derived(editor.read(() => isGalleryNode(selectedNode.getParent())));
+
 	const onChange = () => {
 		editor.update(() => {
-			selectedImageNode.setWidthAndHeight({ width: width || 'inherit', height: height || 'inherit' });
-			selectedImageNode.setAltText(altText);
+			selectedNode.setWidthAndHeight({ width: width || 'inherit', height: height || 'inherit' });
+			selectedNode.setAltText(altText);
 		});
 	};
 
 	const image = () => {
 		editor.read(() => {
-			const { width: selectedImageNodeWidth, height: selectedImageNodeHeight } =
-				selectedImageNode.getWidthAndHeight();
+			const { width: selectedNodeWidth, height: selectedNodeHeight } =
+				selectedNode.getWidthAndHeight();
 
 			modal.set({
 				component: EditImageModal,
-				src: selectedImageNode.getSrc(),
-				altText: selectedImageNode.getAltText(),
-				width: selectedImageNodeWidth,
-				height: selectedImageNodeHeight,
+				src: selectedNode.getSrc(),
+				altText: selectedNode.getAltText(),
+				width: selectedNodeWidth,
+				height: selectedNodeHeight,
 				/** @param {import('../../plugins/Image/Image').ImagePayload} data */
 				onSubmit: (data) => {
 					editor.update(() => {
 						/** @type {import('../../plugins/Image/Image').ImageNode} */
-						const node = /** @type {any} */ (getNodeByKey(selectedImageNode.getKey()));
+						const node = /** @type {any} */ (getNodeByKey(selectedNode.getKey()));
 
 						const { width, height, src } = data;
 
@@ -104,35 +107,37 @@
 <div class="flex flex-col gap-4">
 	<Button on:click={image} class="text-xs">Change image</Button>
 
-	<div class="flex gap-2">
-		<label title="Width" class="relative flex min-h-10.5 items-center gap-2">
-			<span class="hidden">Width</span>
-			<RectangleHorizontalIcon class="absolute left-4" />
+	{#if isParentGallery}
+		<div class="flex gap-2">
+			<label title="Width" class="relative flex min-h-10.5 items-center gap-2">
+				<span class="hidden">Width</span>
+				<RectangleHorizontalIcon class="absolute left-4" />
 
-			<input
-				class="input-color h-full w-full p-0 pl-12 text-sm"
-				placeholder={widthPlaceholder}
-				onchange={onChange}
-				min={IMAGE_MIN_WIDTH}
-				type="number"
-				bind:value={width}
-			/>
-		</label>
+				<input
+					class="input-color h-full w-full p-0 pl-12 text-sm"
+					placeholder={widthPlaceholder}
+					onchange={onChange}
+					min={IMAGE_MIN_WIDTH}
+					type="number"
+					bind:value={width}
+				/>
+			</label>
 
-		<label title="Height" class="relative flex min-h-10.5 items-center gap-2">
-			<span class="hidden">Height</span>
-			<RectangleVerticalIcon class="absolute left-4" />
+			<label title="Height" class="relative flex min-h-10.5 items-center gap-2">
+				<span class="hidden">Height</span>
+				<RectangleVerticalIcon class="absolute left-4" />
 
-			<input
-				class="input-color h-full w-full p-0 pl-12 text-sm"
-				placeholder={heightPlaceholder}
-				onchange={onChange}
-				min={IMAGE_MIN_HEIGHT}
-				type="number"
-				bind:value={height}
-			/>
-		</label>
-	</div>
+				<input
+					class="input-color h-full w-full p-0 pl-12 text-sm"
+					placeholder={heightPlaceholder}
+					onchange={onChange}
+					min={IMAGE_MIN_HEIGHT}
+					type="number"
+					bind:value={height}
+				/>
+			</label>
+		</div>
+	{/if}
 
 	<label class="flex flex-col gap-2">
 		<strong>Alt text</strong>

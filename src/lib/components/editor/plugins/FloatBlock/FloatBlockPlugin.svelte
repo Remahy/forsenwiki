@@ -113,13 +113,6 @@
 		}
 
 		return mergeRegister(
-			editor.registerNodeTransform(FloatBlockNode, (node) => {
-				const children = node.getChildren();
-
-				if (!children.length) {
-					node.remove();
-				}
-			}),
 			editor.registerCommand(
 				INSERT_FLOATBLOCK_COMMAND,
 				(payload) => {

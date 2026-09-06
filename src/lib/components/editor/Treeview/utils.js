@@ -10,6 +10,12 @@ import { $isQuoteNode as isQuoteNode, $isHeadingNode as isHeadingNode } from '@l
 import { ListNode } from '$lib/lexical/index';
 import { blockTypeLabels } from '$lib/constants/element';
 import { alignmentIcons, blockTypeIcons } from '$lib/constants/blockTypeIcons';
+import {
+	$isImageNode as isImageNode,
+	$isVideoEmbedNode as isVideoEmbedNode,
+} from '$lib/lexical/custom';
+import { DOMAIN } from '$lib/environment/environment';
+import { getURLAndTitle } from '../plugins/VideoEmbed/VideoEmbed';
 
 /**
  * @typedef {import('@headless-tree/core').ItemInstance<LexicalNode>} ItemInstance
@@ -42,6 +48,15 @@ const isTextLikeNode = (node) => {
 	return textLikeNodes.find((fn) => fn(node));
 };
 
+const altTextNodes = [isImageNode, isVideoEmbedNode];
+
+/**
+ * @param {LexicalNode} node
+ */
+const hasAltText = (node) => {
+	return altTextNodes.find((fn) => fn(node));
+};
+
 /**
  * @param {LexicalNode} node
  */
@@ -52,6 +67,9 @@ export const getTypeLabelForNode = (node) => {
 	return blockTypeLabels[type] ?? type;
 };
 
+/** @param {string} text */
+const shortenText = (text) => (text.length > 26 ? `${text.substring(0, 24)}...` : text);
+
 /**
  * @param {LexicalNode} node
  */
@@ -59,7 +77,24 @@ export const getLabelForNode = (node) => {
 	if (isTextLikeNode(node)) {
 		const textContent = node.getTextContent();
 
-		return textContent.length > 26 ? `${textContent.substring(0, 24)}...` : textContent;
+		return shortenText(textContent);
+	}
+
+	if (hasAltText(node)) {
+		// @ts-ignore
+		const altText = node.getAltText();
+
+		if (altText) {
+			return shortenText(altText);
+		}
+	}
+
+	if (isVideoEmbedNode(node)) {
+		const { title } = getURLAndTitle(node.getPlatform(), node.getSrc(), DOMAIN);
+
+		if (title) {
+			return shortenText(title);
+		}
 	}
 
 	return getTypeLabelForNode(node);
@@ -145,4 +180,28 @@ export const handleOnClickTreeNode = (state, editor, item) => {
 	);
 
 	state.isTreeNodeSelection = false;
+};
+
+/**
+ * @param {Record<string, any>} obj
+ */
+export const styleObjectToString = (obj) => {
+	let str = '';
+
+	const keys = Object.keys(obj);
+
+	for (let index = 0; index < keys.length; index++) {
+		const key = keys[index];
+		const rawValue = obj[key];
+
+		let val = rawValue;
+
+		if (typeof val === 'number') {
+			val = rawValue + 'px';
+		}
+
+		str += `${key}: ${val};`;
+	}
+
+	return str;
 };

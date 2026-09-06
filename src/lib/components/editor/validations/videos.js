@@ -1,6 +1,6 @@
 import { $nodesOfType as nodesOfType } from 'lexical';
 
-import { VideoEmbedNode } from '$lib/lexical/custom';
+import { $isGalleryNode as isGalleryNode, VideoEmbedNode } from '$lib/lexical/custom';
 import { VIDEO_MIN_HEIGHT, VIDEO_MAX_HEIGHT, VIDEO_MIN_WIDTH } from '$lib/constants/video';
 
 /**
@@ -26,6 +26,13 @@ export const adjustVideoEmbedNodeSiblings = (editor) => {
 						typeof height === 'number'
 							? Math.min(Math.max(VIDEO_MIN_HEIGHT, Math.round(height)), VIDEO_MAX_HEIGHT)
 							: height;
+
+					const isParentGallery = isGalleryNode(node.getParent());
+
+					if (isParentGallery) {
+						width = 'inherit';
+						height = 'inherit';
+					}
 
 					node.setWidthAndHeight({
 						width,

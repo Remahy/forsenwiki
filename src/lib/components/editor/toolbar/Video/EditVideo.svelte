@@ -23,6 +23,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import EditVideoModal from './EditVideoModal.svelte';
 	import { modal } from '$lib/stores/modal';
+	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
 
 	/**
 	 * @typedef {Object} Props
@@ -42,11 +43,16 @@
 
 	let currentWidth = $derived(selectedNode.__width);
 	let currentHeight = $derived(selectedNode.__height);
+	let currentAltText = $derived(selectedNode.__altText);
 
 	let url = $derived(currentURL);
 
 	let width = $derived(currentWidth);
 	let height = $derived(currentHeight);
+
+	let altText = $derived(currentAltText);
+
+	const isParentGallery = $derived(editor.read(() => isGalleryNode(selectedNode.getParent())));
 
 	const platformIcons = {
 		youtube: YouTube,
@@ -61,6 +67,7 @@
 	const onChange = () => {
 		editor.update(() => {
 			selectedNode.setWidthAndHeight({ width, height });
+			selectedNode.setAltText(altText);
 		});
 	};
 
@@ -108,7 +115,7 @@
 </script>
 
 <div class="flex flex-col gap-4">
-	<div class="relative flex items-center w-full gap-2">
+	<div class="relative flex w-full items-center gap-2">
 		<SvelteComponent class="absolute left-4" />
 
 		<Select
@@ -116,7 +123,7 @@
 			bind:ref={platformElement}
 			on:change={setPlatform}
 			bind:value={currentPlatform}
-			class="min-h-10.5 px-12! w-full"
+			class="min-h-10.5 w-full px-12!"
 		>
 			<option value="unknown" hidden>Unknown</option>
 
@@ -143,34 +150,41 @@
 		</label>
 	{/if}
 
-	<div class="flex gap-2">
-		<label title="Width" class="relative flex w-full items-center gap-2">
-			<span class="hidden">Width</span>
-			<RectangleHorizontalIcon class="absolute left-4" />
+	{#if !isParentGallery}
+		<div class="flex gap-2">
+			<label title="Width" class="relative flex w-full items-center gap-2">
+				<span class="hidden">Width</span>
+				<RectangleHorizontalIcon class="absolute left-4" />
 
-			<input
-				class="input-color min-h-10.5 w-full pl-12 text-sm"
-				placeholder={width === 'inherit' ? 'Inherit' : ''}
-				bind:value={width}
-				onchange={onChange}
-				min={VIDEO_MIN_WIDTH}
-				type="number"
-			/>
-		</label>
+				<input
+					class="input-color min-h-10.5 w-full pl-12 text-sm"
+					placeholder={width === 'inherit' ? 'Inherit' : ''}
+					bind:value={width}
+					onchange={onChange}
+					min={VIDEO_MIN_WIDTH}
+					type="number"
+				/>
+			</label>
 
-		<label title="Height" class="relative flex w-full items-center gap-2">
-			<span class="hidden">Height</span>
-			<RectangleVerticalIcon class="absolute left-4" />
+			<label title="Height" class="relative flex w-full items-center gap-2">
+				<span class="hidden">Height</span>
+				<RectangleVerticalIcon class="absolute left-4" />
 
-			<input
-				class="input-color min-h-10.5 w-full pl-12 text-sm"
-				placeholder={height === 'inherit' ? 'Inherit' : ''}
-				onchange={onChange}
-				min={VIDEO_MIN_HEIGHT}
-				max={VIDEO_MAX_HEIGHT}
-				type="number"
-				bind:value={height}
-			/>
-		</label>
-	</div>
+				<input
+					class="input-color min-h-10.5 w-full pl-12 text-sm"
+					placeholder={height === 'inherit' ? 'Inherit' : ''}
+					onchange={onChange}
+					min={VIDEO_MIN_HEIGHT}
+					max={VIDEO_MAX_HEIGHT}
+					type="number"
+					bind:value={height}
+				/>
+			</label>
+		</div>
+	{/if}
+
+	<label class="flex flex-col gap-2">
+		<strong>Alt text</strong>
+		<input class="input-color rounded-sm p-2" onchange={onChange} bind:value={altText} />
+	</label>
 </div>

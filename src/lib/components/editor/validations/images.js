@@ -1,6 +1,6 @@
 import { $nodesOfType as nodesOfType } from 'lexical';
 
-import { ImageNode } from '$lib/lexical/custom';
+import { $isGalleryNode as isGalleryNode, ImageNode } from '$lib/lexical/custom';
 import {
 	IMAGE_MAX_HEIGHT,
 	IMAGE_MAX_WIDTH,
@@ -16,15 +16,15 @@ export const adjustImages = (editor) => {
 	return new Promise((resolve, reject) => {
 		editor.update(
 			() => {
-				const images = nodesOfType(ImageNode);
-				if (!images.length) {
+				const nodes = nodesOfType(ImageNode);
+				if (!nodes.length) {
 					return resolve(false);
 				}
 
-				for (let index = 0; index < images.length; index++) {
-					const image = images[index];
+				for (let index = 0; index < nodes.length; index++) {
+					const node = nodes[index];
 
-					const src = image.getSrc();
+					const src = node.getSrc();
 
 					if (src?.startsWith('data:')) {
 						return reject(
@@ -39,7 +39,7 @@ export const adjustImages = (editor) => {
 						);
 					}
 
-					let { width, height } = image.getWidthAndHeight();
+					let { width, height } = node.getWidthAndHeight();
 
 					// TODO: Revisit image sizes.
 					width =
@@ -51,7 +51,14 @@ export const adjustImages = (editor) => {
 							? Math.min(Math.max(IMAGE_MIN_HEIGHT, Math.round(height)), IMAGE_MAX_HEIGHT)
 							: height;
 
-					image.setWidthAndHeight({
+					const isParentGallery = isGalleryNode(node.getParent());
+
+					if (isParentGallery) {
+						width = 'inherit';
+						height = 'inherit';
+					}
+
+					node.setWidthAndHeight({
 						width,
 						height,
 					});

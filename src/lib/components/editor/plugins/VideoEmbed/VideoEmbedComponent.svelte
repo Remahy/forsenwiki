@@ -40,13 +40,14 @@
 	 * @property {import('lexical').NodeKey} nodeKey
 	 * @property {'inherit' | number} height
 	 * @property {'inherit' | number} width
+	 * @property {string | undefined} altText
 	 * @property {boolean} resizable
 	 * @property {import('lexical').ElementFormatType} format
 	 * @property {import('lexical').LexicalEditor} editor
 	 */
 
 	/** @type {Props} */
-	let { node, src, platform, nodeKey, height, width, resizable, format, editor } = $props();
+	let { node, src, platform, nodeKey, height, width, altText, resizable, format, editor } = $props();
 
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);
@@ -60,7 +61,7 @@
 	let isFocused = $derived($isSelected || isResizing);
 	let parsedSrc = $derived(getURLAndTitle(platform, src, DOMAIN));
 	let url = $derived(parsedSrc.url);
-	let title = $derived(parsedSrc.title);
+	let title = $derived(altText || parsedSrc.title);
 
 	// Used for showing errors for usercontent.
 	let error = $state(false);
@@ -225,6 +226,7 @@
 					{height}
 					style={getIframeStyle(width, height)}
 					loading="lazy"
+					{title}
 				>
 					<source
 						src={url}

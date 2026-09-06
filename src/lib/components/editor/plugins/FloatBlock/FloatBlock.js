@@ -267,6 +267,10 @@ export class FloatBlockNode extends ElementNode {
 		return false;
 	}
 
+	canBeEmpty () {
+		return false;
+	}
+
 	isShadowRoot() {
 		return true;
 	}

@@ -44,6 +44,7 @@ export type VideoEmbedPayload = {
 	src?: string;
 	width?: number | 'inherit';
 	height?: number | 'inherit';
+	altText?: string;
 };
 
 export type SerializedVideoEmbedNode = Spread<VideoEmbedPayload, SerializedDecoratorBlockNode>;
@@ -415,12 +416,14 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	__src: string | undefined;
 	__width: 'inherit' | number | undefined;
 	__height: 'inherit' | number | undefined;
+	__altText: string | undefined;
 
 	constructor(
 		platform?: SupportedPlatforms,
 		src?: string,
 		width?: number | 'inherit',
 		height?: number | 'inherit',
+		altText?: string,
 		format?: ElementFormatType,
 		key?: NodeKey
 	) {
@@ -430,6 +433,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		this.__src = src;
 		this.__width = width;
 		this.__height = height;
+		this.__altText = altText;
 	}
 
 	static getType(): string {
@@ -442,6 +446,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 			node.__src,
 			node.__width,
 			node.__height,
+			node.__altText,
 			node.getFormatType(),
 			node.__key
 		);
@@ -493,6 +498,11 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		return self.__platform;
 	}
 
+	getAltText(): string | undefined {
+		const self = this.getLatest();
+		return self.__altText;
+	}
+
 	getTextContent(
 		_includeInert?: boolean | undefined,
 		_includeDirectionless?: false | undefined
@@ -531,6 +541,11 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		) as SupportedPlatforms;
 	}
 
+	setAltText(altText?: string): void {
+		const self = this.getWritable();
+		self.__altText = altText;
+	}
+
 	exportJSON(): SerializedVideoEmbedNode {
 		return {
 			...super.exportJSON(),
@@ -539,6 +554,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 			src: this.getSrc(),
 			width: this.__width,
 			height: this.__height,
+			altText: this.getAltText(),
 		};
 	}
 
@@ -589,6 +605,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 				props.nodeKey = this.__key;
 				props.width = this.__width;
 				props.height = this.__height;
+				props.altText = this.__altText;
 				props.resizable = true;
 				props.editor = editor;
 			},
@@ -599,9 +616,11 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 export function $createVideoEmbedNode(
 	payload?: VideoEmbedPayload & { format?: ElementFormatType; key?: NodeKey }
 ): VideoEmbedNode {
-	const { platform, src, width, height, format, key } = payload || {};
+	const { platform, src, width, height, altText, format, key } = payload || {};
 
-	return $applyNodeReplacement(new VideoEmbedNode(platform, src, width, height, format, key));
+	return $applyNodeReplacement(
+		new VideoEmbedNode(platform, src, width, height, altText, format, key)
+	);
 }
 
 export function $isVideoEmbedNode(

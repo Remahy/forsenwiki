@@ -20,10 +20,12 @@ import {
 	ATableCellNode,
 	ATableNode,
 	$createATableNode,
+	GalleryNode,
 } from '$lib/lexical/custom';
 import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
 import TableNodeDOMExport from './htmlExport/TableNodeDOMExport';
+import GalleryNodeDOMExport from './htmlExport/GalleryNodeDOMExport';
 
 const floatResponsive = 'max-lg:float-none! max-lg:w-full! max-lg:me-0! max-lg:ms-0!';
 const floatBoxShadow = '0px 0px 0px 1px #696969';
@@ -72,6 +74,7 @@ export const htmlExport = new Map([
 	HeadingNodeDOMExport,
 	TableCellNodeDOMExport,
 	TableNodeDOMExport,
+	GalleryNodeDOMExport,
 ]);
 
 /**
@@ -117,6 +120,8 @@ export const articleNodes = [
 	TableCellNode,
 	TableRowNode,
 	FloatBlockNode,
+
+	GalleryNode,
 
 	// Old nodes / Migration nodes
 	FallbackNode,

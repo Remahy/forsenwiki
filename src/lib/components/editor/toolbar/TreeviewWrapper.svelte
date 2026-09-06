@@ -2,6 +2,7 @@
 	import { ChevronDownIcon, ChevronRightIcon } from '@lucide/svelte';
 	import Treeview from '../Treeview/index.svelte';
 	import { treeviewState } from '../Treeview/treeviewState.svelte';
+	import Title from './components/Title.svelte';
 	import Image from './Image/index.svelte';
 	import Video from './Video/index.svelte';
 	import Table from './Table/index.svelte';
@@ -9,14 +10,14 @@
 	import Link from './Link/index.svelte';
 	import Globals from './Globals/index.svelte';
 	import InsertButton from './InsertButton/index.svelte';
-	import Title from './components/Title.svelte';
+	import Gallery from './Gallery/index.svelte';
 
 	let selectedNode = $derived(treeviewState.selected);
 
 	let isOpen = $state(true);
 </script>
 
-<div class="mb-auto p-2">
+<div class="p-2">
 	<InsertButton />
 </div>
 
@@ -45,5 +46,6 @@
 	<Image {selectedNode} />
 	<Video {selectedNode} />
 	<Link {selectedNode} />
+	<Gallery {selectedNode} />
 	<Globals />
 </div>

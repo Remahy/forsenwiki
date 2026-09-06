@@ -42,6 +42,7 @@
 	import { modal } from '$lib/stores/modal';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import { saveContent } from '$lib/utils/indexedDb/content';
+	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
 
 	import EditImageModal from '../../toolbar/Image/EditImageModal.svelte';
 	import { editorGlobals } from '../../editorGlobals.svelte';
@@ -322,6 +323,15 @@
 					}
 
 					const selection = getSelection();
+
+					if (isNodeSelection(selection)) {
+						const [selectedNode] = selection.getNodes();
+						if (isGalleryNode(selectedNode)) {
+							selectedNode.append(node);
+							return;
+						}
+					}
+
 					if (isRangeSelection(selection)) {
 						insertNodes([node]);
 					} else {
