@@ -21,6 +21,7 @@
 	import Article from '$lib/components/Article.svelte';
 	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
 	import { initializeEmblaForArticle } from '$lib/components/editor/plugins/Gallery/embla.js';
+	import { initializeZoomForImgElements } from '$lib/components/editor/plugins/Gallery/zoom.js';
 
 	const submitErrors = $derived.by(() => {
 		try {
@@ -100,9 +101,18 @@
 		 */
 		const article = /** @type {any} */ (document.querySelector('main.article-root'));
 
+		/**
+		 * @type {Function[]}
+		 */
+		let cleanups = [];
 		if (article) {
-			initializeEmblaForArticle(article);
+			cleanups.push(initializeEmblaForArticle(article));
+			cleanups.push(initializeZoomForImgElements(article));
 		}
+
+		return () => {
+			cleanups.forEach((fn) => fn());
+		};
 	});
 </script>
 

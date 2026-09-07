@@ -22,6 +22,7 @@ export const initializeEmblaForEditorElement = (element) => {
 const initializeEmblaForElement = (element) => {
 	const embla = EmblaCarousel(element, {
 		loop: false,
+		watchDrag: false,
 	});
 
 	return embla;
@@ -45,13 +46,23 @@ const initializeEmblaThumbnailForElement = (element) => {
  * @param {import('embla-carousel').EmblaCarouselType} emblaApiThumb
  */
 const addThumbButtonClickHandlers = (emblaApiMain, emblaApiThumb) => {
+	/**
+	 * @type {Function[]}
+	 */
+	const cleanups = [];
+
 	const slidesThumbs = emblaApiThumb.slideNodes();
 
 	const scrollToIndex = slidesThumbs.map((_, index) => () => emblaApiMain.scrollTo(index));
 
 	slidesThumbs.forEach((slideNode, index) => {
 		slideNode.addEventListener('click', scrollToIndex[index], false);
+		cleanups.push(() => slideNode.removeEventListener('click', scrollToIndex[index]));
 	});
+
+	return () => {
+		cleanups.forEach((fn) => fn());
+	};
 };
 
 /**
@@ -92,6 +103,11 @@ const toggleFullScreen = (element) => {
 export const initializeEmblaForArticle = (rootElement) => {
 	const elements = rootElement.querySelectorAll('.gallery');
 
+	/**
+	 * @type {Function[]}
+	 */
+	const cleanups = [];
+
 	for (let index = 0; index < elements.length; index++) {
 		/**
 		 * @type {HTMLElement}
@@ -115,12 +131,33 @@ export const initializeEmblaForArticle = (rootElement) => {
 
 			const emblaApiThumbnail = initializeEmblaThumbnailForElement(element);
 
-			addThumbButtonClickHandlers(emblaApiMain, emblaApiThumbnail);
+			cleanups.push(addThumbButtonClickHandlers(emblaApiMain, emblaApiThumbnail));
 			addToggleThumbButtonsActive(emblaApiMain, emblaApiThumbnail);
+
+			cleanups.push(() => emblaApiThumbnail.destroy());
 		}
+
+		cleanups.push(() => emblaApiMain.destroy());
 
 		const fullscreenButton = element.querySelector('button.embla-fullscreen-button');
 
-		fullscreenButton?.addEventListener('click', () => toggleFullScreen(element));
+		const toggleFn = () => toggleFullScreen(element);
+
+		fullscreenButton?.addEventListener('click', toggleFn);
+		cleanups.push(() => fullscreenButton?.removeEventListener('click', toggleFn));
 	}
+
+	const toggleOutFullscreen = () => {
+		if (!document.fullscreenElement) {
+			document.body.classList.remove('embla-fullscreen');
+		}
+	};
+
+	document.addEventListener('fullscreenchange', toggleOutFullscreen);
+
+	cleanups.push(() => document.removeEventListener('fullscreenchange', toggleOutFullscreen));
+
+	return () => {
+		cleanups.forEach((fn) => fn());
+	};
 };
