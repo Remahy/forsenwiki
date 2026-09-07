@@ -58,7 +58,7 @@ export default [
 				wrapperDiv.appendChild(fullscreenBtn);
 				topDiv.appendChild(wrapperDiv);
 
-				if (galleryChildren.length === 1) {
+				if (galleryChildren.length <= 1) {
 					return topDiv;
 				}
 
