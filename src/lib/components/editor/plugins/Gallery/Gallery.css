@@ -5,7 +5,7 @@
 }
 
 .embla {
-	@apply relative flex min-h-0 grow overflow-hidden;
+	@apply relative flex aspect-video min-h-0 grow overflow-hidden;
 }
 
 .embla__viewport {
