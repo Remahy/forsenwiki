@@ -22,6 +22,7 @@ export const initializeEmblaForEditorElement = (element) => {
 const initializeEmblaForElement = (element) => {
 	const embla = EmblaCarousel(element, {
 		loop: false,
+		watchDrag: false,
 	});
 
 	return embla;
