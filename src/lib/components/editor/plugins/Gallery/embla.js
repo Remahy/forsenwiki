@@ -146,6 +146,16 @@ export const initializeEmblaForArticle = (rootElement) => {
 		cleanups.push(() => fullscreenButton?.removeEventListener('click', toggleFn));
 	}
 
+	const toggleOutFullscreen = () => {
+		if (!document.fullscreenElement) {
+			document.body.classList.remove('embla-fullscreen');
+		}
+	};
+
+	document.addEventListener('fullscreenchange', toggleOutFullscreen);
+
+	cleanups.push(() => document.removeEventListener('fullscreenchange', toggleOutFullscreen));
+
 	return () => {
 		cleanups.forEach((fn) => fn());
 	};
