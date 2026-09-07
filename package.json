@@ -104,6 +104,7 @@
 		"@prisma/adapter-pg": "^7.9.0",
 		"@prisma/client": "^7.9.0",
 		"@tailwindcss/vite": "^4.3.3",
+		"@zoom-image/core": "^0.42.0",
 		"cookie": "1.1.1",
 		"date-fns": "^4.4.0",
 		"diff": "^9.0.0",
