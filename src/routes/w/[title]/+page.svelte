@@ -100,9 +100,17 @@
 		 */
 		const article = /** @type {any} */ (document.querySelector('main.article-root'));
 
+		/**
+		 * @type {Function[]}
+		 */
+		let cleanups = [];
 		if (article) {
-			initializeEmblaForArticle(article);
+			cleanups.push(initializeEmblaForArticle(article));
 		}
+
+		return () => {
+			cleanups.forEach((fn) => fn());
+		};
 	});
 </script>
 
