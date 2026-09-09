@@ -9,6 +9,8 @@
 	import React2 from './reactions/React_2.svelte';
 	import { reactionGlobals } from './store.svelte';
 
+	import './Display.css';
+
 	const { title = '' } = $props();
 
 	/**
@@ -206,15 +208,3 @@
 		<Reaction.Component {...Reaction.props} />
 	</div>
 {/each}
-
-<style>
-	/* right-side gutter */
-	.reaction {
-		opacity: 0.25;
-		position: absolute;
-		width: 24px;
-		height: auto;
-		left: -32px;
-		transition: top 200ms ease;
-	}
-</style>
