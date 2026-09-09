@@ -96,6 +96,10 @@ const convertTtoSeconds = (tString: string) => {
 	const m = tString.match(/([0-9]+)m/);
 	const s = tString.match(/([0-9]+)s/);
 
+	if (!h && !m && !s && Number.isInteger(Number(tString))) {
+		return tString;
+	}
+
 	if (h) {
 		const [, hValue] = h;
 
