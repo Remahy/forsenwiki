@@ -149,9 +149,10 @@ export const getURLAndTitle = (
 			const clipSlug = url.searchParams.get('clip');
 			const clipTId = url.searchParams.get('clipt');
 
-			const youtubeEmbedURL = new URL(`/embed/${fullVideoSlug}`, 'https://www.youtube.com/');
+			let youtubeEmbedURL = new URL(`/embed/${fullVideoSlug}`, 'https://www.youtube-nocookie.com/');
 
 			if (clipSlug && clipTId) {
+				youtubeEmbedURL = new URL(`/embed/${fullVideoSlug}`, 'https://www.youtube.com/');
 				youtubeEmbedURL.searchParams.set('clip', clipSlug);
 				youtubeEmbedURL.searchParams.set('clipt', clipTId);
 			}
@@ -160,7 +161,10 @@ export const getURLAndTitle = (
 				youtubeEmbedURL.searchParams.set('start', s);
 			}
 
-			return { url: youtubeEmbedURL.toString(), title: 'YouTube clip' };
+			return {
+				url: youtubeEmbedURL.toString(),
+				title: `YouTube ${clipSlug && clipTId ? 'clip' : 'video'}`,
+			};
 		}
 
 		const v = url.searchParams.get('v');
