@@ -305,13 +305,18 @@
 
 					const { width, height, altText, src } = data;
 
-					if (
-						typeof width === 'number' &&
-						typeof height === 'number' &&
-						width >= IMAGE_MIN_WIDTH &&
-						height >= IMAGE_MIN_HEIGHT
-					) {
-						node.setWidthAndHeight({ width, height });
+					if (typeof width === 'number') {
+						node.setWidthAndHeight({
+							width: width > IMAGE_MIN_WIDTH ? width : 'inherit',
+							height: node.getWidthAndHeight().height,
+						});
+					}
+
+					if (typeof height === 'number') {
+						node.setWidthAndHeight({
+							width: node.getWidthAndHeight().width,
+							height: height > IMAGE_MIN_HEIGHT ? height : 'inherit',
+						});
 					}
 
 					if (altText?.length) {
