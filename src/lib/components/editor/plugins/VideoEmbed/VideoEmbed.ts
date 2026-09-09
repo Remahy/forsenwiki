@@ -187,7 +187,10 @@ export const getURLAndTitle = (
 		}
 
 		return {
-			url: `https://www.youtube-nocookie.com/embed/${v || youtuBE || vPathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`,
+			url: `https://www.youtube-nocookie.com/embed/${v || youtuBE || vPathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`.replace(
+				/\/\//g,
+				'\/'
+			),
 			title: 'YouTube video',
 		};
 	}
