@@ -3,11 +3,15 @@
 
 	import { modal } from '$lib/stores/modal';
 	import Button from '$lib/components/Button.svelte';
-	import LinkButton from '$lib/components/LinkButton.svelte';
 	import { searchRequest } from '$lib/api/search';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import { STATIC_DOMAIN } from '$lib/environment/environment';
+	import UploadContent from '$lib/components/Search/UploadContent.svelte';
+	import {
+		handleUploadContentSubmit,
+		uploadContentState,
+	} from '$lib/components/Search/uploadContent.svelte';
 
 	/**
 	 * @typedef {Object} Props
@@ -194,8 +198,15 @@
 
 		{#if currentVideoType === 'new'}
 			<div class="flex flex-col gap-2">
-				<p>Video content must be fully uploaded to the wiki via the upload modal.</p>
-				<LinkButton href="/search" target="_blank">Upload content</LinkButton>
+				<p>User video content must be fully uploaded to the wiki before use.</p>
+				<div class="forsen-wiki-theme-outline flex flex-col gap-16 overflow-hidden p-6">
+					<UploadContent />
+					<Button
+						on:click={handleUploadContentSubmit}
+						disabled={!uploadContentState.content.length || uploadContentState.isLoading}
+						>Upload</Button
+					>
+				</div>
 				<p>Then use the "Browse" tab to search for your newly uploaded content.</p>
 			</div>
 		{/if}
