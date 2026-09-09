@@ -1,6 +1,6 @@
 <script>
 	import { browser } from '$app/environment';
-	import { addReaction } from '$lib/api/articles';
+	import { addReaction } from '$lib/api/posts';
 	import { shuffle } from '$lib/utils/shuffle';
 
 	import React from './reactions/React.svelte';

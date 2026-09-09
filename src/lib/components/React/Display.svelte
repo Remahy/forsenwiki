@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import { readReactions } from '$lib/api/articles';
+	import { readReactions } from '$lib/api/posts';
 	import { debounce } from '$lib/utils/debounce';
 	import { reactions as reactionsMap } from './reactions/reactions';
 	import React from './reactions/React.svelte';
