@@ -96,6 +96,10 @@ const convertTtoSeconds = (tString: string) => {
 	const m = tString.match(/([0-9]+)m/);
 	const s = tString.match(/([0-9]+)s/);
 
+	if (!h && !m && !s && Number.isInteger(Number(tString))) {
+		return tString;
+	}
+
 	if (h) {
 		const [, hValue] = h;
 
@@ -149,9 +153,10 @@ export const getURLAndTitle = (
 			const clipSlug = url.searchParams.get('clip');
 			const clipTId = url.searchParams.get('clipt');
 
-			const youtubeEmbedURL = new URL(`/embed/${fullVideoSlug}`, 'https://www.youtube.com/');
+			let youtubeEmbedURL = new URL(`/embed/${fullVideoSlug}`, 'https://www.youtube-nocookie.com/');
 
 			if (clipSlug && clipTId) {
+				youtubeEmbedURL = new URL(`/embed/${fullVideoSlug}`, 'https://www.youtube.com/');
 				youtubeEmbedURL.searchParams.set('clip', clipSlug);
 				youtubeEmbedURL.searchParams.set('clipt', clipTId);
 			}
@@ -160,7 +165,10 @@ export const getURLAndTitle = (
 				youtubeEmbedURL.searchParams.set('start', s);
 			}
 
-			return { url: youtubeEmbedURL.toString(), title: 'YouTube clip' };
+			return {
+				url: youtubeEmbedURL.toString(),
+				title: `YouTube ${clipSlug && clipTId ? 'clip' : 'video'}`,
+			};
 		}
 
 		const v = url.searchParams.get('v');
@@ -179,7 +187,10 @@ export const getURLAndTitle = (
 		}
 
 		return {
-			url: `https://www.youtube-nocookie.com/embed/${v || youtuBE || vPathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`,
+			url: `https://www.youtube-nocookie.com/embed/${v || youtuBE || vPathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`.replace(
+				/\/\//g,
+				'\/'
+			),
 			title: 'YouTube video',
 		};
 	}
