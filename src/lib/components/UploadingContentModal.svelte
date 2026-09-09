@@ -1,18 +1,23 @@
 <script>
 	import { getType } from '$lib/s3/limits';
 	import { uploadModal } from '$lib/stores/modal';
+	import { XIcon } from '@lucide/svelte';
 	import Button from './Button.svelte';
 	import AudioPreview from './content/AudioPreview.svelte';
 	import ImagePreview from './content/ImagePreview.svelte';
 	import VideoPreview from './content/VideoPreview.svelte';
 	import LinkButton from './LinkButton.svelte';
 	import Spinner from './Spinner.svelte';
-	import { uploadingContentModalGlobals } from './uploadingContentModalGlobals.svelte';
+	import {
+		resetUploadingContentModalGlobals,
+		uploadingContentModalGlobals,
+	} from './uploadingContentModalGlobals.svelte';
 
 	let { uploading = { count: 0 }, uploaded = [] } = uploadingContentModalGlobals;
 
 	const cancel = () => {
 		$uploadModal.isOpen = false;
+		resetUploadingContentModalGlobals();
 	};
 </script>
 
@@ -21,6 +26,11 @@
 		<h1 class="text-xl font-semibold lg:text-2xl">
 			{uploading.count ? 'Uploading' : 'Updating'} content
 		</h1>
+		{#if uploading.count > 0 && $uploadModal.closable}
+			<Button class="ml-auto inline-flex items-center rounded-lg" on:click={cancel}>
+				<XIcon />
+			</Button>
+		{/if}
 	</header>
 
 	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
