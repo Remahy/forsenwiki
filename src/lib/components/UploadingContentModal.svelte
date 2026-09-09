@@ -36,11 +36,11 @@
 			</div>
 
 			{#if uploaded.length}
-				<div class="flex flex-wrap justify-between gap-8">
+				<div class="flex flex-wrap gap-8">
 					{#each uploaded as upload (upload.url)}
 						{@const type = getType(upload.contentType)}
 						<div
-							class="forsen-wiki-theme-border bg-dark flex w-fit flex-col gap-2 overflow-hidden rounded-sm border"
+							class="forsen-wiki-theme-border bg-dark flex w-fit flex-col justify-between gap-2 overflow-hidden rounded-sm border"
 						>
 							{#if type === 'image'}
 								<ImagePreview src={upload.url} name="" className="max-h-32 w-auto! max-w-32!" />
