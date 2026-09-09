@@ -6,7 +6,7 @@ import { isSystem } from '$lib/utils/isSystem.js';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor.js';
 import { articleConfig } from '$lib/components/editor/config/article.js';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants.js';
-import { ArticleError } from '$lib/errors/ArticleError.js';
+import { InvalidPost } from '$lib/errors/InvalidPost.js';
 import {
 	getGlobalOffsets,
 	selectByCharacterRange,
@@ -118,7 +118,7 @@ export const POST = async ({ params, locals, request }) => {
 		return json(id);
 	} catch (err) {
 		if (typeof err === 'string') {
-			return ArticleError(err);
+			return InvalidPost(err);
 		}
 
 		return error(400);
@@ -156,7 +156,7 @@ export const GET = async ({ params }) => {
 		doc = eYjs.doc;
 	} catch (err) {
 		if (typeof err === 'string') {
-			return ArticleError(err);
+			return InvalidPost(err);
 		}
 
 		console.error(err);
