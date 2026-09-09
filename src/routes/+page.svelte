@@ -10,6 +10,9 @@
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 	import Container from '$lib/components/Container.svelte';
+	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+
+	let streamerMode = $state($page.data.session?.user?.userSettings?.streamerMode);
 
 	/**
 	 * @typedef {import('./+page.server').LatestArticle} LatestArticle
@@ -18,20 +21,20 @@
 	 */
 
 	/** @type {Writable<LatestArticle[]>} */
-	const latestArticles = writable($page.data.latestArticles);
+	const latestPosts = writable($page.data.latestArticles);
 	/** @type {Writable<LatestUser[]>} */
 	const latestUsers = writable($page.data.latestUsers);
 	/** @type {Writable<GoatCounterHit[]>} */
 	const popularArticles = writable($page.data.popularArticles);
 
-	const sseArticleCreate = source('/api/adonis/frontpage').select('article:create');
+	const ssePostCreate = source('/api/adonis/frontpage').select('post:create');
 	const sseUserCreate = source('/api/adonis/frontpage').select('user:create');
 	const sseArticlesPopular = source('/api/adonis/frontpage').select('articles:popular');
 
 	onMount(() => {
-		sseArticleCreate.subscribe((v) => {
+		ssePostCreate.subscribe((v) => {
 			if (v) {
-				const values = $latestArticles;
+				const values = $latestPosts;
 
 				/** @type {LatestArticle} */
 				const input = JSON.parse(v);
@@ -47,7 +50,7 @@
 					values.pop();
 				}
 
-				latestArticles.set(values);
+				latestPosts.set(values);
 			}
 		});
 		sseUserCreate.subscribe((v) => {
@@ -90,7 +93,11 @@
 		<p class="m-0 text-center leading-10">
 			<span class="font-bold">ForsenWiki</span>
 			<span> - </span>
-			<span>Forsen lore, news, big plays, tilts. Forsen's past and the bajs' future.</span>
+			<span>Forsen lore, news, big plays, tilts.</span>
+			{#if streamerMode}
+				<br />
+				<strong>Streamer mode is enabled.</strong>
+			{/if}
 		</p>
 	</SuggestionBox>
 
@@ -100,18 +107,25 @@
 				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">Latest articles</h2>
 				</div>
-				{#each $latestArticles as article, index (article.title)}
+				{#each $latestPosts as post, index (post.title)}
 					<div class="p-2 {index % 2 ? 'bg-black/10 dark:bg-white/5' : ''}">
-						<Link href="/w/{article.title}" class="inline-block min-w-32">
-							<strong>{article.rawTitle}</strong>
+						<Link href="/w/{post.title}" class="inline-block min-w-32">
+							<strong>{post.rawTitle}</strong>
 						</Link>
 						<span
-							title={new Date(article.createdTimestamp).toUTCString()}
+							title={new Date(post.createdTimestamp).toUTCString()}
 							class="inline-block min-w-32"
 						>
-							{new Date(article.createdTimestamp).toDateString()}&nbsp;
+							{new Date(post.createdTimestamp).toDateString()}&nbsp;
 						</span>
-						<small class="inline-block"><span class="font-bold">By:</span> {article.author}</small>
+						<small class="inline-block">
+							<span class="font-bold">By:</span>
+							<StreamerModeShow>
+								<Link href="/user/{post.authorId}" class="decoration-1!"
+									>{post.author}</Link
+								>
+							</StreamerModeShow>
+						</small>
 					</div>
 				{/each}
 			</Box>
@@ -160,7 +174,9 @@
 
 				{#each $latestUsers as user (user)}
 					<div class="p-2 pl-0">
-						<span title={user.name} class="font-bold">{user.name}</span>
+						<StreamerModeShow
+							><span title={user.name} class="font-bold">{user.name}</span></StreamerModeShow
+						>
 					</div>
 				{/each}
 			</Box>

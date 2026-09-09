@@ -6,7 +6,7 @@ Don't have Postgres installed locally? Skip this and use the dockerfile.
 
 - Install dependencies with `npm install`.
 - Copy `.env.example` to a new file named `.env` and change the content accordingly.
-- Run migrations & init seed `npm run prisma:migrate-dev && npm run prisma:seed`
+- Run migrations & init seed `npm run prisma:migrate-dev && npm run prisma:generate && npm run prisma:seed`
 - Start a dev server:
 
   ```bash

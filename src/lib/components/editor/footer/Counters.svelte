@@ -37,15 +37,16 @@
 
 			const editor = composer.getEditor();
 
-			editor.registerUpdateListener(({ editorState }) => {
-				editorState.read(() => {
-					if (!disableCount) {
-						const { innerText } = composer?.getEditor().getRootElement() || {};
-
-						wordsCount = countWords(innerText);
-						characterCount = countCharacters(innerText);
-						forsenCount = countForsen(innerText);
+			editor.registerUpdateListener(() => {
+				editor.read(() => {
+					if (disableCount) {
+						return;
 					}
+
+					const { innerText } = editor.getRootElement() || {};
+					wordsCount = countWords(innerText);
+					characterCount = countCharacters(innerText);
+					forsenCount = countForsen(innerText);
 				});
 			});
 		});

@@ -236,7 +236,7 @@
 					{/if}
 
 					<div class="prose dark:prose-invert relative mt-2 flex max-w-[unset]">
-						<table class="table-auto">
+						<table class="w-full table-auto">
 							<tbody>
 								{#each searchResults as result (result.id)}
 									<tr

@@ -7,6 +7,7 @@
 	import Link from '$lib/components/Link.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
+	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
 
 	let { data } = $props();
 
@@ -16,12 +17,14 @@
 	let from = $state(0);
 
 	let link = $derived(
-		postUpdates.length > 1 ? `history/${postUpdates[to].id}..${postUpdates[from].id}` : null
+		postUpdates.length > 1 ? `history/${postUpdates[to].id}-${postUpdates[from].id}` : null
 	);
 </script>
 
 <svelte:head>
 	<title>&quot;{rawTitle}&quot; history - Community Forsen Wiki</title>
+	<meta name="og:title" content="&quot;{rawTitle}&quot; history - Community Forsen Wiki">
+
 	<meta name="description" content="History for &quot;{rawTitle}&quot; on forsen.wiki" />
 	<meta property="og:description" content="History for &quot;{rawTitle}&quot; on forsen.wiki" />
 
@@ -94,7 +97,7 @@
 									{new Date(postUpdate.createdTimestamp).toLocaleString()}
 								</Link>
 
-								<span>by {postUpdate.metadata.user.name}</span>
+								<span>by <StreamerModeShow>{postUpdate.metadata.user.name}</StreamerModeShow></span>
 
 								{#if postUpdate.metadata.byteLength}
 									<span class="opacity-50">({postUpdate.metadata.byteLength})</span>

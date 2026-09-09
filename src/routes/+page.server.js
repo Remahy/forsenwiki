@@ -1,9 +1,10 @@
+import { GOATCOUNTER_API_KEY, GOATCOUNTER_DISABLED } from '$env/static/private';
 import prisma from '$lib/prisma.server';
 import { getPopularArticles } from '$lib/goatcounter.server';
-import { GOATCOUNTER_DISABLED } from '$env/static/private';
+import { Y_POST_TYPES } from '$lib/constants/constants';
 
 /**
- * @typedef {{ rawTitle: string, title: string, createdTimestamp: string, author: string | null }} LatestArticle
+ * @typedef {{ rawTitle: string, title: string, createdTimestamp: string, author: string | null, authorId: string | null }} LatestArticle
  * @typedef {{ name: string | null }} LatestUser
  * @typedef {import('$lib/goatcounter.server').GoatCounterHit} GoatCounterHit
  */
@@ -38,12 +39,20 @@ const getLatest = async () => {
 	try {
 		popularArticles = await getPopularArticles();
 	} catch (err) {
-		if (!GOATCOUNTER_DISABLED) {
+		if (GOATCOUNTER_API_KEY && !GOATCOUNTER_DISABLED) {
 			console.error(err);
 		}
 	}
 
 	const yPosts = prisma.yPost.findMany({
+		where: {
+			outRelations: {
+				some: {
+					isSystem: true,
+					toPostId: Y_POST_TYPES.ARTICLE,
+				},
+			},
+		},
 		select: {
 			rawTitle: true,
 			title: true,
@@ -55,6 +64,7 @@ const getLatest = async () => {
 							user: {
 								select: {
 									name: true,
+									id: true,
 								},
 							},
 						},
@@ -81,6 +91,7 @@ const getLatest = async () => {
 		title: post.title,
 		createdTimestamp: post.createdTimestamp.toString(),
 		author: post.postUpdates[0].metadata.user.name,
+		authorId: post.postUpdates[0].metadata.user.id,
 	}));
 
 	cache = {

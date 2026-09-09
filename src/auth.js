@@ -19,6 +19,19 @@ if (!AUTH_TWITCH_ID || !AUTH_TWITCH_SECRET) {
 
 const adapter = PrismaAdapter(prisma);
 
+const { createSession } = adapter;
+
+/**
+ * @param {{ sessionToken: string, userId: string, expires: Date }} session
+ */
+adapter.createSession = async (session) => {
+	await prisma.session.deleteMany({ where: { userId: session.userId } });
+
+	// Technically logs you out of other sessions when you login.
+	// @ts-ignore
+	return createSession(session);
+};
+
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	trustHost: AUTH_TRUST_HOST === 'true' ? true : false,
 	adapter,
@@ -28,6 +41,13 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 				session.user.id = user.id;
 			}
 
+			const userSettings = await prisma.userSettings.findUnique({
+				where: { userId: user.id },
+				omit: { id: true, userId: true },
+			});
+
+			session.user.userSettings = userSettings || { streamerMode: false };
+
 			return session;
 		},
 	},
@@ -35,8 +55,21 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 		error: '/auth-error',
 	},
 	events: {
-		async createUser() {
+		async createUser(message) {
 			// TODO: Create user bio page.
+
+			const {
+				user: { id },
+			} = message;
+
+			if (id) {
+				await prisma.userSettings.create({
+					data: {
+						userId: id,
+						streamerMode: false,
+					},
+				});
+			}
 		},
 		async signIn(message) {
 			const {
@@ -45,6 +78,9 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 			const newName = message.profile?.name;
 			const newPicture = message.profile?.picture;
 
+			/**
+			 * @type {{ name?: string, image?: string }}
+			 */
 			const updateObj = {};
 
 			if (newName && newName !== name) {

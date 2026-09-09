@@ -16,15 +16,16 @@
 	import {
 		$insertNodes as insertNodes,
 		createCommand,
-		$createParagraphNode as createParagraphNode,
 		COMMAND_PRIORITY_EDITOR,
 		$getNodeByKey as getNodeByKey,
 		$getSelection as getSelection,
 		mergeRegister,
+		$isNodeSelection as isNodeSelection,
 	} from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 
 	import { getYouTubeClipURL } from '$lib/api/utils';
+	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
 	import { $createVideoEmbedNode as createVideoEmbedNode, VideoEmbedNode } from './VideoEmbed';
 
 	/**
@@ -74,6 +75,15 @@
 			const node = createVideoEmbedNode(payload);
 
 			const selection = getSelection();
+
+			if (isNodeSelection(selection)) {
+				const [selectedNode] = selection.getNodes();
+				if (isGalleryNode(selectedNode)) {
+					selectedNode.append(node);
+					return;
+				}
+			}
+
 			if (!selection?.isCollapsed()) {
 				return;
 			}
@@ -112,18 +122,6 @@
 								mutation
 							);
 							continue;
-						}
-
-						const prevNode = node.getPreviousSibling();
-						if (!prevNode) {
-							const p = createParagraphNode();
-							node.insertBefore(p);
-						}
-
-						const nextNode = node.getNextSibling();
-						if (!nextNode) {
-							const p = createParagraphNode();
-							node.insertAfter(p, false);
 						}
 
 						if (node.getPlatform() === 'youtube' && node.getSrc()?.includes('youtube.com/clip/')) {

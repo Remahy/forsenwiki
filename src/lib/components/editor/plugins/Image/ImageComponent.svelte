@@ -27,6 +27,7 @@
 	import { IMAGE_OFF, LUCIDE_ICON_LOADER, $isImageNode as isImageNode } from './Image';
 	import { loadContent } from '$lib/utils/indexedDb/content';
 	import { editorGlobals } from '../../editorGlobals.svelte';
+	import { $isGalleryNode as isGalleryNode } from '../Gallery/Gallery';
 
 	const id = $derived(editorGlobals.articleId);
 
@@ -45,8 +46,12 @@
 	/** @type {Props} */
 	let { node, src, altText, nodeKey, width, height, resizable, editor } = $props();
 
-	let heightCss = $derived(height === 'inherit' ? 'inherit' : height + 'px');
-	let widthCss = $derived(width === 'inherit' ? 'inherit' : width + 'px');
+	let heightCss = $derived(
+		height === 'inherit' ? 'inherit' : Math.max(IMAGE_MIN_HEIGHT, height) + 'px'
+	);
+	let widthCss = $derived(
+		width === 'inherit' ? 'inherit' : Math.max(IMAGE_MIN_WIDTH, width) + 'px'
+	);
 
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);
@@ -56,6 +61,8 @@
 	let isResizing = $state(false);
 
 	let isFocused = $derived($isSelected || isResizing);
+
+	let isParentGallery = $derived(editor.read(() => isGalleryNode(node.getParent())));
 
 	let promise = $derived.by(async () => {
 		try {
@@ -195,10 +202,12 @@
 		let isMounted = true;
 		const rootElement = editor.getRootElement();
 		const unregister = mergeRegister(
-			editor.registerUpdateListener(({ editorState }) => {
-				if (isMounted) {
-					selection = editorState.read(() => getSelection());
+			editor.registerUpdateListener(() => {
+				if (!isMounted) {
+					return;
 				}
+
+				selection = editor.read(() => getSelection());
 			}),
 			editor.registerCommand(CLICK_COMMAND, onClick, COMMAND_PRIORITY_LOW),
 			editor.registerCommand(RIGHT_CLICK_IMAGE_COMMAND, onClick, COMMAND_PRIORITY_LOW),
@@ -244,7 +253,7 @@
 	{/await}
 </div>
 
-{#if resizable && isNodeSelection(selection) && isFocused}
+{#if resizable && isNodeSelection(selection) && isFocused && !isParentGallery}
 	<ImageResizer
 		{editor}
 		{imageRef}

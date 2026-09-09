@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
-import { readAuthorsForYPostByTitle, readRelationsToYPostTitle } from '$lib/db/article/read';
+import { readAuthorsForYPostByTitle, readRelationsToYPostTitle } from '$lib/db/post/read';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-import { _getYPostHTML } from '../../api/article/read/[title]/+server';
+import { _getYPostHTML } from '../../api/post/read/[title]/+server';
 import { getShouldCacheBust } from '$lib/utils/cacheBust';
 
 /** @type {Map<string, number>} */

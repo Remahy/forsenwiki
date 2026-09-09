@@ -39,22 +39,12 @@ import { getFormatType } from '../../utils/elementUtils';
 
 export type SupportedPlatforms = 'twitch' | 'youtube' | 'usercontent';
 
-export type VideoEmbedComponentProps = Readonly<{
-	// className: Readonly<{
-	// 	base: string;
-	// 	focus: string;
-	// }>;
-	format: ElementFormatType | null;
-	nodeKey: NodeKey;
-	platform: SupportedPlatforms;
-	src: string;
-}>;
-
 export type VideoEmbedPayload = {
 	platform?: SupportedPlatforms;
 	src?: string;
 	width?: number | 'inherit';
 	height?: number | 'inherit';
+	altText?: string;
 };
 
 export type SerializedVideoEmbedNode = Spread<VideoEmbedPayload, SerializedDecoratorBlockNode>;
@@ -105,6 +95,10 @@ const convertTtoSeconds = (tString: string) => {
 	const h = tString.match(/([0-9]+)h/);
 	const m = tString.match(/([0-9]+)m/);
 	const s = tString.match(/([0-9]+)s/);
+
+	if (!h && !m && !s && Number.isInteger(Number(tString))) {
+		return tString;
+	}
 
 	if (h) {
 		const [, hValue] = h;
@@ -159,9 +153,10 @@ export const getURLAndTitle = (
 			const clipSlug = url.searchParams.get('clip');
 			const clipTId = url.searchParams.get('clipt');
 
-			const youtubeEmbedURL = new URL(`/embed/${fullVideoSlug}`, 'https://www.youtube.com/');
+			let youtubeEmbedURL = new URL(`/embed/${fullVideoSlug}`, 'https://www.youtube-nocookie.com/');
 
 			if (clipSlug && clipTId) {
+				youtubeEmbedURL = new URL(`/embed/${fullVideoSlug}`, 'https://www.youtube.com/');
 				youtubeEmbedURL.searchParams.set('clip', clipSlug);
 				youtubeEmbedURL.searchParams.set('clipt', clipTId);
 			}
@@ -170,7 +165,10 @@ export const getURLAndTitle = (
 				youtubeEmbedURL.searchParams.set('start', s);
 			}
 
-			return { url: youtubeEmbedURL.toString(), title: 'YouTube clip' };
+			return {
+				url: youtubeEmbedURL.toString(),
+				title: `YouTube ${clipSlug && clipTId ? 'clip' : 'video'}`,
+			};
 		}
 
 		const v = url.searchParams.get('v');
@@ -189,7 +187,10 @@ export const getURLAndTitle = (
 		}
 
 		return {
-			url: `https://www.youtube-nocookie.com/embed/${v || youtuBE || vPathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`,
+			url: `https://www.youtube-nocookie.com/embed/${v || youtuBE || vPathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`.replace(
+				/\/\//g,
+				'\/'
+			),
 			title: 'YouTube video',
 		};
 	}
@@ -256,6 +257,22 @@ export const getURLAndTitle = (
 
 			return { url: playerTwitchURL.toString(), title: 'Twitch video' };
 		}
+
+		const isParsedPlayerVideoUrl = url.hostname === 'player.twitch.tv';
+		const parsedPlayerVideoId = url.searchParams.get('video');
+		if (isParsedPlayerVideoUrl && parsedPlayerVideoId) {
+			const playerTwitchURL = new URL('', 'https://player.twitch.tv/');
+			playerTwitchURL.searchParams.set('video', parsedPlayerVideoId);
+
+			const t = url.searchParams.get('t');
+			if (t) {
+				playerTwitchURL.searchParams.set('t', t);
+			}
+
+			playerTwitchURL.searchParams.set('parent', parent);
+
+			return { url: playerTwitchURL.toString(), title: 'Twitch video' };
+		}
 	}
 
 	return { url: '', title: 'Unknown source' };
@@ -289,7 +306,7 @@ function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl:
 	element.setAttribute('frameborder', '0');
 	element.setAttribute(
 		'allow',
-		'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+		"autoplay 'none'; clipboard-write; encrypted-media; picture-in-picture;"
 	);
 	element.setAttribute('allowfullscreen', 'true');
 	element.setAttribute('title', title);
@@ -350,8 +367,10 @@ function generateCDNSrc(node: VideoEmbedNode, staticURL: string) {
 	setVideoAttributes(node, element);
 	element.setAttribute('controls', '');
 	element.setAttribute('data-lexical-usercontent', node.getSrc()!);
+	element.setAttribute('loading', 'lazy');
 
 	element.controls = true;
+	element.playsInline = true;
 
 	const source = document.createElement('source');
 	source.src = url;
@@ -404,16 +423,18 @@ function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput 
 }
 
 export class VideoEmbedNode extends DecoratorBlockNode {
-	__platform?: SupportedPlatforms;
-	__src?: string;
-	__width?: 'inherit' | number;
-	__height?: 'inherit' | number;
+	__platform: SupportedPlatforms | undefined;
+	__src: string | undefined;
+	__width: 'inherit' | number | undefined;
+	__height: 'inherit' | number | undefined;
+	__altText: string | undefined;
 
 	constructor(
 		platform?: SupportedPlatforms,
 		src?: string,
 		width?: number | 'inherit',
 		height?: number | 'inherit',
+		altText?: string,
 		format?: ElementFormatType,
 		key?: NodeKey
 	) {
@@ -423,6 +444,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		this.__src = src;
 		this.__width = width;
 		this.__height = height;
+		this.__altText = altText;
 	}
 
 	static getType(): string {
@@ -435,6 +457,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 			node.__src,
 			node.__width,
 			node.__height,
+			node.__altText,
 			node.getFormatType(),
 			node.__key
 		);
@@ -486,6 +509,11 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		return self.__platform;
 	}
 
+	getAltText(): string | undefined {
+		const self = this.getLatest();
+		return self.__altText;
+	}
+
 	getTextContent(
 		_includeInert?: boolean | undefined,
 		_includeDirectionless?: false | undefined
@@ -524,6 +552,11 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		) as SupportedPlatforms;
 	}
 
+	setAltText(altText?: string): void {
+		const self = this.getWritable();
+		self.__altText = altText;
+	}
+
 	exportJSON(): SerializedVideoEmbedNode {
 		return {
 			...super.exportJSON(),
@@ -532,6 +565,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 			src: this.getSrc(),
 			width: this.__width,
 			height: this.__height,
+			altText: this.getAltText(),
 		};
 	}
 
@@ -582,6 +616,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 				props.nodeKey = this.__key;
 				props.width = this.__width;
 				props.height = this.__height;
+				props.altText = this.__altText;
 				props.resizable = true;
 				props.editor = editor;
 			},
@@ -592,9 +627,11 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 export function $createVideoEmbedNode(
 	payload?: VideoEmbedPayload & { format?: ElementFormatType; key?: NodeKey }
 ): VideoEmbedNode {
-	const { platform, src, width, height, format, key } = payload || {};
+	const { platform, src, width, height, altText, format, key } = payload || {};
 
-	return $applyNodeReplacement(new VideoEmbedNode(platform, src, width, height, format, key));
+	return $applyNodeReplacement(
+		new VideoEmbedNode(platform, src, width, height, altText, format, key)
+	);
 }
 
 export function $isVideoEmbedNode(

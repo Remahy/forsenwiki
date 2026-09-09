@@ -11,10 +11,10 @@ import { $createFallbackNode, FallbackNode } from '../Fallback/Fallback';
 
 export class DeprecatedVideoEmbedNode extends FallbackNode {
 	/**
-	 * @param {SupportedPlatforms} platform
-	 * @param {string} src
-	 * @param {number | 'inherit'} width
-	 * @param {number | 'inherit'} height
+	 * @param {SupportedPlatforms} [platform]
+	 * @param {string} [src]
+	 * @param {number | 'inherit'} [width]
+	 * @param {number | 'inherit'} [height]
 	 * @param {ElementFormatType} [format]
 	 * @param {NodeKey} [key]
 	 */

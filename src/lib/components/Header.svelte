@@ -1,13 +1,17 @@
 <script>
-	import { LogOutIcon } from '@lucide/svelte';
+	import { LogOutIcon, Settings } from '@lucide/svelte';
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 	import Logo from '$lib/components/Logo.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import { modal } from '$lib/stores/modal';
+	import SettingsModal from '$lib/components/SettingsModal.svelte';
+
 	import Search from './Search/index.svelte';
-	import Announcement from './Announcement.svelte';
+	// import Announcement from './Announcement.svelte';
+	import Link from './Link.svelte';
 
 	let isLoading = $state(false);
 
@@ -16,9 +20,16 @@
 		signIn('twitch', { redirect: true });
 	};
 
-	const signOutWrapper = () => {
+	const openSettingsModal = () => {
+		modal.set({
+			isOpen: true,
+			component: SettingsModal,
+		});
+	};
+
+	const signOutWrapper = async () => {
 		isLoading = true;
-		signOut({ redirect: true });
+		await signOut({ redirect: true });
 	};
 
 	let cachedImage = $state('');
@@ -57,11 +68,17 @@
 								alt="Twitch avatar"
 							/>
 						{/if}
-						<span
+						<Link
+							href="/user/{page.data.session.user.id}"
+							reload
 							class="content-center overflow-hidden text-xs font-medium text-ellipsis"
-							title={page.data.session.user.name}>{page.data.session.user.name}</span
+							title={page.data.session.user.name}>{page.data.session.user.name}</Link
 						>
 					</div>
+
+					<Button class="rounded-r-none! rounded-l-none! px-2! text-xs" onclick={openSettingsModal} title="Settings">
+						<Settings size="18" />
+					</Button>
 
 					<Button
 						on:click={signOutWrapper}
@@ -96,5 +113,5 @@
 		</div>
 	</nav>
 
-	<Announcement />
+	<!-- <Announcement /> -->
 </header>

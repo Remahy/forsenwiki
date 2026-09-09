@@ -1,2 +1,5 @@
-import v from '/version?raw';
-export const version = v.trim().replace(/[\n]+/g, '-').replace(/ /g, '-');
+import rawVersion from '$lib/version.txt?raw';
+
+const version = rawVersion.trim().replace(/[\n]+/g, '-').replace(/ /g, '-');
+
+export { version };

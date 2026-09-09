@@ -27,6 +27,16 @@ model User {
 
   content     Content[]
   permissions Permission[]
+
+  userSettings UserSettings?
+}
+
+model UserSettings {
+  id           String  @id @default(cuid())
+  streamerMode Boolean
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
 }
 
 model Account {
@@ -154,16 +164,15 @@ model YPostRelativeRange {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-
   post   YPost  @relation(fields: [postId], references: [id])
   postId String
 
   type PostRangeType
 
-  anchor  String @db.Text
-  focus   String @db.Text
+  anchor String @db.Text
+  focus  String @db.Text
 
-  content Json   @default("{}")
+  content Json @default("{}")
 }
 
 model WhitelistedAccounts {
@@ -176,11 +185,12 @@ model WhitelistedAccounts {
 model Content {
   id String @id @default(cuid())
 
-  hash        String  @unique
-  type        String?
-  contentType String?
-  metadata    Json    @default("{}")
-  name        String
+  hash          String  @unique
+  type          String?
+  contentType   String?
+  contentLength BigInt?
+  metadata      Json    @default("{}")
+  name          String
 
   author   User   @relation(fields: [authorId], references: [id])
   authorId String

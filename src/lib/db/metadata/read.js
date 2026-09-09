@@ -14,6 +14,7 @@ export async function readAuthorForYPostUpdate(postUpdateId) {
 		},
 		select: {
 			name: true,
+			id: true,
 		},
 	});
 }

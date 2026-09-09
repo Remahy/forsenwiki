@@ -7,6 +7,7 @@
 	import { page } from '$app/stores';
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';
+	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
 	import {
 		getRecentChangesFilters,
 		MINIMUM_LIMIT,
@@ -28,6 +29,7 @@
 
 	const handleFilterSearch = () => {
 		const searchParams = createRecentChangesParams({ authors, limit });
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity
 		const url = new URL($page.url);
 		url.search = `?${searchParams.toString()}`;
 		window.location.href = url.toString();
@@ -40,6 +42,7 @@
 				title: string
 				lastUpdated: string
 				author: string | null
+				authorId: string | null
 				byteLength: number
 				newTitle?: string
 				oldTitle?: string
@@ -79,10 +82,10 @@
 		}
 	};
 
-	const sseArticleUpdate = source('/api/adonis/frontpage').select('article:update');
+	const ssePostUpdate = source('/api/adonis/frontpage').select('post:update');
 
 	onMount(() => {
-		sseArticleUpdate.subscribe((v) => {
+		ssePostUpdate.subscribe((v) => {
 			if (v) {
 				const values = $latestUpdates;
 
@@ -142,7 +145,7 @@
 					</Link>&nbsp;
 				</span>
 				{#if isNewArticle}
-					<span class="rounded-sm bg-green-500/25 p-1 text-xs">New!</span>
+					<span class="rounded-sm bg-emerald-500/25 p-1 text-xs">New!</span>
 				{/if}
 				{#if update.newTitle}
 					<small
@@ -152,10 +155,10 @@
 						{/if})&nbsp;</small
 					>
 				{/if}
-				<span><small class="opacity-50">({update.byteLength})&nbsp;</small></span>
+				<span><small class="opacity-85">({update.byteLength})&nbsp;</small></span>
 				{#if !isNewArticle}
 					<span>
-						<Link href="/w/{update.title}/history/{update.id}.." target="_blank"
+						<Link href="/w/{update.title}/history/{update.id}-" target="_blank"
 							>Compare with previous</Link
 						>&nbsp;</span
 					>
@@ -165,7 +168,16 @@
 						locale: enGB,
 					})}&nbsp;</small
 				>
-				<span><small><span class="font-bold">By:</span> {update.author}</small></span>
+				<span>
+					<small>
+						<span class="font-bold">By:</span>
+						<StreamerModeShow>
+							<Link href="/user/{update.authorId}" target="_blank" class="decoration-1!"
+								>{update.author}</Link
+							>
+						</StreamerModeShow>
+					</small>
+				</span>
 			</div>
 		{:else}
 			<span class="bg-black/10 p-2 dark:bg-white/5">Nothing found.</span>

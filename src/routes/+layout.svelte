@@ -1,6 +1,7 @@
 <script>
 	import { setContext } from 'svelte';
 	import { writable } from 'svelte/store';
+	import { page } from '$app/stores';
 
 	import Modal from '$lib/components/Modal.svelte';
 	import UploadModal from '$lib/components/UploadModal.svelte';
@@ -8,6 +9,8 @@
 	import Footer from '$lib/components/Footer.svelte';
 
 	import '../app.css';
+
+	let streamerMode = $state($page.data.session?.user?.userSettings?.streamerMode);
 
 	/**
 	 * @typedef {Object} Props
@@ -24,7 +27,7 @@
 	setContext('YDOC', writable(null));
 </script>
 
-<div class="app flex min-h-screen flex-col">
+<div class="app flex min-h-screen flex-col" class:streamer-mode={streamerMode}>
 	<Header />
 
 	{@render children?.()}

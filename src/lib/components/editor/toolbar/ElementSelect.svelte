@@ -1,19 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
 	import {
-		FileQuestionMarkIcon,
-		Heading1Icon,
-		Heading2Icon,
-		Heading3Icon,
-		Heading4Icon,
-		Heading5Icon,
-		ListCheckIcon,
-		ListIcon,
-		ListOrderedIcon,
-		PilcrowIcon,
-		QuoteIcon,
-	} from '@lucide/svelte';
-	import {
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,
 		$createParagraphNode as createParagraphNode,
@@ -42,6 +29,7 @@
 	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
 	import { getSelectedElements } from '$lib/components/editor/utils/getSelection';
 	import { ListNode } from '$lib/lexical/index';
+	import { blockTypeIcons } from '$lib/constants/blockTypeIcons';
 
 	const { TYPES } = ELEMENT_CONSTANTS;
 	const elementTypeOptions = Object.entries(TYPES);
@@ -103,23 +91,6 @@
 		number: formatNumberedList,
 		paragraph: formatParagraph,
 		quote: formatQuote,
-	};
-
-	const blockTypeIcons = {
-		default: FileQuestionMarkIcon,
-		mixed: FileQuestionMarkIcon,
-		unknown: FileQuestionMarkIcon,
-		h1: Heading1Icon,
-		h2: Heading2Icon,
-		h3: Heading3Icon,
-		h4: Heading4Icon,
-		h5: Heading5Icon,
-		bullet: ListIcon,
-		number: ListOrderedIcon,
-		paragraph: PilcrowIcon,
-		quote: QuoteIcon,
-		// Unused
-		check: ListCheckIcon,
 	};
 
 	/** @param {Event} e */

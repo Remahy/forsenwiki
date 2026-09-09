@@ -34,7 +34,7 @@
 		<div class="bg-dark mt-2 flex-1 grow overflow-hidden rounded-sm p-4 text-right lg:mt-0">
 			<p>forsen.wiki - {version}</p>
 
-			<div class="decoration-text-color" aria-hidden="true">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</div>
+			<div class="decoration-text-color" aria-hidden="true">⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿</div>
 
 			<ul class="flex flex-col gap-2 font-semibold">
 				<li class="font-normal">Not associated with Twitch.tv and/or Amazon</li>

@@ -38,16 +38,16 @@ const setNumberOrUndefined = (number, min) => {
 
 export class FloatBlockNode extends ElementNode {
 	/** @type {FloatValue} */
-	__float;
+	__float = undefined;
 
 	/** @type {number | undefined} */
-	__width;
+	__width = undefined;
 
 	/** @type {number | undefined} */
-	__height;
+	__height = undefined;
 
 	/** @type {boolean | undefined} */
-	__hasBorder;
+	__hasBorder = undefined;
 
 	/**
 	 * @param {FloatValue} [float]
@@ -264,6 +264,10 @@ export class FloatBlockNode extends ElementNode {
 			dom.style.minHeight = `${FLOATBLOCK_MIN_HEIGHT}px`;
 		}
 
+		return false;
+	}
+
+	canBeEmpty () {
 		return false;
 	}
 

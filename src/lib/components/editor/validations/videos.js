@@ -1,6 +1,6 @@
-import { $nodesOfType as nodesOfType, $createParagraphNode as createParagraphNode } from 'lexical';
+import { $nodesOfType as nodesOfType } from 'lexical';
 
-import { VideoEmbedNode } from '$lib/lexical/custom';
+import { $isGalleryNode as isGalleryNode, VideoEmbedNode } from '$lib/lexical/custom';
 import { VIDEO_MIN_HEIGHT, VIDEO_MAX_HEIGHT, VIDEO_MIN_WIDTH } from '$lib/constants/video';
 
 /**
@@ -19,18 +19,6 @@ export const adjustVideoEmbedNodeSiblings = (editor) => {
 				for (let index = 0; index < videoEmbeds.length; index++) {
 					const node = videoEmbeds[index];
 
-					const prevNode = node.getPreviousSibling();
-					if (!prevNode) {
-						const p = createParagraphNode();
-						node.insertBefore(p);
-					}
-
-					const nextNode = node.getNextSibling();
-					if (!nextNode) {
-						const p = createParagraphNode();
-						node.insertAfter(p, false);
-					}
-
 					let { width, height } = node.getWidthAndHeight();
 
 					width = typeof width === 'number' ? Math.max(VIDEO_MIN_WIDTH, Math.round(width)) : width;
@@ -38,6 +26,13 @@ export const adjustVideoEmbedNodeSiblings = (editor) => {
 						typeof height === 'number'
 							? Math.min(Math.max(VIDEO_MIN_HEIGHT, Math.round(height)), VIDEO_MAX_HEIGHT)
 							: height;
+
+					const isParentGallery = isGalleryNode(node.getParent());
+
+					if (isParentGallery) {
+						width = 'inherit';
+						height = 'inherit';
+					}
 
 					node.setWidthAndHeight({
 						width,

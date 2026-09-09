@@ -1,0 +1,52 @@
+@reference "../../../../../app.css";
+
+.gallery {
+	@apply flex min-h-0 flex-col gap-2 overflow-hidden;
+}
+
+.embla {
+	@apply relative flex aspect-video min-h-0 grow overflow-hidden;
+}
+
+.embla__viewport {
+	@apply flex overflow-hidden;
+}
+
+.embla__container {
+	@apply flex w-full touch-pan-y touch-pinch-zoom;
+}
+
+.embla__slide {
+	@apply flex h-full w-full min-w-0 shrink-0 basis-full transform-[translate3d(0,0,0)] items-stretch justify-center overflow-hidden;
+
+	img,
+	iframe {
+		@apply aspect-video object-contain;
+	}
+}
+
+button.embla-fullscreen-button {
+	@apply absolute right-2 bottom-2;
+}
+
+.embla-thumbs__viewport {
+	@apply shrink-0 overflow-hidden;
+}
+
+.embla-thumbs__container {
+	@apply flex justify-start gap-2;
+}
+
+.embla-thumbs__slide {
+	@apply forsen-wiki-theme-border flex aspect-video h-full w-full min-w-0 flex-[0_0_25%] cursor-pointer items-stretch justify-center overflow-hidden rounded border-2 select-none;
+}
+
+.embla-fullscreen {
+	.embla-thumbs__slide {
+		@apply lg:flex-[0_0_15%];
+	}
+}
+
+.embla-thumbs__slide--selected {
+	@apply border-blue-500!;
+}

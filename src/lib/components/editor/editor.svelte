@@ -14,17 +14,22 @@
 
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
 	import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
+	import Box from '../Box.svelte';
+	import EditorModal from '../EditorModal.svelte';
 	import Toolbar from './toolbar/index.svelte';
-	import ToolbarExtra from './toolbar/Extra.svelte';
+	import TreeviewWrapper from './toolbar/TreeviewWrapper.svelte';
 	import MobileToolbar from './toolbar/MobileToolbar.svelte';
 	import Footer from './footer/index.svelte';
 	import { articleConfig, editableTheme } from './config/article';
-	import { editorGlobals } from './editorGlobals.svelte';
 	import ImagePlugin from './plugins/Image/ImagePlugin.svelte';
-	import AutoFocus from './plugins/AutoFocus.svelte';
 	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 	import TablePlugin from './plugins/Overrides/Table/TablePlugin.svelte';
 	import FloatBlockPlugin from './plugins/FloatBlock/FloatBlockPlugin.svelte';
+	import SelectionOverrides from './plugins/SelectionOverrides.svelte';
+	import GalleryPlugin from './plugins/Gallery/GalleryPlugin.svelte';
+	import ImageFixerModalButton from './ImageFixer/index.svelte';
+	import TreeviewPlugin from './Treeview/TreeviewPlugin.svelte';
+	import { editorGlobals } from './editorGlobals.svelte';
 
 	/**
 	 * @typedef {Object} Props
@@ -57,15 +62,17 @@
 	});
 </script>
 
+<Box class="bg-blue-500/15! p-4">
+	<p><strong>New editor tree for nodes!</strong> There will be bugs! More features coming soon!</p>
+</Box>
+
 <Composer {initialConfig} bind:this={composer}>
-	<div class="relative flex min-h-96 gap-2">
+	<div class="relative flex min-h-96 gap-4">
 		<RichTextPlugin />
 
 		<ListPlugin />
 
 		<LinkPlugin validateUrl={isUrl} />
-
-		<AutoFocus />
 
 		<ImagePlugin />
 
@@ -77,8 +84,14 @@
 
 		<CollaborationPlugin {id} {providerFactory} shouldBootstrap={false} />
 
-		<div class="w-full lg:w-148 xl:w-212 2xl:w-280">
-			<div class="editor-border sticky top-0 z-40 hidden w-full p-2 lg:block">
+		<SelectionOverrides />
+
+		<TreeviewPlugin />
+
+		<GalleryPlugin />
+
+		<div class="min-w-0 flex-1">
+			<div class="editor-border sticky top-0 z-40 hidden w-full p-2 xl:block">
 				<div class="flex flex-wrap items-stretch gap-2">
 					<Toolbar />
 				</div>
@@ -94,21 +107,24 @@
 				</article>
 			</div>
 
-			<div class="editor-border sticky bottom-0 z-40 block w-full p-2 lg:hidden">
-				<div class="flex flex-wrap items-stretch gap-2 text-sm">
+			<div class="editor-border sticky bottom-0 z-40 block w-full p-2 xl:hidden">
+				<div class="flex flex-wrap items-stretch gap-1 text-sm">
 					<MobileToolbar />
 				</div>
 			</div>
 
-			<div class="editor-border sticky bottom-0 hidden w-full border-t-0 p-2 lg:block">
+			<div class="editor-border sticky bottom-0 hidden w-full border-t-0 p-2 xl:block">
 				<Footer />
 			</div>
 		</div>
 
 		<div
-			class="editor-border sticky top-0 hidden h-full w-96 max-w-96 grow flex-col flex-wrap gap-4 p-2 lg:flex"
+			class="shrink-0 self-start editor-border sticky top-0 hidden h-fit max-h-screen flex-col xl:flex xl:w-96 xl:min-w-96"
 		>
-			<ToolbarExtra />
+			<TreeviewWrapper />
 		</div>
 	</div>
+
+	<EditorModal />
+	<ImageFixerModalButton />
 </Composer>

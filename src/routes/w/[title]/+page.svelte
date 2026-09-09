@@ -1,8 +1,10 @@
-<script lang="ts">
-	import { SquarePenIcon, HistoryIcon } from '@lucide/svelte';
+<script>
+	/* eslint-disable svelte/no-at-html-tags */
+	import { onMount } from 'svelte';
+	import { SquarePenIcon, RotateCcwClock } from '@lucide/svelte';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
 	import '$lib/components/editor/Article.css';
 
@@ -18,18 +20,26 @@
 	import { isSystem } from '$lib/utils/isSystem.js';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL.js';
 	import Display from '$lib/components/React/Display.svelte';
+	import Article from '$lib/components/Article.svelte';
+	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+	import { initializeEmblaForArticle } from '$lib/components/editor/plugins/Gallery/embla.js';
+	import { initializeZoomForImgElements } from '$lib/components/editor/plugins/Gallery/zoom.js';
 
 	const submitErrors = $derived.by(() => {
 		try {
-			const rawErrors: Array<{ code: string; field: string; value?: string }> | null = JSON.parse(
-				$page.url.searchParams.get('partialErrors') || ''
-			);
+			/**
+			 * @type {Array<{ code: string; field: string; value?: string }> | null}
+			 */
+			const rawErrors = JSON.parse(page.url.searchParams.get('partialErrors') || '');
 			if (!rawErrors || !(rawErrors instanceof Array)) {
 				return [];
 			}
 
 			// We don't want to display messages verbatim from the URL to make sure users don't modify it.
-			const ERROR_CONSTANT: { [key: string]: string } = {
+			/**
+			 * @type {{ [key: string]: string }}
+			 */
+			const ERROR_CONSTANT = {
 				'EMPTY-newTitle': 'New title submission is empty. Given value: %',
 				'ILLEGAL-newTitle': 'New title submission failed sanitization. Given value: %',
 				'EXISTS-newTitle':
@@ -72,11 +82,13 @@
 				.filter((author) => author.name !== null)
 				.map((author) => ({
 					'@type': 'Person',
-					name: author.name!.replace(/[^\w]/g, ''),
+					// @ts-ignore
+					name: author.name.replace(/[^\w]/g, ''),
 				})),
 		})
 	);
 	const authorsHTML = $derived(
+		// eslint-disable-next-line no-useless-escape
 		`<script type="application/ld+json">${authorsScriptContent}<\/script>`
 	);
 
@@ -84,16 +96,37 @@
 	BigInt.prototype.toJSON = function () {
 		return { $bigint: this.toString() };
 	};
+
+	onMount(() => {
+		/**
+		 * @type {HTMLElement}
+		 */
+		const article = /** @type {any} */ (document.querySelector('main.article-root'));
+
+		/**
+		 * @type {Function[]}
+		 */
+		let cleanups = [];
+		if (article) {
+			cleanups.push(initializeEmblaForArticle(article));
+			cleanups.push(initializeZoomForImgElements(article));
+		}
+
+		return () => {
+			cleanups.forEach((fn) => fn());
+		};
+	});
 </script>
 
 <svelte:head>
 	<title>{rawTitle || title} - Community Forsen Wiki</title>
+	<meta name="og:title" content="{rawTitle || title} - Community Forsen Wiki" />
 
 	<meta property="og:site_name" content="Forsen Wiki" />
 
 	{#if !isArticleSystem}
-		<link rel="canonical" href="{$page.url.origin}/w/{title}" />
-		<meta property="og:url" content="{$page.url.origin}/w/{title}" />
+		<link rel="canonical" href="{page.url.origin}/w/{title}" />
+		<meta property="og:url" content="{page.url.origin}/w/{title}" />
 
 		<meta property="og:type" content="article" />
 
@@ -112,7 +145,7 @@
 		<meta property="article:published_time" content={createdTimestamp.toISOString()} />
 		<meta property="article:modified_time" content={lastUpdated.toISOString()} />
 
-		{#each authors as author}
+		{#each authors as author (author.name)}
 			{#if author.name}
 				<meta property="article:author" content={author.name} />
 			{/if}
@@ -129,7 +162,7 @@
 		{#if submitErrors.length}
 			<Box class="bg-yellow-300/75! p-4 text-black">
 				<strong>Partial submit error(s)</strong>
-				{#each submitErrors as error}
+				{#each submitErrors as error (error)}
 					<p>{error}</p>
 				{/each}
 			</Box>
@@ -147,7 +180,7 @@
 
 						<div class="flex shrink-0 items-start gap-2">
 							<LinkButton href="/w/{title}/history" class="flex items-center gap-2 text-sm">
-								<HistoryIcon size="16" /><span class="hidden md:inline">History</span>
+								<RotateCcwClock size="16" /><span class="hidden md:inline">History</span>
 							</LinkButton>
 
 							<LinkButton href="/w/{title}/edit" reload class="flex items-center gap-2 text-sm">
@@ -158,17 +191,17 @@
 				</header>
 			</SuggestionBox>
 
-			<div class="article-wrapper relative flex grow flex-col gap-4 lg:flex-row">
+			<div class="article-wrapper flex grow flex-col gap-4 lg:flex-row">
 				<FloatingReact {title} />
 
-				<Box class="flex grow flex-col overflow-hidden p-4 lg:mb-0">
-					<main class="prose dark:prose-invert relative max-w-[unset] grow wrap-break-word">
+				<Box class="-mx-4 flex grow flex-col overflow-hidden p-4 sm:mx-0 lg:mb-0">
+					<main class="article-root prose dark:prose-invert max-w-[unset] grow wrap-break-word">
 						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>
 
 						<div class="article-root relative">
-							{@html html}
+							<Article {html} />
 						</div>
 					</main>
 				</Box>
@@ -208,11 +241,15 @@
 			{#if authors.length}
 				<p>
 					<span><strong>Author{authors.length > 1 ? 's' : ''}:</strong></span>
-					<span>
-						{#each authors as author, index}
-							{author.name}{index < authors.length - 1 ? ', ' : ''}
-						{/each}
-					</span>
+					<StreamerModeShow>
+						<span>
+							{#each authors as author, index (author.id)}
+								<Link href="/user/{author.id}" target="_blank" class="decoration-1!"
+									>{author.name}</Link
+								>{index < authors.length - 1 ? ', ' : ''}
+							{/each}
+						</span>
+					</StreamerModeShow>
 				</p>
 			{/if}
 		</footer>
@@ -222,7 +259,7 @@
 				<p>
 					<span><strong>Article{relatedPosts.length > 1 ? 's' : ''} linking here:</strong></span>
 					<span>
-						{#each relatedPosts as post, index}
+						{#each relatedPosts as post, index (post.title)}
 							<Link href={post.title} reload>{post.rawTitle}</Link>{index < relatedPosts.length - 1
 								? ', '
 								: ''}
@@ -241,7 +278,7 @@
 				<CacheBustButton />
 				<LinkButton
 					class="mt-2 min-h-[unset] min-w-[unset] p-1! text-xs"
-					href="/api/article/read/{title}">API request</LinkButton
+					href="/api/post/read/{title}">API request</LinkButton
 				>
 			</div>
 		</details>

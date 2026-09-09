@@ -1,9 +1,10 @@
 /**
  * @param {boolean} atBefore
- * @param {number} o
+ * @param {number} offset
  * @param {number} textLength
  */
-export const offsetIsAtEdges = (atBefore, o, textLength) => (atBefore ? o === 0 : o === textLength);
+export const offsetIsAtEdges = (atBefore, offset, textLength) =>
+	atBefore ? offset === 0 : offset === textLength;
 
 /**
  * @param {boolean} atBefore

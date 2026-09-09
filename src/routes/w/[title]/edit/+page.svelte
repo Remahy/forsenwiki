@@ -8,7 +8,7 @@
 
 	import { resetContent } from '$lib/utils/indexedDb/content';
 	import { resetArticle } from '$lib/utils/indexedDb/article';
-	import { updateArticle } from '$lib/api/articles';
+	import { updatePost } from '$lib/api/posts';
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import Editor from '$lib/components/editor/editor.svelte';
@@ -124,7 +124,7 @@
 			// Upload images to S3.
 			await uploadImages(editor, id);
 
-			res = await editor.read(() => updateArticle(title, yjsDocMap, newTitle));
+			res = await editor.read(() => updatePost(title, yjsDocMap, newTitle));
 		} catch (err) {
 			console.error(err);
 			error = new Error(err?.toString());
@@ -181,6 +181,8 @@
 
 <svelte:head>
 	<title>Editing &quot;{rawTitle}&quot; - Community Forsen Wiki</title>
+	<meta name="og:title" content="Editing &quot;{rawTitle}&quot; - Community Forsen Wiki" />
+
 	<meta name="description" content="Edit the &quot;{rawTitle}&quot; article on forsen.wiki" />
 	<meta
 		property="og:description"
@@ -272,21 +274,24 @@
 			<Clown />
 		</small>
 
-		<Button disabled={!canEdit || isUploading || error} on:click={submit} title="Submit">
-			{#if isUploading}
-				<Spinner />
-			{/if}
-
-			<span class="hidden lg:inline" id="submit">Submit</span>
-			<FileUpIcon class="inline min-w-6 lg:hidden" />
-		</Button>
+		{#if $page.data.session?.user}
+			<Button disabled={!canEdit || isUploading || error} on:click={submit} title="Submit">
+				{#if isUploading}
+					<Spinner />
+				{/if}
+				<span class="hidden lg:inline" id="submit">Submit</span>
+				<FileUpIcon class="inline min-w-6 lg:hidden" />
+			</Button>
+		{:else}
+			<span class="p-2 forsen-wiki-theme-border border">Login to submit.</span>
+		{/if}
 	</Box>
 
 	<div>
 		<ResetCacheLink
 			disabled={!canEdit || isUploading || !!error}
 			isLoading={isUploading}
-			onClickReset={reset}
+			onClickReset={() => reset()}
 		>
 			<span>Reset &quot;{title}&quot; draft cache</span>
 		</ResetCacheLink>

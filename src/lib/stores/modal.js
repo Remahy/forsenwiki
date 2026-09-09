@@ -9,3 +9,8 @@ export const modal = writable();
  * @type {Writable<{component: import('svelte').Component<any>, isOpen?: boolean, [key: string]: unknown}>}
  */
 export const uploadModal = writable();
+
+/**
+ * @type {Writable<{component: import('svelte').Component<any>, isOpen?: boolean, [key: string]: unknown}>}
+ */
+export const editorModal = writable();

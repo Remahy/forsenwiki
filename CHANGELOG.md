@@ -1,3 +1,58 @@
+## [1.0.0-beta.17](https://github.com/Remahy/forsenwiki/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2026-07-27)
+
+### ⚠ BREAKING CHANGES
+
+* kappa.wiki CDN (#143)
+
+### Features
+
+* Add "New" tag to /recentchanges endpoint ([#209](https://github.com/Remahy/forsenwiki/issues/209)) ([6583998](https://github.com/Remahy/forsenwiki/commit/6583998a8fc76adbc2354d44495494fea65e1612))
+* Allow hash searching & image modal fixes ([#207](https://github.com/Remahy/forsenwiki/issues/207)) ([71c5fde](https://github.com/Remahy/forsenwiki/commit/71c5fde84a80c347650470e269f4ed2bf8f04586))
+* Allow moderators to change article title, add title sanitization ([#164](https://github.com/Remahy/forsenwiki/issues/164)) ([e5f9a91](https://github.com/Remahy/forsenwiki/commit/e5f9a915e3a89c62177e6d927879eb6b085e00e9))
+* Internal links ([#156](https://github.com/Remahy/forsenwiki/issues/156)) ([8c6a7eb](https://github.com/Remahy/forsenwiki/commit/8c6a7eba0ba7456832d24d66a849eb410b43291d))
+* kappa.wiki CDN ([#143](https://github.com/Remahy/forsenwiki/issues/143)) ([37065ed](https://github.com/Remahy/forsenwiki/commit/37065eda2dd8e8145ba2164a4b320e251c011027))
+* Rudimentary user profile ([#206](https://github.com/Remahy/forsenwiki/issues/206)) ([50070f8](https://github.com/Remahy/forsenwiki/commit/50070f84208c62dc0c25fc428a6b987dc1bf67a6))
+* sitemap.xml ([#154](https://github.com/Remahy/forsenwiki/issues/154)) ([a73a2dc](https://github.com/Remahy/forsenwiki/commit/a73a2dcc4cf455e429e71c33eb42fa8c624f19a1))
+* Table & Float additions ([#180](https://github.com/Remahy/forsenwiki/issues/180)) ([2b206f3](https://github.com/Remahy/forsenwiki/commit/2b206f3c5bd7da84744f2b2eefca84869a2c8c3a))
+* User Settings & Streamer mode ([#214](https://github.com/Remahy/forsenwiki/issues/214)) ([69e8f8f](https://github.com/Remahy/forsenwiki/commit/69e8f8fbe9b1e8993e1628c14017ddfff9397a53))
+* WIP New editor design ([#170](https://github.com/Remahy/forsenwiki/issues/170)) ([4724e59](https://github.com/Remahy/forsenwiki/commit/4724e599c4104152d4c0230d18849f063f7d51ff))
+
+### Bug Fixes
+
+* `/adonis` -> `/api/adonis`, skip `/api/` endpoints in goatcounter ([#144](https://github.com/Remahy/forsenwiki/issues/144)) ([7add187](https://github.com/Remahy/forsenwiki/commit/7add187c41496dad1b77794d02551b11a44b8929))
+* Add `oldTitle` metadata & show new title in recentchanges ([#169](https://github.com/Remahy/forsenwiki/issues/169)) ([b1a6876](https://github.com/Remahy/forsenwiki/commit/b1a6876a4157baac3ffa6bf928bb329ae5cdf229))
+* Add `rel=canonical` & more `og:...` meta tags for articles ([#146](https://github.com/Remahy/forsenwiki/issues/146)) ([6074a39](https://github.com/Remahy/forsenwiki/commit/6074a398314fadd9f4ad80b19488a66384c96670))
+* Add OG tags to content endpoint ([3115166](https://github.com/Remahy/forsenwiki/commit/3115166a71a5d00a3154e49b051045de74e0b047))
+* Add support for embedding of internal videos ([#204](https://github.com/Remahy/forsenwiki/issues/204)) ([521d7cd](https://github.com/Remahy/forsenwiki/commit/521d7cd08e3a305d0079b1220bc4aec1cd73e2ac))
+* Add Twitter meta tags to `content/[id]` endpoint ([8dab9bf](https://github.com/Remahy/forsenwiki/commit/8dab9bf6c3c7e4c978e10c42bfe44ac02092f8a1))
+* Allow modifying file name before upload & 80 character limit ([40897d1](https://github.com/Remahy/forsenwiki/commit/40897d15fae96584c62624aa5c56bed0d221feea))
+* Allow user to change the name of their own file ([6b5575f](https://github.com/Remahy/forsenwiki/commit/6b5575f5dbf88e22f4555c30f5138d743c075c7d))
+* Disable diffing ([#178](https://github.com/Remahy/forsenwiki/issues/178)) ([6366f0d](https://github.com/Remahy/forsenwiki/commit/6366f0d10cb7341c6f4c45641cef5785128d2d81))
+* Don't crash when browsing history with no prior post update ([#138](https://github.com/Remahy/forsenwiki/issues/138)) ([d3afe7b](https://github.com/Remahy/forsenwiki/commit/d3afe7b2773dec325a5a3551e6d91a4d17085ed8))
+* Don't prematurely close the upload modal ([0729c1a](https://github.com/Remahy/forsenwiki/commit/0729c1a494a9b4cb77e53bea8ce77032607df2a8))
+* Fill Html text & image on article creation, schema fixes ([#210](https://github.com/Remahy/forsenwiki/issues/210)) ([2518773](https://github.com/Remahy/forsenwiki/commit/2518773902ab7ddeb1a7f7b989dc2a5317f48f7a))
+* Make Reset cache into a link & add a confirm alert ([#163](https://github.com/Remahy/forsenwiki/issues/163)) ([73a03e8](https://github.com/Remahy/forsenwiki/commit/73a03e887e5491ec583cd2763497f49431463956))
+* Make sure tables look the same across views ([#186](https://github.com/Remahy/forsenwiki/issues/186)) ([4765ea3](https://github.com/Remahy/forsenwiki/commit/4765ea35745ceb9bebfb3ef2768cb07f910c8621))
+* Properly load articles with sanitized titles ([#150](https://github.com/Remahy/forsenwiki/issues/150)) ([a9a5ee7](https://github.com/Remahy/forsenwiki/commit/a9a5ee717932712f4a93720efe739d3aae202b39))
+* Properly parse pasted internal links ([#200](https://github.com/Remahy/forsenwiki/issues/200)) ([1c7e7c3](https://github.com/Remahy/forsenwiki/commit/1c7e7c3b217bdbd274bc288d83dae0cf6cc69893))
+* Remove privacy policy announcement ([#215](https://github.com/Remahy/forsenwiki/issues/215)) ([8262136](https://github.com/Remahy/forsenwiki/commit/82621361b5f6923aef177aea94dbaa4bdd5d4797))
+* Remove redundant browse endpoint ([#197](https://github.com/Remahy/forsenwiki/issues/197)) ([939e98e](https://github.com/Remahy/forsenwiki/commit/939e98ed2686c8b6361ac78f37392ab8af0ea9a2))
+* Reorder history redirect & Always show 10 new articles ([#139](https://github.com/Remahy/forsenwiki/issues/139)) ([1275c1a](https://github.com/Remahy/forsenwiki/commit/1275c1a50f32f5843664576158bb341db3b2c048))
+* run `prettier --write .` ([#148](https://github.com/Remahy/forsenwiki/issues/148)) ([e8eebd9](https://github.com/Remahy/forsenwiki/commit/e8eebd97d51c972d503e69317f621395fd210733))
+* Send back bigint serialized JSON responses on article API endpoints ([#147](https://github.com/Remahy/forsenwiki/issues/147)) ([cd9552b](https://github.com/Remahy/forsenwiki/commit/cd9552b501c7843aa93f7089eddbf2da18957873))
+* SEO improvements & THIRD-PARTY-LICENSES.txt ([#187](https://github.com/Remahy/forsenwiki/issues/187)) ([9a3073c](https://github.com/Remahy/forsenwiki/commit/9a3073c75218d20caf2f619d73969ca44a08531a))
+* Show more helpful errors ([#179](https://github.com/Remahy/forsenwiki/issues/179)) ([6fe04dc](https://github.com/Remahy/forsenwiki/commit/6fe04dc45032a76db1484f56d31dbe5b040e9946))
+* UI bugs ([#149](https://github.com/Remahy/forsenwiki/issues/149)) ([49fd313](https://github.com/Remahy/forsenwiki/commit/49fd313a923a8d3247dea9caad3df2797c18ac5b))
+* Upgrade packages & use $derived more & toHTML newline fix ([#165](https://github.com/Remahy/forsenwiki/issues/165)) ([c57ace7](https://github.com/Remahy/forsenwiki/commit/c57ace7ab254f54ba858a931a4e7eb1ddb563c86))
+* Upgrade packages, notably prisma and lexical ([#177](https://github.com/Remahy/forsenwiki/issues/177)) ([8ba8e0c](https://github.com/Remahy/forsenwiki/commit/8ba8e0cdc3f669e48c4337991f50fd4983bd7237))
+* Use `+page.server.js` files for redirect pages ([#145](https://github.com/Remahy/forsenwiki/issues/145)) ([4104ba2](https://github.com/Remahy/forsenwiki/commit/4104ba2e5eaae4a1b51577049a1582993c79619f))
+* Use dash `-` instead of `..` for diff endpoints ([#212](https://github.com/Remahy/forsenwiki/issues/212)) ([224c8c1](https://github.com/Remahy/forsenwiki/commit/224c8c1b9146ab020449cdc3d4058b34fe78a797))
+* Use post.rawTitle for old title ([#185](https://github.com/Remahy/forsenwiki/issues/185)) ([0268ea8](https://github.com/Remahy/forsenwiki/commit/0268ea82daccbac521f18622fce493f6aef26a49))
+* Use sanitized title for popular articles ([#155](https://github.com/Remahy/forsenwiki/issues/155)) ([7503ada](https://github.com/Remahy/forsenwiki/commit/7503ada896419b660d70817fefb73af937052394))
+* Various small additions & fixes ([#173](https://github.com/Remahy/forsenwiki/issues/173)) ([45436cf](https://github.com/Remahy/forsenwiki/commit/45436cfe7e404cfe299d92f5a52f4a4ce4e68bdd))
+* Video & Image node fixes & Linting ([#208](https://github.com/Remahy/forsenwiki/issues/208)) ([d95292d](https://github.com/Remahy/forsenwiki/commit/d95292d9d6fc7ebff68aec1611a99a4d0ff79e8a))
+* When calling setIsInternal, conditionally set `target="_blank"` ([#201](https://github.com/Remahy/forsenwiki/issues/201)) ([4f9fab0](https://github.com/Remahy/forsenwiki/commit/4f9fab01d5b19c448c922deb8f48e73d649a9f1d))
+
 ## [1.0.0-beta.16](https://github.com/Remahy/forsenwiki/compare/v1.0.0-beta.13...v1.0.0-beta.16) (2025-12-09)
 
 ### ⚠ BREAKING CHANGES

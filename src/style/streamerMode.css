@@ -1,0 +1,10 @@
+.streamer-mode {
+	.article-root {
+		img:not(.streamer-mode-disable),
+		video:not(.streamer-mode-disable),
+		[data-lexical-youtube]:not(.streamer-mode-disable),
+		[data-lexical-twitch]:not(.streamer-mode-disable) {
+			@apply cursor-pointer blur-3xl [clip-path:inset(0)];
+		}
+	}
+}
