@@ -22,7 +22,7 @@
 		} & { Component: any, props: any }} Note
 	 */
 
-	/** @type {Array<Note & { style: string, className: string }>} */
+	/** @type {Array<Note & { getStyle: (index: number) => string, className: string, y: number }>} */
 	let reactions = $state([]);
 
 	/** @type {Note[]} */
@@ -110,7 +110,8 @@
 		return {
 			...reaction,
 			className: 'reaction',
-			style: `top: ${y}px; left: -${(reaction.index > 0 ? (reaction.index) * 16 : 0) + 32}px;`,
+			y,
+			getStyle: (index) => `top: ${y}px; left: -${(index > 0 ? index * 16 : 0) + 32}px;`,
 		};
 	}
 
@@ -131,6 +132,11 @@
 			const reaction = getReactionPlacement(wrapper, content, entry);
 			if (!reaction) {
 				continue;
+			}
+
+			const atSameY = res.filter((r) => r.y === reaction.y);
+			if (atSameY.length) {
+				reaction.index += atSameY.length;
 			}
 
 			res.push(reaction);
@@ -204,7 +210,7 @@
 </script>
 
 {#each reactions as Reaction (Reaction.reactionKey + Reaction.anchor)}
-	<div style={Reaction.style} class={Reaction.className}>
+	<div style={Reaction.getStyle(Reaction.index)} class={Reaction.className}>
 		<Reaction.Component {...Reaction.props} />
 	</div>
 {/each}
