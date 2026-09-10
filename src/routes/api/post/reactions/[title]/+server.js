@@ -74,7 +74,7 @@ export const POST = async ({ params, locals, request }) => {
 	}
 
 	if (isSystem(post)) {
-		return ForbiddenError('This is a system article that cannot receive a reaction.');
+		return ForbiddenError('This is a system post that cannot receive a reaction.');
 	}
 
 	const updateUntilTimestamp = base64ToUint8Array(post.update);
@@ -140,7 +140,7 @@ export const GET = async ({ params }) => {
 	}
 
 	if (isSystem(post)) {
-		return ForbiddenError('This is a system article that cannot receive a reaction.');
+		return ForbiddenError('This is a system post that cannot receive a reaction.');
 	}
 
 	const update = base64ToUint8Array(post.update);

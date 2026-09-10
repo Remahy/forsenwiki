@@ -68,7 +68,7 @@
 		image,
 	} = $derived(data);
 
-	const isArticleSystem = $derived(isSystem({ id, outRelations }));
+	const isPostSystem = $derived(isSystem({ id, outRelations }));
 
 	const authorsScriptContent = $derived(
 		JSON.stringify({
@@ -124,7 +124,7 @@
 
 	<meta property="og:site_name" content="Forsen Wiki" />
 
-	{#if !isArticleSystem}
+	{#if !isPostSystem}
 		<link rel="canonical" href="{page.url.origin}/w/{title}" />
 		<meta property="og:url" content="{page.url.origin}/w/{title}" />
 
@@ -210,7 +210,7 @@
 
 				<ToC />
 			</div>
-		{:else if isArticleSystem}
+		{:else if isPostSystem}
 			<Box class="flex grow flex-col items-center justify-center gap-2 overflow-hidden p-12">
 				<h2 class="text-2xl">
 					This is {id === 'system' ? 'the' : 'a'} <strong>SYSTEM</strong> article with no content.
