@@ -16,8 +16,10 @@
 	import RandomButton from '$lib/components/RandomButton.svelte';
 	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
 	import Link from '$lib/components/Link.svelte';
+	import FloatingReact from '$lib/components/React/index.svelte';
 	import { isSystem } from '$lib/utils/isSystem.js';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL.js';
+	import Display from '$lib/components/React/Display.svelte';
 	import Article from '$lib/components/Article.svelte';
 	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
 	import { initializeEmblaForArticle } from '$lib/components/editor/plugins/Gallery/embla.js';
@@ -66,7 +68,7 @@
 		image,
 	} = $derived(data);
 
-	const isArticleSystem = $derived(isSystem({ id, outRelations }));
+	const isPostSystem = $derived(isSystem({ id, outRelations }));
 
 	const authorsScriptContent = $derived(
 		JSON.stringify({
@@ -122,7 +124,7 @@
 
 	<meta property="og:site_name" content="Forsen Wiki" />
 
-	{#if !isArticleSystem}
+	{#if !isPostSystem}
 		<link rel="canonical" href="{page.url.origin}/w/{title}" />
 		<meta property="og:url" content="{page.url.origin}/w/{title}" />
 
@@ -189,20 +191,26 @@
 				</header>
 			</SuggestionBox>
 
-			<div class="flex grow flex-col gap-4 lg:flex-row">
+			<div class="article-wrapper relative ml-6 flex grow flex-col gap-4 lg:ml-0 lg:flex-row">
+				<FloatingReact {title} />
+
 				<Box class="-mx-4 flex grow flex-col overflow-hidden p-4 sm:mx-0 lg:mb-0">
-					<main class="article-root prose dark:prose-invert max-w-[unset] grow wrap-break-word">
+					<main class="prose dark:prose-invert relative max-w-[unset] grow wrap-break-word">
 						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>
 
-						<Article {html} />
+						<div class="article-root relative">
+							<Article {html} />
+						</div>
 					</main>
 				</Box>
 
+				<Display {title} />
+
 				<ToC />
 			</div>
-		{:else if isArticleSystem}
+		{:else if isPostSystem}
 			<Box class="flex grow flex-col items-center justify-center gap-2 overflow-hidden p-12">
 				<h2 class="text-2xl">
 					This is {id === 'system' ? 'the' : 'a'} <strong>SYSTEM</strong> article with no content.

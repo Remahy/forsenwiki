@@ -23,6 +23,8 @@ model User {
 
   postUpdatesMetadata YPostUpdateMetadata[]
 
+  postRelativeRanges YPostRelativeRange[]
+
   content     Content[]
   permissions Permission[]
 
@@ -105,6 +107,8 @@ model YPost {
 
   html Html?
 
+  ranges YPostRelativeRange[]
+
   totalByteLength BigInt?
 
   lastUpdated      DateTime @default(now())
@@ -148,6 +152,27 @@ model YPostUpdateMetadata {
   oldTitle String?
 
   postUpdate YPostUpdate?
+}
+
+enum PostRangeType {
+  REACTION
+}
+
+model YPostRelativeRange {
+  id String @id @default(cuid())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  post   YPost  @relation(fields: [postId], references: [id])
+  postId String
+
+  type PostRangeType
+
+  anchor String @db.Text
+  focus  String @db.Text
+
+  content Json @default("{}")
 }
 
 model WhitelistedAccounts {

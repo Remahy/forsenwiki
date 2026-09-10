@@ -8,10 +8,11 @@ import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 
 /**
  * @param {string} title
+ * @param {Date} [timestamp]
  * @throws {number}
  */
-export const _getYPostByTitle = async (title) => {
-	const post = await readYPostUpdatesByTitle(title);
+export const _getYPostByTitle = async (title, timestamp) => {
+	const post = await readYPostUpdatesByTitle(title, timestamp);
 
 	if (!post) {
 		throw 404;
