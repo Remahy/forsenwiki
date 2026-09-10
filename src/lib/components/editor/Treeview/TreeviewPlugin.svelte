@@ -22,8 +22,6 @@
 		 * @param {boolean} shouldUpdateTree
 		 */
 		const debouncedFn = (selection, shouldUpdateTree) => {
-			console.log('a');
-
 			editor.read(() => {
 				if (!treeviewState.tree) {
 					return;
