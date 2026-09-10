@@ -15,9 +15,11 @@ import { createAbsoluteRange, createRelativeRange } from '$lib/components/editor
 import { decodeRelativePosition, encodeRelativePosition } from '$lib/yjs/utils.js';
 import { _getYPostByTitle } from '../../read/[title]/+server.js';
 import { createRange } from '$lib/db/range/create.js';
-import { readRangesForYPost } from '$lib/db/range/read.js';
+import { readRangesForYPost, readRangesForYPostByUser } from '$lib/db/range/read.js';
 import { reactions } from '$lib/components/React/reactions/reactions.js';
 import { $createRangeSelection as createRangeSelection } from 'lexical';
+
+const MAX_USER_REACTIONS_PER_POST = 5;
 
 const availableReactions = Object.keys(reactions);
 
@@ -75,6 +77,12 @@ export const POST = async ({ params, locals, request }) => {
 
 	if (isSystem(post)) {
 		return ForbiddenError('This is a system post that cannot receive a reaction.');
+	}
+
+	const rangesByUser = await readRangesForYPostByUser({ id: session.user.id }, post);
+
+	if (rangesByUser.length >= MAX_USER_REACTIONS_PER_POST) {
+		return ForbiddenError("You've exceeded your reaction count for this article.");
 	}
 
 	const updateUntilTimestamp = base64ToUint8Array(post.update);
@@ -222,3 +230,5 @@ export const GET = async ({ params }) => {
 
 	return json(reactions);
 };
+
+// TODO: DELETE REACTIONS
