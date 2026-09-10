@@ -191,7 +191,7 @@
 				</header>
 			</SuggestionBox>
 
-			<div class="article-wrapper relative flex grow flex-col gap-4 lg:flex-row">
+			<div class="article-wrapper relative ml-6 flex grow flex-col gap-4 lg:ml-0 lg:flex-row">
 				<FloatingReact {title} />
 
 				<Box class="-mx-4 flex grow flex-col overflow-hidden p-4 sm:mx-0 lg:mb-0">
