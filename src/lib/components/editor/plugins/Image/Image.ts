@@ -121,7 +121,9 @@ export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
 			return;
 		}
 
-		const finalSrc = getImageCacheURL(rawSrc, { width: self.__width, height: self.__height });
+		const { width, height } = self.getWidthAndHeight();
+
+		const finalSrc = getImageCacheURL(rawSrc, { width, height });
 
 		return finalSrc.toString();
 	}
