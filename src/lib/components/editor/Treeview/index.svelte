@@ -9,11 +9,6 @@
 	import { handleOnClickTreeNode, styleObjectToString, updateItems } from './utils';
 
 	/**
-	 * @type {{ class?: string }}
-	 */
-	let { class: className = '' } = $props();
-
-	/**
 	 * @typedef {import('@headless-tree/core').ItemInstance<LexicalNode>} ItemInstance
 	 */
 
@@ -57,7 +52,7 @@
 		{...restContainerProps}
 		ondragover={onDragOver}
 		ondrop={onDrop}
-		class="tree grow overflow-y-auto p-2 relative {className}"
+		class="tree grow overflow-y-auto p-2 relative"
 	>
 		{#each treeviewState.items as item (item.getId())}
 			{@const { onDragEnter, onDragLeave, onDragOver, onDrop, ...restProps } =

@@ -36,8 +36,9 @@
 			<Title text="Nodes" hasDefaultDelete={false} />
 		</div>
 	</button>
-
-	<Treeview class={isOpen ? '' : 'hidden'} />
+	{#if isOpen}
+		<Treeview />
+	{/if}
 </div>
 
 <div class="flex flex-wrap items-stretch">
