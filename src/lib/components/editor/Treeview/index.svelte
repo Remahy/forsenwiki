@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import { getEditor } from 'svelte-lexical';
 	import { ChevronDownIcon, ChevronRightIcon } from '@lucide/svelte';
 
@@ -32,7 +31,7 @@
 		updateItems(treeviewState);
 	};
 
-	onMount(() => {
+	$effect(() => {
 		if (!treeviewState.tree) {
 			return;
 		}
