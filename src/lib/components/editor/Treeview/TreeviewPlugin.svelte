@@ -59,8 +59,8 @@
 							/** @type {HTMLDivElement | undefined | null} */
 							const element = treeviewElement?.querySelector(`[data-id="${id}"]`);
 
-							if (element) {
-								treeviewElement?.scrollTo({
+							if (element && treeviewElement) {
+								treeviewElement.scrollTo({
 									top: element.offsetTop - treeviewElement.offsetTop,
 								});
 							}

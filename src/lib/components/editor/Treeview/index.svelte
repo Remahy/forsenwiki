@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import { getEditor } from 'svelte-lexical';
 	import { ChevronDownIcon, ChevronRightIcon } from '@lucide/svelte';
 
@@ -8,11 +7,6 @@
 	import ItemIcon from './ItemIcon.svelte';
 	import ItemName from './ItemName.svelte';
 	import { handleOnClickTreeNode, styleObjectToString, updateItems } from './utils';
-
-	/**
-	 * @type {{ class?: string }}
-	 */
-	let { class: className = '' } = $props();
 
 	/**
 	 * @typedef {import('@headless-tree/core').ItemInstance<LexicalNode>} ItemInstance
@@ -32,7 +26,7 @@
 		updateItems(treeviewState);
 	};
 
-	onMount(() => {
+	$effect(() => {
 		if (!treeviewState.tree) {
 			return;
 		}
@@ -58,7 +52,7 @@
 		{...restContainerProps}
 		ondragover={onDragOver}
 		ondrop={onDrop}
-		class="tree grow overflow-y-auto p-2 relative {className}"
+		class="tree grow overflow-y-auto p-2 relative"
 	>
 		{#each treeviewState.items as item (item.getId())}
 			{@const { onDragEnter, onDragLeave, onDragOver, onDrop, ...restProps } =
