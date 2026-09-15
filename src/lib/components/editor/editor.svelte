@@ -14,7 +14,6 @@
 
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
 	import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
-	import Box from '../Box.svelte';
 	import EditorModal from '../EditorModal.svelte';
 	import Toolbar from './toolbar/index.svelte';
 	import TreeviewWrapper from './toolbar/TreeviewWrapper.svelte';
@@ -61,10 +60,6 @@
 		};
 	});
 </script>
-
-<Box class="bg-blue-500/15! p-4">
-	<p><strong>New editor tree for nodes!</strong> There will be bugs! More features coming soon!</p>
-</Box>
 
 <Composer {initialConfig} bind:this={composer}>
 	<div class="relative flex min-h-96 gap-4">
@@ -119,7 +114,7 @@
 		</div>
 
 		<div
-			class="shrink-0 self-start editor-border sticky top-0 hidden h-fit max-h-screen flex-col xl:flex xl:w-96 xl:min-w-96"
+			class="editor-border sticky top-0 hidden h-fit max-h-screen shrink-0 flex-col self-start xl:flex xl:w-96 xl:min-w-96"
 		>
 			<TreeviewWrapper />
 		</div>
