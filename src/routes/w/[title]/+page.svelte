@@ -101,7 +101,7 @@
 		/**
 		 * @type {HTMLElement}
 		 */
-		const article = /** @type {any} */ (document.querySelector('main.article-root'));
+		const article = /** @type {any} */ (document.querySelector('main .article-root'));
 
 		/**
 		 * @type {Function[]}
