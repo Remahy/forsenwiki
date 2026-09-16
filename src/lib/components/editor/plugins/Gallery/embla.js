@@ -76,6 +76,21 @@ const addToggleThumbButtonsActive = (emblaApiMain, emblaApiThumb) => {
 		emblaApiThumb.scrollTo(emblaApiMain.selectedScrollSnap());
 		const previous = emblaApiMain.previousScrollSnap();
 		const selected = emblaApiMain.selectedScrollSnap();
+
+		const previousNode = emblaApiMain.slideNodes()[previous];
+
+		if (previousNode) {
+			const [item] = [...previousNode.querySelectorAll('video, iframe')];
+
+			if (item instanceof HTMLIFrameElement && item.contentWindow) {
+				item.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+			}
+
+			if (item instanceof HTMLVideoElement) {
+				item.pause();
+			}
+		}
+
 		slidesThumbs[previous].classList.remove('embla-thumbs__slide--selected');
 		slidesThumbs[selected].classList.add('embla-thumbs__slide--selected');
 	};

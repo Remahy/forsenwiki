@@ -165,6 +165,9 @@ export const getURLAndTitle = (
 				youtubeEmbedURL.searchParams.set('start', s);
 			}
 
+			// To enable pausing video in gallery.
+			youtubeEmbedURL.searchParams.set('enablejsapi', '1');
+
 			return {
 				url: youtubeEmbedURL.toString(),
 				title: `YouTube ${clipSlug && clipTId ? 'clip' : 'video'}`,
