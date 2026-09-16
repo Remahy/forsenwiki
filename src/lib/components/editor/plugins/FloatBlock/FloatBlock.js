@@ -207,7 +207,7 @@ export class FloatBlockNode extends ElementNode {
 		const format = this.getFormatType();
 
 		if (float === 'none') {
-			dom.style = decoratorFormatToMarginStyle(format);
+			dom.setAttribute('style', decoratorFormatToMarginStyle(format));
 		}
 
 		dom.style.float = float || 'none';
