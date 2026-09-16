@@ -1,3 +1,4 @@
+import { $createRangeSelection as createRangeSelection } from 'lexical';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 import { error, json } from '@sveltejs/kit';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
@@ -13,11 +14,10 @@ import {
 } from '$lib/components/editor/utils/getSelection.js';
 import { createAbsoluteRange, createRelativeRange } from '$lib/components/editor/utils/ranges.js';
 import { decodeRelativePosition, encodeRelativePosition } from '$lib/yjs/utils.js';
-import { _getYPostByTitle } from '../../read/[title]/+server.js';
 import { createRange } from '$lib/db/range/create.js';
 import { readRangesForYPost, readRangesForYPostByUser } from '$lib/db/range/read.js';
 import { reactions } from '$lib/components/React/reactions/reactions.js';
-import { $createRangeSelection as createRangeSelection } from 'lexical';
+import { _getYPostByTitle } from '../../read/[title]/+server.js';
 
 const MAX_USER_REACTIONS_PER_POST = 5;
 
@@ -76,13 +76,13 @@ export const POST = async ({ params, locals, request }) => {
 	}
 
 	if (isSystem(post)) {
-		return ForbiddenError('This is a system post that cannot receive a reaction.');
+		return error(400, 'This is a system post that cannot receive a reaction.');
 	}
 
 	const rangesByUser = await readRangesForYPostByUser({ id: session.user.id }, post);
 
 	if (rangesByUser.length >= MAX_USER_REACTIONS_PER_POST) {
-		return ForbiddenError("You've exceeded your reaction count for this article.");
+		return error(400, "You've exceeded your reaction count for this article.");
 	}
 
 	const updateUntilTimestamp = base64ToUint8Array(post.update);
@@ -148,7 +148,7 @@ export const GET = async ({ params }) => {
 	}
 
 	if (isSystem(post)) {
-		return ForbiddenError('This is a system post that cannot receive a reaction.');
+		return error(400, 'This is a system post that cannot receive a reaction.');
 	}
 
 	const update = base64ToUint8Array(post.update);

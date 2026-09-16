@@ -1,6 +1,5 @@
 import { error, json } from '@sveltejs/kit';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
-
 import {
 	diffUpdateUsingStateVectorV2,
 	encodeYDocToUpdateV2,
@@ -106,7 +105,7 @@ export async function POST({ request, locals, params }) {
 	}
 
 	if (isSystem(post)) {
-		return ForbiddenError('This is a system post that cannot be edited.');
+		return error(400, 'This is a system post that cannot be edited.');
 	}
 
 	const systemRelations = await readSystemYPostRelations(post.id);
@@ -115,7 +114,7 @@ export async function POST({ request, locals, params }) {
 		newTitle = null;
 
 		if (post.originalAuthorId !== session.user.id) {
-			return ForbiddenError("You're not allowed to edit someone else's bio.");
+			return error(400, "You're not allowed to edit someone else's bio.");
 		}
 	}
 

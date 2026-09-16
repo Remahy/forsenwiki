@@ -2,5 +2,5 @@
 
 /* right-side gutter */
 .reaction {
-	@apply absolute -left-8 h-auto w-6 opacity-25 transition-[top] duration-200 ease-in;
+	@apply absolute -left-8 h-auto w-6 opacity-75 transition-[top] duration-200 ease-in;
 }
