@@ -4,6 +4,7 @@ import {
 	FLOATBLOCK_MIN_WIDTH,
 	floatValues,
 } from '$lib/constants/floatBlock';
+import { decoratorFormatToMarginStyle } from '../VideoEmbed/DecoratorBlockNode';
 
 const startValues = ['left', 'inline-start'];
 const endValues = ['right', 'inline-end'];
@@ -203,6 +204,11 @@ export class FloatBlockNode extends ElementNode {
 	 */
 	updateDOM(_, dom, config) {
 		const float = this.getFloat();
+		const format = this.getFormatType();
+
+		if (float === 'none') {
+			dom.setAttribute('style', decoratorFormatToMarginStyle(format));
+		}
 
 		dom.style.float = float || 'none';
 
@@ -267,7 +273,7 @@ export class FloatBlockNode extends ElementNode {
 		return false;
 	}
 
-	canBeEmpty () {
+	canBeEmpty() {
 		return false;
 	}
 

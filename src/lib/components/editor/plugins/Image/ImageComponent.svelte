@@ -64,18 +64,31 @@
 
 	let isParentGallery = $derived(editor.read(() => isGalleryNode(node.getParent())));
 
-	let promise = $derived.by(async () => {
-		try {
-			const image = await loadContent(id, src);
+	/**
+	 * @type {string | boolean | undefined}
+	 */
+	let url = $state(false);
 
-			if (image) {
-				return image.url;
-			} else {
-				return editor.read(() => node.getRenderedSrc());
+	$effect(() => {
+		// These just refresh the effect.
+		width;
+		height;
+
+		url = '';
+
+		(async () => {
+			try {
+				const image = await loadContent(id, src);
+
+				if (image) {
+					url = image.url;
+				} else {
+					url = editor.read(() => node.getRenderedSrc());
+				}
+			} catch (err) {
+				console.error('Failed loading image from IndexedDb', err);
 			}
-		} catch (err) {
-			console.error('Failed loading image from IndexedDb', err);
-		}
+		})();
 	});
 
 	/** @param {KeyboardEvent} payload */
@@ -229,7 +242,7 @@
 
 <!-- Div wrapper is required to make resizer work properly -->
 <div bind:this={imageRef} class="overflow-hidden" class:focused={isFocused}>
-	{#await promise}
+	{#if url === false}
 		<figure
 			style:width={widthCss}
 			style:height={heightCss}
@@ -242,15 +255,15 @@
 				alt={altText}
 			/>
 		</figure>
-	{:then value}
+	{:else if typeof url === 'string'}
 		<img
 			style:width={widthCss}
 			style:height={heightCss}
 			class="m-0"
-			src={value === '' ? IMAGE_OFF : value}
+			src={url === '' ? IMAGE_OFF : url}
 			alt={altText}
 		/>
-	{/await}
+	{/if}
 </div>
 
 {#if resizable && isNodeSelection(selection) && isFocused && !isParentGallery}
