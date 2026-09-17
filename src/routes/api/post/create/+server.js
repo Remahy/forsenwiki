@@ -12,7 +12,7 @@ import { encodeYDocToUpdateV2 } from '$lib/yjs/utils';
 import { upsertHTML } from '$lib/db/post/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
-import { AVAILABLE_Y_POST_TYPES, EDITOR_IS_READONLY, Y_POST_TYPES } from '$lib/constants/constants';
+import { EDITOR_IS_EDITABLE, AVAILABLE_Y_POST_TYPES, Y_POST_TYPES } from '$lib/constants/constants';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages.js';
 import { pruneFailedUploads, validateUploads } from '$lib/s3/validateUploads.server.js';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server.js';
@@ -64,7 +64,7 @@ export async function POST({ request, locals }) {
 		}
 
 		const data = getYjsAndEditor(
-			articleConfig(null, EDITOR_IS_READONLY, null),
+			articleConfig(null, EDITOR_IS_EDITABLE, null),
 			base64ToUint8Array(content)
 		);
 		editor = data.editor;
@@ -97,15 +97,15 @@ export async function POST({ request, locals }) {
 	}
 
 	// By this point, we have probably modified the editor. Let's recreate the content.
-	const backendUpdate = encodeYDocToUpdateV2(doc);
+	const fullYDocUpdate = encodeYDocToUpdateV2(doc);
 
-	const { byteLength } = backendUpdate;
+	const { byteLength } = fullYDocUpdate;
 
-	const backendContent = uint8ArrayToBase64(backendUpdate);
+	const contentBase64 = uint8ArrayToBase64(fullYDocUpdate);
 
 	const internalIds = getInternalIds(editor);
 
-	const body = { title, data: { content: backendContent }, ids: internalIds };
+	const body = { title, data: { content: contentBase64 }, ids: internalIds };
 	const metadata = {
 		user: { name: session.user.name, id: session.user.id },
 		byteLength,
@@ -114,7 +114,7 @@ export async function POST({ request, locals }) {
 
 	const createdPost = await createPost(body, metadata);
 
-	const { html, text, image } = await toHTML({ config: 'article', update: backendContent });
+	const { html, text, image } = await toHTML({ config: 'article', update: contentBase64 });
 
 	await upsertHTML(createdPost.id, { content: html, text, image });
 

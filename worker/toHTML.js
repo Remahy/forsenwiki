@@ -4,13 +4,12 @@ import { workerData, parentPort } from 'node:worker_threads';
 
 import { $getRoot, $nodesOfType } from 'lexical';
 import { $generateHtmlFromNodes } from '@lexical/html';
-import { createHeadlessEditor } from '@lexical/headless';
 import { base64ToUint8Array } from 'uint8array-extras';
 
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { articleConfig } from '$lib/components/editor/config/article';
 import { diffConfig } from '$lib/components/editor/config/diff';
-import { EDITOR_IS_READONLY } from '$lib/constants/constants';
+import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
 import { ImageNode } from '$lib/lexical/custom';
 import { migrations } from '$lib/components/editor/migrations';
 
@@ -27,16 +26,16 @@ const $$getFirstImage = () => {
 
 export const toHTMLWorker = async (data) => {
 	/**
-	 * @type {{ config: string, content: string, update: string }}
+	 * @type {{ config: string, update: string }}
 	 */
-	const { config, content, update } = data || workerData || {};
+	const { config, update } = data || workerData || {};
 
 	if (!config) {
 		throw new Error('No config string provided.');
 	}
 
-	if (!content && !update) {
-		throw new Error('No content and/or update provided.');
+	if (!update) {
+		throw new Error('No update provided.');
 	}
 
 	let cfg;
@@ -49,20 +48,8 @@ export const toHTMLWorker = async (data) => {
 			break;
 	}
 
-	/**
-	 * @type {import('lexical').LexicalEditor}
-	 */
-	let editor;
-	if (update) {
-		const eY = getYjsAndEditor(cfg(null, EDITOR_IS_READONLY, null), base64ToUint8Array(update));
-		editor = eY.editor;
-	} else {
-		editor = createHeadlessEditor(cfg(null, EDITOR_IS_READONLY, null));
-
-		editor.setEditorState(editor.parseEditorState(content));
-
-		migrations(editor);
-	}
+	const { editor } = getYjsAndEditor(cfg(null, EDITOR_IS_EDITABLE, null), base64ToUint8Array(update));
+	migrations(editor);
 
 	return editor.read(() => {
 		const text = $$getTextInEditor().replace(/\n/g, ' ');

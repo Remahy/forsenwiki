@@ -42,3 +42,20 @@ export const updatePost = async (postTitle, yDoc, newTitle) => {
 
 	return fetch(`/api/post/update/${postTitle}`, { method: 'POST', body, headers });
 };
+
+/**
+ * @param {string} postTitle
+ * @param {{ openTime: number, offset: number[], reaction: string }} arg
+ */
+export const addReaction = async (postTitle, { openTime, offset, reaction }) => {
+	const body = JSON.stringify({ openTime, offset, reaction });
+
+	return fetch(`/api/post/reactions/${postTitle}`, { method: 'POST', body, headers });
+};
+
+/**
+ * @param {string} postTitle
+ */
+export const readReactions = async (postTitle) => {
+	return fetch(`/api/post/reactions/${postTitle}`, { method: 'GET', headers });
+};
