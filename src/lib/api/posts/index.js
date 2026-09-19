@@ -59,3 +59,11 @@ export const addReaction = async (postTitle, { openTime, offset, reaction }) => 
 export const readReactions = async (postTitle) => {
 	return fetch(`/api/post/reactions/${postTitle}`, { method: 'GET', headers });
 };
+
+/**
+ * @param {string} postTitle
+ * @param {string} reactionId
+ */
+export const deleteReaction = async (postTitle, reactionId) => {
+	return fetch(`/api/post/reactions/${postTitle}/${reactionId}`, { method: 'DELETE', headers });
+};

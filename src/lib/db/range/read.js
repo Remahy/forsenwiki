@@ -26,6 +26,31 @@ export const readRangesForYPost = (post, type = PostRangeType.REACTION) => {
 };
 
 /**
+ * @param {{ id: string }} post
+ * @param {string} rangeId
+ */
+export const readRangeByYPostAndRangeId = (post, rangeId) => {
+	return prisma.yPostRelativeRange.findFirst({
+		where: {
+			postId: post.id,
+			id: rangeId,
+		},
+		include: {
+			user: {
+				select: {
+					id: true,
+					name: true,
+				},
+			},
+		},
+		omit: {
+			postId: true,
+			userId: true,
+		},
+	});
+};
+
+/**
  * @param {{ id: string }} user
  * @param {{ id: string }} post
  * @param {any} [type]

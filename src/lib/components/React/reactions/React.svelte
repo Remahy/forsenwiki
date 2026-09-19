@@ -4,10 +4,11 @@
 	/**
 	 * @typedef {Object} Props
 	 * @property {string} imageURL
+	 * @property {string} class
 	 */
 
 	/** @type {Props} */
-	let { imageURL } = $props();
+	let { imageURL, class: className = '' } = $props();
 </script>
 
-<img src="{STATIC_DOMAIN}/reactions/{imageURL}" alt="" />
+<img src="{STATIC_DOMAIN}/reactions/{imageURL}" alt="" class={className} />

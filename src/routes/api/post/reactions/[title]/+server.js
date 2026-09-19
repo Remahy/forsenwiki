@@ -230,5 +230,3 @@ export const GET = async ({ params }) => {
 
 	return json(reactions);
 };
-
-// TODO: DELETE REACTIONS

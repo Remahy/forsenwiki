@@ -3,26 +3,24 @@
 	import { browser } from '$app/environment';
 	import { readReactions } from '$lib/api/posts';
 	import { debounce } from '$lib/utils/debounce';
+	import { modal } from '$lib/stores/modal';
 	import { reactions as reactionsMap } from './reactions/reactions';
 	import React from './reactions/React.svelte';
 	import React1 from './reactions/React_1.svelte';
 	import React2 from './reactions/React_2.svelte';
 	import { reactionGlobals } from './store.svelte';
+	import ReactionsModal from './ReactionsModal.svelte';
 
 	import './Display.css';
 
 	const { title = '' } = $props();
 
 	/**
-	 * @typedef {{
-			anchor: number,
-			reactionKey: string,
-			index: number,
-			authors: Array<{ id: string, name: string, rangeId: string }>
-		} & { Component: any, props: any }} Note
+	 * @typedef {import('./reaction').DisplayReaction} DisplayReaction
+	 * @typedef {import('./reaction').Note} Note
 	 */
 
-	/** @type {Array<Note & { getStyle: (index: number) => string, className: string, y: number }>} */
+	/** @type {DisplayReaction[]} */
 	let reactions = $state([]);
 
 	/** @type {Note[]} */
@@ -34,7 +32,7 @@
 	/**
 	 * @param {HTMLElement} root
 	 */
-	function getAllTextNodes(root) {
+	const getAllTextNodes = (root) => {
 		const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
 		const nodes = [];
 
@@ -45,13 +43,13 @@
 		}
 
 		return nodes;
-	}
+	};
 
 	/**
 	 * @param {HTMLElement} wrapper
 	 * @param {number} offset
 	 */
-	function resolveOffsetInWrapper(wrapper, offset) {
+	const resolveOffsetInWrapper = (wrapper, offset) => {
 		const nodes = getAllTextNodes(wrapper);
 
 		let current = 0;
@@ -74,7 +72,7 @@
 		}
 
 		return null;
-	}
+	};
 
 	/**
 	 * @param {HTMLElement} wrapper
@@ -82,7 +80,7 @@
 	 * @param {Note} reaction
 	 * @returns {reactions[0] | undefined}
 	 */
-	function getReactionPlacement(wrapper, content, reaction) {
+	const getReactionPlacement = (wrapper, content, reaction) => {
 		const { anchor } = reaction;
 
 		const resolved = resolveOffsetInWrapper(content, anchor);
@@ -113,7 +111,7 @@
 			y,
 			getStyle: (index) => `top: ${y}px; left: -${(index > 0 ? index * 16 : 0) + 32}px;`,
 		};
-	}
+	};
 
 	/**
 	 * @param {Note[]} data
@@ -149,7 +147,7 @@
 		update(retrievedReactions);
 	});
 
-	async function loadReactions() {
+	const loadReactions = async () => {
 		try {
 			const res = await readReactions(title);
 
@@ -190,7 +188,22 @@
 		} catch (err) {
 			console.error(err);
 		}
-	}
+	};
+
+	/**
+	 * @param {DisplayReaction[]} reactions
+	 * @param {number} y
+	 */
+	const showReactions = (reactions, y) => {
+		const relevantReactions = reactions.filter((r) => r.y === y);
+
+		modal.set({
+			reactions: relevantReactions,
+			postTitle: title,
+			isOpen: true,
+			component: ReactionsModal,
+		});
+	};
 
 	onMount(() => {
 		const debouncedResize = debounce(() => update(retrievedReactions), 200);
@@ -210,7 +223,11 @@
 </script>
 
 {#each reactions as Reaction (Reaction.reactionKey + Reaction.anchor)}
-	<div style={Reaction.getStyle(Reaction.index)} class={Reaction.className}>
+	<button
+		style={Reaction.getStyle(Reaction.index)}
+		class={Reaction.className}
+		onclick={() => showReactions(reactions, Reaction.y)}
+	>
 		<Reaction.Component {...Reaction.props} />
-	</div>
+	</button>
 {/each}
