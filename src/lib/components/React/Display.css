@@ -1,0 +1,6 @@
+@reference "../../../app.css";
+
+/* right-side gutter */
+.reaction {
+	@apply absolute -left-8 h-auto w-6 cursor-pointer opacity-75 transition-[top] duration-200 ease-in hover:z-10 hover:w-12 hover:opacity-100;
+}

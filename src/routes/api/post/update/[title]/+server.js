@@ -1,6 +1,5 @@
 import { error, json } from '@sveltejs/kit';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
-
 import {
 	diffUpdateUsingStateVectorV2,
 	encodeYDocToUpdateV2,
@@ -18,7 +17,7 @@ import { invalidatePostCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/post/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
-import { EDITOR_IS_READONLY, Y_POST_TYPES } from '$lib/constants/constants';
+import { EDITOR_IS_EDITABLE, Y_POST_TYPES, EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { isSystem } from '$lib/utils/isSystem';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
@@ -73,15 +72,15 @@ export async function POST({ request, locals, params }) {
 		return ForbiddenError();
 	}
 
-	/**
-	 * @type {PartialErrors}
-	 */
-	const partialErrors = [];
-
 	const session = await auth();
 	if (!session?.user?.id || !session?.user?.name) {
 		return ForbiddenError();
 	}
+
+	/**
+	 * @type {PartialErrors}
+	 */
+	const partialErrors = [];
 
 	/**
 	 * @param {string} content
@@ -106,7 +105,7 @@ export async function POST({ request, locals, params }) {
 	}
 
 	if (isSystem(post)) {
-		return ForbiddenError('This is a system post that cannot be edited.');
+		return error(400, 'This is a system post that cannot be edited.');
 	}
 
 	const systemRelations = await readSystemYPostRelations(post.id);
@@ -115,7 +114,7 @@ export async function POST({ request, locals, params }) {
 		newTitle = null;
 
 		if (post.originalAuthorId !== session.user.id) {
-			return ForbiddenError("You're not allowed to edit someone else's bio.");
+			return error(400, "You're not allowed to edit someone else's bio.");
 		}
 	}
 
@@ -134,7 +133,7 @@ export async function POST({ request, locals, params }) {
 
 	let e;
 	try {
-		e = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), combinedInitialUpdate);
+		e = getYjsAndEditor(articleConfig(null, EDITOR_IS_EDITABLE, null), combinedInitialUpdate);
 		const editor = e.editor;
 
 		await serverRunValidations(editor);
@@ -173,10 +172,12 @@ export async function POST({ request, locals, params }) {
 
 	const combinedFinalDiff = mergePostUpdatesV2([initialDiff, finalDiff]);
 
+	// The size of this update.
 	const { byteLength } = combinedFinalDiff;
 
-	// Total size of the YDoc with the new update.
-	const { byteLength: totalByteLength } = mergePostUpdatesV2([currentUpdate, combinedFinalDiff]);
+	const fullYDocUpdate = mergePostUpdatesV2([currentUpdate, combinedFinalDiff]);
+	// New total size of the YDoc.
+	const { byteLength: totalByteLength } = fullYDocUpdate;
 
 	const internalIds = getInternalIds(editor);
 	const outRelations = internalIds.map((mentionPostId) => ({
@@ -203,7 +204,7 @@ export async function POST({ request, locals, params }) {
 
 	const { html, text, image } = await toHTML({
 		config: 'article',
-		content: JSON.stringify(editor.getEditorState().toJSON()),
+		update: uint8ArrayToBase64(fullYDocUpdate),
 	});
 
 	await upsertHTML(post.id, { content: html, text, image });
