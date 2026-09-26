@@ -48,27 +48,37 @@
 		<div class="flex flex-col gap-4 overflow-y-auto p-4">
 			{#each reactions as Reaction (`${Reaction.reactionKey}${Reaction.anchor}${Reaction.focus}`)}
 				{@const haveReaction = Reaction.authors.find((author) => author.name === myUserName)}
-				<div class="forsen-wiki-theme-border search flex items-center gap-2 border p-2">
-					<Reaction.Component {...Reaction.props} class="h-12 w-auto" />
+				<div class="forsen-wiki-theme-border search flex flex-col gap-4 border p-2">
+					<div class="flex flex-wrap items-center gap-2">
+						<Reaction.Component {...Reaction.props} class="h-12 w-auto self-start" />
 
-					<div class="grow">
-						{#each Reaction.authors as author, index (author.rangeId)}
-							<span>
-								<Link href="/user/{author.id}" target="_blank">{author.name}</Link>{index <
-								Reaction.authors.length - 1
-									? ', '
-									: ''}
-							</span>
-						{/each}
+						<div class="grow whitespace-pre">
+							{Reaction.text}
+						</div>
 					</div>
 
-					{#if haveReaction}
-						<Button
-							class="min-h-[unset]! min-w-[unset]! p-2!"
-							onclick={() => handleDeleteReaction(haveReaction.rangeId)}
-							><Trash2Icon size={16} /></Button
-						>
-					{/if}
+					<hr class="forsen-wiki-theme-border mb-4" />
+
+					<div class="flex gap-2">
+						<div class="grow">
+							{#each Reaction.authors as author, index (author.rangeId)}
+								<span>
+									<Link href="/user/{author.id}" target="_blank">{author.name}</Link>{index <
+									Reaction.authors.length - 1
+										? ', '
+										: ''}
+								</span>
+							{/each}
+						</div>
+						{#if haveReaction}
+							<Button
+								class="min-h-[unset]! min-w-[unset]! p-2!"
+								onclick={() => handleDeleteReaction(haveReaction.rangeId)}
+							>
+								<Trash2Icon size={16} />
+							</Button>
+						{/if}
+					</div>
 				</div>
 			{/each}
 		</div>

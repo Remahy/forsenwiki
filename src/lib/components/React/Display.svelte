@@ -81,16 +81,33 @@
 	 * @returns {reactions[0] | undefined}
 	 */
 	const getReactionPlacement = (wrapper, content, reaction) => {
-		const { anchor } = reaction;
+		const { anchor, focus } = reaction;
 
-		const resolved = resolveOffsetInWrapper(content, anchor);
-		if (!resolved) {
+		const resolvedAnchor = resolveOffsetInWrapper(content, anchor);
+		if (!resolvedAnchor) {
 			return;
 		}
 
 		const range = document.createRange();
-		range.setStart(resolved.node, resolved.localOffset);
-		range.setEnd(resolved.node, resolved.localOffset);
+		range.setStart(resolvedAnchor.node, resolvedAnchor.localOffset);
+		range.setEnd(resolvedAnchor.node, resolvedAnchor.localOffset);
+
+		const resolvedFocus = resolveOffsetInWrapper(content, focus);
+
+		/**
+		 * @type {string | null}
+		 */
+		let text = null;
+		if (resolvedFocus) {
+			const textRange = document.createRange();
+
+			textRange.setStart(resolvedAnchor.node, resolvedAnchor.localOffset);
+			textRange.setEnd(resolvedFocus.node, resolvedFocus.localOffset);
+			const tempDiv = document.createElement('div');
+			tempDiv.append(textRange.cloneContents());
+			tempDiv.innerHTML = tempDiv.innerHTML.replace(/<br>/g, '\n');
+			text = tempDiv.innerText.trim();
+		}
 
 		// temporary invisible marker
 		const marker = document.createElement('span');
@@ -109,6 +126,7 @@
 			...reaction,
 			className: 'reaction',
 			y,
+			text,
 			getStyle: (index) => `top: ${y}px; left: -${(index > 0 ? index * 16 : 0) + 32}px;`,
 		};
 	};

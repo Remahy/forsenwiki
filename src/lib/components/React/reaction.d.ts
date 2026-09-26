@@ -9,5 +9,6 @@ export type Note = {
 export type DisplayReaction = Note & {
 	getStyle: (index: number) => string;
 	className: string;
+	text: string | null;
 	y: number;
 };
