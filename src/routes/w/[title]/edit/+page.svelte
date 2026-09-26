@@ -1,6 +1,6 @@
 <script>
 	import { getContext, onMount } from 'svelte';
-	import { FileIcon, FileUpIcon, HistoryIcon } from '@lucide/svelte';
+	import { FileIcon, FileUpIcon, RotateCcwClockIcon } from '@lucide/svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
@@ -91,9 +91,7 @@
 				return;
 			}
 
-			error = new Error(
-				"Unknown error occurred while trying to delete this article's draft cache."
-			);
+			error = new Error("Unknown error occurred while trying to delete this post's draft cache.");
 		}
 	};
 
@@ -204,7 +202,7 @@
 
 		<div class="flex shrink-0 items-start gap-2">
 			<LinkButton href="/w/{title}/history" class="flex items-center gap-2 text-sm">
-				<HistoryIcon size="16" /><span class="hidden md:inline">History</span>
+				<RotateCcwClockIcon size="16" /><span class="hidden md:inline">History</span>
 			</LinkButton>
 
 			<LinkButton href="/w/{title}" class="flex items-center gap-2 text-sm">
@@ -283,7 +281,7 @@
 				<FileUpIcon class="inline min-w-6 lg:hidden" />
 			</Button>
 		{:else}
-			<span class="p-2 forsen-wiki-theme-border border">Login to submit.</span>
+			<span class="forsen-wiki-theme-border border p-2">Login to submit.</span>
 		{/if}
 	</Box>
 
