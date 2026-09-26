@@ -1,5 +1,6 @@
 export type Note = {
 	anchor: number;
+	focus: number;
 	reactionKey: string;
 	index: number;
 	authors: Array<{ id: string; name: string; rangeId: string }>;

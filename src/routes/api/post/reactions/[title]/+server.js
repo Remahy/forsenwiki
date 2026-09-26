@@ -36,6 +36,74 @@ const getReactionData = (data) => {
 	return null;
 };
 
+/**
+ * @param {LexicalEditor} editor
+ * @param {YDoc} doc
+ * @param {{ anchor: string, focus: string }} range
+ */
+const rangeToPoint = (editor, doc, range) => {
+	return editor.read(() => {
+		const decodedRelativeRanges = {
+			anchor: decodeRelativePosition(base64ToUint8Array(range.anchor)),
+			focus: decodeRelativePosition(base64ToUint8Array(range.focus)),
+		};
+
+		const absoluteRange = createAbsoluteRange(doc, decodedRelativeRanges);
+
+		if (!absoluteRange) {
+			return null;
+		}
+
+		const selection = createRangeSelection();
+		selection.anchor.set(absoluteRange.anchorNode.getKey(), absoluteRange.anchorOffset, 'text');
+		selection.focus.set(absoluteRange.focusNode.getKey(), absoluteRange.focusOffset, 'text');
+
+		return getGlobalOffsets(selection);
+	});
+};
+
+/**
+ * @param {{ start: number, end: number }} obj
+ */
+const normalizedPoint = ({ start, end }) => {
+	if (end > start) {
+		return { start: end, end: start };
+	} else {
+		return { start, end };
+	}
+};
+
+/**
+ * @param {Object} Obj
+ * @param {LexicalEditor} Obj.editor
+ * @param {Array<{ anchor: string, focus: string }>} Obj.ranges
+ * @param {YDoc} Obj.doc
+ * @param {{ start: number, end: number }} Obj.point
+ */
+const hasPointInRanges = ({ editor, doc, ranges, point: _point }) => {
+	const point = normalizedPoint(_point);
+
+	for (let index = 0; index < ranges.length; index++) {
+		const range = ranges[index];
+
+		const _entry = rangeToPoint(editor, doc, range);
+
+		if (!_entry) {
+			continue;
+		}
+
+		const entry = normalizedPoint(_entry);
+
+		const found = entry.start === point.start && entry.end === point.end;
+
+		if (found) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
 export const POST = async ({ params, locals, request }) => {
 	const { isBlocked, auth } = locals;
 
@@ -49,9 +117,7 @@ export const POST = async ({ params, locals, request }) => {
 	}
 
 	/**
-	 * @param {number} openTime
-	 * @param {number[]} offset
-	 * @param {string} reaction
+	 * @type {{ openTime: number, offset: number[], reaction: string }}
 	 */
 	const { openTime, offset, reaction } = await request.json();
 
@@ -88,7 +154,7 @@ export const POST = async ({ params, locals, request }) => {
 	const updateUntilTimestamp = base64ToUint8Array(post.update);
 
 	try {
-		const { editor, binding } = getYjsAndEditor(
+		const { editor, binding, doc } = getYjsAndEditor(
 			articleConfig(null, EDITOR_IS_READONLY, null),
 			updateUntilTimestamp
 		);
@@ -108,10 +174,23 @@ export const POST = async ({ params, locals, request }) => {
 				);
 			}
 
-			return {
+			const range = {
 				anchor: uint8ArrayToBase64(encodeRelativePosition(data.anchorPos)),
 				focus: uint8ArrayToBase64(encodeRelativePosition(data.focusPos)),
 			};
+
+			const foundRange = hasPointInRanges({
+				editor,
+				doc,
+				ranges: rangesByUser,
+				point: { start: offset[0], end: offset[1] },
+			});
+
+			if (foundRange) {
+				throw new Error('You have already added this reaction to this range.');
+			}
+
+			return range;
 		});
 
 		const content = {
@@ -127,6 +206,10 @@ export const POST = async ({ params, locals, request }) => {
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidPost(err);
+		}
+
+		if (err instanceof Error) {
+			return error(400, err.message);
 		}
 
 		return error(400);
@@ -179,30 +262,13 @@ export const GET = async ({ params }) => {
 	for (let index = 0; index < ranges.length; index++) {
 		const range = ranges[index];
 
-		const offsets = editor.read(() => {
-			const decodedRelativeRanges = {
-				anchor: decodeRelativePosition(base64ToUint8Array(range.anchor)),
-				focus: decodeRelativePosition(base64ToUint8Array(range.focus)),
-			};
+		const point = rangeToPoint(editor, doc, range);
 
-			const absoluteRange = createAbsoluteRange(doc, decodedRelativeRanges);
-
-			if (!absoluteRange) {
-				return null;
-			}
-
-			const selection = createRangeSelection();
-			selection.anchor.set(absoluteRange.anchorNode.getKey(), absoluteRange.anchorOffset, 'text');
-			selection.focus.set(absoluteRange.focusNode.getKey(), absoluteRange.focusOffset, 'text');
-
-			return getGlobalOffsets(selection);
-		});
-
-		if (!offsets) {
+		if (!point) {
 			continue;
 		}
 
-		const { start, end } = offsets;
+		const { start, end } = point;
 
 		try {
 			const key = `${start}-${end}`;

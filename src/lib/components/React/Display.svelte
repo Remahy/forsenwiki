@@ -161,7 +161,7 @@
 
 			for (let index = 0; index < offsets.length; index++) {
 				const [offsetKey, offsetValues] = offsets[index];
-				const [start] = offsetKey.split('-');
+				const [start, end] = offsetKey.split('-');
 				const reactionKeys = Object.keys(offsetValues);
 
 				for (let ii = 0; ii < reactionKeys.length; ii++) {
@@ -175,6 +175,7 @@
 
 					result.push({
 						anchor: Number(start),
+						focus: Number(end),
 						index: ii,
 						reactionKey,
 						props: reaction,
