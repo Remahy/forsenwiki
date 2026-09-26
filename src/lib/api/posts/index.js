@@ -65,5 +65,5 @@ export const readReactions = async (postTitle) => {
  * @param {string} reactionId
  */
 export const deleteReaction = async (postTitle, reactionId) => {
-	return fetch(`/api/post/reactions/${postTitle}/${reactionId}`, { method: 'DELETE', headers });
+	return fetch(`/api/post/reactions/${postTitle}/${reactionId}`, { method: 'DELETE' });
 };

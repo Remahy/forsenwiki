@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import prisma from '$lib/prisma.server.js';
+import prisma, { PostRangeType } from '$lib/prisma.server.js';
 import { SYSTEM } from '$lib/constants/constants.js';
 
 export async function load({ url, params }) {
@@ -37,6 +37,7 @@ export async function load({ url, params }) {
 
 	let stats = {
 		editedArticles: 0,
+		reactions: 0,
 		uploadedContent: {
 			total: 0,
 			images: 0,
@@ -51,26 +52,43 @@ export async function load({ url, params }) {
 	}
 
 	if (id !== SYSTEM) {
-		stats.editedArticles = await prisma.yPost.count({
-			where: { postUpdates: { some: { metadata: { userId: id } } } },
-		});
-
-		stats.uploadedContent = {
-			total: await prisma.content.count({
+		const [editedArticles, reactions, total, images, videos, audio, documents] = await Promise.all([
+			prisma.yPost.count({
+				where: { postUpdates: { some: { metadata: { userId: id } } } },
+			}),
+			prisma.yPostRelativeRange.count({
+				where: {
+					userId: id,
+					type: PostRangeType.REACTION,
+				},
+			}),
+			prisma.content.count({
 				where: { authorId: id },
 			}),
-			images: await prisma.content.count({
+			prisma.content.count({
 				where: { authorId: id, type: 'image' },
 			}),
-			videos: await prisma.content.count({
+			prisma.content.count({
 				where: { authorId: id, type: 'video' },
 			}),
-			audio: await prisma.content.count({
+			prisma.content.count({
 				where: { authorId: id, type: 'audio' },
 			}),
-			documents: await prisma.content.count({
+			prisma.content.count({
 				where: { authorId: id, type: 'document' },
 			}),
+		]);
+
+		stats.editedArticles = editedArticles;
+
+		stats.reactions = reactions;
+
+		stats.uploadedContent = {
+			total,
+			images,
+			videos,
+			audio,
+			documents,
 		};
 	}
 
