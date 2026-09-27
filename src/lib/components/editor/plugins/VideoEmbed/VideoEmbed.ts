@@ -80,10 +80,10 @@ export const getIframeStyle = (
 		widthStyle = 'width:100%;';
 	}
 
-	const heightStyle = height === 'inherit' ? 'height:auto;' : '';
+	const heightStyle = height === 'inherit' ? 'height:auto;' : `height:${height}px;`;
 
 	const min = `min-width:${VIDEO_MIN_WIDTH}px;min-height:${VIDEO_MIN_HEIGHT}px;`;
-	const max = 'max-width:100vw;max-height:100vh;';
+	const max = 'max-width:92vw;max-height:92vh;';
 	const aspectRatio = width === 'inherit' || height === 'inherit' ? 'aspect-ratio:16/9;' : '';
 
 	return `${min}${max}${aspectRatio}${widthStyle}${heightStyle}${formatType ? decoratorFormatToMarginStyle(formatType) : ''}margin-top: 0!important;margin-bottom:0!important;`;
@@ -121,11 +121,73 @@ const convertTtoSeconds = (tString: string) => {
 	return seconds.toFixed(0);
 };
 
+export const getYouTubeInfo = (src?: string) => {
+	const url = new URL('', src);
+
+	const t = url.searchParams.get('t');
+	const start = url.searchParams.get('start');
+
+	const s = t ? convertTtoSeconds(t) : start;
+
+	if (url.pathname.startsWith('/embed/')) {
+		const fullVideoSlug = url.pathname.split('/').pop();
+		const clipSlug = url.searchParams.get('clip');
+		const clipTId = url.searchParams.get('clipt');
+
+		let youtubeEmbedURL = new URL(`/embed/${fullVideoSlug}`, 'https://www.youtube-nocookie.com/');
+
+		if (clipSlug && clipTId) {
+			youtubeEmbedURL = new URL(`/embed/${fullVideoSlug}`, 'https://www.youtube.com/');
+			youtubeEmbedURL.searchParams.set('clip', clipSlug);
+			youtubeEmbedURL.searchParams.set('clipt', clipTId);
+		}
+
+		if (s) {
+			youtubeEmbedURL.searchParams.set('start', s);
+		}
+
+		// To enable pausing video in gallery.
+		youtubeEmbedURL.searchParams.set('enablejsapi', '1');
+
+		return {
+			url: youtubeEmbedURL.toString(),
+			title: `YouTube ${clipSlug && clipTId ? 'clip' : 'video'}`,
+			thumbnail: `https://img.youtube.com/vi/${fullVideoSlug}/maxresdefault.jpg`,
+		};
+	}
+
+	const v = url.searchParams.get('v');
+	const youtuBE = url.hostname === 'youtu.be' ? url.pathname : null;
+	const vPathname = url.pathname.startsWith('/v/')
+		? url.pathname.split('/').pop()?.split('?').shift()
+		: null;
+
+	if ((v || youtuBE || vPathname) === null) {
+		return { url: '', title: 'Unknown source' };
+	}
+
+	const searchParams = new URLSearchParams();
+	if (s) {
+		searchParams.set('start', s);
+	}
+
+	const id = v || youtuBE || vPathname;
+
+	return {
+		url: `https://www.youtube-nocookie.com/embed/${id}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`.replace(
+			/\/\//g,
+			'\/'
+		),
+		title: 'YouTube video',
+		thumbnail: `https://img.youtube.com/vi/${id}/maxresdefault.jpg`,
+	};
+};
+
 export const getURLAndTitle = (
 	platform?: SupportedPlatforms,
 	src?: string,
 	parentUrl?: string
-): { url: string; title: string } => {
+): { url: string; title: string; thumbnail?: string } => {
 	if (platform === 'usercontent') {
 		const hash = src?.split('/').pop();
 		return {
@@ -141,61 +203,7 @@ export const getURLAndTitle = (
 	}
 
 	if (platform === 'youtube') {
-		const url = new URL('', src);
-
-		const t = url.searchParams.get('t');
-		const start = url.searchParams.get('start');
-
-		const s = t ? convertTtoSeconds(t) : start;
-
-		if (url.pathname.startsWith('/embed/')) {
-			const fullVideoSlug = url.pathname.split('/').pop();
-			const clipSlug = url.searchParams.get('clip');
-			const clipTId = url.searchParams.get('clipt');
-
-			let youtubeEmbedURL = new URL(`/embed/${fullVideoSlug}`, 'https://www.youtube-nocookie.com/');
-
-			if (clipSlug && clipTId) {
-				youtubeEmbedURL = new URL(`/embed/${fullVideoSlug}`, 'https://www.youtube.com/');
-				youtubeEmbedURL.searchParams.set('clip', clipSlug);
-				youtubeEmbedURL.searchParams.set('clipt', clipTId);
-			}
-
-			if (s) {
-				youtubeEmbedURL.searchParams.set('start', s);
-			}
-
-			// To enable pausing video in gallery.
-			youtubeEmbedURL.searchParams.set('enablejsapi', '1');
-
-			return {
-				url: youtubeEmbedURL.toString(),
-				title: `YouTube ${clipSlug && clipTId ? 'clip' : 'video'}`,
-			};
-		}
-
-		const v = url.searchParams.get('v');
-		const youtuBE = url.hostname === 'youtu.be' ? url.pathname : null;
-		const vPathname = url.pathname.startsWith('/v/')
-			? url.pathname.split('/').pop()?.split('?').shift()
-			: null;
-
-		if ((v || youtuBE || vPathname) === null) {
-			return { url: '', title: 'Unknown source' };
-		}
-
-		const searchParams = new URLSearchParams();
-		if (s) {
-			searchParams.set('start', s);
-		}
-
-		return {
-			url: `https://www.youtube-nocookie.com/embed/${v || youtuBE || vPathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`.replace(
-				/\/\//g,
-				'\/'
-			),
-			title: 'YouTube video',
-		};
+		return getYouTubeInfo(src);
 	}
 
 	const parent = new URL('', parentUrl).hostname;
@@ -290,6 +298,10 @@ const setVideoAttributes = (node: VideoEmbedNode, element: HTMLElement) => {
 	element.setAttribute('width', width);
 	element.setAttribute('height', height);
 
+	element.setAttribute('loading', 'lazy');
+	// element.setAttribute('poster', '/favicon.png');
+	// element.setAttribute('preload', 'none');
+
 	element.setAttribute(
 		'style',
 		getIframeStyle(
@@ -313,7 +325,7 @@ function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl:
 	);
 	element.setAttribute('allowfullscreen', 'true');
 	element.setAttribute('title', title);
-	element.setAttribute('loading', 'lazy');
+	element.setAttribute('preload', 'none');
 
 	setVideoAttributes(node, element);
 
@@ -370,7 +382,6 @@ function generateCDNSrc(node: VideoEmbedNode, staticURL: string) {
 	setVideoAttributes(node, element);
 	element.setAttribute('controls', '');
 	element.setAttribute('data-lexical-usercontent', node.getSrc()!);
-	element.setAttribute('loading', 'lazy');
 
 	element.controls = true;
 	element.playsInline = true;
@@ -599,12 +610,6 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	}
 
 	decorate(editor: LexicalEditor, _config: EditorConfig): DecoratorVideoEmbedNodeType {
-		// const embedBlockTheme = config.theme.embedBlock || {};
-		// const className = {
-		// 	base: embedBlockTheme.base || '',
-		// 	focus: embedBlockTheme.focus || '',
-		// };
-
 		return {
 			componentClass: VideoEmbedComponent,
 			updateProps: (props) => {
