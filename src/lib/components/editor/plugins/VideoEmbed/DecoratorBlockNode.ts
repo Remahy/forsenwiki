@@ -108,7 +108,7 @@ export class DecoratorBlockNode extends DecoratorNode<unknown> {
 		return element;
 	}
 
-	updateDOM(): false {
+	updateDOM(): boolean {
 		return false;
 	}
 

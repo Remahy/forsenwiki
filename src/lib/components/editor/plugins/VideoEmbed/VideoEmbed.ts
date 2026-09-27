@@ -594,8 +594,8 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		return super.createDOM(config, editor);
 	}
 
-	updateDOM(): false {
-		return false;
+	updateDOM() {
+		return true;
 	}
 
 	decorate(editor: LexicalEditor, _config: EditorConfig): DecoratorVideoEmbedNodeType {
