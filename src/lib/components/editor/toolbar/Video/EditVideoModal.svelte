@@ -73,7 +73,7 @@
 		const handler = setTimeout(async () => {
 			try {
 				const res = await searchRequest(searchQuery, ['content'], {
-					contentTypes: ['video'],
+					contentTypes: ['video', 'audio'],
 					// Todo allow loading in of more pages.
 					page: 0,
 					orderBy: 'desc',
