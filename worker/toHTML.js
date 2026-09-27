@@ -1,6 +1,6 @@
 import 'linkedom-global';
 
-import { workerData, parentPort } from 'node:worker_threads';
+import { workerData, parentPort, isMainThread } from 'node:worker_threads';
 
 import { $getRoot, $nodesOfType } from 'lexical';
 import { $generateHtmlFromNodes } from '@lexical/html';
@@ -20,17 +20,15 @@ const $$getTextInEditor = () => {
 
 const $$getFirstImage = () => {
 	const images = $nodesOfType(ImageNode);
-	const firstImage = images?.[0];
+	const firstImage = /** @type {ImageNode | null} */ (images?.[0]);
 
 	return firstImage?.getSrc() || '';
 };
 
-export const toHTMLWorker = async (data) => {
-	/**
-	 * @type {{ config: string, content: string, update: string }}
-	 */
-	const { config, content, update } = data || workerData || {};
-
+/**
+ * @param {{ config: string, content: string, update: string }} data
+ */
+export const toHTMLWorker = async ({ config, content, update }) => {
 	if (!config) {
 		throw new Error('No config string provided.');
 	}
@@ -67,18 +65,20 @@ export const toHTMLWorker = async (data) => {
 	return editor.read(() => {
 		const text = $$getTextInEditor().replace(/\n/g, ' ');
 		const image = $$getFirstImage();
-
 		const htmlString = $generateHtmlFromNodes(editor, null);
+
+		/**
+		 * @type {{ html: string, text: string, image?: string }}
+		 */
 		const response = { html: htmlString, text, image };
-		parentPort?.postMessage(response);
+
 		return response;
 	});
 };
 
-if (workerData) {
-	try {
-		toHTMLWorker();
-	} catch (err) {
-		console.error('toHTMLWorker error', err);
-	}
+if (!isMainThread && parentPort && workerData) {
+	toHTMLWorker(workerData).then(
+		(data) => parentPort.postMessage(data),
+		(err) => parentPort.postMessage({ error: String(err?.message ?? err) })
+	);
 }

@@ -7,7 +7,7 @@ import workerPath from './worker?modulePath';
 
 /**
  * @param {{ config: 'article' | 'diff', update?: string, content?: string }} workerData
- * @returns {Promise<{ html: string, text: string, image: string }>}
+ * @returns {Promise<{ html: string, text: string, image?: string }>}
  */
 export default async function toHTML(workerData) {
 	if (dev) {
@@ -20,14 +20,34 @@ export default async function toHTML(workerData) {
 
 	return new Promise((resolve, reject) => {
 		const w = new Worker(workerPath, { workerData });
+		let settled = false;
 
-		w.on('message', resolve);
-		w.on('error', reject);
-
-		w.on('exit', (/** @type {number} */ code) => {
-			if (code !== 0) {
-				reject(new Error(`Worker stopped with exit code ${code}`));
+		/** @param {() => void} fn */
+		const settle = (fn) => {
+			if (settled) {
+				return;
 			}
+
+			settled = true;
+
+			fn();
+
+			w.terminate();
+		};
+
+		w.once(
+			'message',
+			(
+				/** @type {{ html: string, text: string, image?: string, error: null } | { error: string }} */ msg
+			) => {
+				settle(() => (msg.error === null ? resolve(msg) : reject(new Error(msg.error))));
+			}
+		);
+
+		w.once('error', (err) => settle(() => reject(err)));
+
+		w.once('exit', (code) => {
+			settle(() => reject(new Error(`toHTML exited (code ${code}) without a result`)));
 		});
 	});
 }

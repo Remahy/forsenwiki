@@ -11,22 +11,34 @@ import workerPath from './worker?modulePath';
 export default async function youtubeClipURL(workerData) {
 	if (dev) {
 		const { youtubeClipURLWorker } = await import('./worker');
-
-		const data = await youtubeClipURLWorker(workerData);
-
-		return data;
+		return youtubeClipURLWorker(workerData);
 	}
 
 	return new Promise((resolve, reject) => {
 		const w = new Worker(workerPath, { workerData });
+		let settled = false;
 
-		w.on('message', resolve);
-		w.on('error', reject);
-
-		w.on('exit', (/** @type {number} */ code) => {
-			if (code !== 0) {
-				reject(new Error(`Worker stopped with exit code ${code}`));
+		/** @param {() => void} fn */
+		const settle = (fn) => {
+			if (settled) {
+				return;
 			}
+
+			settled = true;
+
+			fn();
+
+			w.terminate();
+		};
+
+		w.once('message', (/** @type {{ url: string, error: null } | { error: string }} */ msg) => {
+			settle(() => (msg.error === null ? resolve(msg.url) : reject(new Error(msg.error))));
+		});
+
+		w.once('error', (err) => settle(() => reject(err)));
+
+		w.once('exit', (code) => {
+			settle(() => reject(new Error(`youtubeClipURL exited (code ${code}) without a result`)));
 		});
 	});
 }
