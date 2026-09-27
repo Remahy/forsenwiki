@@ -517,12 +517,8 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		return self.__altText;
 	}
 
-	getTextContent(
-		_includeInert?: boolean | undefined,
-		_includeDirectionless?: false | undefined
-	): string {
-		const self = this.getLatest();
-		return self.__src || '';
+	getTextContent() {
+		return this.getAltText() || '';
 	}
 
 	// Setters
