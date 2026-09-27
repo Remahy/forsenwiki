@@ -1,5 +1,6 @@
-import { GalleryNode } from '$lib/lexical/custom';
 import { isHTMLElement } from 'lexical';
+import { GalleryNode } from '$lib/lexical/custom';
+import { getYouTubeInfo } from '../../plugins/VideoEmbed/VideoEmbed';
 
 /**
  * @type {[import("lexical").Klass<LexicalNode>, (editor: LexicalEditor, target: LexicalNode) => import("lexical").DOMExportOutput]}
@@ -75,10 +76,25 @@ export default [
 					/**
 					 * @type {HTMLElement}
 					 */
-					const clonedChild = /** @type {any} */ (child.cloneNode(true));
+					let clonedChild = /** @type {any} */ (child.cloneNode(true));
+
+					const isYouTube = clonedChild.dataset.lexicalYoutube;
+
+					if (isYouTube) {
+						const imgThumbnailElement = document.createElement('img');
+						// Copy all attributes
+						for (const attr of clonedChild.attributes) {
+							imgThumbnailElement.setAttribute(attr.name, attr.value);
+						}
+
+						imgThumbnailElement.src = getYouTubeInfo(imgThumbnailElement.src).thumbnail || '';
+
+						clonedChild = imgThumbnailElement;
+					} else {
+						clonedChild.removeAttribute('controls');
+					}
 
 					clonedChild.classList.add('pointer-events-none');
-					clonedChild.removeAttribute('controls');
 
 					const emblaSlideDiv = document.createElement('div');
 					emblaSlideDiv.classList.add('embla-thumbs__slide');
