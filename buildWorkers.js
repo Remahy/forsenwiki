@@ -27,52 +27,58 @@ const injectPlugin = {
 
 // Build the worker
 async function buildInitialUpdateWorker() {
+	const name = 'initialUpdate';
+
 	const result = await esbuild.build({
-		entryPoints: ['worker/initialUpdate.js'],
+		entryPoints: [`worker/${name}.js`],
 		conditions: ['svelte'],
 		bundle: true,
 		platform: 'node',
 		format: 'esm',
-		outfile: './src/lib/worker/initialUpdate.js',
+		outfile: `./src/lib/worker/${name}.js`,
 		write: false,
 		plugins: [sveltePlugin(), injectPlugin],
 	});
 
 	// Ensure dist directory exists
-	mkdirSync('src/lib/worker/initialUpdate', { recursive: true });
-	writeFileSync('src/lib/worker/initialUpdate/worker.js', result.outputFiles[0].contents);
+	mkdirSync(`src/lib/worker/${name}`, { recursive: true });
+	writeFileSync(`src/lib/worker/${name}/worker.js`, result.outputFiles[0].contents);
 }
 
 async function buildToHTMLWorker() {
+	const name = 'toHTML';
+
 	const result = await esbuild.build({
-		entryPoints: ['worker/toHTML.js'],
+		entryPoints: [`worker/${name}/index.js`],
 		conditions: ['svelte'],
 		bundle: true,
 		platform: 'node',
 		format: 'esm',
-		outfile: './src/lib/worker/toHTML.js',
+		outfile: `./src/lib/worker/${name}.js`,
 		write: false,
 		plugins: [sveltePlugin(), injectPlugin],
 	});
 
 	// Ensure dist directory exists
-	mkdirSync('src/lib/worker/toHTML', { recursive: true });
-	writeFileSync('src/lib/worker/toHTML/worker.js', result.outputFiles[0].contents);
+	mkdirSync(`src/lib/worker/${name}`, { recursive: true });
+	writeFileSync(`src/lib/worker/${name}/worker.js`, result.outputFiles[0].contents);
 }
 
 async function buildYoutubeClipURLWorker() {
+	const name = 'youtubeClipURL';
+
 	const result = await esbuild.build({
-		entryPoints: ['worker/youtubeClipURL.js'],
+		entryPoints: [`worker/${name}.js`],
 		bundle: true,
 		platform: 'node',
 		format: 'esm',
-		outfile: './src/lib/worker/youtubeClipURL.js',
+		outfile: `./src/lib/worker/${name}.js`,
 		write: false,
 	});
 
 	// Ensure dist directory exists
-	mkdirSync('src/lib/worker/youtubeClipURL', { recursive: true });
-	writeFileSync('src/lib/worker/youtubeClipURL/worker.js', result.outputFiles[0].contents);
+	mkdirSync(`src/lib/worker/${name}`, { recursive: true });
+	writeFileSync(`src/lib/worker/${name}/worker.js`, result.outputFiles[0].contents);
 }
 
 buildInitialUpdateWorker().catch(() => process.exit(1));

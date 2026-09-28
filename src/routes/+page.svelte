@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Dice4Icon, HistoryIcon, FolderSearchIcon, SquarePenIcon } from '@lucide/svelte';
+	import { Dice4Icon, RotateCcwClock, FolderSearchIcon, SquarePenIcon } from '@lucide/svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
 
@@ -85,21 +85,17 @@
 
 <svelte:head>
 	<title>Community Forsen Wiki</title>
-	<meta name="description" content="All things forsen, forsenboys and more." />
+	<meta name="description" content="All things forsen, forsenbajs and more." />
 </svelte:head>
 
 <Container>
-	<SuggestionBox>
-		<p class="m-0 text-center leading-10">
-			<span class="font-bold">ForsenWiki</span>
-			<span> - </span>
-			<span>Forsen lore, news, big plays, tilts.</span>
-			{#if streamerMode}
-				<br />
+	{#if streamerMode}
+		<SuggestionBox>
+			<p class="m-0 text-center leading-10">
 				<strong>Streamer mode is enabled.</strong>
-			{/if}
-		</p>
-	</SuggestionBox>
+			</p>
+		</SuggestionBox>
+	{/if}
 
 	<div class="block grow gap-4 lg:flex">
 		<div class="mb-4 flex grow flex-col lg:mb-0">
@@ -121,9 +117,7 @@
 						<small class="inline-block">
 							<span class="font-bold">By:</span>
 							<StreamerModeShow>
-								<Link href="/user/{post.authorId}" class="decoration-1!"
-									>{post.author}</Link
-								>
+								<Link href="/user/{post.authorId}" class="decoration-1!">{post.author}</Link>
 							</StreamerModeShow>
 						</small>
 					</div>
@@ -154,13 +148,13 @@
 					<h2 class="text-2xl">Navigation</h2>
 				</div>
 				<LinkButton href="/recentchanges" class="flex gap-2 whitespace-nowrap">
-					<HistoryIcon /> <span>Recent changes</span>
+					<RotateCcwClock /> <span>Recent changes</span>
 				</LinkButton>
 				<LinkButton href="/create" class="flex gap-2 whitespace-nowrap" reload>
-					<SquarePenIcon /> <span>Create new article</span>
+					<SquarePenIcon /> <span>New article</span>
 				</LinkButton>
 				<LinkButton href="/content" class="flex gap-2 whitespace-nowrap">
-					<FolderSearchIcon /> <span>Search content</span>
+					<FolderSearchIcon /> <span>Content</span>
 				</LinkButton>
 				<LinkButton href="/random" class="flex gap-2 whitespace-nowrap">
 					<Dice4Icon /> <span>Random</span>

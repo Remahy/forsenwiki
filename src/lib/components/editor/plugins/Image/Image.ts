@@ -227,6 +227,10 @@ export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
 			},
 		};
 	}
+
+	getTextContent() {
+		return this.getAltText() || '';
+	}
 }
 
 export function $createImageNode(payload?: ImagePayload): ImageNode {

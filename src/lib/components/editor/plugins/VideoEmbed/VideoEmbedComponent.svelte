@@ -64,6 +64,7 @@
 	let parsedSrc = $derived(getURLAndTitle(platform, src, DOMAIN));
 	let url = $derived(parsedSrc.url);
 	let title = $derived(altText || parsedSrc.title);
+	let thumbnail = $derived(parsedSrc.thumbnail);
 
 	// Used for showing errors for usercontent.
 	let error = $state(false);
@@ -221,40 +222,62 @@
 					<p class="text-lg whitespace-break-spaces text-white">
 						Something went wrong loading this video.
 					</p>
-					<p class="whitespace-break-spaces text-white"><strong>URL:</strong> <span>{url}</span></p>
+					<p class="whitespace-break-spaces text-white">
+						<strong>URL:</strong> <span>{url}</span>
+					</p>
 				</div>
 			{:else}
-				<video
-					class="pointer-events-none m-0!"
-					{width}
-					{height}
-					style={getIframeStyle(width, height)}
-					loading="lazy"
-					{title}
-				>
-					<source
-						src={url}
-						onerror={() => {
-							error = true;
-						}}
-					/>
-				</video>
+				{#if thumbnail}
+					<img src={thumbnail} alt="" />
+				{:else}
+					<video
+						class="pointer-events-none z-10 m-0!"
+						{width}
+						{height}
+						style={getIframeStyle(width, height)}
+						loading="lazy"
+						{title}
+					>
+						<source
+							src={url}
+							onerror={() => {
+								error = true;
+							}}
+						/>
+					</video>
+					<div class="pointer-events-none absolute top-0 -z-10 flex flex-col gap-2 p-2">
+						<p class="text-lg whitespace-break-spaces text-white">No preview available.</p>
+						<p class="text-white">
+							<strong>URL:</strong> <span>{url}</span>
+						</p>
+					</div>
+				{/if}
 			{/if}
 		{:else}
-			<iframe
-				class="pointer-events-none"
-				srcdoc={!url
-					? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform.toUpperCase()} embed.</strong></p>`
-					: undefined}
-				{width}
-				{height}
-				src={url}
-				frameBorder="0"
-				allow="autoplay 'none'; clipboard-write; encrypted-media; picture-in-picture"
-				allowFullScreen={false}
-				{title}
-				style={getIframeStyle(width, height)}
-			></iframe>
+			{#if thumbnail}
+				<img
+					class="pointer-events-none"
+					src={thumbnail}
+					alt=""
+					style={getIframeStyle(width, height)}
+				/>
+			{:else}
+				<iframe
+					class="pointer-events-none"
+					srcdoc={!url
+						? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform.toUpperCase()} embed.</strong></p>`
+						: undefined}
+					{width}
+					{height}
+					src={url}
+					frameBorder="0"
+					loading="lazy"
+					allow="autoplay 'none'; clipboard-write; encrypted-media; picture-in-picture"
+					allowFullScreen={false}
+					{title}
+					style={getIframeStyle(width, height)}
+				></iframe>
+			{/if}
 		{/if}
 	</div>
 

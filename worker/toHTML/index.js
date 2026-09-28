@@ -1,6 +1,6 @@
 import 'linkedom-global';
 
-import { workerData, parentPort } from 'node:worker_threads';
+import { workerData, parentPort, isMainThread } from 'node:worker_threads';
 
 import { $getRoot, $nodesOfType } from 'lexical';
 import { $generateHtmlFromNodes } from '@lexical/html';
@@ -13,6 +13,7 @@ import { diffConfig } from '$lib/components/editor/config/diff';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { ImageNode } from '$lib/lexical/custom';
 import { migrations } from '$lib/components/editor/migrations';
+import { twitchThumbnailURL } from './twitchThumbnailURL';
 
 const $$getTextInEditor = () => {
 	return $getRoot().getTextContent().trim().replace(/\n+/gm, '\n');
@@ -20,17 +21,33 @@ const $$getTextInEditor = () => {
 
 const $$getFirstImage = () => {
 	const images = $nodesOfType(ImageNode);
-	const firstImage = images?.[0];
+	const firstImage = /** @type {ImageNode | null} */ (images?.[0]);
 
 	return firstImage?.getSrc() || '';
 };
 
-export const toHTMLWorker = async (data) => {
-	/**
-	 * @type {{ config: string, content: string, update: string }}
-	 */
-	const { config, content, update } = data || workerData || {};
+const addTwitchThumbnails = async (html) => {
+	const replacedHTML = new DOMParser().parseFromString(
+		`<html><body>${html}</body></html>`,
+		'text/html'
+	);
+	const twitchImages = replacedHTML.querySelectorAll('img[data-lexical-twitch][data-replace-me]');
 
+	for (let index = 0; index < twitchImages.length; index++) {
+		/** @type {HTMLImageElement} */
+		const image = twitchImages[index];
+		const thumbnailURL = await twitchThumbnailURL({ url: image.src });
+
+		image.src = thumbnailURL;
+	}
+
+	return replacedHTML.body.innerHTML;
+};
+
+/**
+ * @param {{ config: string, content: string, update: string }} data
+ */
+export const toHTMLWorker = async ({ config, content, update }) => {
 	if (!config) {
 		throw new Error('No config string provided.');
 	}
@@ -64,21 +81,27 @@ export const toHTMLWorker = async (data) => {
 		migrations(editor);
 	}
 
-	return editor.read(() => {
+	const { html, text, image } = editor.read(() => {
 		const text = $$getTextInEditor().replace(/\n/g, ' ');
 		const image = $$getFirstImage();
-
 		const htmlString = $generateHtmlFromNodes(editor, null);
+
+		/**
+		 * @type {{ html: string, text: string, image?: string }}
+		 */
 		const response = { html: htmlString, text, image };
-		parentPort?.postMessage(response);
+
 		return response;
 	});
+
+	let replacedHTMLString = await addTwitchThumbnails(html);
+
+	return { html: replacedHTMLString, text, image };
 };
 
-if (workerData) {
-	try {
-		toHTMLWorker();
-	} catch (err) {
-		console.error('toHTMLWorker error', err);
-	}
+if (!isMainThread && parentPort && workerData) {
+	toHTMLWorker(workerData).then(
+		(data) => parentPort.postMessage(data),
+		(err) => parentPort.postMessage({ error: String(err?.message ?? err) })
+	);
 }

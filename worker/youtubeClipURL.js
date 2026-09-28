@@ -1,21 +1,17 @@
 import 'linkedom-global';
 
-import { workerData, parentPort } from 'node:worker_threads';
+import { workerData, parentPort, isMainThread } from 'node:worker_threads';
 
 const headers = new Headers();
 headers.set('User-Agent', 'facebookexternalhit/1.1');
 
-export const youtubeClipURLWorker = async (data) => {
-	/**
-	 * @type {{ url: string }}
-	 */
-	const { url } = data || workerData || {};
-
+/**
+ * @param {{ url: string }} data
+ */
+export const youtubeClipURLWorker = async ({ url }) => {
 	const parsedURL = new URL('', url);
 
 	if (parsedURL.hostname !== 'www.youtube.com' && parsedURL.hostname !== 'youtube.com') {
-		parentPort?.postMessage(url);
-
 		return url;
 	}
 
@@ -31,15 +27,12 @@ export const youtubeClipURLWorker = async (data) => {
 		// noop
 	}
 
-	parentPort?.postMessage(metaVideoURLTag?.content || url);
-
 	return metaVideoURLTag?.content || url;
 };
 
-if (workerData) {
-	try {
-		youtubeClipURLWorker();
-	} catch (err) {
-		console.error('toHTMLWorker error', err);
-	}
+if (!isMainThread && parentPort && workerData) {
+	youtubeClipURLWorker(workerData).then(
+		(url) => parentPort.postMessage({ url }),
+		(err) => parentPort.postMessage({ error: String(err?.message ?? err) })
+	);
 }

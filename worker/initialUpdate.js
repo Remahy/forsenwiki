@@ -1,4 +1,4 @@
-import { workerData, parentPort } from 'node:worker_threads';
+import { workerData, parentPort, isMainThread } from 'node:worker_threads';
 
 import { $createTextNode, $getRoot, $createParagraphNode } from 'lexical';
 
@@ -41,16 +41,13 @@ export const initialUpdateWorker = () => {
 
 	return editor.read(() => {
 		const encodedContent = encodeYDocToUpdateV2ToBase64(doc);
-
-		parentPort?.postMessage(encodedContent);
 		return encodedContent;
 	});
 };
 
-if (workerData) {
-	try {
-		initialUpdateWorker();
-	} catch (err) {
-		console.error('initialUpdateWorker error', err);
-	}
+if (!isMainThread && parentPort && workerData) {
+	initialUpdateWorker(workerData).then(
+		(url) => parentPort.postMessage({ url }),
+		(err) => parentPort.postMessage({ error: String(err?.message ?? err) })
+	);
 }

@@ -1,5 +1,6 @@
-import { GalleryNode } from '$lib/lexical/custom';
 import { isHTMLElement } from 'lexical';
+import { GalleryNode } from '$lib/lexical/custom';
+import { getYouTubeInfo } from '../../plugins/VideoEmbed/VideoEmbed';
 
 /**
  * @type {[import("lexical").Klass<LexicalNode>, (editor: LexicalEditor, target: LexicalNode) => import("lexical").DOMExportOutput]}
@@ -75,10 +76,31 @@ export default [
 					/**
 					 * @type {HTMLElement}
 					 */
-					const clonedChild = /** @type {any} */ (child.cloneNode(true));
+					let clonedChild = /** @type {any} */ (child.cloneNode(true));
+
+					const isYouTube = clonedChild.dataset.lexicalYoutube;
+					const isTwitch = clonedChild.dataset.lexicalTwitch;
+					// Twitch ones are replaced by toHTML due to asynchronous call to worker.
+
+					if (isYouTube || isTwitch) {
+						const imgThumbnailElement = document.createElement('img');
+						// Copy all attributes
+						for (const attr of clonedChild.attributes) {
+							imgThumbnailElement.setAttribute(attr.name, attr.value);
+						}
+
+						imgThumbnailElement.setAttribute('data-replace-me', '');
+
+						imgThumbnailElement.src = isTwitch
+							? imgThumbnailElement.src
+							: getYouTubeInfo(imgThumbnailElement.src).thumbnail || '';
+
+						clonedChild = /** @type {any} */ (imgThumbnailElement.cloneNode(true));
+					} else {
+						clonedChild.removeAttribute('controls');
+					}
 
 					clonedChild.classList.add('pointer-events-none');
-					clonedChild.removeAttribute('controls');
 
 					const emblaSlideDiv = document.createElement('div');
 					emblaSlideDiv.classList.add('embla-thumbs__slide');
