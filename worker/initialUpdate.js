@@ -47,7 +47,7 @@ export const initialUpdateWorker = () => {
 
 if (!isMainThread && parentPort && workerData) {
 	initialUpdateWorker(workerData).then(
-		(url) => parentPort.postMessage({ url }),
+		(url) => parentPort.postMessage({ url, error: null }),
 		(err) => parentPort.postMessage({ error: String(err?.message ?? err) })
 	);
 }

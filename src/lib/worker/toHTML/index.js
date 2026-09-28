@@ -6,13 +6,14 @@ import { dev } from '$app/environment';
 import workerPath from './worker?modulePath';
 
 /**
- * @param {{ config: 'article' | 'diff', update: string, content: undefined } | { config: 'article' | 'diff', update: undefined, content: string }} workerData
+ * @param {{ config: 'article' | 'diff', update: string } | { config: 'article' | 'diff', content: string }} workerData
  * @returns {Promise<{ html: string, text: string, image?: string }>}
  */
 export default async function toHTML(workerData) {
 	if (dev) {
 		const { toHTMLWorker } = await import('./worker');
 
+		// @ts-ignore
 		const data = await toHTMLWorker(workerData);
 
 		return data;

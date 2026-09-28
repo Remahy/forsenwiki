@@ -45,7 +45,7 @@ const addTwitchThumbnails = async (html) => {
 };
 
 /**
- * @param {{ config: string, content: string, update: string }} data
+ * @param {{ config: string, update: string } | { config: string, content: string }} data
  */
 export const toHTMLWorker = async ({ config, content, update }) => {
 	if (!config) {
@@ -101,7 +101,7 @@ export const toHTMLWorker = async ({ config, content, update }) => {
 
 if (!isMainThread && parentPort && workerData) {
 	toHTMLWorker(workerData).then(
-		(data) => parentPort.postMessage(data),
+		(data) => parentPort.postMessage({ ...data, error: null }),
 		(err) => parentPort.postMessage({ error: String(err?.message ?? err) })
 	);
 }

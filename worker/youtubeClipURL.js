@@ -32,7 +32,7 @@ export const youtubeClipURLWorker = async ({ url }) => {
 
 if (!isMainThread && parentPort && workerData) {
 	youtubeClipURLWorker(workerData).then(
-		(url) => parentPort.postMessage({ url }),
+		(url) => parentPort.postMessage({ url, error: null }),
 		(err) => parentPort.postMessage({ error: String(err?.message ?? err) })
 	);
 }

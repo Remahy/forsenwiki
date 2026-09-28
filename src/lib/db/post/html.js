@@ -2,7 +2,7 @@ import prisma from '$lib/prisma.server';
 
 /**
  * @param {string} postId
- * @param {{ content: string, text: string, image: string }} arg2
+ * @param {{ content: string, text: string, image?: string }} data
  */
 export const upsertHTML = (postId, { content, text, image }) => {
 	return prisma.html.upsert({
