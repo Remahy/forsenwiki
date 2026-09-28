@@ -247,7 +247,7 @@
 					</video>
 					<div class="pointer-events-none absolute top-0 -z-10 flex flex-col gap-2 p-2">
 						<p class="text-lg whitespace-break-spaces text-white">No preview available.</p>
-						<p class="whitespace-break-spaces text-white">
+						<p class="text-white">
 							<strong>URL:</strong> <span>{url}</span>
 						</p>
 					</div>

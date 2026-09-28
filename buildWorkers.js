@@ -49,7 +49,7 @@ async function buildToHTMLWorker() {
 	const name = 'toHTML';
 
 	const result = await esbuild.build({
-		entryPoints: [`worker/${name}.js`],
+		entryPoints: [`worker/${name}/index.js`],
 		conditions: ['svelte'],
 		bundle: true,
 		platform: 'node',
@@ -81,24 +81,6 @@ async function buildYoutubeClipURLWorker() {
 	writeFileSync(`src/lib/worker/${name}/worker.js`, result.outputFiles[0].contents);
 }
 
-async function buildTwitchThumbnailURLWorker() {
-	const name = 'twitchThumbnailURL';
-
-	const result = await esbuild.build({
-		entryPoints: [`worker/${name}.js`],
-		bundle: true,
-		platform: 'node',
-		format: 'esm',
-		outfile: `./src/lib/worker/${name}.js`,
-		write: false,
-	});
-
-	// Ensure dist directory exists
-	mkdirSync(`src/lib/worker/${name}`, { recursive: true });
-	writeFileSync(`src/lib/worker/${name}/worker.js`, result.outputFiles[0].contents);
-}
-
 buildInitialUpdateWorker().catch(() => process.exit(1));
 buildToHTMLWorker().catch(() => process.exit(1));
 buildYoutubeClipURLWorker().catch(() => process.exit(1));
-buildTwitchThumbnailURLWorker().catch(() => process.exit(1));

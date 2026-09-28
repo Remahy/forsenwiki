@@ -13,6 +13,7 @@ import { diffConfig } from '$lib/components/editor/config/diff';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { ImageNode } from '$lib/lexical/custom';
 import { migrations } from '$lib/components/editor/migrations';
+import { twitchThumbnailURL } from './twitchThumbnailURL';
 
 const $$getTextInEditor = () => {
 	return $getRoot().getTextContent().trim().replace(/\n+/gm, '\n');
@@ -23,6 +24,24 @@ const $$getFirstImage = () => {
 	const firstImage = /** @type {ImageNode | null} */ (images?.[0]);
 
 	return firstImage?.getSrc() || '';
+};
+
+const addTwitchThumbnails = async (html) => {
+	const replacedHTML = new DOMParser().parseFromString(
+		`<html><body>${html}</body></html>`,
+		'text/html'
+	);
+	const twitchImages = replacedHTML.querySelectorAll('img[data-lexical-twitch][data-replace-me]');
+
+	for (let index = 0; index < twitchImages.length; index++) {
+		/** @type {HTMLImageElement} */
+		const image = twitchImages[index];
+		const thumbnailURL = await twitchThumbnailURL({ url: image.src });
+
+		image.src = thumbnailURL;
+	}
+
+	return replacedHTML.body.innerHTML;
 };
 
 /**
@@ -62,7 +81,7 @@ export const toHTMLWorker = async ({ config, content, update }) => {
 		migrations(editor);
 	}
 
-	return editor.read(() => {
+	const { html, text, image } = editor.read(() => {
 		const text = $$getTextInEditor().replace(/\n/g, ' ');
 		const image = $$getFirstImage();
 		const htmlString = $generateHtmlFromNodes(editor, null);
@@ -74,6 +93,10 @@ export const toHTMLWorker = async ({ config, content, update }) => {
 
 		return response;
 	});
+
+	let replacedHTMLString = await addTwitchThumbnails(html);
+
+	return { html: replacedHTMLString, text, image };
 };
 
 if (!isMainThread && parentPort && workerData) {

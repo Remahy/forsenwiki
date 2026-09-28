@@ -79,17 +79,23 @@ export default [
 					let clonedChild = /** @type {any} */ (child.cloneNode(true));
 
 					const isYouTube = clonedChild.dataset.lexicalYoutube;
+					const isTwitch = clonedChild.dataset.lexicalTwitch;
+					// Twitch ones are replaced by toHTML due to asynchronous call to worker.
 
-					if (isYouTube) {
+					if (isYouTube || isTwitch) {
 						const imgThumbnailElement = document.createElement('img');
 						// Copy all attributes
 						for (const attr of clonedChild.attributes) {
 							imgThumbnailElement.setAttribute(attr.name, attr.value);
 						}
 
-						imgThumbnailElement.src = getYouTubeInfo(imgThumbnailElement.src).thumbnail || '';
+						imgThumbnailElement.setAttribute('data-replace-me', '');
 
-						clonedChild = imgThumbnailElement;
+						imgThumbnailElement.src = isTwitch
+							? imgThumbnailElement.src
+							: getYouTubeInfo(imgThumbnailElement.src).thumbnail || '';
+
+						clonedChild = /** @type {any} */ (imgThumbnailElement.cloneNode(true));
 					} else {
 						clonedChild.removeAttribute('controls');
 					}
