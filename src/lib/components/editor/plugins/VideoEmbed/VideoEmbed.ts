@@ -152,7 +152,7 @@ export const getYouTubeInfo = (src?: string) => {
 		return {
 			url: youtubeEmbedURL.toString(),
 			title: `YouTube ${clipSlug && clipTId ? 'clip' : 'video'}`,
-			thumbnail: `https://img.youtube.com/vi/${fullVideoSlug}/0.jpg`,
+			thumbnail: `https://img.youtube.com/vi_webp/${fullVideoSlug}/sddefault.webp`,
 		};
 	}
 
@@ -179,7 +179,7 @@ export const getYouTubeInfo = (src?: string) => {
 			'\/'
 		),
 		title: 'YouTube video',
-		thumbnail: `https://img.youtube.com/vi/${id}/0.jpg`,
+		thumbnail: `https://img.youtube.com/vi_webp/${id}/sddefault.jpg`,
 	};
 };
 
