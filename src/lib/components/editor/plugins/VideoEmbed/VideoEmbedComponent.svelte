@@ -228,7 +228,7 @@
 				</div>
 			{:else}
 				{#if thumbnail}
-					<img src={thumbnail} alt="" />
+					<img src={thumbnail} alt="" {width} {height} style={getIframeStyle(width, height)} />
 				{:else}
 					<video
 						class="pointer-events-none z-10 m-0!"
@@ -259,6 +259,8 @@
 					class="pointer-events-none"
 					src={thumbnail}
 					alt=""
+					{width}
+					{height}
 					style={getIframeStyle(width, height)}
 				/>
 			{:else}
