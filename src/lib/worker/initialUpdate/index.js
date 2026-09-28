@@ -44,8 +44,15 @@ export default async function initialUpdate() {
 			w.terminate();
 		};
 
-		w.once('message', (/** @type {{ url: string, error: null } | { error: string }} */ msg) => {
-			settle(() => (msg.error === null ? resolve(msg.url) : reject(new Error(msg.error))));
+		w.once('message', (/** @type {{ update: string, error: null } | { error: string }} */ msg) => {
+			settle(() => {
+				if (msg.error === null) {
+					initialUpdateString = msg.update;
+					return resolve(msg.update);
+				}
+
+				reject(new Error(msg.error));
+			});
 		});
 
 		w.once('error', (err) => settle(() => reject(err)));

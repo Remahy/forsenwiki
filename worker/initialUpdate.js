@@ -12,6 +12,9 @@ import {
 import { articleConfig } from '$lib/components/editor/config/article';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 
+/**
+ * @returns {string}
+ */
 export const initialUpdateWorker = () => {
 	let emptyUpdate;
 	{
@@ -46,8 +49,9 @@ export const initialUpdateWorker = () => {
 };
 
 if (!isMainThread && parentPort && workerData) {
-	initialUpdateWorker(workerData).then(
-		(url) => parentPort.postMessage({ url, error: null }),
-		(err) => parentPort.postMessage({ error: String(err?.message ?? err) })
-	);
+	try {
+		parentPort.postMessage({ update: initialUpdateWorker(), error: null });
+	} catch (err) {
+		parentPort.postMessage({ error: String(err?.message ?? err) });
+	}
 }
