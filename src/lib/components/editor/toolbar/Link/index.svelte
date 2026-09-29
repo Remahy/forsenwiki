@@ -1,4 +1,5 @@
 <script>
+	import { $setSelection as setSelection, $getSelection as getSelection } from 'lexical';
 	import { $toggleLink as toggleLink } from '@lexical/link';
 	import { getEditor } from 'svelte-lexical';
 	import { UnlinkIcon } from '@lucide/svelte';
@@ -18,11 +19,21 @@
 
 	const editor = $derived(getEditor());
 
-	const onClickUnlink = () => {
+	/**
+	 * @param {import('$lib/lexical/custom').ALinkNode} linkNode
+	 */
+	const onClickUnlink = (linkNode) => {
 		editor.update(() => {
-			if (isALinkNode(selectedNode)) {
-				selectedNode.selectEnd();
+			if (isALinkNode(linkNode)) {
+				const currentSelection = getSelection();
+
+				if (selectedNode !== selectedLink) {
+					linkNode.select();
+				}
+
 				toggleLink(null);
+
+				setSelection(currentSelection);
 			}
 		});
 	};
@@ -74,7 +85,11 @@
 	<Wrapper>
 		{#snippet title()}
 			<Title selectedNode={selectedLink} text="Link">
-				<Button class="m-0! rounded-none! p-0!" onclick={onClickUnlink} title="Unlink">
+				<Button
+					class="m-0! rounded-none! p-0! hover:bg-violet-500!"
+					onclick={() => onClickUnlink(selectedLink)}
+					title="Unlink"
+				>
 					<UnlinkIcon />
 				</Button>
 			</Title>
