@@ -300,7 +300,7 @@ const setVideoAttributes = (node: VideoEmbedNode, element: HTMLElement) => {
 
 	element.setAttribute('loading', 'lazy');
 	element.setAttribute('preload', 'metadata');
-	element.setAttribute('poster', '/favicon.png');
+	// element.setAttribute('poster', '/favicon.png');
 
 	element.setAttribute(
 		'style',
