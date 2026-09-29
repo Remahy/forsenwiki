@@ -299,8 +299,8 @@ const setVideoAttributes = (node: VideoEmbedNode, element: HTMLElement) => {
 	element.setAttribute('height', height);
 
 	element.setAttribute('loading', 'lazy');
-	// element.setAttribute('poster', '/favicon.png');
-	// element.setAttribute('preload', 'none');
+	element.setAttribute('preload', 'metadata');
+	element.setAttribute('poster', '/favicon.png');
 
 	element.setAttribute(
 		'style',
@@ -371,12 +371,6 @@ function generateTwitchIframe(node: VideoEmbedNode, parentUrl: string) {
 
 function generateCDNSrc(node: VideoEmbedNode, staticURL: string) {
 	const url = `${staticURL}/${node.getSrc()!}`;
-
-	/**
-	 * <video controls class="mx-auto min-h-32 aspect-video">
-	<source src={src} type={contentType} />
-</video>
-	 */
 
 	const element = document.createElement('video');
 	setVideoAttributes(node, element);
