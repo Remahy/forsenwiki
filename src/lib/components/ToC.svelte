@@ -1,6 +1,15 @@
 <script>
+	import { TableOfContentsIcon } from '@lucide/svelte';
 	/* eslint-disable svelte/no-at-html-tags */
 	import Box from './Box.svelte';
+	import Button from './Button.svelte';
+
+	/**
+	 * @type {string}
+	 */
+	let toc = $state('');
+
+	let isHidden = $state(false);
 
 	/**
 	 * @param {Node | null} _element
@@ -62,9 +71,16 @@
 			a.setAttribute('class', 'inline-flex flex-wrap items-baseline gap-2 hover:text-indigo-300');
 
 			const li = doc.createElement('li');
-			li.setAttribute('class', 'leading-7');
 			li.appendChild(a);
 			li.style.paddingLeft = `${16 * (level - 1)}px`;
+
+			if (headings.length - 1 > index) {
+				li.style.marginBottom = '4px';
+
+				if (level === 1) {
+					li.style.marginBottom = '8px';
+				}
+			}
 
 			ul.appendChild(li);
 		}
@@ -78,22 +94,32 @@
 		};
 	}
 
-	/**
-	 * @type {string}
-	 */
-	let toc = $state('');
+	const handleToggleHideToC = () => {
+		isHidden = !isHidden;
+	};
 </script>
 
-<div use:tocAction class="hidden xl:block xl:w-96 xl:min-w-96">
+<div use:tocAction>
 	{#if toc}
-		<Box class="sticky top-4 flex flex-col overflow-hidden p-4 pr-0 pb-0 break-all">
-			<div class="box-heading-wrapper">
-				<h2 class="text-2xl">Table of Contents</h2>
-			</div>
+		<div class="{isHidden ? 'hidden!' : 'hidden'} sticky top-4 xl:block xl:w-96 xl:min-w-96">
+			<Box class="flex flex-col overflow-hidden p-4 pr-0 pb-0 break-normal">
+				<div class="box-heading-wrapper flex items-center gap-2 pr-4">
+					<div class="grow"><strong>Contents</strong></div>
+					<Button class="min-h-[unset]! p-2! text-xs leading-none!" onclick={handleToggleHideToC}
+						>Hide</Button
+					>
+				</div>
 
-			{@html toc}
-		</Box>
-	{:else}
-		<img src="/favicon.png" alt="The face of Twitch" class="opacity-[.04] select-none" />
+				{@html toc}
+			</Box>
+		</div>
+		{#if isHidden}
+			<Button
+				class="sticky top-4 min-h-[unset]! p-2! text-xs leading-none!"
+				onclick={handleToggleHideToC}
+			>
+				<TableOfContentsIcon size={16} />
+			</Button>
+		{/if}
 	{/if}
 </div>
