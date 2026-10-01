@@ -35,9 +35,12 @@ export const initializeZoomForImgElements = (rootElement) => {
 			continue;
 		}
 
+		const wheelZoomRatio = 0.35;
+
 		if (parentContainer.classList.contains('embla__slide')) {
 			const { cleanup } = createZoomImageWheel(parentContainer, {
 				zoomTarget: element,
+				wheelZoomRatio,
 			});
 
 			cleanups.push(cleanup);
@@ -50,7 +53,9 @@ export const initializeZoomForImgElements = (rootElement) => {
 		container.append(clonedImg);
 		element.replaceWith(container);
 
-		const { cleanup } = createZoomImageWheel(container);
+		const { cleanup } = createZoomImageWheel(container, {
+			wheelZoomRatio
+		});
 
 
 		cleanups.push(cleanup);
