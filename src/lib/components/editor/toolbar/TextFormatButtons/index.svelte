@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { BoldIcon, ItalicIcon } from '@lucide/svelte';
+	import { BoldIcon, ItalicIcon, SuperscriptIcon } from '@lucide/svelte';
 	import {
 		$isRangeSelection as isRangeSelection,
 		FORMAT_TEXT_COMMAND,
@@ -17,6 +17,8 @@
 
 	let isItalic = $state(false);
 
+	let isSuperscript = $state(false);
+
 	let editor = $derived(getEditor?.());
 
 	const updateToolbar = () => {
@@ -29,6 +31,7 @@
 
 			isBold = selection.hasFormat('bold');
 			isItalic = selection.hasFormat('italic');
+			isSuperscript = selection.hasFormat('superscript');
 		});
 	};
 
@@ -38,6 +41,10 @@
 
 	const italic = () => {
 		editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
+	};
+
+	const superscript = () => {
+		editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
 	};
 
 	onMount(() => {
@@ -55,6 +62,10 @@
 
 <EditorButton title="Italic ({ctrlKey}I)" on:click={italic} isActive={isItalic}>
 	<ItalicIcon size="16" />
+</EditorButton>
+
+<EditorButton title="Superscript" on:click={superscript} isActive={isSuperscript}>
+	<SuperscriptIcon size="16" />
 </EditorButton>
 
 <EditLinkButton />
