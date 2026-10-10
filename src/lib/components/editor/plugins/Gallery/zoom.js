@@ -102,19 +102,6 @@ export const initializeZoomForImgElements = (rootElement) => {
 			cleanups.push(cleanup);
 			cleanups.push(() => document.removeEventListener('fullscreenchange', onFullscreenChange));
 		}
-
-		const container = document.createElement('span');
-		container.classList.add('inline-block', 'relative', 'overflow-visible!');
-		const clonedImg = element.cloneNode();
-		container.append(clonedImg);
-		element.replaceWith(container);
-
-		const { cleanup } = createZoomImageWheel(container, {
-			wheelZoomRatio
-		});
-
-
-		cleanups.push(cleanup);
 	}
 
 	return () => {
