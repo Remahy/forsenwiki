@@ -11,14 +11,24 @@
 	const label = $derived(item.getItemName());
 
 	const typeLabel = $derived(editor.read(() => getTypeLabelForNode(node)));
+
+	const isBold = $derived(isTextNode(node) && editor.read(() => node.hasFormat('bold')));
+	const isItalic = $derived(isTextNode(node) && editor.read(() => node.hasFormat('italic')));
+	const isSuperscript = $derived(
+		isTextNode(node) && editor.read(() => node.hasFormat('superscript'))
+	);
+	const isSubscript = $derived(isTextNode(node) && editor.read(() => node.hasFormat('subscript')));
 </script>
 
 {#if isTextNode(node)}
-	<span
-		class:font-bold={editor.read(() => node.hasFormat('bold'))}
-		class:italic={editor.read(() => node.hasFormat('italic'))}
-	>
-		{label}
+	<span class:font-bold={isBold} class:italic={isItalic}>
+		{#if isSuperscript}
+			<sup>{label}</sup>
+		{:else if isSubscript}
+			<sub>{label}</sub>
+		{:else}
+			{label}
+		{/if}
 	</span>
 {:else}
 	{#if label !== typeLabel && label.length}
