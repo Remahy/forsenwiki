@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { BoldIcon, ItalicIcon, SuperscriptIcon } from '@lucide/svelte';
+	import { BoldIcon, ItalicIcon, SubscriptIcon, SuperscriptIcon } from '@lucide/svelte';
 	import {
 		$isRangeSelection as isRangeSelection,
 		FORMAT_TEXT_COMMAND,
@@ -14,10 +14,9 @@
 	import EditLinkButton from './EditLinkButton.svelte';
 
 	let isBold = $state(false);
-
 	let isItalic = $state(false);
-
 	let isSuperscript = $state(false);
+	let isSubscript = $state(false);
 
 	let editor = $derived(getEditor?.());
 
@@ -32,6 +31,7 @@
 			isBold = selection.hasFormat('bold');
 			isItalic = selection.hasFormat('italic');
 			isSuperscript = selection.hasFormat('superscript');
+			isSubscript = selection.hasFormat('subscript');
 		});
 	};
 
@@ -45,6 +45,10 @@
 
 	const superscript = () => {
 		editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
+	};
+
+	const subscript = () => {
+		editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
 	};
 
 	onMount(() => {
@@ -66,6 +70,10 @@
 
 <EditorButton title="Superscript" on:click={superscript} isActive={isSuperscript}>
 	<SuperscriptIcon size="16" />
+</EditorButton>
+
+<EditorButton title="Subscript" on:click={subscript} isActive={isSubscript}>
+	<SubscriptIcon size="16" />
 </EditorButton>
 
 <EditLinkButton />
