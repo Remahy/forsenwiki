@@ -15,7 +15,7 @@
 	import Spinner from '../Spinner.svelte';
 	import Box from '../Box.svelte';
 	import Button from '../Button.svelte';
-	import { uploadContentState } from './uploadContent.svelte.js';
+	import { uploadContentState } from './uploadContentState.svelte.js';
 
 	/** @param {HTMLInputElement} target */
 	const handleNewWrapper = async (target) => {
