@@ -7,7 +7,7 @@
 		uploadContentState,
 		handleUploadContentSubmit,
 		resetUploadContentState,
-	} from './uploadContent.svelte';
+	} from './uploadContent.svelte.js';
 
 	const cancel = () => {
 		$modal.isOpen = false;

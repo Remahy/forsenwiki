@@ -11,7 +11,7 @@
 	import {
 		handleUploadContentSubmit,
 		uploadContentState,
-	} from '$lib/components/Search/uploadContent.svelte';
+	} from '$lib/components/Search/uploadContent.svelte.js';
 
 	/**
 	 * @typedef {Object} Props
