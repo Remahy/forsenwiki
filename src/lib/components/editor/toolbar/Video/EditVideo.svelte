@@ -100,10 +100,14 @@
 				/** @param {import('../../plugins/VideoEmbed/VideoEmbed').VideoEmbedPayload} data */
 				onSubmit: (data) => {
 					editor.update(() => {
-						/** @type {import('../../plugins/Image/Image').ImageNode} */
+						/** @type {import('../../plugins/VideoEmbed/VideoEmbed').VideoEmbedNode} */
 						const node = /** @type {any} */ (getNodeByKey(selectedNode.getKey()));
 
 						const { src } = data;
+
+						if (!src) {
+							return;
+						}
 
 						node.setSrc(src);
 					});

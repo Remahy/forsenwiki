@@ -37,11 +37,11 @@
 
 	let searchQuery = $state(src);
 	let isSearching = $state(false);
-	/** @type {Array<{ title: string, rawTitle: string, lastUpdated: string, id: string }>} */
+	/** @type {Array<{ title: string, rawTitle: string, createdTimestamp: string, id: string }>} */
 	let searchResults = $state([]);
 
 	/** @param {{ rawTitle: string, title?: string }} value */
-	const handleInternalImage = (value) => {
+	const handleInternalContent = (value) => {
 		if (!value.title) {
 			return;
 		}
@@ -122,7 +122,7 @@
 				<figure
 					class="forsen-wiki-theme-border bg-dark mx-auto flex min-h-50 min-w-50 items-center justify-center border"
 				>
-					<video>
+					<video controls>
 						<source src="{STATIC_DOMAIN}/{newSrc || src}" />
 					</video>
 				</figure>
@@ -181,7 +181,7 @@
 									<td
 										><Button
 											class="min-h-0! p-2! text-xs"
-											on:click={() => handleInternalImage(result)}>Select</Button
+											on:click={() => handleInternalContent(result)}>Select</Button
 										>{newSrc === result.title ? '(Selected)' : ''}</td
 									>
 								</tr>
