@@ -229,14 +229,7 @@
 						<table class="w-full table-auto">
 							<tbody>
 								{#each search.results as result (result.id)}
-									<tr
-										class={internalId === result.id
-											? `
-										bg-black/10
-										dark:bg-white/10
-									`
-											: ''}
-									>
+									<tr class={internalId === result.id ? `bg-black/10 dark:bg-white/10` : ''}>
 										<td>
 											<Link href="/w/{result.title}" target="_blank">
 												<strong>{result.rawTitle}</strong>

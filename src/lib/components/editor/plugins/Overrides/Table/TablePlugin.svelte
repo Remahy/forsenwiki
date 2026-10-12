@@ -48,6 +48,7 @@
 		includeHeaders?: InsertTableCommandPayloadHeaders;
 	}) {
 		modal.set({
+			isOpen: true,
 			component: InsertTableDialog,
 			columns: payload.columns,
 			rows: payload.rows,
@@ -73,7 +74,6 @@
 					}
 				});
 			},
-			isOpen: true,
 		});
 	}
 

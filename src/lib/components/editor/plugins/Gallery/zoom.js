@@ -36,8 +36,8 @@ export const initializeZoomForImgElements = (rootElement) => {
 			// Mount during the user gesture so the browser allows requesting fullscreen.
 			flushSync(() => {
 				modal.set({
-					component: ImageFocus,
 					isOpen: true,
+					component: ImageFocus,
 					src: element.currentSrc || element.src,
 					name: element.alt,
 				});

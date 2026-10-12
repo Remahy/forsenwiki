@@ -375,14 +375,7 @@
 					<table class="w-full table-auto">
 						<tbody>
 							{#each search.results as result (result.id)}
-								<tr
-									class={newSrc === result.title
-										? `
-											bg-black/10
-											dark:bg-white/10
-										`
-										: ''}
-								>
+								<tr class={newSrc === result.title ? `bg-black/10 dark:bg-white/10` : ''}>
 									<td class="max-w-xs">
 										<div class="truncate">
 											<Link href="/content/{result.id}" target="_blank">

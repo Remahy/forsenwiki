@@ -42,7 +42,7 @@
 
 	/** @type {'new' | 'internal'} */
 	let currentVideoType = $state('internal');
-	let isLoading = $state(false);
+
 	let isValidVideo = $state(false);
 	let error = $state('');
 
@@ -63,7 +63,7 @@
 		isValidVideo = true;
 	};
 
-	const handleSubmit = async () => {
+	const handleSubmit = () => {
 		isValidVideo = false;
 
 		if (newSrc) {
@@ -132,7 +132,7 @@
 				<div>File selected: {newSrcName}</div>
 			{/if}
 
-			{#if isLoading}
+			{#if uploadContentState.isLoading}
 				<div>
 					<Spinner />
 				</div>
@@ -163,14 +163,7 @@
 					<table class="w-full table-auto">
 						<tbody>
 							{#each search.results as result (result.id)}
-								<tr
-									class={newSrc === result.title
-										? `
-									bg-black/10
-									dark:bg-white/10
-								`
-										: ''}
-								>
+								<tr class={newSrc === result.title ? `bg-black/10 dark:bg-white/10` : ''}>
 									<td class="max-w-xs">
 										<div class="truncate">
 											<Link href="/content/{result.id}" target="_blank">
@@ -219,6 +212,8 @@
 
 	<footer class="flex items-center justify-end gap-2 p-6">
 		<Button on:click={cancel}>Cancel</Button>
-		<Button on:click={handleSubmit} disabled={!isValidVideo || isLoading}>Submit</Button>
+		<Button on:click={handleSubmit} disabled={!isValidVideo || uploadContentState.isLoading}
+			>Submit</Button
+		>
 	</footer>
 </div>

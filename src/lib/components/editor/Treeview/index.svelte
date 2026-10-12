@@ -100,10 +100,10 @@
 						{draggable}
 						ondragstart={onDragStart}
 						ondragend={onDragEnd}
-						class="drag-handle flex items-center"
+						class="drag-handle flex items-center px-2"
 						title="Drag handle - click and drag to move this item"
 					>
-						⋮
+						<span>⋮</span>
 					</div>
 				{/if}
 			</div>

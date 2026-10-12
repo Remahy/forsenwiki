@@ -95,6 +95,7 @@
 	const video = () => {
 		editor.read(() => {
 			modal.set({
+				isOpen: true,
 				component: EditVideoModal,
 				src: selectedNode.getSrc(),
 				fileType: selectedNode.getFileType(),
@@ -114,7 +115,6 @@
 						node.setFileType(fileType);
 					});
 				},
-				isOpen: true,
 			});
 		});
 	};

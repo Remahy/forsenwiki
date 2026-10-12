@@ -74,6 +74,7 @@
 				selectedNode.getWidthAndHeight();
 
 			modal.set({
+				isOpen: true,
 				component: EditImageModal,
 				src: selectedNode.getSrc(),
 				altText: selectedNode.getAltText(),
@@ -104,7 +105,6 @@
 						node.setSrc(src);
 					});
 				},
-				isOpen: true,
 			});
 		});
 	};

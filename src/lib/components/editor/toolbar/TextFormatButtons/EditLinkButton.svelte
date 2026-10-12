@@ -54,6 +54,7 @@
 	 */
 	const wrapperToggleLink = (definedUrl, definedAttrs) => {
 		modal.set({
+			isOpen: true,
 			component: EditLinkButtonModal,
 			hasLink,
 			/**
@@ -101,7 +102,6 @@
 			attrs: definedAttrs || attrs,
 			isInternal,
 			internalId,
-			isOpen: true,
 		});
 	};
 

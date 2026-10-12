@@ -53,7 +53,7 @@
 	}
 
 	const toggleUploadModal = () => {
-		modal.set({ component: UploadContentModal, isOpen: true });
+		modal.set({ isOpen: true, component: UploadContentModal });
 	};
 </script>
 
