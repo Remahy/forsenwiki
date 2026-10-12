@@ -11,7 +11,7 @@
 	import {
 		handleUploadContentSubmit,
 		uploadContentState,
-	} from '$lib/components/Search/uploadContent.svelte';
+	} from '$lib/components/Search/uploadContentState.svelte.js';
 	import { createDebouncedSearch } from '../../utils/debouncedSearch.svelte';
 
 	/**
