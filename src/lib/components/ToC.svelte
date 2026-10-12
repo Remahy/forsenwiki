@@ -99,27 +99,31 @@
 	};
 </script>
 
-<div use:tocAction>
+<div use:tocAction class="contents">
 	{#if toc}
-		<div class="{isHidden ? 'hidden!' : 'hidden'} sticky top-4 xl:block xl:w-96 xl:min-w-96">
-			<Box class="flex flex-col overflow-hidden p-4 pr-0 pb-0 break-normal">
-				<div class="box-heading-wrapper flex items-center gap-2 pr-4">
-					<div class="grow"><strong>Contents</strong></div>
-					<Button class="min-h-[unset]! p-2! text-xs leading-none!" onclick={handleToggleHideToC}
-						>Hide</Button
-					>
-				</div>
+		<div>
+			<div class="{isHidden ? 'hidden!' : 'hidden'} sticky top-4 xl:block xl:w-96 xl:min-w-96">
+				<Box class="flex flex-col overflow-hidden p-4 pr-0 pb-0 break-normal">
+					<div class="box-heading-wrapper flex items-center gap-2 pr-4">
+						<div class="grow"><strong>Contents</strong></div>
+						<Button class="min-h-[unset]! p-2! text-xs leading-none!" onclick={handleToggleHideToC}
+							>Hide</Button
+						>
+					</div>
 
-				{@html toc}
-			</Box>
+					{@html toc}
+				</Box>
+			</div>
 		</div>
 		{#if isHidden}
-			<Button
-				class="sticky top-4 min-h-[unset]! p-2! text-xs leading-none!"
-				onclick={handleToggleHideToC}
-			>
-				<TableOfContentsIcon size={16} />
-			</Button>
+			<div>
+				<Button
+					class="sticky top-4 min-h-[unset]! p-2! text-xs leading-none!"
+					onclick={handleToggleHideToC}
+				>
+					<TableOfContentsIcon size={16} />
+				</Button>
+			</div>
 		{/if}
 	{/if}
 </div>
