@@ -492,6 +492,8 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 			serializedNode.src,
 			serializedNode.width,
 			serializedNode.height,
+			serializedNode.altText,
+			serializedNode.fileType,
 			serializedNode.format
 		);
 

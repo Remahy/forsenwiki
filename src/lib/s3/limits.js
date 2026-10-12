@@ -59,9 +59,9 @@ const mimeLookup = Object.entries(mimetypes).reduce((acc, [type, list]) => {
 
 /**
  * @param {string} contentType
- * @returns {keyof mimetypes | null}
+ * @returns {keyof mimetypes | undefined}
  */
-export const getType = (contentType) => /** @type {any} */ (mimeLookup[contentType]) ?? null;
+export const getType = (contentType) => /** @type {any} */ (mimeLookup[contentType]) ?? undefined;
 
 /**
  * @typedef {ReturnType<getType>} MimetypeType
