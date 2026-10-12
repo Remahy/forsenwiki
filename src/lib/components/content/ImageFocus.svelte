@@ -4,8 +4,8 @@
 	import { createZoomImageWheel } from '@zoom-image/core';
 	import { modal } from '$lib/stores/modal';
 
-	/** @type {{ src: string, name: string }} */
-	const { src, name } = $props();
+	/** @type {{ src: string, name: string, onclose?: () => void }} */
+	const { src, name, onclose } = $props();
 
 	/** @type {HTMLElement} */
 	let container;
@@ -23,6 +23,11 @@
 	};
 
 	const close = () => {
+		if (onclose) {
+			onclose();
+			return;
+		}
+
 		$modal.isOpen = false;
 	};
 
