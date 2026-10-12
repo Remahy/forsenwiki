@@ -1,4 +1,5 @@
 <script>
+	import { untrack } from 'svelte';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
 	import { Trash2Icon, XIcon } from '@lucide/svelte';
@@ -10,9 +11,12 @@
 	import { sanitizeUrl } from '../../utils/sanitizeUrl';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Link from '$lib/components/Link.svelte';
-	import { untrack } from 'svelte';
+	import { createDebouncedSearch } from '../../utils/debouncedSearch.svelte';
 
-	/** @typedef {import('@lexical/link').LinkAttributes} LinkAttributes */
+	/**
+	 * @typedef {import('@lexical/link').LinkAttributes} LinkAttributes
+	 * @typedef {import('$lib/api/search').SearchResult} SearchResult
+	 */
 
 	/**
 	 * @typedef {Object} Props
@@ -50,9 +54,6 @@
 	let rawTitle = $state('');
 
 	let searchQuery = $state('');
-	let isSearching = $state(false);
-	/** @type {Array<{ title: string, rawTitle: string, lastUpdated: string, id: string }>} */
-	let searchResults = $state([]);
 
 	/** @param {string} value */
 	const linkType = (value) => {
@@ -99,7 +100,7 @@
 		}
 	};
 
-	/** @param {{ title: string, rawTitle: string, lastUpdated: string, id: string }} value */
+	/** @param {{ title: string, rawTitle: string, id: string }} value */
 	const handleInternalLink = (value) => {
 		finalUrl = '/w/' + value.title;
 		rawTitle = value.rawTitle;
@@ -137,32 +138,20 @@
 		$modal.isOpen = false;
 	};
 
-	$effect(() => {
-		if (!searchQuery) {
-			return;
-		}
+	const search = createDebouncedSearch(
+		() => searchQuery,
+		/** @returns {Promise<SearchResult[]>} */
+		async (query, signal) => {
+			const res = await searchRequest(query, ['article'], { signal });
 
-		isSearching = true;
-
-		// Debouncer
-		const handler = setTimeout(async () => {
-			try {
-				const res = await searchRequest(searchQuery, ['article']);
-				searchResults = await res.json();
-			} catch (err) {
-				console.error(err);
-				error = 'Search returned an error.';
+			if (!res.ok) {
+				throw new Error(`Search failed: ${res.status}`);
 			}
 
-			isSearching = false;
-		}, 750);
-
-		// Cleanup function to clear the timeout if the search query changes before the timeout completes
-		return () => {
-			clearTimeout(handler);
-			isSearching = false;
-		};
-	});
+			return res.json();
+		},
+		{ initialValue: [] }
+	);
 
 	$effect(() => {
 		// Trigger handleInputChange if we're, for example, provided an URL through a selection + copy & paste action.
@@ -220,13 +209,14 @@
 					onclick={() => inputElement?.dispatchEvent(new Event('input', { bubbles: true }))}
 				/>
 			</label>
-			{#if error}
-				<span class="font-bold text-red-700">{error}</span>
+
+			{#if error || search.error}
+				<span class="font-bold text-red-700">{error || search.error}</span>
 			{/if}
 
 			{#if currentLinkType === 'internal'}
 				<div>
-					{#if isSearching}
+					{#if search.isSearching}
 						<div class="flex grow items-center gap-2">
 							<Spinner size="16" />
 							<span>Searching for "{searchQuery}"...</span>
@@ -238,7 +228,7 @@
 					<div class="prose dark:prose-invert relative mt-2 flex max-w-[unset]">
 						<table class="w-full table-auto">
 							<tbody>
-								{#each searchResults as result (result.id)}
+								{#each search.results as result (result.id)}
 									<tr
 										class={internalId === result.id
 											? `
@@ -252,7 +242,7 @@
 												<strong>{result.rawTitle}</strong>
 											</Link>
 										</td>
-										<td>{formatRelative(result.lastUpdated, Date.now(), { locale: enGB })}</td>
+										<td>{formatRelative(result.createdTimestamp, Date.now(), { locale: enGB })}</td>
 										<td>
 											<Button
 												class="min-h-0! p-2! text-xs"

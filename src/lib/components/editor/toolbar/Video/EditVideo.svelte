@@ -19,11 +19,11 @@
 	} from '$lib/constants/video';
 	import { DOMAIN } from '$lib/environment/environment';
 	import YouTube from '$lib/components/icons/YouTube.svelte';
-	import { getURLAndTitle } from '../../plugins/VideoEmbed/VideoEmbed';
 	import Button from '$lib/components/Button.svelte';
-	import EditVideoModal from './EditVideoModal.svelte';
 	import { modal } from '$lib/stores/modal';
 	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
+	import EditVideoModal from './EditVideoModal.svelte';
+	import { getURLAndTitle } from '../../plugins/VideoEmbed/VideoEmbed';
 
 	/**
 	 * @typedef {Object} Props

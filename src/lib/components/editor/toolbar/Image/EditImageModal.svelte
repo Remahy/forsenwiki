@@ -16,6 +16,11 @@
 	import { createFileUploadObject } from '../../utils/fileUploadObject';
 	import { editorGlobals } from '../../editorGlobals.svelte';
 	import { FileErrorCodes } from '../../utils/handleNewFile';
+	import { createDebouncedSearch } from '../../utils/debouncedSearch.svelte';
+
+	/**
+	 * @typedef {import('$lib/api/search').SearchResult} SearchResult
+	 */
 
 	const id = $derived(editorGlobals.articleId);
 
@@ -60,9 +65,6 @@
 	let originalImageWidth = $state(0);
 
 	let searchQuery = $state(src);
-	let isSearching = $state(false);
-	/** @type {Array<{ title: string, rawTitle: string, lastUpdated: string, id: string }>} */
-	let searchResults = $state([]);
 
 	let previewImage = $derived.by(async () => {
 		let value = newSrc || src;
@@ -262,38 +264,26 @@
 		}, 500);
 	};
 
-	$effect(() => {
-		if (!searchQuery) {
-			return;
-		}
+	const search = createDebouncedSearch(
+		() => searchQuery,
+		/** @returns {Promise<SearchResult[]>} */
+		async (query, signal) => {
+			const res = await searchRequest(query, ['content'], {
+				signal,
+				contentTypes: ['image'],
+				// Todo allow loading in of more pages.
+				page: 0,
+				orderBy: 'desc',
+			});
 
-		isSearching = true;
-
-		// Debouncer
-		const handler = setTimeout(async () => {
-			try {
-				const res = await searchRequest(searchQuery, ['content'], {
-					contentTypes: ['image'],
-					// Todo allow loading in of more pages.
-					page: 0,
-					orderBy: 'desc',
-				});
-				const json = await res.json();
-				searchResults = json;
-			} catch (err) {
-				console.error(err);
-				error = 'Search returned an error.';
+			if (!res.ok) {
+				throw new Error(`Search failed: ${res.status}`);
 			}
 
-			isSearching = false;
-		}, 750);
-
-		// Cleanup function to clear the timeout if the search query changes before the timeout completes
-		return () => {
-			clearTimeout(handler);
-			isSearching = false;
-		};
-	});
+			return res.json();
+		},
+		{ initialValue: [] }
+	);
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">
@@ -359,8 +349,8 @@
 					</div>
 				{/if}
 
-				{#if error}
-					<span class="font-bold text-red-700">{error}</span>
+				{#if error || search.error}
+					<span class="font-bold text-red-700">{error || search.error}</span>
 				{/if}
 			</label>
 		{/if}
@@ -372,7 +362,7 @@
 					<input class="input-color w-full rounded-sm p-2" bind:value={searchQuery} />
 				</div>
 
-				{#if isSearching}
+				{#if search.isSearching}
 					<div class="flex grow items-center gap-2">
 						<Spinner size="16" />
 						<span>Searching for "{searchQuery}"...</span>
@@ -384,7 +374,7 @@
 				<div class="prose dark:prose-invert relative mt-2 flex max-w-[unset]">
 					<table class="w-full table-auto">
 						<tbody>
-							{#each searchResults as result (result.id)}
+							{#each search.results as result (result.id)}
 								<tr
 									class={newSrc === result.title
 										? `

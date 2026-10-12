@@ -1,12 +1,14 @@
 const headers = new Headers({ 'content-type': 'application/json' });
 
+/** @typedef {{ title: string, rawTitle: string, fileType?: import('$lib/s3/limits').MimetypeType, createdTimestamp: string, id: string }} SearchResult */
+
 /**
  * @param {string} query
  * @param {string[]} [types]
- * @param {{ contentTypes: string[], orderBy: string, page: number } } [options]
+ * @param {{ contentTypes?: string[], orderBy?: string, page?: number, signal?: AbortSignal } } [options]
  */
 export const searchRequest = async (query, types = [], options) => {
-	const { contentTypes = [], orderBy, page = 0 } = options || {};
+	const { contentTypes = [], orderBy, page = 0, signal = null } = options || {};
 
 	const searchParams = new URLSearchParams();
 
@@ -33,6 +35,7 @@ export const searchRequest = async (query, types = [], options) => {
 	}
 
 	return fetch(`/api/search?${searchParams.toString()}`, {
+		signal,
 		method: 'GET',
 		headers,
 	});

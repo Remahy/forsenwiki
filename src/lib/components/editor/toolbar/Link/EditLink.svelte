@@ -1,13 +1,18 @@
 <script>
-	import isUrl from 'is-url';
-	import Button from '$lib/components/Button.svelte';
-	import { searchRequest } from '$lib/api/search';
-	import { sanitizeUrl } from '../../utils/sanitizeUrl';
 	import { Link2Icon, LinkIcon } from '@lucide/svelte';
-	import Spinner from '$lib/components/Spinner.svelte';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
+	import isUrl from 'is-url';
 	import { getEditor } from 'svelte-lexical';
+	import Button from '$lib/components/Button.svelte';
+	import { searchRequest } from '$lib/api/search';
+	import Spinner from '$lib/components/Spinner.svelte';
+	import { sanitizeUrl } from '../../utils/sanitizeUrl';
+	import { createDebouncedSearch } from '../../utils/debouncedSearch.svelte';
+
+	/**
+	 * @typedef {import('$lib/api/search').SearchResult} SearchResult
+	 */
 
 	const IS_INTERNAL = true;
 	const IS_EXTERNAL = false;
@@ -26,9 +31,6 @@
 	let finalUrl = $state();
 	let error = $state('');
 	let searchQuery = $state('');
-	let isSearching = $state(false);
-	/** @type {Array<{ title: string, rawTitle: string, lastUpdated: string, id: string }>} */
-	let searchResults = $state([]);
 
 	let editor = $derived(getEditor());
 
@@ -61,7 +63,7 @@
 		inputElement?.dispatchEvent(new Event('input', { bubbles: true }));
 	};
 
-	/** @param {{ title: string, rawTitle: string, lastUpdated: string, id: string }} value */
+	/** @param {{ title: string, rawTitle: string, id: string }} value */
 	const handleInternalLink = (value) => {
 		finalUrl = '/w/' + value.title;
 		currentInternalId = value.id;
@@ -71,7 +73,7 @@
 
 	/** @param {string} _value */
 	const handleSearchInternalLink = (_value) => {
-		const s = searchResults.find((r) => r.rawTitle === _value);
+		const s = search.results.find((r) => r.rawTitle === _value);
 		if (s) {
 			handleInternalLink(s);
 			return;
@@ -120,32 +122,20 @@
 		}
 	};
 
-	$effect(() => {
-		if (!searchQuery) {
-			return;
-		}
+	const search = createDebouncedSearch(
+		() => searchQuery,
+		/** @returns {Promise<SearchResult[]>} */
+		async (query, signal) => {
+			const res = await searchRequest(query, ['article'], { signal });
 
-		isSearching = true;
-
-		// Debouncer
-		const handler = setTimeout(async () => {
-			try {
-				const res = await searchRequest(searchQuery, ['article']);
-				searchResults = await res.json();
-			} catch (err) {
-				console.error(err);
-				error = 'Search returned an error.';
+			if (!res.ok) {
+				throw new Error(`Search failed: ${res.status}`);
 			}
 
-			isSearching = false;
-		}, 750);
-
-		// Cleanup function to clear the timeout if the search query changes before the timeout completes
-		return () => {
-			clearTimeout(handler);
-			isSearching = false;
-		};
-	});
+			return res.json();
+		},
+		{ initialValue: [] }
+	);
 </script>
 
 <div class="flex flex-col gap-4">
@@ -172,7 +162,7 @@
 			<span class="hidden">URL</span>
 			{#if !currentIsInternal}
 				<LinkIcon class="absolute left-4" />
-			{:else if isSearching}
+			{:else if search.isSearching}
 				<Spinner size="16" class="absolute left-4" />
 			{:else}
 				<Link2Icon class="absolute left-4" />
@@ -188,9 +178,9 @@
 
 			{#if currentIsInternal}
 				<datalist id="internal-search">
-					{#each searchResults as result (result.id)}
+					{#each search.results as result (result.id)}
 						<option value={result.rawTitle}
-							>Last updated: {formatRelative(result.lastUpdated, Date.now(), {
+							>Created: {formatRelative(result.createdTimestamp, Date.now(), {
 								locale: enGB,
 							})}</option
 						>
@@ -198,8 +188,9 @@
 				</datalist>
 			{/if}
 		</label>
-		{#if error}
-			<span class="font-bold text-red-700">{error}</span>
+
+		{#if error || search.error}
+			<span class="font-bold text-red-700">{error || search.error}</span>
 		{/if}
 	</div>
 </div>
