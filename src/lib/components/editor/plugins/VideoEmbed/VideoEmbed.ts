@@ -27,6 +27,7 @@ import {
 	VIDEO_MIN_WIDTH,
 	VIDEO_MAX_HEIGHT,
 } from '$lib/constants/video';
+import type { MimetypeType } from '$lib/s3/limits';
 
 import VideoEmbedComponent from './VideoEmbedComponent.svelte';
 import {
@@ -45,6 +46,7 @@ export type VideoEmbedPayload = {
 	width?: number | 'inherit';
 	height?: number | 'inherit';
 	altText?: string;
+	fileType?: MimetypeType;
 };
 
 export type SerializedVideoEmbedNode = Spread<VideoEmbedPayload, SerializedDecoratorBlockNode>;
@@ -73,6 +75,7 @@ export const getWidthAndHeight = (
 export const getIframeStyle = (
 	width: VideoEmbedPayload['width'],
 	height: VideoEmbedPayload['height'],
+	fileType?: MimetypeType,
 	formatType?: ElementFormatType
 ) => {
 	let widthStyle = width === 'inherit' ? 'width:auto;' : '';
@@ -84,7 +87,10 @@ export const getIframeStyle = (
 
 	const min = `min-width:${VIDEO_MIN_WIDTH}px;min-height:${VIDEO_MIN_HEIGHT}px;`;
 	const max = 'max-width:92vw;max-height:92vh;';
-	const aspectRatio = width === 'inherit' || height === 'inherit' ? 'aspect-ratio:16/9;' : '';
+	const aspectRatio =
+		(width === 'inherit' || height === 'inherit') && fileType === 'video'
+			? 'aspect-ratio:16/9;'
+			: '';
 
 	return `${min}${max}${aspectRatio}${widthStyle}${heightStyle}${formatType ? decoratorFormatToMarginStyle(formatType) : ''}margin-top: 0!important;margin-bottom:0!important;`;
 };
@@ -307,6 +313,7 @@ const setVideoAttributes = (node: VideoEmbedNode, element: HTMLElement) => {
 		getIframeStyle(
 			width as VideoEmbedPayload['width'],
 			height as VideoEmbedPayload['height'],
+			node.getFileType(),
 			node.getFormatType()
 		)
 	);
@@ -436,6 +443,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	__width: 'inherit' | number | undefined;
 	__height: 'inherit' | number | undefined;
 	__altText: string | undefined;
+	__fileType: MimetypeType | undefined;
 
 	constructor(
 		platform?: SupportedPlatforms,
@@ -443,6 +451,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		width?: number | 'inherit',
 		height?: number | 'inherit',
 		altText?: string,
+		fileType?: MimetypeType,
 		format?: ElementFormatType,
 		key?: NodeKey
 	) {
@@ -453,6 +462,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		this.__width = width;
 		this.__height = height;
 		this.__altText = altText;
+		this.__fileType = fileType;
 	}
 
 	static getType(): string {
@@ -466,6 +476,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 			node.__width,
 			node.__height,
 			node.__altText,
+			node.__fileType,
 			node.getFormatType(),
 			node.__key
 		);
@@ -522,6 +533,11 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		return self.__altText;
 	}
 
+	getFileType(): MimetypeType | undefined {
+		const self = this.getLatest();
+		return self.__fileType;
+	}
+
 	getTextContent() {
 		return this.getAltText() || '';
 	}
@@ -561,6 +577,11 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		self.__altText = altText;
 	}
 
+	setFileType(fileType?: MimetypeType): void {
+		const self = this.getWritable();
+		self.__fileType = fileType;
+	}
+
 	exportJSON(): SerializedVideoEmbedNode {
 		return {
 			...super.exportJSON(),
@@ -570,6 +591,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 			width: this.__width,
 			height: this.__height,
 			altText: this.getAltText(),
+			fileType: this.getFileType(),
 		};
 	}
 
@@ -615,6 +637,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 				props.width = this.__width;
 				props.height = this.__height;
 				props.altText = this.__altText;
+				props.fileType = this.__fileType;
 				props.resizable = true;
 				props.editor = editor;
 			},
@@ -625,10 +648,10 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 export function $createVideoEmbedNode(
 	payload?: VideoEmbedPayload & { format?: ElementFormatType; key?: NodeKey }
 ): VideoEmbedNode {
-	const { platform, src, width, height, altText, format, key } = payload || {};
+	const { platform, src, width, height, altText, fileType, format, key } = payload || {};
 
 	return $applyNodeReplacement(
-		new VideoEmbedNode(platform, src, width, height, altText, format, key)
+		new VideoEmbedNode(platform, src, width, height, altText, fileType, format, key)
 	);
 }
 

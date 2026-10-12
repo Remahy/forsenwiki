@@ -14,6 +14,7 @@ export const mimetypes = {
 		['text/markdown'],
 		['application/msword'],
 		['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+		['text/vtt'],
 	],
 };
 
@@ -33,6 +34,7 @@ const magikaExtend = {
 		['application/msword', 'doc'],
 		['text/plain', 'txt'],
 		['text/markdown', 'md'],
+		['text/vtt', 'vtt']
 	]),
 };
 export const magikaTypeToMimetype = Object.entries(magikaExtend).reduce((acc, [, list]) => {
@@ -60,6 +62,10 @@ const mimeLookup = Object.entries(mimetypes).reduce((acc, [type, list]) => {
  * @returns {keyof mimetypes | null}
  */
 export const getType = (contentType) => /** @type {any} */ (mimeLookup[contentType]) ?? null;
+
+/**
+ * @typedef {ReturnType<getType>} MimetypeType
+ */
 
 /**
  * @param {'image' | 'video' | 'audio' | 'document'} type

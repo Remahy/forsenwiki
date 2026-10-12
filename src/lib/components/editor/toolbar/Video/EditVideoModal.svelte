@@ -14,6 +14,10 @@
 	} from '$lib/components/Search/uploadContent.svelte';
 
 	/**
+	 * @typedef {import('$lib/s3/limits.js').MimetypeType} MimetypeType
+	*/
+
+	/**
 	 * @typedef {Object} Props
 	 * @property {string} [src]
 	 * @property {(data: import('../../plugins/VideoEmbed/VideoEmbed').VideoEmbedPayload) => void} onSubmit
@@ -28,6 +32,10 @@
 
 	let newSrc = $state('');
 	let newSrcName = $state('');
+	/**
+	 * @type {MimetypeType | undefined}
+	 */
+	let newFileType = $state(null);
 
 	/** @type {'new' | 'internal'} */
 	let currentVideoType = $state('internal');
@@ -37,10 +45,10 @@
 
 	let searchQuery = $state(src);
 	let isSearching = $state(false);
-	/** @type {Array<{ title: string, rawTitle: string, createdTimestamp: string, id: string }>} */
+	/** @type {Array<{ title: string, rawTitle: string, fileType: MimetypeType, createdTimestamp: string, id: string }>} */
 	let searchResults = $state([]);
 
-	/** @param {{ rawTitle: string, title?: string }} value */
+	/** @param {{ rawTitle: string, title?: string, fileType?: MimetypeType }} value */
 	const handleInternalContent = (value) => {
 		if (!value.title) {
 			return;
@@ -48,6 +56,7 @@
 
 		newSrc = value.title;
 		newSrcName = value.rawTitle;
+		newFileType = value.fileType;
 
 		isValidVideo = true;
 	};
@@ -56,7 +65,7 @@
 		isValidVideo = false;
 
 		if (newSrc) {
-			onSubmit({ src: newSrc });
+			onSubmit({ src: newSrc, fileType: newFileType });
 		}
 
 		$modal.isOpen = false;
@@ -176,6 +185,11 @@
 											<Link href="/content/{result.id}" target="_blank">
 												<strong>{result.rawTitle}</strong>
 											</Link>
+										</div>
+									</td>
+									<td class="max-w-xs">
+										<div class="truncate">
+											<strong>{result.fileType}</strong>
 										</div>
 									</td>
 									<td

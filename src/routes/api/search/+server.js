@@ -2,7 +2,7 @@ import { json } from '@sveltejs/kit';
 import prisma from '$lib/prisma.server.js';
 
 /**
- * @typedef {ReturnType<import('../../../lib/s3/limits.js').getType>} MimetypeType
+ * @typedef {import('$lib/s3/limits.js').MimetypeType} MimetypeType
  */
 
 /**

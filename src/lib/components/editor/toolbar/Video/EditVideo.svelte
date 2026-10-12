@@ -103,13 +103,14 @@
 						/** @type {import('../../plugins/VideoEmbed/VideoEmbed').VideoEmbedNode} */
 						const node = /** @type {any} */ (getNodeByKey(selectedNode.getKey()));
 
-						const { src } = data;
+						const { src, fileType } = data;
 
 						if (!src) {
 							return;
 						}
 
 						node.setSrc(src);
+						node.setFileType(fileType);
 					});
 				},
 				isOpen: true,
