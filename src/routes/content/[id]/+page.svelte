@@ -126,6 +126,7 @@
 			props: () => ({
 				src: `${STATIC_DOMAIN}/${hash}`,
 				name,
+				fullscreen: true,
 			}),
 		},
 		video: {
