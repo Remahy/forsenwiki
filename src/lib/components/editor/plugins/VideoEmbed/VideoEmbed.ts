@@ -88,7 +88,7 @@ export const getIframeStyle = (
 	const min = `min-width:${VIDEO_MIN_WIDTH}px;min-height:${VIDEO_MIN_HEIGHT}px;`;
 	const max = 'max-width:92vw;max-height:92vh;';
 	const aspectRatio =
-		(width === 'inherit' || height === 'inherit') && fileType === 'video'
+		(width === 'inherit' || height === 'inherit') && [undefined, null, 'video'].includes(fileType)
 			? 'aspect-ratio:16/9;'
 			: '';
 
@@ -157,7 +157,7 @@ export const getYouTubeInfo = (src?: string) => {
 
 		return {
 			url: youtubeEmbedURL.toString(),
-			title: `YouTube ${clipSlug && clipTId ? 'clip' : 'video'}`,
+			title: `${clipSlug && clipTId ? 'Clip' : 'Video'}`,
 			thumbnail: `https://img.youtube.com/vi_webp/${fullVideoSlug}/sddefault.webp`,
 		};
 	}
@@ -184,7 +184,7 @@ export const getYouTubeInfo = (src?: string) => {
 			/\/\//g,
 			'\/'
 		),
-		title: 'YouTube video',
+		title: 'Video',
 		thumbnail: `https://img.youtube.com/vi_webp/${id}/sddefault.jpg`,
 	};
 };
@@ -229,7 +229,7 @@ export const getURLAndTitle = (
 				clipsTwitchURL.searchParams.set('clip', clipParam);
 				clipsTwitchURL.searchParams.set('parent', parent);
 
-				return { url: clipsTwitchURL.toString(), title: 'Twitch clip' };
+				return { url: clipsTwitchURL.toString(), title: 'Clip' };
 			}
 
 			if (clipSlug) {
@@ -237,7 +237,7 @@ export const getURLAndTitle = (
 				clipsTwitchURL.searchParams.set('clip', clipSlug);
 				clipsTwitchURL.searchParams.set('parent', parent);
 
-				return { url: clipsTwitchURL.toString(), title: 'Twitch clip' };
+				return { url: clipsTwitchURL.toString(), title: 'Clip' };
 			}
 		}
 
@@ -253,7 +253,7 @@ export const getURLAndTitle = (
 				clipsTwitchURL.searchParams.set('clip', clipSlug);
 				clipsTwitchURL.searchParams.set('parent', parent);
 
-				return { url: clipsTwitchURL.toString(), title: 'Twitch clip' };
+				return { url: clipsTwitchURL.toString(), title: 'Clip' };
 			}
 		}
 
@@ -272,7 +272,7 @@ export const getURLAndTitle = (
 
 			playerTwitchURL.searchParams.set('parent', parent);
 
-			return { url: playerTwitchURL.toString(), title: 'Twitch video' };
+			return { url: playerTwitchURL.toString(), title: 'VOD' };
 		}
 
 		const isParsedPlayerVideoUrl = url.hostname === 'player.twitch.tv';
@@ -288,7 +288,7 @@ export const getURLAndTitle = (
 
 			playerTwitchURL.searchParams.set('parent', parent);
 
-			return { url: playerTwitchURL.toString(), title: 'Twitch video' };
+			return { url: playerTwitchURL.toString(), title: 'VOD' };
 		}
 	}
 
@@ -437,6 +437,10 @@ function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput 
 	return null;
 }
 
+const getFileType = (node: VideoEmbedNode) => {
+	return node.__platform === 'usercontent' ? node.__fileType : 'video';
+};
+
 export class VideoEmbedNode extends DecoratorBlockNode {
 	__platform: SupportedPlatforms | undefined;
 	__src: string | undefined;
@@ -535,7 +539,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 
 	getFileType(): MimetypeType | undefined {
 		const self = this.getLatest();
-		return self.__fileType;
+		return getFileType(self);
 	}
 
 	getTextContent() {
@@ -567,9 +571,12 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 
 	setPlatform(platform: string) {
 		const self = this.getWritable();
+
 		self.__platform = (
 			platforms.includes(platform) ? platform : platforms[0]
 		) as SupportedPlatforms;
+
+		self.setFileType();
 	}
 
 	setAltText(altText?: string): void {
@@ -637,7 +644,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 				props.width = this.__width;
 				props.height = this.__height;
 				props.altText = this.__altText;
-				props.fileType = this.__fileType;
+				props.fileType = getFileType(this);
 				props.resizable = true;
 				props.editor = editor;
 			},

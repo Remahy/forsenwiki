@@ -32,9 +32,16 @@ export const blockTypeLabels = {
 	tablerow: 'Row',
 	tablecell: 'Cell',
 	'a-table': 'Table',
-	videoembed: 'Video',
+	videoembed: 'Video / Audio',
 	image: 'Image',
 	'float-block': 'Float block',
 	'a-link': 'Link',
 	gallery: 'Gallery',
+	linebreak: '',
+
+	// These are still "videoembed".
+	video: 'Video',
+	audio: 'Audio',
+	youtube: 'YouTube',
+	twitch: 'Twitch',
 };

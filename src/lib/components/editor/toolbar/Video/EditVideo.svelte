@@ -97,6 +97,7 @@
 			modal.set({
 				component: EditVideoModal,
 				src: selectedNode.getSrc(),
+				fileType: selectedNode.getFileType(),
 				/** @param {import('../../plugins/VideoEmbed/VideoEmbed').VideoEmbedPayload} data */
 				onSubmit: (data) => {
 					editor.update(() => {

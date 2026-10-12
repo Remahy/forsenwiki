@@ -1,4 +1,7 @@
+import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
+import YouTube from '$lib/components/icons/YouTube.svelte';
 import {
+	AudioLinesIcon,
 	CircleSmallIcon,
 	FileQuestionMarkIcon,
 	Heading1Icon,
@@ -12,6 +15,7 @@ import {
 	ListCheckIcon,
 	ListIcon,
 	ListOrderedIcon,
+	PlayIcon,
 	QuoteIcon,
 	Rows2Icon,
 	SquareSquareIcon,
@@ -21,6 +25,7 @@ import {
 	TextAlignJustifyIcon,
 	TextAlignStartIcon,
 	TextInitialIcon,
+	TextWrapIcon,
 	VectorSquareIcon,
 	VideoIcon,
 } from '@lucide/svelte';
@@ -41,7 +46,11 @@ export const blockTypeIcons = {
 
 	'float-block': SquareSquareIcon,
 	'a-table': TableIcon,
-	videoembed: VideoIcon,
+	videoembed: PlayIcon,
+	audio: AudioLinesIcon,
+	video: VideoIcon,
+	youtube: YouTube,
+	twitch: TwitchGlitch,
 	image: ImageIcon,
 	tablecell: VectorSquareIcon,
 	tablerow: Rows2Icon,
@@ -49,6 +58,7 @@ export const blockTypeIcons = {
 	text: TextInitialIcon,
 	'a-link': LinkIcon,
 	gallery: ImagesIcon,
+	linebreak: TextWrapIcon,
 
 	// Unused
 	check: ListCheckIcon,

@@ -11,9 +11,11 @@
 </script>
 
 {#if isVideoEmbedNode(selectedNode)}
+	{@const fileType = selectedNode.__fileType}
+
 	<Wrapper>
 		{#snippet title()}
-			<Title {selectedNode} text="Video" />
+			<Title {selectedNode} text={fileType || 'Video'} />
 		{/snippet}
 
 		{#snippet content()}

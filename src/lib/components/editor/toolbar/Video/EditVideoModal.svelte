@@ -15,16 +15,17 @@
 
 	/**
 	 * @typedef {import('$lib/s3/limits.js').MimetypeType} MimetypeType
-	*/
+	 */
 
 	/**
 	 * @typedef {Object} Props
 	 * @property {string} [src]
+	 * @property {string} [fileType]
 	 * @property {(data: import('../../plugins/VideoEmbed/VideoEmbed').VideoEmbedPayload) => void} onSubmit
 	 */
 
 	/** @type {Props} */
-	let { src = $bindable(''), onSubmit } = $props();
+	let { src = $bindable(''), fileType = $bindable(''), onSubmit } = $props();
 
 	const cancel = () => {
 		$modal.isOpen = false;
@@ -47,6 +48,8 @@
 	let isSearching = $state(false);
 	/** @type {Array<{ title: string, rawTitle: string, fileType: MimetypeType, createdTimestamp: string, id: string }>} */
 	let searchResults = $state([]);
+
+	let displayFileType = $derived(newFileType || fileType || 'video');
 
 	/** @param {{ rawTitle: string, title?: string, fileType?: MimetypeType }} value */
 	const handleInternalContent = (value) => {
@@ -107,7 +110,7 @@
 
 <div class="modal-color pointer-events-auto relative p-0">
 	<header class="forsen-wiki-theme-border flex items-center justify-between border-b p-6">
-		<h1 class="text-xl font-semibold lg:text-2xl">Edit video</h1>
+		<h1 class="text-xl font-semibold lg:text-2xl">Edit {displayFileType}</h1>
 		<Button class="ml-auto inline-flex items-center rounded-lg" on:click={cancel}>
 			<XIcon />
 		</Button>
@@ -115,7 +118,7 @@
 
 	<main class="forsen-wiki-theme-border flex flex-col gap-16 overflow-hidden border-b p-6">
 		<label class="flex flex-col gap-2" for="select">
-			<strong>Video source</strong>
+			<strong class="capitalize">{displayFileType} source</strong>
 			<div class="flex">
 				<Button
 					class="grow rounded-r-none! {currentVideoType === 'internal' ? '' : 'opacity-50'}"
@@ -131,9 +134,11 @@
 				<figure
 					class="forsen-wiki-theme-border bg-dark mx-auto flex min-h-50 min-w-50 items-center justify-center border"
 				>
-					<video controls>
-						<source src="{STATIC_DOMAIN}/{newSrc || src}" />
-					</video>
+					{#key newSrc}
+						<video controls>
+							<source src="{STATIC_DOMAIN}/{newSrc || src}" />
+						</video>
+					{/key}
 				</figure>
 			{/if}
 
@@ -212,7 +217,7 @@
 
 		{#if currentVideoType === 'new'}
 			<div class="flex flex-col gap-2">
-				<p>User video content must be fully uploaded to the wiki before use.</p>
+				<p>Video & audio content must be fully uploaded to the wiki before use.</p>
 				<div class="forsen-wiki-theme-outline flex flex-col gap-16 overflow-hidden p-6">
 					<UploadContent />
 					<Button
