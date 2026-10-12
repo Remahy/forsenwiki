@@ -12,7 +12,12 @@ import { encodeYDocToUpdateV2 } from '$lib/yjs/utils';
 import { upsertHTML } from '$lib/db/post/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
-import { AVAILABLE_Y_POST_TYPES, EDITOR_IS_READONLY, Y_POST_TYPES } from '$lib/constants/constants';
+import {
+	AVAILABLE_SYSTEM_TAGS,
+	AVAILABLE_Y_POST_TYPES,
+	EDITOR_IS_READONLY,
+	Y_POST_TYPES,
+} from '$lib/constants/constants';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages.js';
 import { pruneFailedUploads, validateUploads } from '$lib/s3/validateUploads.server.js';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server.js';
@@ -29,7 +34,12 @@ export async function POST({ request, locals }) {
 		return ForbiddenError();
 	}
 
-	const { title: rawTitle, content, type: rawType } = await request.json();
+	const { title: rawTitle, content, type: rawType, tags: rawTags } = await request.json();
+
+	// Only known system tags are accepted.
+	const tags = Array.isArray(rawTags)
+		? [...new Set(rawTags.filter((tag) => AVAILABLE_SYSTEM_TAGS.includes(tag)))]
+		: [];
 
 	/**
 	 * @type {import('$lib/constants/constants').Y_POST_TYPES_VALUES}
@@ -110,6 +120,7 @@ export async function POST({ request, locals }) {
 		user: { name: session.user.name, id: session.user.id },
 		byteLength,
 		type,
+		tags,
 	};
 
 	const createdPost = await createPost(body, metadata);

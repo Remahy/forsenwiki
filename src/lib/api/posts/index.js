@@ -10,11 +10,12 @@ const headers = new Headers({ 'content-type': 'application/json' });
  * @param {string} title
  * @param {Y_POST_TYPES_VALUES} type
  * @param {YDoc} yDoc
+ * @param {string[]} [tags]
  */
-export const createPost = async (title, type, yDoc) => {
+export const createPost = async (title, type, yDoc, tags = []) => {
 	const encodedContent = encodeYDocToUpdateV2ToBase64(yDoc);
 
-	const body = JSON.stringify({ title, content: encodedContent });
+	const body = JSON.stringify({ title, content: encodedContent, tags });
 
 	const { length } = new TextEncoder().encode(body);
 
@@ -34,11 +35,12 @@ export const createPost = async (title, type, yDoc) => {
  * @param {string} postTitle
  * @param {YDoc} yDoc
  * @param {string} newTitle
+ * @param {string[]} [tags] - Only applied for moderators.
  */
-export const updatePost = async (postTitle, yDoc, newTitle) => {
+export const updatePost = async (postTitle, yDoc, newTitle, tags) => {
 	const encodedContent = encodeYDocToUpdateV2ToBase64(yDoc);
 
-	const body = JSON.stringify({ content: encodedContent, newTitle });
+	const body = JSON.stringify({ content: encodedContent, newTitle, tags });
 
 	return fetch(`/api/post/update/${postTitle}`, { method: 'POST', body, headers });
 };

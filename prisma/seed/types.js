@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../../src/generated/prisma/client.ts';
-import { SYSTEM, Y_POST_TYPES } from '../../src/lib/constants/constants.js';
+import { SYSTEM, SYSTEM_TAGS, Y_POST_TYPES } from '../../src/lib/constants/constants.js';
 
 dotenvExpand.expand(dotenv.config());
 
@@ -45,7 +45,7 @@ async function yMain() {
 		},
 	});
 
-	const ids = [ARTICLE, BIO];
+	const ids = [ARTICLE, BIO, ...Object.values(SYSTEM_TAGS)];
 
 	const postPromises = [];
 

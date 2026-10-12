@@ -2,10 +2,11 @@ import prisma from '$lib/prisma.server';
 
 /**
  * @param {{ title: { raw: string, sanitized: string }, data: { content: string }, ids: string[] }} arg1
- * @param {{ user: { name: string, id: string }, byteLength: number, type: import('$lib/constants/constants').Y_POST_TYPES_VALUES }} metadata
+ * @param {{ user: { name: string, id: string }, byteLength: number, type: import('$lib/constants/constants').Y_POST_TYPES_VALUES, tags?: string[] }} metadata
  */
 export const createPost = async ({ title, data, ids }, metadata) => {
 	const outRelations = ids.map((id) => ({ isSystem: false, toPostId: id }));
+	const tagRelations = (metadata.tags ?? []).map((tag) => ({ isSystem: true, toPostId: tag }));
 
 	const { user, byteLength } = metadata;
 
@@ -22,6 +23,7 @@ export const createPost = async ({ title, data, ids }, metadata) => {
 								isSystem: true,
 								toPostId: metadata.type,
 							},
+							...tagRelations,
 							...outRelations,
 						],
 						skipDuplicates: true,
