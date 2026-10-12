@@ -29,14 +29,17 @@ import {
 } from '$lib/constants/video';
 import type { MimetypeType } from '$lib/s3/limits';
 
+import { sanitizeUrl } from '../../utils/sanitizeUrl';
+import { getFormatType } from '../../utils/elementUtils';
 import VideoEmbedComponent from './VideoEmbedComponent.svelte';
+import { bcp47 } from './bcp47';
 import {
 	DecoratorBlockNode,
 	decoratorFormatToMarginStyle,
 	type SerializedDecoratorBlockNode,
 } from './DecoratorBlockNode';
-import { sanitizeUrl } from '../../utils/sanitizeUrl';
-import { getFormatType } from '../../utils/elementUtils';
+
+export type Subtitle = { id: string; title: string; src: string; language: string };
 
 export type SupportedPlatforms = 'twitch' | 'youtube' | 'usercontent';
 
@@ -47,6 +50,7 @@ export type VideoEmbedPayload = {
 	height?: number | 'inherit';
 	altText?: string;
 	fileType?: MimetypeType;
+	subtitles?: Subtitle[];
 };
 
 export type SerializedVideoEmbedNode = Spread<VideoEmbedPayload, SerializedDecoratorBlockNode>;
@@ -341,7 +345,10 @@ function createBoilerplateVideoIframeAttributes(node: VideoEmbedNode, parentUrl:
 
 const setFallbackElement = (element: HTMLIFrameElement, platform?: string) => {
 	element.setAttribute('class', 'element-placeholder-color');
-	element.srcdoc = `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform || 'Unknown platform'} embed.</strong></p>`;
+	element.setAttribute(
+		'srcdoc',
+		`<p style="color:#fff;"><strong>No valid URL is provided for this ${platform || 'Unknown platform'} embed.</strong></p>`
+	);
 };
 
 function generateYouTubeIframe(node: VideoEmbedNode, parentUrl: string) {
@@ -382,15 +389,40 @@ function generateCDNSrc(node: VideoEmbedNode, staticURL: string) {
 	const element = document.createElement('video');
 	setVideoAttributes(node, element);
 	element.setAttribute('controls', '');
+	element.setAttribute('playsinline', '');
 	element.setAttribute('data-lexical-usercontent', node.getSrc()!);
 
 	element.controls = true;
 	element.playsInline = true;
 
 	const source = document.createElement('source');
-	source.src = url;
+	source.setAttribute('src', url);
 
 	element.appendChild(source);
+
+	const subtitles = node.getSubtitles();
+	if (subtitles?.length) {
+		// This needs to be set to allow captions to work.
+		element.setAttribute('crossorigin', 'anonymous');
+
+		for (let index = 0; index < subtitles.length; index++) {
+			const subtitle = subtitles[index];
+			const languageLabel = bcp47.find((l) => l.lang === subtitle.language)?.label;
+
+			const track = document.createElement('track');
+			track.setAttribute('src', `${STATIC_DOMAIN}/${subtitle.src}`);
+			track.setAttribute('srclang', subtitle.language);
+			track.setAttribute('kind', 'subtitles');
+			track.setAttribute('label', `${subtitle.title} (${languageLabel})`);
+
+			if (index === 0) {
+				track.setAttribute('default', '')
+				track.default = true;
+			}
+
+			element.appendChild(track);
+		}
+	}
 
 	if (!url) {
 		const fallbackIframe = createBoilerplateVideoIframeAttributes(node, '');
@@ -441,6 +473,50 @@ const getFileType = (node: VideoEmbedNode) => {
 	return node.__platform === 'usercontent' ? node.__fileType : 'video';
 };
 
+export const setSubtitles = (
+	node: { __subtitles: VideoEmbedNode['__subtitles'] },
+	subtitles: Subtitle[]
+) => {
+	const s = new Map(
+		node.__subtitles?.map((s) => [s.src, { id: s.id, title: s.title, language: s.language }])
+	);
+
+	for (let index = 0; index < subtitles.length; index++) {
+		const subtitle = subtitles[index];
+
+		s.set(subtitle.src, { id: subtitle.id, title: subtitle.title, language: subtitle.language });
+	}
+
+	node.__subtitles = [...s.entries()].map(([src, { title, language, id }]) => ({
+		id,
+		src,
+		title,
+		language,
+	}));
+
+	return node;
+};
+
+export const deleteSubtitle = (
+	node: { __subtitles: VideoEmbedNode['__subtitles'] },
+	subtitleSrc: string
+) => {
+	const s = new Map(
+		node.__subtitles?.map((s) => [s.src, { id: s.id, title: s.title, language: s.language }])
+	);
+
+	s.delete(subtitleSrc);
+
+	node.__subtitles = [...s.entries()].map(([src, { id, title, language }]) => ({
+		id,
+		src,
+		title,
+		language,
+	}));
+
+	return node;
+};
+
 export class VideoEmbedNode extends DecoratorBlockNode {
 	__platform: SupportedPlatforms | undefined;
 	__src: string | undefined;
@@ -448,6 +524,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	__height: 'inherit' | number | undefined;
 	__altText: string | undefined;
 	__fileType: MimetypeType | undefined;
+	__subtitles: Subtitle[] | undefined;
 
 	constructor(
 		platform?: SupportedPlatforms,
@@ -456,6 +533,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		height?: number | 'inherit',
 		altText?: string,
 		fileType?: MimetypeType,
+		subtitles?: Subtitle[],
 		format?: ElementFormatType,
 		key?: NodeKey
 	) {
@@ -467,6 +545,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		this.__height = height;
 		this.__altText = altText;
 		this.__fileType = fileType;
+		this.__subtitles = subtitles;
 	}
 
 	static getType(): string {
@@ -481,6 +560,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 			node.__height,
 			node.__altText,
 			node.__fileType,
+			node.__subtitles,
 			node.getFormatType(),
 			node.__key
 		);
@@ -494,6 +574,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 			serializedNode.height,
 			serializedNode.altText,
 			serializedNode.fileType,
+			serializedNode.subtitles,
 			serializedNode.format
 		);
 
@@ -544,6 +625,11 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		return getFileType(self);
 	}
 
+	getSubtitles(): Subtitle[] | undefined {
+		const self = this.getLatest();
+		return self.__subtitles;
+	}
+
 	getTextContent() {
 		return this.getAltText() || '';
 	}
@@ -591,6 +677,21 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 		self.__fileType = fileType;
 	}
 
+	setSubtitles(subtitles: Subtitle[]): void {
+		const self = this.getWritable();
+		setSubtitles(self, subtitles);
+	}
+
+	deleteSubtitle(subtitleSrc: string): void {
+		const self = this.getWritable();
+		deleteSubtitle(self, subtitleSrc);
+	}
+
+	deleteSubtitles(): void {
+		const self = this.getWritable();
+		self.__subtitles = undefined;
+	}
+
 	exportJSON(): SerializedVideoEmbedNode {
 		return {
 			...super.exportJSON(),
@@ -601,6 +702,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 			height: this.__height,
 			altText: this.getAltText(),
 			fileType: this.getFileType(),
+			subtitles: this.getSubtitles(),
 		};
 	}
 
@@ -647,6 +749,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 				props.height = this.__height;
 				props.altText = this.__altText;
 				props.fileType = getFileType(this);
+				// props.subtitles = this.__subtitles;
 				props.resizable = true;
 				props.editor = editor;
 			},
@@ -657,10 +760,10 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 export function $createVideoEmbedNode(
 	payload?: VideoEmbedPayload & { format?: ElementFormatType; key?: NodeKey }
 ): VideoEmbedNode {
-	const { platform, src, width, height, altText, fileType, format, key } = payload || {};
+	const { platform, src, width, height, altText, fileType, subtitles, format, key } = payload || {};
 
 	return $applyNodeReplacement(
-		new VideoEmbedNode(platform, src, width, height, altText, fileType, format, key)
+		new VideoEmbedNode(platform, src, width, height, altText, fileType, subtitles, format, key)
 	);
 }
 

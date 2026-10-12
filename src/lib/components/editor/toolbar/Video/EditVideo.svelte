@@ -22,8 +22,9 @@
 	import Button from '$lib/components/Button.svelte';
 	import { modal } from '$lib/stores/modal';
 	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
-	import EditVideoModal from './EditVideoModal.svelte';
 	import { getURLAndTitle } from '../../plugins/VideoEmbed/VideoEmbed';
+	import EditVideoModal from './EditVideoModal.svelte';
+	import EditSubtitlesModal from './EditSubtitlesModal.svelte';
 
 	/**
 	 * @typedef {Object} Props
@@ -118,6 +119,31 @@
 			});
 		});
 	};
+
+	const subtitles = () =>
+		editor.read(() => {
+			modal.set({
+				isOpen: true,
+				component: EditSubtitlesModal,
+				src: selectedNode.getSrc(),
+				subtitles: selectedNode.getSubtitles(),
+				/** @param {import('../../plugins/VideoEmbed/VideoEmbed').VideoEmbedPayload} data */
+				onSubmit: (data) => {
+					editor.update(() => {
+						/** @type {import('../../plugins/VideoEmbed/VideoEmbed').VideoEmbedNode} */
+						const node = /** @type {any} */ (getNodeByKey(selectedNode.getKey()));
+
+						const { subtitles } = data;
+
+						node.deleteSubtitles();
+
+						if (subtitles?.length) {
+							node.setSubtitles(subtitles);
+						}
+					});
+				},
+			});
+		});
 </script>
 
 <div class="flex flex-col gap-4">
@@ -187,6 +213,10 @@
 				/>
 			</label>
 		</div>
+	{/if}
+
+	{#if currentPlatform === 'usercontent'}
+		<Button on:click={subtitles} class="text-xs">Subtitles</Button>
 	{/if}
 
 	<label class="flex flex-col gap-2">
