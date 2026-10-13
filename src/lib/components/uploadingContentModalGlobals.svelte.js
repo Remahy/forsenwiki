@@ -4,7 +4,7 @@ const defaults = {
 };
 
 /**
- * @type {Array<{ url: string, contentType: string, id: string }>}
+ * @type {Array<{ url: string, contentType: string, id: string, name: string }>}
  */
 const uploaded = $state([]);
 
@@ -19,7 +19,7 @@ export const uploadingContentModalGlobals = {
 };
 
 /**
- * @param {{ url: string, contentType: string, id: string }} entry
+ * @param {{ url: string, contentType: string, id: string, name: string }} entry
  */
 export const addNewUploaded = (entry) => {
 	uploaded.push(entry);

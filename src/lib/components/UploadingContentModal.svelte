@@ -53,7 +53,11 @@
 							class="forsen-wiki-theme-border bg-dark flex w-fit flex-col justify-between gap-2 overflow-hidden rounded-sm border"
 						>
 							{#if type === 'image'}
-								<ImagePreview src={upload.url} name="" className="max-h-32 w-auto! max-w-32!" />
+								<ImagePreview
+									src={upload.url}
+									name={upload.name}
+									className="max-h-32 w-auto! max-w-32!"
+								/>
 							{:else if type === 'audio'}
 								<AudioPreview src={upload.url} />
 							{:else if type === 'video'}
