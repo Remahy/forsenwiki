@@ -20,9 +20,9 @@ export class DiffFloatBlockNode extends FloatBlockNode {
 			// @ts-ignore
 			node.float || node.__float,
 			// @ts-ignore
-			node.width || node.__width,
+			node.width ?? node.__width,
 			// @ts-ignore
-			node.height || node.__height,
+			node.height ?? node.__height,
 			// @ts-ignore
 			node.hasBorder || node.__hasBorder,
 			key
