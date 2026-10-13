@@ -28,6 +28,7 @@
 	import GalleryPlugin from './plugins/Gallery/GalleryPlugin.svelte';
 	import ImageFixerModalButton from './ImageFixer/index.svelte';
 	import TreeviewPlugin from './Treeview/TreeviewPlugin.svelte';
+	import EditorShortcuts from './plugins/EditorShortcuts.svelte';
 	import { editorGlobals } from './editorGlobals.svelte';
 
 	/**
@@ -84,6 +85,8 @@
 		<TreeviewPlugin />
 
 		<GalleryPlugin />
+
+		<EditorShortcuts />
 
 		<div class="min-w-0 flex-1">
 			<div class="editor-border sticky top-0 z-40 hidden w-full p-2 xl:block">
