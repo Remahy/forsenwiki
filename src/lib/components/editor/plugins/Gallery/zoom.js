@@ -5,6 +5,19 @@ import { modal } from '$lib/stores/modal';
 import ImageFocus from '$lib/components/content/ImageFocus.svelte';
 
 /**
+ * @param {HTMLElement} container
+ * @param {import('@zoom-image/core').ZoomImageWheelOptions} [options]
+ * @returns
+ */
+export const initializeZoomWithDefaults = (container, options = {}) => {
+	const wheelZoomRatio = 0.35;
+	return createZoomImageWheel(container, {
+		wheelZoomRatio,
+		...options,
+	});
+};
+
+/**
  * @param {HTMLElement} rootElement
  */
 export const initializeZoomForImgElements = (rootElement) => {
@@ -82,13 +95,10 @@ export const initializeZoomForImgElements = (rootElement) => {
 			continue;
 		}
 
-		const wheelZoomRatio = 0.35;
-
 		if (parentContainer.classList.contains('embla__slide')) {
-			const { cleanup, setState } = createZoomImageWheel(parentContainer, {
+			const { cleanup, setState } = initializeZoomWithDefaults(parentContainer, {
 				zoomTarget: element,
 				initialState: { enable: false },
-				wheelZoomRatio,
 			});
 
 			const onFullscreenChange = () => {

@@ -1,8 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import { MaximizeIcon } from '@lucide/svelte';
-	import { createZoomImageWheel } from '@zoom-image/core';
 	import { modal } from '$lib/stores/modal';
+	import { initializeZoomWithDefaults } from '../editor/plugins/Gallery/zoom';
 
 	/** @type {{ src: string, name: string, onclose?: () => void }} */
 	const { src, name, onclose } = $props();
@@ -33,9 +33,12 @@
 
 	onMount(() => {
 		let isMounted = true;
+
 		const previousFocus = document.activeElement;
+
 		closeButton.focus();
-		const { cleanup } = createZoomImageWheel(container);
+
+		const { cleanup } = initializeZoomWithDefaults(container);
 
 		const onFullscreenChange = () => {
 			if (document.fullscreenElement !== viewer) {
@@ -44,6 +47,7 @@
 		};
 
 		document.addEventListener('fullscreenchange', onFullscreenChange);
+
 		viewer
 			.requestFullscreen?.()
 			.then(() => {
@@ -57,9 +61,12 @@
 
 		return () => {
 			isMounted = false;
+
 			document.removeEventListener('fullscreenchange', onFullscreenChange);
+
 			exitFullscreen();
 			cleanup();
+
 			if (previousFocus instanceof HTMLElement && previousFocus.isConnected) {
 				previousFocus.focus({ preventScroll: true });
 			}
