@@ -31,9 +31,13 @@ export class DiffVideoEmbedNode extends VideoEmbedNode {
 			// @ts-ignore
 			node.height ?? node.__height,
 			// @ts-ignore
-			node.format ?? node.__format,
+			node.altText || node.__altText,
 			// @ts-ignore
-			node.alt ?? node.__alt,
+			node.fileType || node.__fileType,
+			// @ts-ignore
+			node.subtitles || node.__subtitles,
+			// @ts-ignore
+			node.format ?? node.__format,
 			key
 		);
 		// @ts-ignore
