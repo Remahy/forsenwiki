@@ -2,7 +2,7 @@ import { json } from '@sveltejs/kit';
 import prisma from '$lib/prisma.server.js';
 
 /**
- * @typedef {ReturnType<import('../../../lib/s3/limits.js').getType>} MimetypeType
+ * @typedef {import('$lib/s3/limits.js').MimetypeType} MimetypeType
  */
 
 /**
@@ -15,7 +15,7 @@ const contentEntry = (content) => ({
 	// @ts-ignore
 	fileType: content.type,
 	contentType: content.contentType,
-	lastUpdated: content.createdTimestamp,
+	createdTimestamp: content.createdTimestamp,
 	rawTitle: content.name,
 	title: content.hash,
 });
@@ -46,7 +46,7 @@ const getRecentUploads = async (types = [], options) => {
 				},
 				id: true,
 				rawTitle: true,
-				lastUpdated: true,
+				createdTimestamp: true,
 				title: true,
 			},
 		});
@@ -91,15 +91,15 @@ const getRecentUploads = async (types = [], options) => {
 
 	results.sort((a, b) =>
 		orderBy === 'asc'
-			? a.lastUpdated.getTime() - b.lastUpdated.getTime()
-			: b.lastUpdated.getTime() - a.lastUpdated.getTime()
+			? a.createdTimestamp.getTime() - b.createdTimestamp.getTime()
+			: b.createdTimestamp.getTime() - a.createdTimestamp.getTime()
 	);
 
 	return { results };
 };
 
 /**
- * @typedef {{ type?: 'content', rawTitle: string, title: string, lastUpdated: Date, id: string, fileType?: MimetypeType, contentType?: string | null, html?: { image: string | null, text: string | null } | null }} QueryResult
+ * @typedef {{ type?: 'content', rawTitle: string, title: string, createdTimestamp: Date, id: string, fileType?: MimetypeType, contentType?: string | null, html?: { image: string | null, text: string | null } | null }} QueryResult
  */
 
 /**
@@ -151,7 +151,7 @@ export const _getSearch = async (query, types = [], options) => {
 				},
 				id: true,
 				rawTitle: true,
-				lastUpdated: true,
+				createdTimestamp: true,
 				title: true,
 			},
 			skip: 51 * page,
@@ -189,7 +189,7 @@ export const _getSearch = async (query, types = [], options) => {
 				},
 				id: true,
 				rawTitle: true,
-				lastUpdated: true,
+				createdTimestamp: true,
 				title: true,
 			},
 			skip: 51 * page,
@@ -269,8 +269,8 @@ export const _getSearch = async (query, types = [], options) => {
 
 	results.sort((a, b) =>
 		orderBy === 'asc'
-			? a.lastUpdated.getTime() - b.lastUpdated.getTime()
-			: b.lastUpdated.getTime() - a.lastUpdated.getTime()
+			? a.createdTimestamp.getTime() - b.createdTimestamp.getTime()
+			: b.createdTimestamp.getTime() - a.createdTimestamp.getTime()
 	);
 
 	return { results: results.flat() };

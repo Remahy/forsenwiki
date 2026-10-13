@@ -91,9 +91,12 @@ export default [
 
 						imgThumbnailElement.setAttribute('data-replace-me', '');
 
-						imgThumbnailElement.src = isTwitch
-							? imgThumbnailElement.src
-							: getYouTubeInfo(imgThumbnailElement.src).thumbnail || '';
+						imgThumbnailElement.setAttribute(
+							'src',
+							isTwitch
+								? imgThumbnailElement.src
+								: getYouTubeInfo(imgThumbnailElement.src).thumbnail || ''
+						);
 
 						clonedChild = /** @type {any} */ (imgThumbnailElement.cloneNode(true));
 					} else {

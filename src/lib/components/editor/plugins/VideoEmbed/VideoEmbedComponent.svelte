@@ -42,14 +42,26 @@
 	 * @property {'inherit' | number} height
 	 * @property {'inherit' | number} width
 	 * @property {string | undefined} altText
+	 * @property {import('$lib/s3/limits.js').MimetypeType | undefined} fileType
 	 * @property {boolean} resizable
 	 * @property {import('lexical').ElementFormatType} format
 	 * @property {import('lexical').LexicalEditor} editor
 	 */
 
 	/** @type {Props} */
-	let { node, src, platform, nodeKey, height, width, altText, resizable, format, editor } =
-		$props();
+	let {
+		node,
+		src,
+		platform,
+		nodeKey,
+		height,
+		width,
+		altText,
+		fileType,
+		resizable,
+		format,
+		editor,
+	} = $props();
 
 	/** @type {BaseSelection | null} */
 	let selection = $state(null);
@@ -217,10 +229,10 @@
 	>
 		{#if platform === 'usercontent'}
 			{#if error}
-				<div class="pointer-events-none" style={getIframeStyle(width, height)}></div>
+				<div class="pointer-events-none" style={getIframeStyle(width, height, fileType)}></div>
 				<div class="pointer-events-none absolute top-0 flex flex-col gap-2 p-2">
 					<p class="text-lg whitespace-break-spaces text-white">
-						Something went wrong loading this video.
+						Something went wrong loading this {fileType || 'content'}.
 					</p>
 					<p class="whitespace-break-spaces text-white">
 						<strong>URL:</strong> <span>{url}</span>
@@ -228,13 +240,19 @@
 				</div>
 			{:else}
 				{#if thumbnail}
-					<img src={thumbnail} alt="" {width} {height} style={getIframeStyle(width, height)} />
+					<img
+						src={thumbnail}
+						alt=""
+						{width}
+						{height}
+						style={getIframeStyle(width, height, fileType)}
+					/>
 				{:else}
 					<video
 						class="pointer-events-none z-10 m-0!"
 						{width}
 						{height}
-						style={getIframeStyle(width, height)}
+						style={getIframeStyle(width, height, fileType)}
 						loading="lazy"
 						{title}
 					>
@@ -245,8 +263,12 @@
 							}}
 						/>
 					</video>
+
 					<div class="pointer-events-none absolute top-0 -z-10 flex flex-col gap-2 p-2">
-						<p class="text-lg whitespace-break-spaces text-white">No preview available.</p>
+						{#if fileType === 'audio'}
+							<p class="text-lg whitespace-break-spaces text-white">This is an audio file.</p>
+						{/if}
+
 						<p class="text-white">
 							<strong>URL:</strong> <span>{url}</span>
 						</p>
@@ -261,7 +283,7 @@
 					alt=""
 					{width}
 					{height}
-					style={getIframeStyle(width, height)}
+					style={getIframeStyle(width, height, fileType)}
 				/>
 			{:else}
 				<iframe
@@ -277,7 +299,7 @@
 					allow="autoplay 'none'; clipboard-write; encrypted-media; picture-in-picture"
 					allowFullScreen={false}
 					{title}
-					style={getIframeStyle(width, height)}
+					style={getIframeStyle(width, height, fileType)}
 				></iframe>
 			{/if}
 		{/if}

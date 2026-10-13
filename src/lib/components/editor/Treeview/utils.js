@@ -34,6 +34,29 @@ export const getTypeForNode = (node) => {
 		return parentList ? parentList.getListType() : node.getListType();
 	}
 
+	if (isVideoEmbedNode(node)) {
+		const src = node.getSrc();
+
+		const type = node.getType();
+		if (!src) {
+			return type;
+		}
+
+		const platform = node.getPlatform();
+
+		switch (platform) {
+			case 'usercontent': {
+				const fileType = node.getFileType();
+				return fileType || type;
+			}
+			case 'twitch':
+			case 'youtube':
+				return platform;
+			default:
+				return type;
+		}
+	}
+
 	const type = isHeadingNode(node) ? node.getTag() : node.getType();
 
 	return type;

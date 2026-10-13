@@ -117,7 +117,7 @@
 
 			await runValidations(editor);
 
-			uploadModal.set({ component: UploadingContentModal, isOpen: true });
+			uploadModal.set({ isOpen: true, component: UploadingContentModal });
 
 			// Upload images to S3.
 			await uploadImages(editor, id);

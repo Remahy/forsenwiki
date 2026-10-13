@@ -293,6 +293,7 @@
 			placeholderNode.getWidthAndHeight();
 
 		modal.set({
+			isOpen: true,
 			component: EditImageModal,
 			src: placeholderNode.getSrc(),
 			altText: placeholderNode.getAltText(),
@@ -348,7 +349,6 @@
 					}
 				});
 			},
-			isOpen: true,
 		});
 	}
 

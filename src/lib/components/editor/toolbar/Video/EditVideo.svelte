@@ -19,11 +19,12 @@
 	} from '$lib/constants/video';
 	import { DOMAIN } from '$lib/environment/environment';
 	import YouTube from '$lib/components/icons/YouTube.svelte';
-	import { getURLAndTitle } from '../../plugins/VideoEmbed/VideoEmbed';
 	import Button from '$lib/components/Button.svelte';
-	import EditVideoModal from './EditVideoModal.svelte';
 	import { modal } from '$lib/stores/modal';
 	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
+	import { getURLAndTitle } from '../../plugins/VideoEmbed/VideoEmbed';
+	import EditVideoModal from './EditVideoModal.svelte';
+	import EditSubtitlesModal from './EditSubtitlesModal.svelte';
 
 	/**
 	 * @typedef {Object} Props
@@ -95,23 +96,54 @@
 	const video = () => {
 		editor.read(() => {
 			modal.set({
+				isOpen: true,
 				component: EditVideoModal,
 				src: selectedNode.getSrc(),
+				fileType: selectedNode.getFileType(),
 				/** @param {import('../../plugins/VideoEmbed/VideoEmbed').VideoEmbedPayload} data */
 				onSubmit: (data) => {
 					editor.update(() => {
-						/** @type {import('../../plugins/Image/Image').ImageNode} */
+						/** @type {import('../../plugins/VideoEmbed/VideoEmbed').VideoEmbedNode} */
 						const node = /** @type {any} */ (getNodeByKey(selectedNode.getKey()));
 
-						const { src } = data;
+						const { src, fileType } = data;
+
+						if (!src) {
+							return;
+						}
 
 						node.setSrc(src);
+						node.setFileType(fileType);
 					});
 				},
-				isOpen: true,
 			});
 		});
 	};
+
+	const subtitles = () =>
+		editor.read(() => {
+			modal.set({
+				isOpen: true,
+				component: EditSubtitlesModal,
+				src: selectedNode.getSrc(),
+				subtitles: selectedNode.getSubtitles(),
+				/** @param {import('../../plugins/VideoEmbed/VideoEmbed').VideoEmbedPayload} data */
+				onSubmit: (data) => {
+					editor.update(() => {
+						/** @type {import('../../plugins/VideoEmbed/VideoEmbed').VideoEmbedNode} */
+						const node = /** @type {any} */ (getNodeByKey(selectedNode.getKey()));
+
+						const { subtitles } = data;
+
+						node.deleteSubtitles();
+
+						if (subtitles?.length) {
+							node.setSubtitles(subtitles);
+						}
+					});
+				},
+			});
+		});
 </script>
 
 <div class="flex flex-col gap-4">
@@ -181,6 +213,10 @@
 				/>
 			</label>
 		</div>
+	{/if}
+
+	{#if currentPlatform === 'usercontent'}
+		<Button on:click={subtitles} class="text-xs">Subtitles</Button>
 	{/if}
 
 	<label class="flex flex-col gap-2">

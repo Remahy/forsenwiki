@@ -53,7 +53,7 @@
 	}
 
 	const toggleUploadModal = () => {
-		modal.set({ component: UploadContentModal, isOpen: true });
+		modal.set({ isOpen: true, component: UploadContentModal });
 	};
 </script>
 
@@ -112,8 +112,8 @@
 								</span>
 							</div>
 
-							<small title={new Date(result.lastUpdated).toUTCString()}
-								>{formatRelative(result.lastUpdated, Date.now(), {
+							<small title={new Date(result.createdTimestamp).toUTCString()}
+								>{formatRelative(result.createdTimestamp, Date.now(), {
 									locale: enGB,
 								})}&nbsp;</small
 							>

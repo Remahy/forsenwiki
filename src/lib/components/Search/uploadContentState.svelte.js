@@ -66,7 +66,7 @@ export const handleUploadContentSubmit = async () => {
 		}
 	}
 
-	uploadModal.set({ component: UploadingContentModal, isOpen: true, closable: true });
+	uploadModal.set({ isOpen: true, component: UploadingContentModal, closable: true });
 
 	try {
 		await uploadFiles(filesToUpload);
