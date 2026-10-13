@@ -40,6 +40,30 @@ export const initializeZoomForImgElements = (rootElement) => {
 			continue;
 		}
 
+		const { parentElement } = element;
+
+		if (parentElement?.classList.contains('embla__slide')) {
+			const { cleanup, setState } = initializeZoomWithDefaults(parentElement, {
+				zoomTarget: element,
+				initialState: { enable: false },
+			});
+
+			const onFullscreenChange = () => {
+				setState({ currentZoom: 1 });
+				setState({
+					enable: !!document.fullscreenElement?.contains(element),
+				});
+			};
+
+			document.addEventListener('fullscreenchange', onFullscreenChange);
+			cleanups.push(() => {
+				cleanup();
+				document.removeEventListener('fullscreenchange', onFullscreenChange);
+			});
+
+			continue;
+		}
+
 		const openImage = () => {
 			if (document.fullscreenElement) {
 				return;
@@ -88,30 +112,6 @@ export const initializeZoomForImgElements = (rootElement) => {
 				element.setAttribute('tabindex', previousTabIndex);
 			}
 		});
-
-		const parentContainer = element.parentElement;
-
-		if (!parentContainer) {
-			continue;
-		}
-
-		if (parentContainer.classList.contains('embla__slide')) {
-			const { cleanup, setState } = initializeZoomWithDefaults(parentContainer, {
-				zoomTarget: element,
-				initialState: { enable: false },
-			});
-
-			const onFullscreenChange = () => {
-				setState({ currentZoom: 1 });
-				setState({
-					enable: !!document.fullscreenElement?.contains(element),
-				});
-			};
-
-			document.addEventListener('fullscreenchange', onFullscreenChange);
-			cleanups.push(cleanup);
-			cleanups.push(() => document.removeEventListener('fullscreenchange', onFullscreenChange));
-		}
 	}
 
 	return () => {
