@@ -56,7 +56,7 @@
 	</div>
 </div>
 
-{#if types.includes('content') || types.includes('') || !types.length}
+{#if types.includes('content')}
 	<div class="flex flex-col gap-1">
 		<strong class="min-w-25">Content type</strong>
 		<div class="flex flex-wrap items-baseline gap-3">

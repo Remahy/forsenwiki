@@ -116,7 +116,7 @@ const uploadContentHandler = async (contentToUpload) => {
 	}
 
 	/**
-	 * @type {Array<{ index: number, url: string, contentType: string, metadata: { id: string } }>}
+	 * @type {Array<{ index: number, url: string, contentType: string, name: string, metadata: { id: string } }>}
 	 */
 	const presignedURLs = await presignRes.json();
 
@@ -137,6 +137,7 @@ const uploadContentHandler = async (contentToUpload) => {
 						id: presignEntry.metadata.id,
 						url: `${STATIC_DOMAIN}/${hash}`,
 						contentType: presignEntry.contentType,
+						name: presignEntry.name,
 					})
 				)
 				.catch((err) => {

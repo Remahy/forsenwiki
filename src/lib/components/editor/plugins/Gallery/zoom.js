@@ -5,6 +5,18 @@ import { modal } from '$lib/stores/modal';
 import ImageFocus from '$lib/components/content/ImageFocus.svelte';
 
 /**
+ * @param {HTMLElement} container
+ * @param {import('@zoom-image/core').ZoomImageWheelOptions} [options]
+ */
+export const initializeZoomWithDefaults = (container, options = {}) => {
+	const wheelZoomRatio = 0.35;
+	return createZoomImageWheel(container, {
+		wheelZoomRatio,
+		...options,
+	});
+};
+
+/**
  * @param {HTMLElement} rootElement
  */
 export const initializeZoomForImgElements = (rootElement) => {
@@ -24,6 +36,30 @@ export const initializeZoomForImgElements = (rootElement) => {
 		}
 
 		if (element.closest('.embla-thumbs__slide, a')) {
+			continue;
+		}
+
+		const { parentElement } = element;
+
+		if (parentElement?.classList.contains('embla__slide')) {
+			const { cleanup, setState } = initializeZoomWithDefaults(parentElement, {
+				zoomTarget: element,
+				initialState: { enable: false },
+			});
+
+			const onFullscreenChange = () => {
+				setState({ currentZoom: 1 });
+				setState({
+					enable: !!document.fullscreenElement?.contains(element),
+				});
+			};
+
+			document.addEventListener('fullscreenchange', onFullscreenChange);
+			cleanups.push(() => {
+				cleanup();
+				document.removeEventListener('fullscreenchange', onFullscreenChange);
+			});
+
 			continue;
 		}
 
@@ -75,33 +111,6 @@ export const initializeZoomForImgElements = (rootElement) => {
 				element.setAttribute('tabindex', previousTabIndex);
 			}
 		});
-
-		const parentContainer = element.parentElement;
-
-		if (!parentContainer) {
-			continue;
-		}
-
-		const wheelZoomRatio = 0.35;
-
-		if (parentContainer.classList.contains('embla__slide')) {
-			const { cleanup, setState } = createZoomImageWheel(parentContainer, {
-				zoomTarget: element,
-				initialState: { enable: false },
-				wheelZoomRatio,
-			});
-
-			const onFullscreenChange = () => {
-				setState({ currentZoom: 1 });
-				setState({
-					enable: !!document.fullscreenElement?.contains(element),
-				});
-			};
-
-			document.addEventListener('fullscreenchange', onFullscreenChange);
-			cleanups.push(cleanup);
-			cleanups.push(() => document.removeEventListener('fullscreenchange', onFullscreenChange));
-		}
 	}
 
 	return () => {
