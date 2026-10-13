@@ -226,7 +226,7 @@
 
 	<div class="items-start gap-8 xl:flex">
 		<div class="mb-4 xl:mb-0 xl:w-fit">
-			<Box class="xl:min-h-96 xl:max-w-3xl xl:min-w-96">
+			<Box class="xl:max-w-3xl xl:min-w-96">
 				{#if SvelteComponent && SvelteComponentProps}
 					<SvelteComponent {...SvelteComponentProps} />
 				{:else}

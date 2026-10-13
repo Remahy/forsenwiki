@@ -66,7 +66,7 @@ export async function POST({ request, locals }) {
 	}
 
 	/**
-	 * @type {Array<{ url: string, index: number, contentType: string, metadata: any }>}
+	 * @type {Array<{ url: string, index: number, contentType: string, name: string, metadata: any }>}
 	 */
 	let presignedUrls = [];
 
@@ -93,6 +93,7 @@ export async function POST({ request, locals }) {
 					url: presignedUrl,
 					contentType: f.contentType,
 					metadata: finalMetadata,
+					name: f.name,
 				});
 			}
 		});

@@ -1,11 +1,16 @@
 <script>
 	import { onMount } from 'svelte';
 	import { MaximizeIcon } from '@lucide/svelte';
-	import { createZoomImageWheel } from '@zoom-image/core';
 	import { modal } from '$lib/stores/modal';
+	import { STATIC_DOMAIN } from '$lib/environment/environment';
+	import { initializeZoomWithDefaults } from '../editor/plugins/Gallery/zoom';
 
-	/** @type {{ src: string, name: string }} */
-	const { src, name } = $props();
+	/** @type {{ src: string, name: string, onclose?: () => void }} */
+	const { src, name, onclose } = $props();
+
+	let rawSrc = $derived(
+		src.startsWith(STATIC_DOMAIN) ? `${STATIC_DOMAIN}/${src.split('/').pop()}` : src
+	);
 
 	/** @type {HTMLElement} */
 	let container;
@@ -23,14 +28,22 @@
 	};
 
 	const close = () => {
+		if (onclose) {
+			onclose();
+			return;
+		}
+
 		$modal.isOpen = false;
 	};
 
 	onMount(() => {
 		let isMounted = true;
+
 		const previousFocus = document.activeElement;
+
 		closeButton.focus();
-		const { cleanup } = createZoomImageWheel(container);
+
+		const { cleanup } = initializeZoomWithDefaults(container);
 
 		const onFullscreenChange = () => {
 			if (document.fullscreenElement !== viewer) {
@@ -39,6 +52,7 @@
 		};
 
 		document.addEventListener('fullscreenchange', onFullscreenChange);
+
 		viewer
 			.requestFullscreen?.()
 			.then(() => {
@@ -52,9 +66,12 @@
 
 		return () => {
 			isMounted = false;
+
 			document.removeEventListener('fullscreenchange', onFullscreenChange);
+
 			exitFullscreen();
 			cleanup();
+
 			if (previousFocus instanceof HTMLElement && previousFocus.isConnected) {
 				previousFocus.focus({ preventScroll: true });
 			}
@@ -64,7 +81,7 @@
 
 <div bind:this={viewer} class="modal-color pointer-events-auto fixed inset-0 flex h-dvh flex-col">
 	<div bind:this={container} class="min-h-0 grow overflow-hidden">
-		<img {src} alt={name} class="m-0! h-full w-full object-contain" />
+		<img src={rawSrc} alt={name} class="m-0! h-full w-full object-contain" />
 	</div>
 	<button
 		bind:this={closeButton}

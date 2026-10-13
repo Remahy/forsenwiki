@@ -100,14 +100,18 @@
 						target="_blank"
 					>
 						<div class="flex grow flex-col gap-2">
-							<span class="line-clamp-1" title={result.rawTitle}>
-								{#if !result.type}<span class="rounded-sm bg-black/10 p-1 text-xs dark:bg-black"
-										>Article</span
-									>{:else if result.type === 'content'}
+							<div>
+								{#if !result.type}
+									<span class="rounded-sm bg-black/10 p-1 text-xs dark:bg-black">Article</span>
+								{:else if result.type === 'content'}
 									<span class="rounded-sm bg-violet-500/25 p-1 text-xs">Content</span>
 								{/if}
-								<strong>{result.rawTitle}</strong>
-							</span>
+
+								<span title={result.rawTitle}>
+									<strong>{result.rawTitle}</strong>
+								</span>
+							</div>
+
 							<small title={new Date(result.createdTimestamp).toUTCString()}
 								>{formatRelative(result.createdTimestamp, Date.now(), {
 									locale: enGB,
