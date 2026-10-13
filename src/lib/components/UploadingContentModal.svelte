@@ -46,12 +46,23 @@
 			</div>
 
 			{#if uploaded.length}
-				<div class="flex flex-wrap gap-8">
+				<div class="flex flex-wrap gap-8 justify-between">
 					{#each uploaded as upload (upload.url)}
 						{@const type = getType(upload.contentType)}
 						<div
-							class="forsen-wiki-theme-border bg-dark flex w-fit flex-col justify-between gap-2 overflow-hidden rounded-sm border"
+							class="forsen-wiki-theme-border bg-dark flex w-fit min-w-64 max-w-64 flex-col justify-between gap-2 overflow-hidden rounded-sm border"
 						>
+							<div class="flex items-center gap-2 p-2" title={upload.name}>
+								<LinkButton
+									href="/content/{upload.id}"
+									target="_blank"
+									class="self-start truncate p-2! text-xs shrink-0"
+								>
+									<span>View</span>
+								</LinkButton>
+								<span class="truncate">{upload.name}</span>
+							</div>
+
 							{#if type === 'image'}
 								<ImagePreview
 									src={upload.url}
@@ -65,9 +76,6 @@
 							{:else if type === 'document'}
 								<span>Document {upload.url}</span>
 							{/if}
-							<LinkButton href="/content/{upload.id}" target="_blank" class="self-start"
-								>View</LinkButton
-							>
 						</div>
 					{/each}
 				</div>

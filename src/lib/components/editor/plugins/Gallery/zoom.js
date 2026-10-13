@@ -7,7 +7,6 @@ import ImageFocus from '$lib/components/content/ImageFocus.svelte';
 /**
  * @param {HTMLElement} container
  * @param {import('@zoom-image/core').ZoomImageWheelOptions} [options]
- * @returns
  */
 export const initializeZoomWithDefaults = (container, options = {}) => {
 	const wheelZoomRatio = 0.35;
