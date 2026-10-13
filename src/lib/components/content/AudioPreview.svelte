@@ -2,4 +2,4 @@
 	const { src } = $props();
 </script>
 
-<audio controls {src}></audio>
+<audio controls {src} class="w-full"></audio>
