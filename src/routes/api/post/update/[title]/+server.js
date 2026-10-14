@@ -18,7 +18,7 @@ import { invalidatePostCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/post/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
-import { EDITOR_IS_READONLY, Y_POST_TYPES } from '$lib/constants/constants';
+import { AVAILABLE_SYSTEM_TAGS, EDITOR_IS_READONLY, Y_POST_TYPES } from '$lib/constants/constants';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { isSystem } from '$lib/utils/isSystem';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
@@ -87,7 +87,7 @@ export async function POST({ request, locals, params }) {
 	 * @param {string} content
 	 * @param {string} newTitle - Skip this if user is not moderator.
 	 */
-	const { content, ...rest } = await request.json();
+	const { content, tags: rawTags, ...rest } = await request.json();
 
 	/** @type {{ newTitle: string | null }} */
 	let { newTitle } = rest;
@@ -190,7 +190,13 @@ export async function POST({ request, locals, params }) {
 	let potentialNewTitle =
 		isModerator && newTitle ? await validateTitle(post, newTitle, partialErrors) : undefined;
 
-	const body = { post, outRelations, content: contentBase64 };
+	// Only moderators can change tags. `undefined` leaves the current tags untouched.
+	const systemTags =
+		isModerator && Array.isArray(rawTags)
+			? [...new Set(rawTags.filter((tag) => AVAILABLE_SYSTEM_TAGS.includes(tag)))]
+			: undefined;
+
+	const body = { post, outRelations, systemTags, content: contentBase64 };
 	const metadata = {
 		user: { id: session.user.id },
 		byteLength,

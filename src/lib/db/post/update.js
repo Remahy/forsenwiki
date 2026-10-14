@@ -1,9 +1,11 @@
 import prisma from '$lib/prisma.server';
+import { AVAILABLE_SYSTEM_TAGS } from '$lib/constants/constants';
 import { postYRelationDeleteByFromPostId } from './delete';
 
 /**
  * @typedef {{ post: Pick<Prisma.YPost, 'id' | 'rawTitle' | 'title'>,
  *   outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[],
+ *   systemTags?: string[],
  *   metadata: { totalByteLength: number }
  * }} UpdateYPost
  */
@@ -12,8 +14,15 @@ import { postYRelationDeleteByFromPostId } from './delete';
  * @param {Prisma.PrismaClient | Prisma.Prisma.TransactionClient} tx
  * @param {UpdateYPost} arg2
  */
-const updateYPost = async (tx, { post, outRelations, metadata }) => {
+const updateYPost = async (tx, { post, outRelations, systemTags, metadata }) => {
 	await postYRelationDeleteByFromPostId(tx, post.id);
+
+	// When tags are given, they replace all of the post's current system tags.
+	if (systemTags) {
+		await tx.yPostRelation.deleteMany({
+			where: { fromPostId: post.id, isSystem: true, toPostId: { in: AVAILABLE_SYSTEM_TAGS } },
+		});
+	}
 
 	await tx.yPost.update({
 		where: {
@@ -22,7 +31,10 @@ const updateYPost = async (tx, { post, outRelations, metadata }) => {
 		data: {
 			outRelations: {
 				createMany: {
-					data: outRelations,
+					data: [
+						...(systemTags ?? []).map((tag) => ({ isSystem: true, toPostId: tag })),
+						...outRelations,
+					],
 					skipDuplicates: true,
 				},
 			},
@@ -62,16 +74,17 @@ const createYPostUpdate = async (tx, data, metadata) => {
 };
 
 /**
- * @param {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], content: string }} data
+ * @param {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], systemTags?: string[], content: string }} data
  * @param {{ user: { id: string }, byteLength: number, totalByteLength: number, newTitle?: string, oldTitle?: string }} metadata
  */
 export const updatePost = async (data, metadata) => {
-	const { post, outRelations, content } = data;
+	const { post, outRelations, systemTags, content } = data;
 
 	return prisma.$transaction(async (tx) => {
 		await updateYPost(tx, {
 			post,
 			outRelations,
+			systemTags,
 			metadata,
 		});
 

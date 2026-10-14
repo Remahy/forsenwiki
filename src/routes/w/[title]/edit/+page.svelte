@@ -16,10 +16,11 @@
 	import Clown from '$lib/components/Clown.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Container from '$lib/components/Container.svelte';
+	import TagSelect from '$lib/components/TagSelect.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-	import { WIKI_PATH } from '$lib/constants/constants';
+	import { AVAILABLE_SYSTEM_TAGS, WIKI_PATH } from '$lib/constants/constants';
 	import { uploadImages } from '$lib/s3/uploadContentHandlers';
 	import { uploadModal } from '$lib/stores/modal';
 	import UploadingContentModal from '$lib/components/UploadingContentModal.svelte';
@@ -27,7 +28,7 @@
 	import { runValidations } from '$lib/components/editor/validations';
 
 	const {
-		post: { id, title, rawTitle },
+		post: { id, title, rawTitle, outRelations },
 		update,
 	} = $page.data;
 
@@ -54,6 +55,13 @@
 	let isUploading = $state(false);
 
 	let newTitle = $state(rawTitle);
+
+	/** @type {string[]} */
+	let tags = $state(
+		/** @type {Array<{ isSystem: boolean, toPostId: string }>} */ (outRelations)
+			.filter(({ isSystem, toPostId }) => isSystem && AVAILABLE_SYSTEM_TAGS.includes(toPostId))
+			.map(({ toPostId }) => toPostId)
+	);
 
 	let titleError = $derived.by(() => {
 		const rawTitle = newTitle;
@@ -124,7 +132,9 @@
 			// Upload images to S3.
 			await uploadImages(editor, id);
 
-			res = await editor.read(() => updatePost(title, yjsDocMap, newTitle));
+			res = await editor.read(() =>
+				updatePost(title, yjsDocMap, newTitle, $page.data.isModerator ? tags : undefined)
+			);
 		} catch (err) {
 			console.error(err);
 			error = new Error(err?.toString());
@@ -238,6 +248,10 @@
 					{/if}
 				</label>
 			</div>
+
+			<div class="mt-4">
+				<TagSelect bind:tags onchange={unsetError} />
+			</div>
 		</Box>
 	{/if}
 
@@ -283,7 +297,7 @@
 				<FileUpIcon class="inline min-w-6 lg:hidden" />
 			</Button>
 		{:else}
-			<span class="p-2 forsen-wiki-theme-border border">Login to submit.</span>
+			<span class="forsen-wiki-theme-border border p-2">Login to submit.</span>
 		{/if}
 	</Box>
 
