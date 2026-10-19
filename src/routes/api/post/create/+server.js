@@ -14,13 +14,21 @@ import { articleConfig } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
 import {
 	AVAILABLE_DISCLAIMER_TAGS,
-	AVAILABLE_Y_POST_TYPES,
+	// AVAILABLE_Y_POST_TYPES,
 	EDITOR_IS_READONLY,
 	Y_POST_TYPES,
 } from '$lib/constants/constants';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages.js';
 import { pruneFailedUploads, validateUploads } from '$lib/s3/validateUploads.server.js';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server.js';
+
+/**
+ * @typedef {Object} CreateBody
+ * @property {string} content
+ * @property {string} title
+ * @property {import('$lib/constants/constants').Y_POST_TYPES_VALUES} type
+ * @property {string[]} [disclaimerTags]
+ */
 
 export async function POST({ request, locals }) {
 	const { isBlocked, auth } = locals;
@@ -34,16 +42,21 @@ export async function POST({ request, locals }) {
 		return ForbiddenError();
 	}
 
-	const { title: rawTitle, content, type: rawType, tags: rawTags } = await request.json();
+	/** @type {CreateBody} */
+	const {
+		title: rawTitle,
+		content,
+		// type: rawType,
+		disclaimerTags: disclaimerRawTags,
+	} = await request.json();
 
-	const tags = Array.isArray(rawTags)
-		? [...new Set(rawTags.filter((tag) => AVAILABLE_DISCLAIMER_TAGS.includes(tag)))]
+	const disclaimerTags = Array.isArray(disclaimerRawTags)
+		? [...new Set(disclaimerRawTags.filter((tag) => AVAILABLE_DISCLAIMER_TAGS.includes(tag)))]
 		: [];
 
-	/**
-	 * @type {import('$lib/constants/constants').Y_POST_TYPES_VALUES}
-	 */
-	let type = AVAILABLE_Y_POST_TYPES.includes(rawType) ? rawType : Y_POST_TYPES.ARTICLE;
+	// let type = AVAILABLE_Y_POST_TYPES.includes(rawType) ? rawType : Y_POST_TYPES.ARTICLE;
+	const type = Y_POST_TYPES.ARTICLE;
+	// @ts-ignore
 	const isBio = type === Y_POST_TYPES.BIO;
 
 	let editor;
@@ -114,12 +127,14 @@ export async function POST({ request, locals }) {
 
 	const internalIds = getInternalIds(editor);
 
-	const body = { title, data: { content: backendContent }, ids: internalIds };
+	/** @type {import('$lib/db/post/create').CreatePostData} */
+	const body = { title, data: { content: backendContent }, ids: internalIds, disclaimerTags };
+
+	/** @type {import('$lib/db/post/create').CreatePostMetadata} */
 	const metadata = {
 		user: { name: session.user.name, id: session.user.id },
 		byteLength,
 		type,
-		tags,
 	};
 
 	const createdPost = await createPost(body, metadata);

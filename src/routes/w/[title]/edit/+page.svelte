@@ -71,7 +71,7 @@
 	);
 
 	let isSatire = $derived(disclaimerTags.includes(DISCLAIMER_TAGS.SATIRE));
-	let isNSFW = $derived(disclaimerTags.includes(DISCLAIMER_TAGS.SATIRE));
+	let isNSFW = $derived(disclaimerTags.includes(DISCLAIMER_TAGS.NSFW));
 
 	let titleError = $derived.by(() => {
 		const rawTitle = newTitle;
@@ -238,6 +238,14 @@
 		</div>
 	</Box>
 
+	{#if isSatire}
+		<Satire />
+	{/if}
+
+	{#if isNSFW}
+		<NSFW />
+	{/if}
+
 	{#if data.isModerator}
 		<Box class="p-4">
 			<div class="mb-5 border-b border-black/25 dark:border-white/25">
@@ -268,14 +276,6 @@
 				<TagSelect bind:disclaimerTags onchange={unsetError} />
 			</div>
 		</Box>
-	{/if}
-
-	{#if isSatire}
-		<Satire />
-	{/if}
-
-	{#if isNSFW}
-		<NSFW />
 	{/if}
 
 	{#if browser}

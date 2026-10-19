@@ -9,14 +9,16 @@ const headers = new Headers({ 'content-type': 'application/json' });
 /**
  * @param {object} Arg
  * @param {string} Arg.title
- * @param {Y_POST_TYPES_VALUES} Arg.type UNUSED FOR NOW.
+ * @param {Y_POST_TYPES_VALUES} Arg.type
  * @param {YDoc} Arg.yDoc
  * @param {string[]} [Arg.disclaimerTags]
  */
 export const createPost = async ({ title, type, yDoc, disclaimerTags = [] }) => {
 	const encodedContent = encodeYDocToUpdateV2ToBase64(yDoc);
 
-	const body = JSON.stringify({ title, content: encodedContent, disclaimerTags });
+	/** @type {import('../../../routes/api/post/create/+server').CreateBody} */
+	const createBody = { title, content: encodedContent, type, disclaimerTags };
+	const body = JSON.stringify(createBody);
 
 	const { length } = new TextEncoder().encode(body);
 
@@ -42,7 +44,9 @@ export const createPost = async ({ title, type, yDoc, disclaimerTags = [] }) => 
 export const updatePost = async ({ postTitle, yDoc, newTitle, disclaimerTags }) => {
 	const encodedContent = encodeYDocToUpdateV2ToBase64(yDoc);
 
-	const body = JSON.stringify({ content: encodedContent, newTitle, disclaimerTags });
+	/** @type {import('../../../routes/api/post/update/[title]/+server').UpdateBody} */
+	const updateBody = { content: encodedContent, newTitle, disclaimerTags };
+	const body = JSON.stringify(updateBody);
 
 	return fetch(`/api/post/update/${postTitle}`, { method: 'POST', body, headers });
 };

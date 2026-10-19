@@ -23,6 +23,11 @@ const updateYPost = async (tx, { post, outRelations, disclaimerTags, metadata })
 		});
 	}
 
+	const disclaimerTagRelations = (disclaimerTags ?? []).map((tag) => ({
+		isSystem: true,
+		toPostId: tag,
+	}));
+
 	await tx.yPost.update({
 		where: {
 			id: post.id,
@@ -30,10 +35,7 @@ const updateYPost = async (tx, { post, outRelations, disclaimerTags, metadata })
 		data: {
 			outRelations: {
 				createMany: {
-					data: [
-						...(disclaimerTags ?? []).map((tag) => ({ isSystem: true, toPostId: tag })),
-						...outRelations,
-					],
+					data: [...disclaimerTagRelations, ...outRelations],
 					skipDuplicates: true,
 				},
 			},
@@ -73,8 +75,13 @@ const createYPostUpdate = async (tx, data, metadata) => {
 };
 
 /**
- * @param {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], disclaimerTags?: string[], content: string }} data
- * @param {{ user: { id: string }, byteLength: number, totalByteLength: number, newTitle?: string, oldTitle?: string }} metadata
+ * @typedef {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], disclaimerTags?: string[], content: string }} UpdatePostData
+ * @typedef {{ user: { id: string }, byteLength: number, totalByteLength: number, newTitle?: string, oldTitle?: string }} UpdatePostMetadata
+ */
+
+/**
+ * @param {UpdatePostData} data
+ * @param {UpdatePostMetadata} metadata
  */
 export const updatePost = async (data, metadata) => {
 	const { post, outRelations, disclaimerTags, content } = data;
