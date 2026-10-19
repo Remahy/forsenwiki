@@ -28,6 +28,7 @@
 	import GalleryPlugin from './plugins/Gallery/GalleryPlugin.svelte';
 	import ImageFixerModalButton from './ImageFixer/index.svelte';
 	import TreeviewPlugin from './Treeview/TreeviewPlugin.svelte';
+	import EditorShortcuts from './plugins/EditorShortcuts.svelte';
 	import { editorGlobals } from './editorGlobals.svelte';
 
 	/**
@@ -85,9 +86,11 @@
 
 		<GalleryPlugin />
 
+		<EditorShortcuts />
+
 		<div class="min-w-0 flex-1">
-			<div class="editor-border sticky top-0 z-40 hidden w-full p-2 xl:block">
-				<div class="flex flex-wrap items-stretch gap-2">
+			<div class="editor-border sticky top-0 z-40 hidden w-full xl:block">
+				<div class="flex flex-wrap items-center gap-2 px-2">
 					<Toolbar />
 				</div>
 			</div>
@@ -102,8 +105,8 @@
 				</article>
 			</div>
 
-			<div class="editor-border sticky bottom-0 z-40 block w-full p-2 xl:hidden">
-				<div class="flex flex-wrap items-stretch gap-1 text-sm">
+			<div class="editor-border sticky bottom-0 z-40 block w-full xl:hidden">
+				<div class="flex flex-wrap items-center gap-2 px-2 text-sm">
 					<MobileToolbar />
 				</div>
 			</div>
