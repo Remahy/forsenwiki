@@ -13,7 +13,7 @@ import { upsertHTML } from '$lib/db/post/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
 import {
-	AVAILABLE_SYSTEM_TAGS,
+	AVAILABLE_DISCLAIMER_TAGS,
 	AVAILABLE_Y_POST_TYPES,
 	EDITOR_IS_READONLY,
 	Y_POST_TYPES,
@@ -36,9 +36,8 @@ export async function POST({ request, locals }) {
 
 	const { title: rawTitle, content, type: rawType, tags: rawTags } = await request.json();
 
-	// Only known system tags are accepted.
 	const tags = Array.isArray(rawTags)
-		? [...new Set(rawTags.filter((tag) => AVAILABLE_SYSTEM_TAGS.includes(tag)))]
+		? [...new Set(rawTags.filter((tag) => AVAILABLE_DISCLAIMER_TAGS.includes(tag)))]
 		: [];
 
 	/**

@@ -16,21 +16,28 @@
 	import Clown from '$lib/components/Clown.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Container from '$lib/components/Container.svelte';
-	import TagSelect from '$lib/components/TagSelect.svelte';
+	import TagSelect from '$lib/components/Disclaimer/TagSelect.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-	import { AVAILABLE_SYSTEM_TAGS, WIKI_PATH } from '$lib/constants/constants';
+	import { AVAILABLE_DISCLAIMER_TAGS, DISCLAIMER_TAGS, WIKI_PATH } from '$lib/constants/constants';
 	import { uploadImages } from '$lib/s3/uploadContentHandlers';
 	import { uploadModal } from '$lib/stores/modal';
 	import UploadingContentModal from '$lib/components/UploadingContentModal.svelte';
 	import { resetUploadingContentModalGlobals } from '$lib/components/uploadingContentModalGlobals.svelte';
 	import { runValidations } from '$lib/components/editor/validations';
+	import Satire from '$lib/components/Disclaimer/Satire.svelte';
+	import NSFW from '$lib/components/Disclaimer/NSFW.svelte';
+
+	/**
+	 * @type {import('./$types').PageProps}
+	 */
+	let { data = $bindable() } = $props();
 
 	const {
 		post: { id, title, rawTitle, outRelations },
 		update,
-	} = $page.data;
+	} = data;
 
 	/** @type {Error | null} */
 	let error = $state(null);
@@ -57,11 +64,14 @@
 	let newTitle = $state(rawTitle);
 
 	/** @type {string[]} */
-	let tags = $state(
+	let disclaimerTags = $state(
 		/** @type {Array<{ isSystem: boolean, toPostId: string }>} */ (outRelations)
-			.filter(({ isSystem, toPostId }) => isSystem && AVAILABLE_SYSTEM_TAGS.includes(toPostId))
+			.filter(({ isSystem, toPostId }) => isSystem && AVAILABLE_DISCLAIMER_TAGS.includes(toPostId))
 			.map(({ toPostId }) => toPostId)
 	);
+
+	let isSatire = $derived(disclaimerTags.includes(DISCLAIMER_TAGS.SATIRE));
+	let isNSFW = $derived(disclaimerTags.includes(DISCLAIMER_TAGS.SATIRE));
 
 	let titleError = $derived.by(() => {
 		const rawTitle = newTitle;
@@ -133,7 +143,12 @@
 			await uploadImages(editor, id);
 
 			res = await editor.read(() =>
-				updatePost(title, yjsDocMap, newTitle, $page.data.isModerator ? tags : undefined)
+				updatePost({
+					postTitle: title,
+					yDoc: yjsDocMap,
+					newTitle,
+					disclaimerTags: data.isModerator ? disclaimerTags : undefined,
+				})
 			);
 		} catch (err) {
 			console.error(err);
@@ -223,7 +238,7 @@
 		</div>
 	</Box>
 
-	{#if $page.data.isModerator}
+	{#if data.isModerator}
 		<Box class="p-4">
 			<div class="mb-5 border-b border-black/25 dark:border-white/25">
 				<strong>Moderation tools</strong>
@@ -250,9 +265,17 @@
 			</div>
 
 			<div class="mt-4">
-				<TagSelect bind:tags onchange={unsetError} />
+				<TagSelect bind:disclaimerTags onchange={unsetError} />
 			</div>
 		</Box>
+	{/if}
+
+	{#if isSatire}
+		<Satire />
+	{/if}
+
+	{#if isNSFW}
+		<NSFW />
 	{/if}
 
 	{#if browser}

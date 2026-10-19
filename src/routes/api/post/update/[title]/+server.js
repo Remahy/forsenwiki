@@ -18,7 +18,7 @@ import { invalidatePostCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/post/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
-import { AVAILABLE_SYSTEM_TAGS, EDITOR_IS_READONLY, Y_POST_TYPES } from '$lib/constants/constants';
+import { AVAILABLE_DISCLAIMER_TAGS, EDITOR_IS_READONLY, Y_POST_TYPES } from '$lib/constants/constants';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { isSystem } from '$lib/utils/isSystem';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
@@ -190,13 +190,13 @@ export async function POST({ request, locals, params }) {
 	let potentialNewTitle =
 		isModerator && newTitle ? await validateTitle(post, newTitle, partialErrors) : undefined;
 
-	// Only moderators can change tags. `undefined` leaves the current tags untouched.
-	const systemTags =
+	// Only moderators can change disclaimer tags. `undefined` leaves the current tags untouched.
+	const disclaimerTags =
 		isModerator && Array.isArray(rawTags)
-			? [...new Set(rawTags.filter((tag) => AVAILABLE_SYSTEM_TAGS.includes(tag)))]
+			? [...new Set(rawTags.filter((tag) => AVAILABLE_DISCLAIMER_TAGS.includes(tag)))]
 			: undefined;
 
-	const body = { post, outRelations, systemTags, content: contentBase64 };
+	const body = { post, outRelations, disclaimerTags, content: contentBase64 };
 	const metadata = {
 		user: { id: session.user.id },
 		byteLength,

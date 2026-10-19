@@ -17,7 +17,7 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Editor from '$lib/components/editor/editor.svelte';
 	import Container from '$lib/components/Container.svelte';
-	import TagSelect from '$lib/components/TagSelect.svelte';
+	import TagSelect from '$lib/components/Disclaimer/TagSelect.svelte';
 	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
 	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 	import { WIKI_PATH, Y_POST_TYPES } from '$lib/constants/constants';
@@ -37,7 +37,7 @@
 	let title = localStore('lastTitle', '');
 
 	/** @type {string[]} */
-	let tags = $state([]);
+	let disclaimerTags = $state([]);
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
@@ -126,7 +126,14 @@
 			// Upload images to S3.
 			await uploadImages(editor, id);
 
-			res = await editor.read(() => createPost(title.value, Y_POST_TYPES.ARTICLE, yjsDocMap, tags));
+			res = await editor.read(() =>
+				createPost({
+					title: title.value,
+					type: Y_POST_TYPES.ARTICLE,
+					yDoc: yjsDocMap,
+					disclaimerTags,
+				})
+			);
 		} catch (err) {
 			console.error(err);
 			error = new Error(err?.toString());
@@ -204,7 +211,7 @@
 		{/if}
 	</label>
 
-	<TagSelect bind:tags onchange={unsetError} />
+	<TagSelect bind:disclaimerTags onchange={unsetError} />
 
 	{#if browser}
 		<Editor update={null} {id} {initialUpdate} />

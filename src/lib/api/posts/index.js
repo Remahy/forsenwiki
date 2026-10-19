@@ -7,15 +7,16 @@ import { encodeYDocToUpdateV2ToBase64 } from '$lib/yjs/utils';
 const headers = new Headers({ 'content-type': 'application/json' });
 
 /**
- * @param {string} title
- * @param {Y_POST_TYPES_VALUES} type
- * @param {YDoc} yDoc
- * @param {string[]} [tags]
+ * @param {object} Arg
+ * @param {string} Arg.title
+ * @param {Y_POST_TYPES_VALUES} Arg.type UNUSED FOR NOW.
+ * @param {YDoc} Arg.yDoc
+ * @param {string[]} [Arg.disclaimerTags]
  */
-export const createPost = async (title, type, yDoc, tags = []) => {
+export const createPost = async ({ title, type, yDoc, disclaimerTags = [] }) => {
 	const encodedContent = encodeYDocToUpdateV2ToBase64(yDoc);
 
-	const body = JSON.stringify({ title, content: encodedContent, tags });
+	const body = JSON.stringify({ title, content: encodedContent, disclaimerTags });
 
 	const { length } = new TextEncoder().encode(body);
 
@@ -23,7 +24,7 @@ export const createPost = async (title, type, yDoc, tags = []) => {
 
 	if (length > TEN_MiB) {
 		const error = new Error(
-			`Body of ${length} (~${(length / 1_048_576).toFixed(2)} MiB) exceeds limit of ${TEN_MiB} bytes (10 MiB). Submit a smaller snippet of your article and add to it afterwards.`
+			`Body of ${length} (~${(length / 1_048_576).toFixed(2)} MiB) exceeds limit of ${TEN_MiB} bytes (10 MiB). Refresh page & submit a smaller snippet of your article and add to it afterwards.`
 		);
 		throw error;
 	}
@@ -32,15 +33,16 @@ export const createPost = async (title, type, yDoc, tags = []) => {
 };
 
 /**
- * @param {string} postTitle
- * @param {YDoc} yDoc
- * @param {string} newTitle
- * @param {string[]} [tags] - Only applied for moderators.
+ * @param {object} Arg
+ * @param {string} Arg.postTitle
+ * @param {YDoc} Arg.yDoc
+ * @param {string} Arg.newTitle
+ * @param {string[]} [Arg.disclaimerTags] - Only applied for moderators.
  */
-export const updatePost = async (postTitle, yDoc, newTitle, tags) => {
+export const updatePost = async ({ postTitle, yDoc, newTitle, disclaimerTags }) => {
 	const encodedContent = encodeYDocToUpdateV2ToBase64(yDoc);
 
-	const body = JSON.stringify({ content: encodedContent, newTitle, tags });
+	const body = JSON.stringify({ content: encodedContent, newTitle, disclaimerTags });
 
 	return fetch(`/api/post/update/${postTitle}`, { method: 'POST', body, headers });
 };

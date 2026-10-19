@@ -16,13 +16,14 @@
 	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import { isSystem } from '$lib/utils/isSystem.js';
-	import { SYSTEM_TAGS } from '$lib/constants/constants.js';
+	import { DISCLAIMER_TAGS } from '$lib/constants/constants.js';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL.js';
 	import Article from '$lib/components/Article.svelte';
-	import Button from '$lib/components/Button.svelte';
 	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
 	import { initializeEmblaForArticle } from '$lib/components/editor/plugins/Gallery/embla.js';
 	import { initializeZoomForImgElements } from '$lib/components/editor/plugins/Gallery/zoom.js';
+	import NSFW from '$lib/components/Disclaimer/NSFW.svelte';
+	import Satire from '$lib/components/Disclaimer/Satire.svelte';
 
 	const submitErrors = $derived.by(() => {
 		try {
@@ -72,11 +73,11 @@
 	const systemTags = $derived(
 		outRelations.filter(({ isSystem }) => isSystem).map(({ toPostId }) => toPostId)
 	);
-	const isSatire = $derived(systemTags.includes(SYSTEM_TAGS.SATIRE));
-	const isNsfw = $derived(systemTags.includes(SYSTEM_TAGS.NSFW));
+	const isSatire = $derived(systemTags.includes(DISCLAIMER_TAGS.SATIRE));
+	const isNSFW = $derived(systemTags.includes(DISCLAIMER_TAGS.NSFW));
 
 	let nsfwAccepted = $state(false);
-	const isHidden = $derived(isNsfw && !nsfwAccepted);
+	const isHidden = $derived(isNSFW && !nsfwAccepted);
 
 	const authorsScriptContent = $derived(
 		JSON.stringify({
@@ -143,12 +144,15 @@
 
 		<meta property="og:type" content="article" />
 
-		{#if text?.length}
+		{#if text?.length && !isNSFW}
 			<meta name="description" content={text} />
 			<meta property="og:description" content={text} />
+		{:else if isNSFW}
+			<meta name="description" content="This page is marked as NSFW." />
+			<meta property="og:description" content="This page is marked as NSFW." />
 		{/if}
 
-		{#if image?.length && !isNsfw}
+		{#if image?.length && !isNSFW}
 			<meta
 				property="og:image"
 				content={getImageCacheURL(image, { quality: 'medium-low' }).toString()}
@@ -205,27 +209,11 @@
 			</SuggestionBox>
 
 			{#if isSatire}
-				<Box class="bg-yellow-300/75! p-4 text-black" role="note">
-					<strong>Satire disclaimer</strong>
-					<p class="m-0">
-						This article is satire. It is intended as humor and should not be taken as factual.
-					</p>
-				</Box>
+				<Satire />
 			{/if}
 
 			{#if isHidden}
-				<Box
-					class="flex grow flex-col items-center justify-center gap-4 p-12 text-center"
-					role="alertdialog"
-					aria-label="NSFW content warning"
-				>
-					<h2 class="m-0 text-2xl font-bold">NSFW content</h2>
-					<p class="m-0 max-w-md">
-						This article is marked as NSFW and may contain content that is not suitable for all
-						audiences. Proceed at your own risk.
-					</p>
-					<Button on:click={() => (nsfwAccepted = true)}>I understand, show the article</Button>
-				</Box>
+				<NSFW onAccept={() => (nsfwAccepted = true)} />
 			{:else}
 				<div class="flex grow flex-col gap-4 lg:flex-row">
 					<Box class="-mx-4 flex grow flex-col overflow-hidden p-4 sm:mx-0 lg:mb-0">

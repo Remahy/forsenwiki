@@ -10,13 +10,13 @@ export const AVAILABLE_Y_POST_TYPES = Object.values(Y_POST_TYPES);
  * @typedef {typeof Y_POST_TYPES[Y_POST_TYPES_KEYS]} Y_POST_TYPES_VALUES
  */
 
-export const SYSTEM_TAGS = /** @type {const} */ ({
+export const DISCLAIMER_TAGS = /** @type {const} */ ({
 	SATIRE: 'satire',
 	NSFW: 'nsfw',
 });
 
 /** @type {string[]} */
-export const AVAILABLE_SYSTEM_TAGS = Object.values(SYSTEM_TAGS);
+export const AVAILABLE_DISCLAIMER_TAGS = Object.values(DISCLAIMER_TAGS);
 
 export const SYSTEM = 'system';
 
