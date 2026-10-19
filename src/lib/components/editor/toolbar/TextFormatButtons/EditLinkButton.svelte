@@ -189,10 +189,8 @@
 	isActive={hasLink}
 	disabled={isDisabled}
 >
+	<Link2Icon />
 	{#if hasLink}
-		<Link2Icon />
-		<SettingsIcon size="16" class="absolute top-0 right-0" />
-	{:else}
-		<Link2Icon />
+		<SettingsIcon size="16" class="absolute -top-2 -right-2" />
 	{/if}
 </EditorButton>

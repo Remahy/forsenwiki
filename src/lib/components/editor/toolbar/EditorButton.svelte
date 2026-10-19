@@ -20,9 +20,9 @@
 <Button
 	on:click
 	{...rest}
-	class="max-h-8! min-h-8! max-w-8! min-w-8! lg:max-h-[unset]! lg:min-h-[unset]! {fullClassName}"
+	class="relative max-h-8! min-h-8! max-w-8! min-w-8! p-0! {fullClassName}"
 >
-	<div class="relative -m-2 flex items-center p-2">
+	<div class="flex items-center">
 		{@render children?.()}
 	</div>
 </Button>

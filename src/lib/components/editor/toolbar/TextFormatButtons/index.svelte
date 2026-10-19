@@ -60,19 +60,27 @@
 	});
 </script>
 
-<EditorButton title="Bold ({ctrlKey}B)" on:click={bold} isActive={isBold}>
+<EditorButton title="Bold ({ctrlKey} B)" on:click={bold} isActive={isBold}>
 	<BoldIcon size="16" />
 </EditorButton>
 
-<EditorButton title="Italic ({ctrlKey}I)" on:click={italic} isActive={isItalic}>
+<EditorButton title="Italic ({ctrlKey} I)" on:click={italic} isActive={isItalic}>
 	<ItalicIcon size="16" />
 </EditorButton>
 
-<EditorButton title="Superscript" on:click={superscript} isActive={isSuperscript}>
+<EditorButton
+	title="Superscript ({ctrlKey} Shift + Equals)"
+	on:click={superscript}
+	isActive={isSuperscript}
+>
 	<SuperscriptIcon size="16" />
 </EditorButton>
 
-<EditorButton title="Subscript" on:click={subscript} isActive={isSubscript}>
+<EditorButton
+	title="Subscript ({ctrlKey} Shift + Minus)"
+	on:click={subscript}
+	isActive={isSubscript}
+>
 	<SubscriptIcon size="16" />
 </EditorButton>
 

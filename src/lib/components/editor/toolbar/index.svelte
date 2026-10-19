@@ -6,5 +6,9 @@
 </script>
 
 <HistoryButtons />
+
 <Divider />
-<FormatControls />
+
+<div class="flex min-w-0 flex-1 items-stretch gap-1 overflow-x-auto py-2">
+	<FormatControls />
+</div>
