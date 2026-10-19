@@ -1,3 +1,4 @@
+import { building } from '$app/environment';
 import { sequence } from '@sveltejs/kit/hooks';
 import prisma, { Permissions } from '$lib/prisma.server';
 import { CLOUDFLARE_API_TOKEN, CLOUDFLARE_ZONE_ID } from '$env/static/private';
@@ -11,7 +12,7 @@ if (!STATIC_DOMAIN) {
 	throw new Error('Environment value VITE_STATIC_DOMAIN has not been set.');
 }
 
-if (CLOUDFLARE_API_TOKEN && CLOUDFLARE_ZONE_ID) {
+if ((CLOUDFLARE_API_TOKEN && CLOUDFLARE_ZONE_ID) && !building) {
 	const result = await validateToken();
 	if (!result) {
 		console.error(new Error('Could not validate Cloudflare token!'));

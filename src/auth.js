@@ -1,3 +1,4 @@
+import { building } from '$app/environment';
 import { AUTH_TWITCH_ID, AUTH_TWITCH_SECRET, AUTH_TRUST_HOST } from '$env/static/private';
 import { SvelteKitAuth } from '@auth/sveltekit';
 import Twitch from '@auth/sveltekit/providers/twitch';
@@ -8,7 +9,7 @@ import { AccountTooYoung } from '$lib/errors/auth/AccountTooYoung';
 import { NoUser } from '$lib/errors/auth/NoUser';
 import { version } from '$lib/utils/version';
 
-if (!AUTH_TWITCH_ID || !AUTH_TWITCH_SECRET) {
+if ((!AUTH_TWITCH_ID || !AUTH_TWITCH_SECRET) && !building) {
 	console.error(
 		new Error(
 			'Make sure AUTH_TWITCH_ID and AUTH_TWITCH_SECRET are defined in your environment file.'
