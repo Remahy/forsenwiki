@@ -5,10 +5,10 @@
 	 * @property {import('svelte').Snippet} [children]
 	 */
 
-	/** @type {Props} */
-	let { class: className = '', children } = $props();
+	/** @type {Props & { [key: string]: any }} */
+	let { class: className = '', children, ...rest } = $props();
 </script>
 
-<div class="box rounded-sm {className}">
+<div {...rest} class="box rounded-sm {className}">
 	{@render children?.()}
 </div>

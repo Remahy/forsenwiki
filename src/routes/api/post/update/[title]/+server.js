@@ -18,7 +18,11 @@ import { invalidatePostCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/post/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
-import { EDITOR_IS_READONLY, Y_POST_TYPES } from '$lib/constants/constants';
+import {
+	AVAILABLE_DISCLAIMER_TAGS,
+	EDITOR_IS_READONLY,
+	Y_POST_TYPES,
+} from '$lib/constants/constants';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { isSystem } from '$lib/utils/isSystem';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
@@ -66,6 +70,13 @@ const validateTitle = async (post, newTitle, partialErrors) => {
 	return sanitizedTitle;
 };
 
+/**
+ * @typedef {Object} UpdateBody
+ * @property {string} content
+ * @property {string | null} [newTitle] Skip if user is not moderator.
+ * @property {string[]} [disclaimerTags]
+ */
+
 export async function POST({ request, locals, params }) {
 	const { isBlocked, isModerator, auth } = locals;
 
@@ -83,13 +94,9 @@ export async function POST({ request, locals, params }) {
 		return ForbiddenError();
 	}
 
-	/**
-	 * @param {string} content
-	 * @param {string} newTitle - Skip this if user is not moderator.
-	 */
-	const { content, ...rest } = await request.json();
+	/** @type {UpdateBody} */
+	const { content, disclaimerTags: disclaimerRawTags, ...rest } = await request.json();
 
-	/** @type {{ newTitle: string | null }} */
 	let { newTitle } = rest;
 
 	const { sanitized: title } = sanitizeTitle(params.title);
@@ -190,7 +197,15 @@ export async function POST({ request, locals, params }) {
 	let potentialNewTitle =
 		isModerator && newTitle ? await validateTitle(post, newTitle, partialErrors) : undefined;
 
-	const body = { post, outRelations, content: contentBase64 };
+	// Only moderators can change disclaimer tags. `undefined` leaves the current tags untouched.
+	const disclaimerTags =
+		isModerator && Array.isArray(disclaimerRawTags)
+			? [...new Set(disclaimerRawTags.filter((tag) => AVAILABLE_DISCLAIMER_TAGS.includes(tag)))]
+			: undefined;
+
+	/** @type {import('$lib/db/post/update').UpdatePostData} */
+	const body = { post, outRelations, disclaimerTags, content: contentBase64 };
+	/** @type {import('$lib/db/post/update').UpdatePostMetadata} */
 	const metadata = {
 		user: { id: session.user.id },
 		byteLength,

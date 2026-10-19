@@ -12,10 +12,23 @@ import { encodeYDocToUpdateV2 } from '$lib/yjs/utils';
 import { upsertHTML } from '$lib/db/post/html';
 import { articleConfig } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
-import { AVAILABLE_Y_POST_TYPES, EDITOR_IS_READONLY, Y_POST_TYPES } from '$lib/constants/constants';
+import {
+	AVAILABLE_DISCLAIMER_TAGS,
+	// AVAILABLE_Y_POST_TYPES,
+	EDITOR_IS_READONLY,
+	Y_POST_TYPES,
+} from '$lib/constants/constants';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages.js';
 import { pruneFailedUploads, validateUploads } from '$lib/s3/validateUploads.server.js';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server.js';
+
+/**
+ * @typedef {Object} CreateBody
+ * @property {string} content
+ * @property {string} title
+ * @property {import('$lib/constants/constants').Y_POST_TYPES_VALUES} type
+ * @property {string[]} [disclaimerTags]
+ */
 
 export async function POST({ request, locals }) {
 	const { isBlocked, auth } = locals;
@@ -29,12 +42,21 @@ export async function POST({ request, locals }) {
 		return ForbiddenError();
 	}
 
-	const { title: rawTitle, content, type: rawType } = await request.json();
+	/** @type {CreateBody} */
+	const {
+		title: rawTitle,
+		content,
+		// type: rawType,
+		disclaimerTags: disclaimerRawTags,
+	} = await request.json();
 
-	/**
-	 * @type {import('$lib/constants/constants').Y_POST_TYPES_VALUES}
-	 */
-	let type = AVAILABLE_Y_POST_TYPES.includes(rawType) ? rawType : Y_POST_TYPES.ARTICLE;
+	const disclaimerTags = Array.isArray(disclaimerRawTags)
+		? [...new Set(disclaimerRawTags.filter((tag) => AVAILABLE_DISCLAIMER_TAGS.includes(tag)))]
+		: [];
+
+	// let type = AVAILABLE_Y_POST_TYPES.includes(rawType) ? rawType : Y_POST_TYPES.ARTICLE;
+	const type = Y_POST_TYPES.ARTICLE;
+	// @ts-ignore
 	const isBio = type === Y_POST_TYPES.BIO;
 
 	let editor;
@@ -105,7 +127,10 @@ export async function POST({ request, locals }) {
 
 	const internalIds = getInternalIds(editor);
 
-	const body = { title, data: { content: backendContent }, ids: internalIds };
+	/** @type {import('$lib/db/post/create').CreatePostData} */
+	const body = { title, data: { content: backendContent }, ids: internalIds, disclaimerTags };
+
+	/** @type {import('$lib/db/post/create').CreatePostMetadata} */
 	const metadata = {
 		user: { name: session.user.name, id: session.user.id },
 		byteLength,
