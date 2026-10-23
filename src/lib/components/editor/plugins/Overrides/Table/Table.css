@@ -5,7 +5,7 @@
 	padding-inline-start: 0.5714286em;
 }
 
-.tableCell:has(table),
-.tableCell:has(img) {
+.tableCell:has(> table:only-child),
+.tableCell:has(> img:only-child) {
 	padding: 0 !important;
 }
