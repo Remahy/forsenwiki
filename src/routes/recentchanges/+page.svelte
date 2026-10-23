@@ -151,23 +151,21 @@
 					<small
 						>(<span class="font-bold">Title change:</span>
 						"{update.newTitle}"{#if update.oldTitle}
-							&nbsp;<i>was "{update.oldTitle}"</i>
-						{/if})&nbsp;</small
-					>
+							<i>was "{update.oldTitle}"</i>
+						{/if})&nbsp;
+					</small>
 				{/if}
 				<span><small class="opacity-85">({update.byteLength})&nbsp;</small></span>
 				{#if !isNewArticle}
 					<span>
 						<Link href="/w/{update.title}/history/{update.id}-" target="_blank"
 							>Compare with previous</Link
-						>&nbsp;</span
-					>
+						>
+					</span>
 				{/if}
-				<small
-					>{formatRelative(update.lastUpdated, Date.now(), {
-						locale: enGB,
-					})}&nbsp;</small
-				>
+
+				<small>{formatRelative(update.lastUpdated, Date.now(), { locale: enGB })}&nbsp;</small>
+
 				<span>
 					<small>
 						<span class="font-bold">By:</span>
