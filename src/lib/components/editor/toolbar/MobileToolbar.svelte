@@ -1,5 +1,5 @@
 <script>
-	import Divider from '#lib/components/Divider.svelte';
+	import Divider from '$lib/components/Divider.svelte';
 
 	import TreeviewModalButton from '../Treeview/TreeviewModalButton.svelte';
 	import Toolbar from './index.svelte';

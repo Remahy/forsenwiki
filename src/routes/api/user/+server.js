@@ -1,5 +1,6 @@
-import prisma from '#lib/prisma.server.js';
-import { ForbiddenError } from '#lib/errors/Forbidden.js';
+import { json } from '@sveltejs/kit';
+import prisma from '$lib/prisma.server';
+import { ForbiddenError } from '$lib/errors/Forbidden';
 
 /**
  * @param {string} id
@@ -120,5 +121,5 @@ export async function GET({ locals }) {
 		uploads,
 	};
 
-	return Response.json(data);
+	return json(data);
 }

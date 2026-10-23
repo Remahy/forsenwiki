@@ -1,6 +1,5 @@
 import { Worker } from 'node:worker_threads';
-
-import { dev } from '$app/env';
+import { dev } from '$app/environment';
 
 // @ts-ignore
 import workerPath from './worker?modulePath';

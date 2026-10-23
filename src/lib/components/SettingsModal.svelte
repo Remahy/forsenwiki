@@ -1,8 +1,8 @@
 <script>
 	import { XIcon } from '@lucide/svelte';
 	import { page } from '$app/state';
-	import { modal } from '#lib/stores/modal.js';
-	import { saveUserSettings } from '#lib/api/usersettings/index.js';
+	import { modal } from '$lib/stores/modal';
+	import { saveUserSettings } from '$lib/api/usersettings';
 	import Button from './Button.svelte';
 
 	let streamerMode = $state(page.data.session?.user?.userSettings?.streamerMode);

@@ -18,7 +18,7 @@ import {
 	$isImageNode as isImageNode,
 	$isVideoEmbedNode as isVideoEmbedNode,
 	$isGalleryNode as isGalleryNode,
-} from '#lib/lexical/custom.js';
+} from '$lib/lexical/custom';
 import { getLabelForNode } from './utils';
 
 declare module '@headless-tree/core' {

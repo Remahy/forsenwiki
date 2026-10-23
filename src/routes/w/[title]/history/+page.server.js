@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
-import { readYPostUpdatesIdsByTitle } from '#lib/db/post/read.js';
-import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
+import { readYPostUpdatesIdsByTitle } from '$lib/db/post/read';
+import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle.js';
 
 export async function load({ params }) {
 	const { sanitized: title } = sanitizeTitle(params.title);

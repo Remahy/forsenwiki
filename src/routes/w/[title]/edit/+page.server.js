@@ -1,8 +1,8 @@
 import { error, redirect } from '@sveltejs/kit';
-import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
+import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { _getYPostUpdate } from '../../../api/post/read/[title]/+server';
-import { isSystem } from '#lib/utils/isSystem.js';
-import prisma from '#lib/prisma.server.js';
+import { isSystem } from '$lib/utils/isSystem';
+import prisma from '$lib/prisma.server';
 
 export async function load({ params }) {
 	const { sanitized: title } = sanitizeTitle(params.title);

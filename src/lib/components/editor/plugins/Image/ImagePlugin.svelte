@@ -39,10 +39,10 @@
 	} from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
 
-	import { modal } from '#lib/stores/modal.js';
-	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '#lib/constants/image.js';
-	import { saveContent } from '#lib/utils/indexedDb/content.js';
-	import { $isGalleryNode as isGalleryNode } from '#lib/lexical/custom.js';
+	import { modal } from '$lib/stores/modal';
+	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
+	import { saveContent } from '$lib/utils/indexedDb/content';
+	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
 
 	import EditImageModal from '../../toolbar/Image/EditImageModal.svelte';
 	import { editorGlobals } from '../../editorGlobals.svelte';

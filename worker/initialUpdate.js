@@ -2,15 +2,15 @@ import { workerData, parentPort, isMainThread } from 'node:worker_threads';
 
 import { $createTextNode, $getRoot, $createParagraphNode } from 'lexical';
 
-import { getYjsAndEditor } from '#lib/yjs/getYjsAndEditor.js';
+import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import {
 	encodeYDocToUpdateV2ToBase64,
 	encodeYDocToUpdateV2,
 	createNewYDoc,
 	YXmlText,
-} from '#lib/yjs/utils.js';
-import { articleConfig } from '#lib/components/editor/config/article.js';
-import { EDITOR_IS_READONLY } from '#lib/constants/constants.js';
+} from '$lib/yjs/utils';
+import { articleConfig } from '$lib/components/editor/config/article';
+import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 
 /**
  * @returns {string}

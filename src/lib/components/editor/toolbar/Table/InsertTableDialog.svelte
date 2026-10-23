@@ -4,8 +4,8 @@
 	import { onMount } from 'svelte';
 	import { XIcon } from '@lucide/svelte';
 
-	import Button from '#lib/components/Button.svelte';
-	import { modal } from '#lib/stores/modal.js';
+	import Button from '$lib/components/Button.svelte';
+	import { modal } from '$lib/stores/modal';
 
 	/**
 	 * @typedef Props

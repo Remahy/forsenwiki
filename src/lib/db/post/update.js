@@ -1,5 +1,5 @@
-import prisma from '#lib/prisma.server.js';
-import { AVAILABLE_DISCLAIMER_TAGS } from '#lib/constants/constants.js';
+import prisma from '$lib/prisma.server';
+import { AVAILABLE_DISCLAIMER_TAGS } from '$lib/constants/constants';
 import { postYRelationDeleteByFromPostId } from './delete';
 
 /**

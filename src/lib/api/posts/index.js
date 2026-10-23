@@ -1,7 +1,7 @@
-import { encodeYDocToUpdateV2ToBase64 } from '#lib/yjs/utils.js';
+import { encodeYDocToUpdateV2ToBase64 } from '$lib/yjs/utils';
 
 /**
- * @typedef {import('#lib/constants/constants.js').Y_POST_TYPES_VALUES} Y_POST_TYPES_VALUES
+ * @typedef {import('$lib/constants/constants').Y_POST_TYPES_VALUES} Y_POST_TYPES_VALUES
  */
 
 const headers = new Headers({ 'content-type': 'application/json' });

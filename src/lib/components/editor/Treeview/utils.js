@@ -7,14 +7,14 @@ import {
 import { $getNearestNodeOfType as getNearestNodeOfType } from '@lexical/utils';
 import { $isListItemNode as isListItemNode, $isListNode as isListNode } from '@lexical/list';
 import { $isQuoteNode as isQuoteNode, $isHeadingNode as isHeadingNode } from '@lexical/rich-text';
-import { ListNode } from '#lib/lexical/index.js';
-import { blockTypeLabels } from '#lib/constants/element.js';
-import { alignmentIcons, blockTypeIcons } from '#lib/constants/blockTypeIcons.js';
+import { ListNode } from '$lib/lexical/index';
+import { blockTypeLabels } from '$lib/constants/element';
+import { alignmentIcons, blockTypeIcons } from '$lib/constants/blockTypeIcons';
 import {
 	$isImageNode as isImageNode,
 	$isVideoEmbedNode as isVideoEmbedNode,
-} from '#lib/lexical/custom.js';
-import { DOMAIN } from '#lib/environment/environment.js';
+} from '$lib/lexical/custom';
+import { DOMAIN } from '$lib/environment/environment';
 import { getURLAndTitle } from '../plugins/VideoEmbed/VideoEmbed';
 
 /**

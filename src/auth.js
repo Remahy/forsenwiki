@@ -1,12 +1,21 @@
-import { AUTH_TWITCH_ID, AUTH_TWITCH_SECRET, AUTH_TRUST_HOST } from '$app/env/private';
+import { AUTH_TWITCH_ID, AUTH_TWITCH_SECRET, AUTH_TRUST_HOST } from '$env/static/private';
 import { SvelteKitAuth } from '@auth/sveltekit';
 import Twitch from '@auth/sveltekit/providers/twitch';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 
-import prisma from '#lib/prisma.server.js';
-import { AccountTooYoung } from '#lib/errors/auth/AccountTooYoung.js';
-import { NoUser } from '#lib/errors/auth/NoUser.js';
-import { version } from '#lib/utils/version.js';
+import prisma from '$lib/prisma.server';
+import { AccountTooYoung } from '$lib/errors/auth/AccountTooYoung';
+import { NoUser } from '$lib/errors/auth/NoUser';
+import { version } from '$lib/utils/version';
+
+if (!AUTH_TWITCH_ID || !AUTH_TWITCH_SECRET) {
+	console.error(
+		new Error(
+			'Make sure AUTH_TWITCH_ID and AUTH_TWITCH_SECRET are defined in your environment file.'
+		)
+	);
+	process.exit(1);
+}
 
 const adapter = PrismaAdapter(prisma);
 
@@ -23,7 +32,7 @@ adapter.createSession = async (session) => {
 	return createSession(session);
 };
 
-export const { handle } = SvelteKitAuth({
+export const { handle, signIn, signOut } = SvelteKitAuth({
 	trustHost: AUTH_TRUST_HOST === 'true' ? true : false,
 	adapter,
 	callbacks: {

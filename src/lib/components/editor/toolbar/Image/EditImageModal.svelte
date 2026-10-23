@@ -1,16 +1,16 @@
 <script>
 	import { XIcon } from '@lucide/svelte';
-	import Button from '#lib/components/Button.svelte';
-	import Spinner from '#lib/components/Spinner.svelte';
-	import Link from '#lib/components/Link.svelte';
-	import { modal } from '#lib/stores/modal.js';
-	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '#lib/constants/image.js';
-	import { loadContent, saveContent } from '#lib/utils/indexedDb/content.js';
-	import { validateContent } from '#lib/api/content/index.js';
-	import { ErrorWithCode } from '#lib/errors/ErrorWithCode.js';
-	import { searchRequest } from '#lib/api/search/index.js';
-	import { getImageCacheURL } from '#lib/utils/getImageCacheURL.js';
-	import { mimetypes } from '#lib/s3/limits.js';
+	import Button from '$lib/components/Button.svelte';
+	import Spinner from '$lib/components/Spinner.svelte';
+	import Link from '$lib/components/Link.svelte';
+	import { modal } from '$lib/stores/modal';
+	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
+	import { loadContent, saveContent } from '$lib/utils/indexedDb/content';
+	import { validateContent } from '$lib/api/content';
+	import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
+	import { searchRequest } from '$lib/api/search';
+	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
+	import { mimetypes } from '$lib/s3/limits';
 	import { IMAGE_OFF, LUCIDE_ICON_LOADER } from '../../plugins/Image/Image';
 	import { handleNewImage } from '../../utils/handleNewImage';
 	import { createFileUploadObject } from '../../utils/fileUploadObject';
@@ -19,7 +19,7 @@
 	import { createDebouncedSearch } from '../../utils/debouncedSearch.svelte';
 
 	/**
-	 * @typedef {import('#lib/api/search/index.js').SearchResult} SearchResult
+	 * @typedef {import('$lib/api/search').SearchResult} SearchResult
 	 */
 
 	const id = $derived(editorGlobals.articleId);

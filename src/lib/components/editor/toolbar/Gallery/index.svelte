@@ -1,5 +1,5 @@
 <script>
-	import { $isGalleryNode as isGalleryNode } from '#lib/lexical/custom.js';
+	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
 	import Wrapper from '../components/Wrapper.svelte';
 	import Title from '../components/Title.svelte';
 

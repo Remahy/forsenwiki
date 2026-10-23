@@ -13,8 +13,8 @@
 	} from '@lexical/selection';
 	import { getEditor } from 'svelte-lexical';
 
-	import Select from '#lib/components/Select.svelte';
-	import { TEXT_CONSTANTS } from '#lib/constants/text.js';
+	import Select from '$lib/components/Select.svelte';
+	import { TEXT_CONSTANTS } from '$lib/constants/text';
 
 	const { FONTFAMILIES } = TEXT_CONSTANTS;
 	const validValues = Object.values(FONTFAMILIES);

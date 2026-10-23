@@ -1,8 +1,8 @@
-import { validateContent } from '#lib/api/content/index.js';
-import { uploadFiles } from '#lib/s3/uploadContentHandlers.js';
+import { validateContent } from '$lib/api/content';
+import { uploadFiles } from '$lib/s3/uploadContentHandlers';
 import { createFileUploadObject } from '../editor/utils/fileUploadObject';
 import UploadingContentModal from '../UploadingContentModal.svelte';
-import { uploadModal } from '#lib/stores/modal.js';
+import { uploadModal } from '$lib/stores/modal';
 
 /**
  * @type {{

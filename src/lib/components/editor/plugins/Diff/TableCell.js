@@ -1,4 +1,4 @@
-import { TableCellNode } from '#lib/lexical/index.js';
+import { TableCellNode } from '$lib/lexical/index';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**

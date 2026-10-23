@@ -1,5 +1,5 @@
-import { IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT } from '#lib/constants/image.js';
-import { STATIC_DOMAIN } from '#lib/environment/environment.js';
+import { IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT } from '$lib/constants/image';
+import { STATIC_DOMAIN } from '$lib/environment/environment';
 
 export const cacheServiceBaseURLWithStatic = STATIC_DOMAIN;
 

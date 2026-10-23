@@ -1,12 +1,12 @@
 import { $nodesOfType as nodesOfType } from 'lexical';
 
-import { $isGalleryNode as isGalleryNode, ImageNode } from '#lib/lexical/custom.js';
+import { $isGalleryNode as isGalleryNode, ImageNode } from '$lib/lexical/custom';
 import {
 	IMAGE_MAX_HEIGHT,
 	IMAGE_MAX_WIDTH,
 	IMAGE_MIN_HEIGHT,
 	IMAGE_MIN_WIDTH,
-} from '#lib/constants/image.js';
+} from '$lib/constants/image';
 
 /**
  * @param {LexicalEditor} editor

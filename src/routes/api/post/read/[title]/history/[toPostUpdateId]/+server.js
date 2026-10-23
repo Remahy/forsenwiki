@@ -1,10 +1,10 @@
-import { error} from '@sveltejs/kit';
-import { readYPostUpdatesWithIdByTitle } from '#lib/db/post/read.js';
-import { yPostUpdatesV2ToBase64 } from '#lib/yjs/utils.js';
-import { readAuthorForYPostUpdate } from '#lib/db/metadata/read.js';
-import { replacer } from '#lib/utils/json.js';
-import { updateToHTML } from '#lib/lexical/updateToHTML.js';
-import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
+import { error, json } from '@sveltejs/kit';
+import { readYPostUpdatesWithIdByTitle } from '$lib/db/post/read';
+import { yPostUpdatesV2ToBase64 } from '$lib/yjs/utils';
+import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
+import { replacer } from '$lib/utils/json';
+import { updateToHTML } from '$lib/lexical/updateToHTML';
+import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 
 /**
  * @param {string} title
@@ -69,7 +69,7 @@ export async function GET({ params }) {
 
 		const safeJSON = JSON.parse(JSON.stringify(res, replacer));
 
-		return Response.json(safeJSON);
+		return json(safeJSON);
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);

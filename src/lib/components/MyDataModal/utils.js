@@ -1,5 +1,5 @@
 import { Zip, ZipDeflate } from 'fflate';
-import { STATIC_DOMAIN } from '#lib/environment/environment.js';
+import { STATIC_DOMAIN } from '$lib/environment/environment';
 
 /**
  * @type {File[]}

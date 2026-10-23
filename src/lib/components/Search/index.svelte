@@ -1,6 +1,6 @@
 <script>
 	import { SearchIcon } from '@lucide/svelte';
-	import { page } from '$app/state';
+	import { page } from '$app/stores';
 
 	import Button from '../Button.svelte';
 	import { parseSearchURL } from './parseSearchURL';
@@ -8,10 +8,10 @@
 
 	let { inline = false } = $props();
 
-	let query = $state(page.url.pathname === '/search' ? page.url.searchParams.get('query') : '');
+	let query = $state($page.url.pathname === '/search' ? $page.url.searchParams.get('query') : '');
 
 	$effect(() => {
-		const { url } = page;
+		const { url } = $page;
 
 		if (url.pathname === '/search') {
 			const { query: q } = parseSearchURL(url);

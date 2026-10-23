@@ -1,8 +1,8 @@
 <script>
 	// @ts-nocheck - Complains about "xmlns:cc" and "xmlns:dct" not being valid.
-	import cc from '#lib/images/cc.svg';
-	import by from '#lib/images/by.svg';
-	import sa from '#lib/images/sa.svg';
+	import cc from '$lib/images/cc.svg';
+	import by from '$lib/images/by.svg';
+	import sa from '$lib/images/sa.svg';
 </script>
 
 <p

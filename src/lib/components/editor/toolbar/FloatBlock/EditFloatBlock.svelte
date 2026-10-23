@@ -10,12 +10,12 @@
 		SquareDashedIcon,
 	} from '@lucide/svelte';
 	import { getEditor } from 'svelte-lexical';
-	import Select from '#lib/components/Select.svelte';
+	import Select from '$lib/components/Select.svelte';
 	import EditorButton from '../EditorButton.svelte';
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {import('#lib/lexical/custom.js').FloatBlockNode} selectedFloatBlockNode
+	 * @property {import('$lib/lexical/custom').FloatBlockNode} selectedFloatBlockNode
 	 */
 
 	/** @type {Props & { [key: string]: any }} */

@@ -1,7 +1,7 @@
 <script>
-	import License from '#lib/components/License.svelte';
-	import Link from '#lib/components/Link.svelte';
-	import { version } from '#lib/utils/version.js';
+	import License from '$lib/components/License.svelte';
+	import Link from '$lib/components/Link.svelte';
+	import { version } from '$lib/utils/version';
 	import Discord from './icons/Discord.svelte';
 	import GitHub from './icons/GitHub.svelte';
 	import TwitchGlitch from './icons/TwitchGlitch.svelte';

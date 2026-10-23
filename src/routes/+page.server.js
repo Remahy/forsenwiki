@@ -1,12 +1,12 @@
-import { GOATCOUNTER_API_KEY, GOATCOUNTER_DISABLED } from '$app/env/private';
-import prisma from '#lib/prisma.server.js';
-import { getPopularArticles } from '#lib/goatcounter.server.js';
-import { Y_POST_TYPES } from '#lib/constants/constants.js';
+import { GOATCOUNTER_API_KEY, GOATCOUNTER_DISABLED } from '$env/static/private';
+import prisma from '$lib/prisma.server';
+import { getPopularArticles } from '$lib/goatcounter.server';
+import { Y_POST_TYPES } from '$lib/constants/constants';
 
 /**
  * @typedef {{ rawTitle: string, title: string, createdTimestamp: string, author: string | null, authorId: string | null }} LatestArticle
  * @typedef {{ name: string | null }} LatestUser
- * @typedef {import('#lib/goatcounter.server.js').GoatCounterHit} GoatCounterHit
+ * @typedef {import('$lib/goatcounter.server').GoatCounterHit} GoatCounterHit
  */
 
 /** @type {Prisma.Prisma.UserFindManyArgs} */

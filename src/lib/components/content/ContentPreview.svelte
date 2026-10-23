@@ -1,8 +1,8 @@
 <script>
 	// @ts-nocheck
 
-	import { STATIC_DOMAIN } from '#lib/environment/environment.js';
-	import { getImageCacheURL } from '#lib/utils/getImageCacheURL.js';
+	import { STATIC_DOMAIN } from '$lib/environment/environment';
+	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 	import AudioPreview from './AudioPreview.svelte';
 	import DocumentPreview from './DocumentPreview.svelte';
 	import ImagePreview from './ImagePreview.svelte';

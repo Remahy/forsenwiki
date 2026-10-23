@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
-import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
+import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { _getToYPostUpdateIdByTitle } from '../../../../api/post/read/[title]/history/[toPostUpdateId]/+server';
-import { isSystem } from '#lib/utils/isSystem.js';
+import { isSystem } from '$lib/utils/isSystem';
 
 export async function load({ params }) {
 	const { title: rawTitle, toPostUpdateId } = params;

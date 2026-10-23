@@ -1,5 +1,5 @@
-import { building } from '$app/env';
-import { GOATCOUNTER_API_KEY, GOATCOUNTER_DISABLED } from '$app/env/private';
+import { building } from '$app/environment';
+import { GOATCOUNTER_API_KEY, GOATCOUNTER_DISABLED } from '$env/static/private';
 import { _emit } from '../routes/api/adonis/frontpage/+server';
 import { sanitizeTitle } from './components/editor/utils/sanitizeTitle';
 import prisma from './prisma.server';

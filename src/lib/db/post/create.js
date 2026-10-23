@@ -1,8 +1,8 @@
-import prisma from '#lib/prisma.server.js';
+import prisma from '$lib/prisma.server';
 
 /**
  * @typedef {{ title: { raw: string, sanitized: string }, data: { content: string }, ids: string[], disclaimerTags?: string[] }} CreatePostData
- * @typedef {{ user: { name: string, id: string }, byteLength: number, type: import('#lib/constants/constants.js').Y_POST_TYPES_VALUES }} CreatePostMetadata
+ * @typedef {{ user: { name: string, id: string }, byteLength: number, type: import('$lib/constants/constants').Y_POST_TYPES_VALUES }} CreatePostMetadata
  */
 
 /**

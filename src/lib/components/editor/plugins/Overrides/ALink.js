@@ -5,7 +5,7 @@
 
 import { $applyNodeReplacement } from 'lexical';
 
-import { LinkNode } from '#lib/lexical/index.js';
+import { LinkNode } from '$lib/lexical/index';
 
 /**
  * @typedef {import('@lexical/link').LinkAttributes} LinkAttributes

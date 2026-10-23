@@ -1,21 +1,21 @@
 <script>
 	import { ExternalLinkIcon, Trash2Icon, XIcon } from '@lucide/svelte';
-	import Button from '#lib/components/Button.svelte';
-	import { modal } from '#lib/stores/modal.js';
-	import { searchRequest } from '#lib/api/search/index.js';
-	import { STATIC_DOMAIN } from '#lib/environment/environment.js';
-	import { uploadContentState } from '#lib/components/Search/uploadContentState.svelte.js';
-	import Link from '#lib/components/Link.svelte';
-	import Spinner from '#lib/components/Spinner.svelte';
-	import LinkButton from '#lib/components/LinkButton.svelte';
-	import Select from '#lib/components/Select.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import { modal } from '$lib/stores/modal';
+	import { searchRequest } from '$lib/api/search';
+	import { STATIC_DOMAIN } from '$lib/environment/environment';
+	import { uploadContentState } from '$lib/components/Search/uploadContentState.svelte';
+	import Link from '$lib/components/Link.svelte';
+	import Spinner from '$lib/components/Spinner.svelte';
+	import LinkButton from '$lib/components/LinkButton.svelte';
+	import Select from '$lib/components/Select.svelte';
 	import { createDebouncedSearch } from '../../utils/debouncedSearch.svelte';
 	import { deleteSubtitle, setSubtitles } from '../../plugins/VideoEmbed/VideoEmbed';
 	import { bcp47 } from '../../plugins/VideoEmbed/bcp47';
 
 	/**
 	 * @typedef {import('../../plugins/VideoEmbed/VideoEmbed').Subtitle} Subtitle
-	 * @typedef {import('#lib/api/search/index.js').SearchResult} SearchResult
+	 * @typedef {import('$lib/api/search').SearchResult} SearchResult
 	 */
 
 	/**

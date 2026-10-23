@@ -11,7 +11,7 @@
 	} from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 
-	import { ctrlKey } from '#lib/environment/environment.js';
+	import { ctrlKey } from '$lib/environment/environment';
 	import EditorButton from './EditorButton.svelte';
 
 	let canUndo = $state(false);

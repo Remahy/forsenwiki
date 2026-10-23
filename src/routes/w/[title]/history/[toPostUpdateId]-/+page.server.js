@@ -1,5 +1,5 @@
 import { redirect, error } from '@sveltejs/kit';
-import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
+import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { _getYPostUpdateIds } from '../../../../api/post/read/[title]/history/[toPostUpdateId]-[fromPostUpdateId]/+server';
 
 export async function load({ params }) {

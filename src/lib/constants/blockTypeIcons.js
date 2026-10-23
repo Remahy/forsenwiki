@@ -1,5 +1,5 @@
-import TwitchGlitch from '#lib/components/icons/TwitchGlitch.svelte';
-import YouTube from '#lib/components/icons/YouTube.svelte';
+import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
+import YouTube from '$lib/components/icons/YouTube.svelte';
 import {
 	AudioLinesIcon,
 	CircleSmallIcon,

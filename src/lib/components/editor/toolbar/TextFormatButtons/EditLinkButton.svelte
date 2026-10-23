@@ -14,10 +14,10 @@
 	import { $getNearestNodeOfType as getNearestNodeOfType, mergeRegister } from '@lexical/utils';
 	import { getEditor } from 'svelte-lexical';
 
-	import { ctrlKey } from '#lib/environment/environment.js';
-	import { getSelectedNode } from '#lib/components/editor/utils/getSelection.js';
-	import { modal } from '#lib/stores/modal.js';
-	import { ALinkNode, $isALinkNode as isALinkNode } from '#lib/lexical/custom.js';
+	import { ctrlKey } from '$lib/environment/environment';
+	import { getSelectedNode } from '$lib/components/editor/utils/getSelection';
+	import { modal } from '$lib/stores/modal';
+	import { ALinkNode, $isALinkNode as isALinkNode } from '$lib/lexical/custom';
 	import EditorButton from '../EditorButton.svelte';
 	import EditLinkButtonModal from './EditLinkButtonModal.svelte';
 

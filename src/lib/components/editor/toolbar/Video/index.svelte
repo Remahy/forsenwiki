@@ -1,5 +1,5 @@
 <script>
-	import { $isVideoEmbedNode as isVideoEmbedNode } from '#lib/lexical/custom.js';
+	import { $isVideoEmbedNode as isVideoEmbedNode } from '$lib/lexical/custom';
 	import Wrapper from '../components/Wrapper.svelte';
 	import Title from '../components/Title.svelte';
 	import EditVideo from './EditVideo.svelte';
