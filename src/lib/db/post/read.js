@@ -1,4 +1,4 @@
-import prisma from '#lib/prisma.server.js';
+import prisma from '$lib/prisma.server';
 
 /**
  * @param {string} title
@@ -34,8 +34,8 @@ export async function readYPostUpdatesByTitle(title) {
 					metadata: {
 						select: {
 							userId: true,
-						},
-					},
+						}
+					}
 				},
 				orderBy: {
 					createdTimestamp: 'asc',

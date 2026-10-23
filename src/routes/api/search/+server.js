@@ -1,7 +1,8 @@
-import prisma from '#lib/prisma.server.js';
+import { json } from '@sveltejs/kit';
+import prisma from '$lib/prisma.server.js';
 
 /**
- * @typedef {import('#lib/s3/limits.js').MimetypeType} MimetypeType
+ * @typedef {import('$lib/s3/limits.js').MimetypeType} MimetypeType
  */
 
 /**
@@ -303,5 +304,5 @@ export async function GET({ url }) {
 
 	const res = await _getSearch(query, types, options);
 
-	return Response.json(res.results);
+	return json(res.results);
 }

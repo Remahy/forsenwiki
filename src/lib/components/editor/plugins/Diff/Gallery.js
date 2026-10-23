@@ -1,5 +1,5 @@
 import { addInformationHover, applyCSSColorDiff } from './utils';
-import { GalleryNode } from '#lib/lexical/custom.js';
+import { GalleryNode } from '$lib/lexical/custom';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey

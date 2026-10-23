@@ -1,5 +1,5 @@
 <script>
-	import { $isFloatBlockNode as isFloatBlockNode } from '#lib/lexical/custom.js';
+	import { $isFloatBlockNode as isFloatBlockNode } from '$lib/lexical/custom';
 	import Wrapper from '../components/Wrapper.svelte';
 	import Title from '../components/Title.svelte';
 	import EditFloatBlock from './EditFloatBlock.svelte';

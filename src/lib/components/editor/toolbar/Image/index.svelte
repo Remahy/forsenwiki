@@ -1,5 +1,5 @@
 <script>
-	import { $isImageNode as isImageNode } from '#lib/lexical/custom.js';
+	import { $isImageNode as isImageNode } from '$lib/lexical/custom';
 	import Wrapper from '../components/Wrapper.svelte';
 	import Title from '../components/Title.svelte';
 	import EditImage from './EditImage.svelte';
@@ -18,7 +18,7 @@
 
 		{#snippet content()}
 			<div class="p-2">
-				<EditImage {selectedNode} />
+				<EditImage selectedNode={selectedNode} />
 			</div>
 		{/snippet}
 	</Wrapper>

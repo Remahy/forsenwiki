@@ -1,22 +1,22 @@
 <script>
 	import { XIcon } from '@lucide/svelte';
 
-	import { modal } from '#lib/stores/modal.js';
-	import Button from '#lib/components/Button.svelte';
-	import { searchRequest } from '#lib/api/search/index.js';
-	import Spinner from '#lib/components/Spinner.svelte';
-	import Link from '#lib/components/Link.svelte';
-	import { STATIC_DOMAIN } from '#lib/environment/environment.js';
-	import UploadContent from '#lib/components/Search/UploadContent.svelte';
+	import { modal } from '$lib/stores/modal';
+	import Button from '$lib/components/Button.svelte';
+	import { searchRequest } from '$lib/api/search';
+	import Spinner from '$lib/components/Spinner.svelte';
+	import Link from '$lib/components/Link.svelte';
+	import { STATIC_DOMAIN } from '$lib/environment/environment';
+	import UploadContent from '$lib/components/Search/UploadContent.svelte';
 	import {
 		handleUploadContentSubmit,
 		uploadContentState,
-	} from '#lib/components/Search/uploadContentState.svelte.js';
+	} from '$lib/components/Search/uploadContentState.svelte.js';
 	import { createDebouncedSearch } from '../../utils/debouncedSearch.svelte';
 
 	/**
-	 * @typedef {import('#lib/s3/limits.js').MimetypeType} MimetypeType
-	 * @typedef {import('#lib/api/search/index.js').SearchResult} SearchResult
+	 * @typedef {import('$lib/s3/limits.js').MimetypeType} MimetypeType
+	 * @typedef {import('$lib/api/search').SearchResult} SearchResult
 	 */
 
 	/**

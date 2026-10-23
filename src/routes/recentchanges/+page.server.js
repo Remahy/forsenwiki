@@ -1,4 +1,4 @@
-import { getRecentChangesFilters } from '#lib/utils/recentChanges.js';
+import { getRecentChangesFilters } from '$lib/utils/recentChanges.js';
 import { _getRecentChanges } from '../api/recentchanges/+server.js';
 
 export async function load({ url }) {

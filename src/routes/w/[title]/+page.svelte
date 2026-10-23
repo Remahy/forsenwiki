@@ -5,25 +5,25 @@
 	import { enGB } from 'date-fns/locale';
 	import { page } from '$app/state';
 
-	import '#lib/components/editor/Article.css';
+	import '$lib/components/editor/Article.css';
 
-	import Container from '#lib/components/Container.svelte';
-	import LinkButton from '#lib/components/LinkButton.svelte';
-	import SuggestionBox from '#lib/components/SuggestionBox.svelte';
-	import Box from '#lib/components/Box.svelte';
-	import ToC from '#lib/components/ToC.svelte';
-	import RandomButton from '#lib/components/RandomButton.svelte';
-	import CacheBustButton from '#lib/components/CacheBustButton.svelte';
-	import Link from '#lib/components/Link.svelte';
-	import { isSystem } from '#lib/utils/isSystem.js';
-	import { DISCLAIMER_TAGS } from '#lib/constants/constants.js';
-	import { getImageCacheURL } from '#lib/utils/getImageCacheURL.js';
-	import Article from '#lib/components/Article.svelte';
-	import StreamerModeShow from '#lib/components/StreamerModeShow.svelte';
-	import { initializeEmblaForArticle } from '#lib/components/editor/plugins/Gallery/embla.js';
-	import { initializeZoomForImgElements } from '#lib/components/editor/plugins/Gallery/zoom.js';
-	import NSFW from '#lib/components/Disclaimer/NSFW.svelte';
-	import Satire from '#lib/components/Disclaimer/Satire.svelte';
+	import Container from '$lib/components/Container.svelte';
+	import LinkButton from '$lib/components/LinkButton.svelte';
+	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
+	import Box from '$lib/components/Box.svelte';
+	import ToC from '$lib/components/ToC.svelte';
+	import RandomButton from '$lib/components/RandomButton.svelte';
+	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
+	import Link from '$lib/components/Link.svelte';
+	import { isSystem } from '$lib/utils/isSystem.js';
+	import { DISCLAIMER_TAGS } from '$lib/constants/constants.js';
+	import { getImageCacheURL } from '$lib/utils/getImageCacheURL.js';
+	import Article from '$lib/components/Article.svelte';
+	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+	import { initializeEmblaForArticle } from '$lib/components/editor/plugins/Gallery/embla.js';
+	import { initializeZoomForImgElements } from '$lib/components/editor/plugins/Gallery/zoom.js';
+	import NSFW from '$lib/components/Disclaimer/NSFW.svelte';
+	import Satire from '$lib/components/Disclaimer/Satire.svelte';
 
 	const submitErrors = $derived.by(() => {
 		try {

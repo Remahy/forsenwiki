@@ -24,8 +24,8 @@
 	} from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 
-	import { getYouTubeClipURL } from '#lib/api/utils/index.js';
-	import { $isGalleryNode as isGalleryNode } from '#lib/lexical/custom.js';
+	import { getYouTubeClipURL } from '$lib/api/utils';
+	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
 	import { $createVideoEmbedNode as createVideoEmbedNode, VideoEmbedNode } from './VideoEmbed';
 
 	/**

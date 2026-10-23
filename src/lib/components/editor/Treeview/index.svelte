@@ -52,10 +52,11 @@
 		{...restContainerProps}
 		ondragover={onDragOver}
 		ondrop={onDrop}
-		class="tree relative grow overflow-y-auto p-2"
+		class="tree grow overflow-y-auto p-2 relative"
 	>
 		{#each treeviewState.items as item (item.getId())}
-			{@const { onDragEnter, onDragLeave, onDragOver, onDrop, ...restProps } = item.getProps()}
+			{@const { onDragEnter, onDragLeave, onDragOver, onDrop, ...restProps } =
+				item.getProps()}
 			{@const { draggable, onDragStart, onDragEnd, ...restDragHandleProps } =
 				item.getDragHandleProps()}
 			<div

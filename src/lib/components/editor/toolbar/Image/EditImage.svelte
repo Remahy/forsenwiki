@@ -3,15 +3,15 @@
 	import { getEditor } from 'svelte-lexical';
 	import { RectangleHorizontalIcon, RectangleVerticalIcon } from '@lucide/svelte';
 
-	import Button from '#lib/components/Button.svelte';
-	import { modal } from '#lib/stores/modal.js';
-	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '#lib/constants/image.js';
+	import Button from '$lib/components/Button.svelte';
+	import { modal } from '$lib/stores/modal';
+	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import EditImageModal from './EditImageModal.svelte';
-	import { $isGalleryNode as isGalleryNode } from '#lib/lexical/custom.js';
+	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {import('#lib/lexical/custom.js').ImageNode} selectedNode
+	 * @property {import('$lib/lexical/custom').ImageNode} selectedNode
 	 */
 
 	/** @type {Props} */

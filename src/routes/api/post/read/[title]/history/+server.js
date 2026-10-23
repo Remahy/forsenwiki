@@ -1,7 +1,7 @@
-import { error} from '@sveltejs/kit';
-import { readYPostUpdatesIdsByTitle } from '#lib/db/post/read.js';
-import { replacer } from '#lib/utils/json.js';
-import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
+import { error, json } from '@sveltejs/kit';
+import { readYPostUpdatesIdsByTitle } from '$lib/db/post/read';
+import { replacer } from '$lib/utils/json';
+import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 
 export async function GET({ params }) {
 	const { sanitized: title } = sanitizeTitle(params.title);
@@ -14,5 +14,5 @@ export async function GET({ params }) {
 
 	const safeJSON = JSON.parse(JSON.stringify(res, replacer));
 
-	return Response.json(safeJSON);
+	return json(safeJSON);
 }

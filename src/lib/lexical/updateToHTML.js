@@ -1,4 +1,4 @@
-import toHTML from '#lib/worker/toHTML/index.js';
+import toHTML from '$lib/worker/toHTML';
 
 /**
  * @param {string} update

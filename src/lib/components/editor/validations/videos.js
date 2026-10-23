@@ -1,7 +1,7 @@
 import { $nodesOfType as nodesOfType } from 'lexical';
 
-import { $isGalleryNode as isGalleryNode, VideoEmbedNode } from '#lib/lexical/custom.js';
-import { VIDEO_MIN_HEIGHT, VIDEO_MAX_HEIGHT, VIDEO_MIN_WIDTH } from '#lib/constants/video.js';
+import { $isGalleryNode as isGalleryNode, VideoEmbedNode } from '$lib/lexical/custom';
+import { VIDEO_MIN_HEIGHT, VIDEO_MAX_HEIGHT, VIDEO_MIN_WIDTH } from '$lib/constants/video';
 
 /**
  * @param {LexicalEditor} editor

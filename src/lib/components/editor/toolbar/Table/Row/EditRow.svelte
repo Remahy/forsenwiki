@@ -15,12 +15,12 @@
 		TableCellHeaderStates,
 	} from '@lexical/table';
 
-	import Button from '#lib/components/Button.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import EditorButton from '../../EditorButton.svelte';
 
 	/**
 	 * @typedef Props
-	 * @property {import('#lib/lexical/custom.js').ATableNode} selectedTable
+	 * @property {import('$lib/lexical/custom').ATableNode} selectedTable
 	 * @property {import('@lexical/table').TableRowNode} selectedNode
 	 */
 

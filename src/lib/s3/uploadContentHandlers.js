@@ -1,12 +1,12 @@
-import { STATIC_DOMAIN } from '#lib/environment/environment.js';
-import { loadContent } from '#lib/utils/indexedDb/content.js';
-import { deleteContent, uploadContent } from '#lib/api/content/index.js';
-import { createFileUploadObject } from '#lib/components/editor/utils/fileUploadObject.js';
+import { STATIC_DOMAIN } from '$lib/environment/environment';
+import { loadContent } from '$lib/utils/indexedDb/content';
+import { deleteContent, uploadContent } from '$lib/api/content';
+import { createFileUploadObject } from '$lib/components/editor/utils/fileUploadObject';
 import {
 	addNewUploaded,
 	setUploading,
-} from '#lib/components/uploadingContentModalGlobals.svelte.js';
-import { getUniqueImageHashes } from '#lib/components/editor/utils/getImages.js';
+} from '$lib/components/uploadingContentModalGlobals.svelte.js';
+import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
 
 /**
  * https://stackoverflow.com/a/41797377

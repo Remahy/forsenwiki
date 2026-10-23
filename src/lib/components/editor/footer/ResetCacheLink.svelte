@@ -1,5 +1,5 @@
 <script>
-	import Spinner from '#lib/components/Spinner.svelte';
+	import Spinner from '$lib/components/Spinner.svelte';
 	import { Trash2Icon } from '@lucide/svelte';
 
 	/**

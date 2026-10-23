@@ -1,4 +1,4 @@
-import { ATableNode } from '#lib/lexical/custom.js';
+import { ATableNode } from '$lib/lexical/custom';
 import { $isRootNode as isRootNode, $getNodeByKey as getNodeByKey } from 'lexical';
 
 /**

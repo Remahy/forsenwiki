@@ -1,4 +1,4 @@
-import prisma from '#lib/prisma.server.js';
+import prisma from '$lib/prisma.server';
 import { error } from '@sveltejs/kit';
 
 export async function load({ params }) {

@@ -1,5 +1,5 @@
 <script>
-	import ImageFocus from '#lib/components/content/ImageFocus.svelte';
+	import ImageFocus from '$lib/components/content/ImageFocus.svelte';
 
 	const { src, name, className = '' } = $props();
 

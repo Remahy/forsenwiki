@@ -1,5 +1,5 @@
 import { $createHeadingNode } from '@lexical/rich-text';
-import { HeadingNode } from '#lib/lexical/index.js';
+import { HeadingNode } from '$lib/lexical/index';
 
 export class AHeadingNode extends HeadingNode {
 	$config() {

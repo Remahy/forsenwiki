@@ -1,6 +1,6 @@
 <script>
-	import { uploadModal } from '#lib/stores/modal.js';
-	import { browser } from '$app/env';
+	import { uploadModal } from '$lib/stores/modal';
+	import { browser } from '$app/environment';
 
 	uploadModal.subscribe((modal) => {
 		if (!browser || !modal) {
@@ -17,10 +17,8 @@
 
 {#if $uploadModal && $uploadModal.isOpen}
 	{@const SvelteComponent = $uploadModal.component}
-
 	<div class="fixed inset-0 z-50 flex items-center overflow-y-auto">
 		<div class="modal-bg-transparent fixed inset-0 duration-300"></div>
-
 		<div
 			role="dialog"
 			aria-modal="true"

@@ -13,8 +13,8 @@ import type {
 import { $applyNodeReplacement, DecoratorNode } from 'lexical';
 import type { ComponentProps } from 'svelte';
 
-import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '#lib/constants/image.js';
-import { getImageCacheURL } from '#lib/utils/getImageCacheURL.js';
+import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
+import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 
 import ImageComponent from './ImageComponent.svelte';
 

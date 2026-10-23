@@ -1,4 +1,4 @@
-import prisma from '#lib/prisma.server.js';
+import prisma from '$lib/prisma.server';
 
 /** @param {string} id */
 export const deleteContent = async (id) => {

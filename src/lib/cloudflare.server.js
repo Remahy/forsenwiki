@@ -1,4 +1,4 @@
-import { CLOUDFLARE_API_TOKEN, CLOUDFLARE_ZONE_ID } from '$app/env/private';
+import { CLOUDFLARE_API_TOKEN, CLOUDFLARE_ZONE_ID } from '$env/static/private';
 import { DOMAIN } from './environment/environment';
 
 const headers = new Headers({

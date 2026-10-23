@@ -1,15 +1,15 @@
 <script>
 	import { FileIcon, HistoryIcon } from '@lucide/svelte';
-	import { page } from '$app/state';
+	import { page } from '$app/stores';
 
-	import '#lib/components/editor/Article.css';
+	import '$lib/components/editor/Article.css';
 
-	import Container from '#lib/components/Container.svelte';
-	import LinkButton from '#lib/components/LinkButton.svelte';
-	import Box from '#lib/components/Box.svelte';
-	import Article from '#lib/components/Article.svelte';
-	import StreamerModeShow from '#lib/components/StreamerModeShow.svelte';
-	import Link from '#lib/components/Link.svelte';
+	import Container from '$lib/components/Container.svelte';
+	import LinkButton from '$lib/components/LinkButton.svelte';
+	import Box from '$lib/components/Box.svelte';
+	import Article from '$lib/components/Article.svelte';
+	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+	import Link from '$lib/components/Link.svelte';
 
 	let { data } = $props();
 
@@ -30,16 +30,13 @@
 
 <svelte:head>
 	<title>{displayTitle} - Community Forsen Wiki</title>
-
 	<meta name="og:title" content="{displayTitle} - Community Forsen Wiki" />
 
 	<meta name="description" content="{displayTitle} on forsen.wiki" />
-
 	<meta property="og:description" content="{displayTitle} on forsen.wiki" />
 
-	<link rel="canonical" href="{page.url.origin}/w/{title}" />
-
-	<meta property="og:url" content="{page.url.origin}/w/{title}" />
+	<link rel="canonical" href="{$page.url.origin}/w/{title}" />
+	<meta property="og:url" content="{$page.url.origin}/w/{title}" />
 </svelte:head>
 
 <Container class="-m-4">
@@ -75,7 +72,7 @@
 
 			<div class="mt-4">
 				<p>
-					<span class="font-bold">"{tD}" version author:</span>
+					<span class="font-bold">&quot;{tD}&quot; version author:</span>
 					<StreamerModeShow>
 						<Link href="/user/{toAuthor?.id}" target="_blank" class="decoration-1!"
 							>{toAuthor?.name}</Link
@@ -84,7 +81,7 @@
 				</p>
 
 				<p>
-					<span class="font-bold">"{fD}" version author:</span>
+					<span class="font-bold">&quot;{fD}&quot; version author:</span>
 					<StreamerModeShow>
 						<Link href="/user/{fromAuthor?.id}" target="_blank" class="decoration-1!"
 							>{fromAuthor?.name}</Link
@@ -95,27 +92,22 @@
 		</header>
 
 		<div class="flex flex-col gap-2 text-xs">
-			<p><span class="font-bold">Legend:</span></p>
-			<p class="p-1 text-red-500 outline">
-				<span><span class="font-bold">Red:</span>Deleted (-)</span>
-			</p>
-
-			<p class="p-1 text-orange-500 outline outline-dashed dark:text-orange-300">
-				<span><span class="font-bold">Orange:</span>Modified (~)</span>
-			</p>
-
-			<p class="p-1 text-green-500 outline">
-				<span><span class="font-bold">Green:</span>Added (+)</span>
-			</p>
-
 			<p>
-				When available, hover over the question mark
-
-				<span class="mx-1 rounded-full bg-blue-500/50 px-2 py-1 font-bold outline outline-white"
-					>?</span
-				>
-
-				to read what fields were modified.
+				<span class="font-bold">Legend:</span>
+			</p>
+			<p class="p-1 text-red-500 outline">
+				<span><span class="font-bold">Red:</span> Deleted &#40;-&#41;</span>
+			</p>
+			<p class="p-1 text-orange-500 outline outline-dashed dark:text-orange-300">
+				<span><span class="font-bold">Orange:</span> Modified &#40;~&#41;</span>
+			</p>
+			<p class="p-1 text-green-500 outline">
+				<span><span class="font-bold">Green:</span> Added &#40;+&#41;</span>
+			</p>
+			<p>
+				When available, hover over the question mark <span
+					class="mx-1 rounded-full bg-blue-500/50 px-2 py-1 font-bold outline outline-white">?</span
+				> to read what fields were modified.
 			</p>
 		</div>
 

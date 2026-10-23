@@ -6,7 +6,7 @@
 		$isRangeSelection as isRangeSelection,
 		mergeRegister,
 	} from 'lexical';
-	import { useDebounce } from '#lib/utils/debouncer.js';
+	import { useDebounce } from '$lib/utils/debouncer';
 
 	import { treeviewState } from './treeviewState.svelte';
 	import { initTree } from './tree';

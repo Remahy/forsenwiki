@@ -1,4 +1,4 @@
-import { createRecentChangesParams } from '#lib/utils/recentChanges.js';
+import { createRecentChangesParams } from '$lib/utils/recentChanges';
 
 /**
  * @param {{ authors: string[], cursor: string, limit: number}} arg

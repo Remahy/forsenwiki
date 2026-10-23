@@ -1,7 +1,7 @@
 <script>
 	import { XIcon } from '@lucide/svelte';
-	import { editorModal } from '#lib/stores/modal.js';
-	import Button from '#lib/components/Button.svelte';
+	import { editorModal } from '$lib/stores/modal';
+	import Button from '$lib/components/Button.svelte';
 	import TreeviewWrapper from '../toolbar/TreeviewWrapper.svelte';
 	import { treeviewState } from './treeviewState.svelte';
 	import { expandParents } from './utils';

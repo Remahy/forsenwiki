@@ -1,4 +1,4 @@
-import { ImageNode } from '#lib/lexical/custom.js';
+import { ImageNode } from '$lib/lexical/custom';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**

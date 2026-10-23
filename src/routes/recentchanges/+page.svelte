@@ -4,22 +4,22 @@
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
-	import { page } from '$app/state';
-	import Box from '#lib/components/Box.svelte';
-	import Link from '#lib/components/Link.svelte';
-	import StreamerModeShow from '#lib/components/StreamerModeShow.svelte';
+	import { page } from '$app/stores';
+	import Box from '$lib/components/Box.svelte';
+	import Link from '$lib/components/Link.svelte';
+	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
 	import {
 		getRecentChangesFilters,
 		MINIMUM_LIMIT,
 		MAXIMUM_LIMIT,
 		createRecentChangesParams,
 		handleAuthorsString,
-	} from '#lib/utils/recentChanges.js';
-	import Button from '#lib/components/Button.svelte';
-	import { getMoreRecentChanges } from '#lib/api/recentchanges/index.js';
-	import { reviver } from '#lib/utils/json.js';
+	} from '$lib/utils/recentChanges';
+	import Button from '$lib/components/Button.svelte';
+	import { getMoreRecentChanges } from '$lib/api/recentchanges';
+	import { reviver } from '$lib/utils/json';
 
-	const filters = $derived(getRecentChangesFilters(page.url.searchParams));
+	const filters = $derived(getRecentChangesFilters($page.url.searchParams));
 
 	let authorsInput = $derived(filters.authors.join(', '));
 	const authors = $derived(handleAuthorsString(authorsInput));
@@ -30,7 +30,7 @@
 	const handleFilterSearch = () => {
 		const searchParams = createRecentChangesParams({ authors, limit });
 		// eslint-disable-next-line svelte/prefer-svelte-reactivity
-		const url = new URL(page.url);
+		const url = new URL($page.url);
 		url.search = `?${searchParams.toString()}`;
 		window.location.href = url.toString();
 	};
@@ -50,7 +50,7 @@
 	 */
 
 	/** @type {Writable<Update[]>} */
-	const latestUpdates = writable(page.data.latestUpdates);
+	const latestUpdates = writable($page.data.latestUpdates);
 
 	let loading = $state(false);
 	let done = $state(false);
@@ -151,21 +151,23 @@
 					<small
 						>(<span class="font-bold">Title change:</span>
 						"{update.newTitle}"{#if update.oldTitle}
-							<i>was "{update.oldTitle}"</i>
-						{/if})&nbsp;
-					</small>
+							&nbsp;<i>was "{update.oldTitle}"</i>
+						{/if})&nbsp;</small
+					>
 				{/if}
 				<span><small class="opacity-85">({update.byteLength})&nbsp;</small></span>
 				{#if !isNewArticle}
 					<span>
 						<Link href="/w/{update.title}/history/{update.id}-" target="_blank"
 							>Compare with previous</Link
-						>
-					</span>
+						>&nbsp;</span
+					>
 				{/if}
-
-				<small>{formatRelative(update.lastUpdated, Date.now(), { locale: enGB })}&nbsp;</small>
-
+				<small
+					>{formatRelative(update.lastUpdated, Date.now(), {
+						locale: enGB,
+					})}&nbsp;</small
+				>
 				<span>
 					<small>
 						<span class="font-bold">By:</span>

@@ -21,11 +21,11 @@
 	import {
 		clearSelection,
 		createNodeSelectionStore,
-	} from '#lib/components/editor/utils/getSelection.js';
-	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '#lib/constants/image.js';
+	} from '$lib/components/editor/utils/getSelection';
+	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 	import ImageResizer from './ImageResizer.svelte';
 	import { IMAGE_OFF, LUCIDE_ICON_LOADER, $isImageNode as isImageNode } from './Image';
-	import { loadContent } from '#lib/utils/indexedDb/content.js';
+	import { loadContent } from '$lib/utils/indexedDb/content';
 	import { editorGlobals } from '../../editorGlobals.svelte';
 	import { $isGalleryNode as isGalleryNode } from '../Gallery/Gallery';
 
