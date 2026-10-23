@@ -1,4 +1,4 @@
-import { json, error } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import { readYPostsByIds, readYPostByTitle, readYPostUpdatesByTitle } from '#lib/db/post/read.js';
 import { yPostUpdatesV2ToBase64 } from '#lib/yjs/utils.js';
 import { upsertHTML } from '#lib/db/post/html.js';
@@ -91,7 +91,7 @@ export async function GET({ params }) {
 
 		const safeJSON = JSON.parse(JSON.stringify(res, replacer));
 
-		return json(safeJSON);
+		return Response.json(safeJSON);
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);

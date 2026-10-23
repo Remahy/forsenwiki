@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit';
+import { error} from '@sveltejs/kit';
 import { readRelationsToYPostTitle, readYPostByTitle } from '#lib/db/post/read.js';
 import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
 
@@ -13,5 +13,5 @@ export async function GET({ params }) {
 
 	const relatedPosts = await readRelationsToYPostTitle(post.title);
 
-	return json(relatedPosts);
+	return Response.json(relatedPosts);
 }

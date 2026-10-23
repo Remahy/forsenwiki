@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit';
+import { error} from '@sveltejs/kit';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import {
@@ -241,7 +241,7 @@ export async function POST({ request, locals, params }) {
 		authorId: session.user.id,
 	});
 
-	return json({
+	return Response.json({
 		...updatedPost,
 		title: _post.title,
 		partialErrors: partialErrors.length ? partialErrors : undefined,

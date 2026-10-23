@@ -143,7 +143,7 @@ export async function POST({ request, locals }) {
 
 	await upsertHTML(createdPost.id, { content: html, text, image });
 
-	return json({
+	return Response.json({
 		...createdPost,
 	});
 }

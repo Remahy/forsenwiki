@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import prisma from '#lib/prisma.server.js';
 import { ForbiddenError } from '#lib/errors/Forbidden.js';
 
@@ -121,5 +120,5 @@ export async function GET({ locals }) {
 		uploads,
 	};
 
-	return json(data);
+	return Response.json(data);
 }

@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import prisma from '#lib/prisma.server.js';
 
 /**
@@ -304,5 +303,5 @@ export async function GET({ url }) {
 
 	const res = await _getSearch(query, types, options);
 
-	return json(res.results);
+	return Response.json(res.results);
 }

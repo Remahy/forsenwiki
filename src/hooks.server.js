@@ -53,4 +53,6 @@ export const handleError = async ({ error }) => {
 			code: 'PAYLOAD_TOO_LARGE',
 		};
 	}
+
+	return e;
 };

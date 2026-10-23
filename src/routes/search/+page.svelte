@@ -28,8 +28,14 @@
 	function infiniteHandler({ detail: { complete, error, loaded } }) {
 		const newSearchRequest = structuredClone(currentQuery);
 		currentPage++;
-		page.url.searchParams.set('page', String(currentPage));
+
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity
+		const searchParams = new URLSearchParams(page.url.searchParams);
+
+		searchParams.set('page', String(currentPage));
 		newSearchRequest.options.page = currentPage;
+
+		window.location.search = searchParams;
 
 		// Classic, good old, then & catch.
 		searchRequest(newSearchRequest.query, newSearchRequest.types, newSearchRequest.options)

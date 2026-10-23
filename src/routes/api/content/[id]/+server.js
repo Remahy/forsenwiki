@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import prisma from '#lib/prisma.server.js';
 import { ForbiddenError } from '#lib/errors/Forbidden.js';
 import { deleteContent } from '#lib/db/content/delete.js';
@@ -37,7 +37,7 @@ export async function POST({ request, locals, params }) {
 
 	const updateRes = await updateContentName(id, name);
 
-	return json(updateRes);
+	return Response.json(updateRes);
 }
 
 export async function DELETE({ locals, params }) {
@@ -77,5 +77,5 @@ export async function DELETE({ locals, params }) {
 		return error(500);
 	}
 
-	return json({ hash: deleteRes.hash, id: deleteRes.id });
+	return Response.json({ hash: deleteRes.hash, id: deleteRes.id });
 }

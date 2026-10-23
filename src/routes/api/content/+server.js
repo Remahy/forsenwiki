@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import prisma from '#lib/prisma.server.js';
 import { ForbiddenError } from '#lib/errors/Forbidden.js';
 import { _validateContent } from './validate/+server';
@@ -33,7 +33,7 @@ export async function POST({ request, locals }) {
 	}
 
 	if (!files?.length) {
-		return json([]);
+		return Response.json([]);
 	}
 
 	let readyFiles = [];
@@ -106,5 +106,5 @@ export async function POST({ request, locals }) {
 		return error(500, 'Something went wrong generating upload URLs');
 	}
 
-	return json(presignedUrls);
+	return Response.json(presignedUrls);
 }

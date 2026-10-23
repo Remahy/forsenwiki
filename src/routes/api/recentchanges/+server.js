@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit';
 import prisma from '#lib/prisma.server.js';
 import { getRecentChangesFilters } from '#lib/utils/recentChanges.js';
 import { replacer } from '#lib/utils/json.js';
@@ -76,5 +75,5 @@ export async function GET({ url }) {
 
 	const safeJSON = JSON.parse(JSON.stringify(res, replacer));
 
-	return json(safeJSON);
+	return Response.json(safeJSON);
 }

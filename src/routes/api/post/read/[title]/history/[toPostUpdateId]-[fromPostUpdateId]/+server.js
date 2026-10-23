@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit';
+import { error} from '@sveltejs/kit';
 /*
 import { createHeadlessEditor } from '@lexical/headless';
 
@@ -154,7 +154,7 @@ export async function GET({ params }) {
 
 		const safeJSON = JSON.parse(JSON.stringify(res, replacer));
 
-		return json(safeJSON);
+		return Response.json(safeJSON);
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);

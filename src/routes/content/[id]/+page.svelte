@@ -113,7 +113,6 @@
 		}
 
 		if (res.status === 200) {
-			// eslint-disable-next-line svelte/no-navigation-without-resolve
 			goto(`${resolve('search')}?query=${result.name}`);
 		} else if (res.status >= 400) {
 			error = await res.json();

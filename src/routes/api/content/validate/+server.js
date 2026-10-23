@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import { base64ToUint8Array } from 'uint8array-extras';
 import { getFileSizeLimit, getType } from '#lib/s3/limits.js';
 import { sniffMimetype } from '#lib/s3/sniffMimetype.server.js';
@@ -153,5 +153,5 @@ export async function POST({ request, locals }) {
 		return error(status, JSON.stringify(errors));
 	}
 
-	return json(files.length);
+	return Response.json(files.length);
 }
