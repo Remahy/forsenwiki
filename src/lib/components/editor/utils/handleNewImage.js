@@ -1,6 +1,6 @@
-import { IMAGE_MAX_HEIGHT, IMAGE_MAX_WIDTH } from '$lib/constants/image';
-import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
-import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
+import { IMAGE_MAX_HEIGHT, IMAGE_MAX_WIDTH } from '#lib/constants/image.js';
+import { ErrorWithCode } from '#lib/errors/ErrorWithCode.js';
+import { getImageCacheURL } from '#lib/utils/getImageCacheURL.js';
 import { checkFile, FileErrorCodes } from './handleNewFile';
 
 /**

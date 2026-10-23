@@ -1,6 +1,6 @@
-import { error, json } from '@sveltejs/kit';
-import { readAuthorsForYPostByTitle, readYPostByTitle } from '$lib/db/post/read';
-import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
+import { error} from '@sveltejs/kit';
+import { readAuthorsForYPostByTitle, readYPostByTitle } from '#lib/db/post/read.js';
+import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
 
 export async function GET({ params }) {
 	const { sanitized: title } = sanitizeTitle(params.title);
@@ -13,5 +13,5 @@ export async function GET({ params }) {
 
 	const res = await readAuthorsForYPostByTitle(post.title);
 
-	return json(res);
+	return Response.json(res);
 }

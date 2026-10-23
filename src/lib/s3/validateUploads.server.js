@@ -1,5 +1,5 @@
-import { STATIC_DOMAIN } from '$lib/environment/environment';
-import prisma from '$lib/prisma.server';
+import { STATIC_DOMAIN } from '#lib/environment/environment.js';
+import prisma from '#lib/prisma.server.js';
 
 /**
  * @param {Array<{ index: number, hash: string }>} hashes

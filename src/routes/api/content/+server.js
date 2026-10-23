@@ -1,13 +1,13 @@
-import { error, json } from '@sveltejs/kit';
-import prisma from '$lib/prisma.server';
-import { ForbiddenError } from '$lib/errors/Forbidden.js';
+import { error } from '@sveltejs/kit';
+import prisma from '#lib/prisma.server.js';
+import { ForbiddenError } from '#lib/errors/Forbidden.js';
 import { _validateContent } from './validate/+server';
-import { getPresignedURL } from '$lib/s3/index.server';
-import { createContent } from '$lib/db/content/create';
-import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
-import { CLOUDFLARE_R2_SECRET_ACCESS_KEY } from '$env/static/private';
-import { FileErrorCodes } from '$lib/components/editor/utils/handleNewFile';
-import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
+import { getPresignedURL } from '#lib/s3/index.server.js';
+import { createContent } from '#lib/db/content/create.js';
+import { ErrorWithCode } from '#lib/errors/ErrorWithCode.js';
+import { CLOUDFLARE_R2_SECRET_ACCESS_KEY } from '$app/env/private';
+import { FileErrorCodes } from '#lib/components/editor/utils/handleNewFile.js';
+import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
 
 export async function POST({ request, locals }) {
 	const { isBlocked, isModerator, auth } = locals;
@@ -33,7 +33,7 @@ export async function POST({ request, locals }) {
 	}
 
 	if (!files?.length) {
-		return json([]);
+		return Response.json([]);
 	}
 
 	let readyFiles = [];
@@ -106,5 +106,5 @@ export async function POST({ request, locals }) {
 		return error(500, 'Something went wrong generating upload URLs');
 	}
 
-	return json(presignedUrls);
+	return Response.json(presignedUrls);
 }

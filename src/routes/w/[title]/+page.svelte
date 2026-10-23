@@ -1,27 +1,29 @@
 <script>
 	/* eslint-disable svelte/no-at-html-tags */
-	import { onMount } from 'svelte';
 	import { SquarePenIcon, RotateCcwClock } from '@lucide/svelte';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
 	import { page } from '$app/state';
 
-	import '$lib/components/editor/Article.css';
+	import '#lib/components/editor/Article.css';
 
-	import Container from '$lib/components/Container.svelte';
-	import LinkButton from '$lib/components/LinkButton.svelte';
-	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
-	import Box from '$lib/components/Box.svelte';
-	import ToC from '$lib/components/ToC.svelte';
-	import RandomButton from '$lib/components/RandomButton.svelte';
-	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
-	import Link from '$lib/components/Link.svelte';
-	import { isSystem } from '$lib/utils/isSystem.js';
-	import { getImageCacheURL } from '$lib/utils/getImageCacheURL.js';
-	import Article from '$lib/components/Article.svelte';
-	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
-	import { initializeEmblaForArticle } from '$lib/components/editor/plugins/Gallery/embla.js';
-	import { initializeZoomForImgElements } from '$lib/components/editor/plugins/Gallery/zoom.js';
+	import Container from '#lib/components/Container.svelte';
+	import LinkButton from '#lib/components/LinkButton.svelte';
+	import SuggestionBox from '#lib/components/SuggestionBox.svelte';
+	import Box from '#lib/components/Box.svelte';
+	import ToC from '#lib/components/ToC.svelte';
+	import RandomButton from '#lib/components/RandomButton.svelte';
+	import CacheBustButton from '#lib/components/CacheBustButton.svelte';
+	import Link from '#lib/components/Link.svelte';
+	import { isSystem } from '#lib/utils/isSystem.js';
+	import { DISCLAIMER_TAGS } from '#lib/constants/constants.js';
+	import { getImageCacheURL } from '#lib/utils/getImageCacheURL.js';
+	import Article from '#lib/components/Article.svelte';
+	import StreamerModeShow from '#lib/components/StreamerModeShow.svelte';
+	import { initializeEmblaForArticle } from '#lib/components/editor/plugins/Gallery/embla.js';
+	import { initializeZoomForImgElements } from '#lib/components/editor/plugins/Gallery/zoom.js';
+	import NSFW from '#lib/components/Disclaimer/NSFW.svelte';
+	import Satire from '#lib/components/Disclaimer/Satire.svelte';
 
 	const submitErrors = $derived.by(() => {
 		try {
@@ -68,6 +70,15 @@
 
 	const isArticleSystem = $derived(isSystem({ id, outRelations }));
 
+	const systemTags = $derived(
+		outRelations.filter(({ isSystem }) => isSystem).map(({ toPostId }) => toPostId)
+	);
+	const isSatire = $derived(systemTags.includes(DISCLAIMER_TAGS.SATIRE));
+	const isNSFW = $derived(systemTags.includes(DISCLAIMER_TAGS.NSFW));
+
+	let nsfwAccepted = $state(false);
+	const isHidden = $derived(isNSFW && !nsfwAccepted);
+
 	const authorsScriptContent = $derived(
 		JSON.stringify({
 			'@context': 'https://schema.org',
@@ -95,7 +106,12 @@
 		return { $bigint: this.toString() };
 	};
 
-	onMount(() => {
+	// Re-runs when the article is revealed, since NSFW articles aren't rendered until accepted.
+	$effect(() => {
+		if (isHidden) {
+			return;
+		}
+
 		/**
 		 * @type {HTMLElement}
 		 */
@@ -128,12 +144,15 @@
 
 		<meta property="og:type" content="article" />
 
-		{#if text?.length}
+		{#if text?.length && !isNSFW}
 			<meta name="description" content={text} />
 			<meta property="og:description" content={text} />
+		{:else if isNSFW}
+			<meta name="description" content="This page is marked as NSFW." />
+			<meta property="og:description" content="This page is marked as NSFW." />
 		{/if}
 
-		{#if image?.length}
+		{#if image?.length && !isNSFW}
 			<meta
 				property="og:image"
 				content={getImageCacheURL(image, { quality: 'medium-low' }).toString()}
@@ -189,19 +208,27 @@
 				</header>
 			</SuggestionBox>
 
-			<div class="flex grow flex-col gap-4 lg:flex-row">
-				<Box class="-mx-4 flex grow flex-col overflow-hidden p-4 sm:mx-0 lg:mb-0">
-					<main class="article-root prose dark:prose-invert max-w-[unset] grow wrap-break-word">
-						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
-							<strong class="text-4xl">{rawTitle}</strong>
-						</div>
+			{#if isSatire}
+				<Satire />
+			{/if}
 
-						<Article {html} />
-					</main>
-				</Box>
+			{#if isHidden}
+				<NSFW onAccept={() => (nsfwAccepted = true)} />
+			{:else}
+				<div class="flex grow flex-col gap-4 lg:flex-row">
+					<Box class="-mx-4 flex grow flex-col overflow-hidden p-4 sm:mx-0 lg:mb-0">
+						<main class="article-root prose dark:prose-invert max-w-[unset] grow wrap-break-word">
+							<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
+								<strong class="text-4xl">{rawTitle}</strong>
+							</div>
 
-				<ToC />
-			</div>
+							<Article {html} />
+						</main>
+					</Box>
+
+					<ToC />
+				</div>
+			{/if}
 		{:else if isArticleSystem}
 			<Box class="flex grow flex-col items-center justify-center gap-2 overflow-hidden p-12">
 				<h2 class="text-2xl">

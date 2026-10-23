@@ -1,14 +1,14 @@
 <script>
-	import Divider from '$lib/components/Divider.svelte';
+	import Divider from '#lib/components/Divider.svelte';
 
+	import FormatControls from './FormatControls.svelte';
 	import HistoryButtons from './HistoryButtons.svelte';
-	import TextFormatButtons from './TextFormatButtons/index.svelte';
-	import FontSelect from './FontSelect.svelte';
-	import ElementSelect from './ElementSelect.svelte';
 </script>
 
 <HistoryButtons />
+
 <Divider />
-<ElementSelect />
-<FontSelect />
-<TextFormatButtons />
+
+<div class="flex min-w-0 flex-1 items-stretch gap-1 overflow-x-auto py-2">
+	<FormatControls />
+</div>

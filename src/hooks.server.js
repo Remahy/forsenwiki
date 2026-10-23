@@ -1,12 +1,12 @@
 import { building } from '$app/environment';
 import { sequence } from '@sveltejs/kit/hooks';
-import prisma, { Permissions } from '$lib/prisma.server';
-import { CLOUDFLARE_API_TOKEN, CLOUDFLARE_ZONE_ID } from '$env/static/private';
-import { STATIC_DOMAIN } from '$lib/environment/environment';
-import { validateToken } from '$lib/cloudflare.server';
+import prisma, { Permissions } from '#lib/prisma.server.js';
+import { CLOUDFLARE_API_TOKEN, CLOUDFLARE_ZONE_ID } from '$app/env/private';
+import { STATIC_DOMAIN } from '#lib/environment/environment.js';
+import { validateToken } from '#lib/cloudflare.server.js';
 import { handle as authenticationHandle } from './auth';
 
-import '$lib/goatcounter.server';
+import '#lib/goatcounter.server.js';
 
 if (!STATIC_DOMAIN) {
 	throw new Error('Environment value VITE_STATIC_DOMAIN has not been set.');
@@ -22,7 +22,7 @@ if ((CLOUDFLARE_API_TOKEN && CLOUDFLARE_ZONE_ID) && !building) {
 	console.log('Cloudflare cache purging enabled.');
 }
 
-/** @type {import('@sveltejs/kit').Handle} */
+/** @type {import('@sveltejs/kit/hooks').Handle} */
 async function authorizationHandle({ event, resolve }) {
 	// Protect paths here.
 	// https://authjs.dev/reference/sveltekit#per-path
@@ -54,4 +54,6 @@ export const handleError = async ({ error }) => {
 			code: 'PAYLOAD_TOO_LARGE',
 		};
 	}
+
+	return e;
 };

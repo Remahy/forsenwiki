@@ -3,7 +3,7 @@ import {
 	FLOATBLOCK_MIN_HEIGHT,
 	FLOATBLOCK_MIN_WIDTH,
 	floatValues,
-} from '$lib/constants/floatBlock';
+} from '#lib/constants/floatBlock.js';
 import { decoratorFormatToMarginStyle } from '../VideoEmbed/DecoratorBlockNode';
 
 const startValues = ['left', 'inline-start'];

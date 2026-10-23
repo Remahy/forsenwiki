@@ -1,5 +1,5 @@
 import { $nodesOfType as nodesOfType, $getNodeFromDOMNode as getNodeFromDOMNode } from 'lexical';
-import { ImageNode, $isImageNode as isImageNode } from '$lib/lexical/custom';
+import { ImageNode, $isImageNode as isImageNode } from '#lib/lexical/custom.js';
 
 /**
  * @param {ImageNode} image

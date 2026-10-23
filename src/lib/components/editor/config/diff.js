@@ -15,7 +15,7 @@ import {
 	DiffTableCellNode,
 	DiffFloatBlockNode,
 	DiffGalleryNode,
-} from '$lib/lexical/custom';
+} from '#lib/lexical/custom.js';
 
 import { articleTheme, articleNodes, htmlExport } from './article';
 

@@ -1,7 +1,7 @@
 <script>
 	import { getEditor } from 'svelte-lexical';
-	import Button from '$lib/components/Button.svelte';
-	import { modal } from '$lib/stores/modal';
+	import Button from '#lib/components/Button.svelte';
+	import { modal } from '#lib/stores/modal.js';
 	import ImageFixerModal from './ImageFixerModal.svelte';
 
 	let editor = $derived(getEditor?.());

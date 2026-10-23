@@ -5,17 +5,17 @@
 	import { Trash2Icon, XIcon } from '@lucide/svelte';
 	import isUrl from 'is-url';
 
-	import { modal } from '$lib/stores/modal';
-	import Button from '$lib/components/Button.svelte';
-	import { searchRequest } from '$lib/api/search';
+	import { modal } from '#lib/stores/modal.js';
+	import Button from '#lib/components/Button.svelte';
+	import { searchRequest } from '#lib/api/search/index.js';
 	import { sanitizeUrl } from '../../utils/sanitizeUrl';
-	import Spinner from '$lib/components/Spinner.svelte';
-	import Link from '$lib/components/Link.svelte';
+	import Spinner from '#lib/components/Spinner.svelte';
+	import Link from '#lib/components/Link.svelte';
 	import { createDebouncedSearch } from '../../utils/debouncedSearch.svelte';
 
 	/**
 	 * @typedef {import('@lexical/link').LinkAttributes} LinkAttributes
-	 * @typedef {import('$lib/api/search').SearchResult} SearchResult
+	 * @typedef {import('#lib/api/search/index.js').SearchResult} SearchResult
 	 */
 
 	/**

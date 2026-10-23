@@ -1,6 +1,5 @@
-import { json } from '@sveltejs/kit';
-import prisma from '$lib/prisma.server';
-import { ForbiddenError } from '$lib/errors/Forbidden.js';
+import prisma from '#lib/prisma.server.js';
+import { ForbiddenError } from '#lib/errors/Forbidden.js';
 
 export async function POST({ request, locals }) {
 	const { auth } = locals;
@@ -19,5 +18,5 @@ export async function POST({ request, locals }) {
 		select: { streamerMode: true },
 	});
 
-	return json(updatedSettings);
+	return Response.json(updatedSettings);
 }

@@ -1,6 +1,6 @@
 <script>
 	import { ListTreeIcon } from '@lucide/svelte';
-	import { editorModal } from '$lib/stores/modal';
+	import { editorModal } from '#lib/stores/modal.js';
 	import TreeviewModal from './TreeviewModal.svelte';
 	import EditorButton from '../toolbar/EditorButton.svelte';
 

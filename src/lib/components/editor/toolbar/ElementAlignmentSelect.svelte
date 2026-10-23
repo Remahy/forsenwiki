@@ -3,10 +3,10 @@
 	import { COMMAND_PRIORITY_CRITICAL, FORMAT_ELEMENT_COMMAND, mergeRegister } from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 
-	import Select from '$lib/components/Select.svelte';
-	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
-	import { getSelectedElements } from '$lib/components/editor/utils/getSelection';
-	import { alignmentIcons } from '$lib/constants/blockTypeIcons';
+	import Select from '#lib/components/Select.svelte';
+	import { ELEMENT_CONSTANTS } from '#lib/constants/element.js';
+	import { getSelectedElements } from '#lib/components/editor/utils/getSelection.js';
+	import { alignmentIcons } from '#lib/constants/blockTypeIcons.js';
 
 	const { ALIGNMENT } = ELEMENT_CONSTANTS;
 	const alignmentOptions = Object.entries(ALIGNMENT);

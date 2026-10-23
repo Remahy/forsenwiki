@@ -1,4 +1,4 @@
-import prisma from '$lib/prisma.server';
+import prisma from '#lib/prisma.server.js';
 
 /**
  * @param {string} postId

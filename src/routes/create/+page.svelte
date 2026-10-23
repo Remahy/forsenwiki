@@ -1,39 +1,43 @@
 <script>
 	import { getContext, onMount } from 'svelte';
 	import { FileUpIcon } from '@lucide/svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { browser } from '$app/environment';
+	import { browser } from '$app/env';
 
-	import { localStore } from '$lib/localStore.svelte';
-	import { resetArticle } from '$lib/utils/indexedDb/article';
-	import { resetContent } from '$lib/utils/indexedDb/content';
-	import { createPost } from '$lib/api/posts';
-	import Box from '$lib/components/Box.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import Clown from '$lib/components/Clown.svelte';
-	import Link from '$lib/components/Link.svelte';
-	import Spinner from '$lib/components/Spinner.svelte';
-	import Editor from '$lib/components/editor/editor.svelte';
-	import Container from '$lib/components/Container.svelte';
-	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
-	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-	import { WIKI_PATH, Y_POST_TYPES } from '$lib/constants/constants';
-	import { uploadImages } from '$lib/s3/uploadContentHandlers';
-	import { uploadModal } from '$lib/stores/modal';
-	import UploadingContentModal from '$lib/components/UploadingContentModal.svelte';
-	import { resetUploadingContentModalGlobals } from '$lib/components/uploadingContentModalGlobals.svelte';
-	import { runValidations } from '$lib/components/editor/validations';
+	import { localStore } from '#lib/localStore.svelte.js';
+	import { resetArticle } from '#lib/utils/indexedDb/article.js';
+	import { resetContent } from '#lib/utils/indexedDb/content.js';
+	import { createPost } from '#lib/api/posts/index.js';
+	import Box from '#lib/components/Box.svelte';
+	import Button from '#lib/components/Button.svelte';
+	import Clown from '#lib/components/Clown.svelte';
+	import Link from '#lib/components/Link.svelte';
+	import Spinner from '#lib/components/Spinner.svelte';
+	import Editor from '#lib/components/editor/editor.svelte';
+	import Container from '#lib/components/Container.svelte';
+	import TagSelect from '#lib/components/Disclaimer/TagSelect.svelte';
+	import ResetCacheLink from '#lib/components/editor/footer/ResetCacheLink.svelte';
+	import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
+	import { WIKI_PATH, Y_POST_TYPES } from '#lib/constants/constants.js';
+	import { uploadImages } from '#lib/s3/uploadContentHandlers.js';
+	import { uploadModal } from '#lib/stores/modal.js';
+	import UploadingContentModal from '#lib/components/UploadingContentModal.svelte';
+	import { resetUploadingContentModalGlobals } from '#lib/components/uploadingContentModalGlobals.svelte.js';
+	import { runValidations } from '#lib/components/editor/validations/index.js';
 
 	const id = 'new';
 
-	const { initialUpdate } = $page.data;
+	const { initialUpdate } = page.data;
 
 	/** @type {Error & { status?: number, statusText?: string } | null} */
 	let error = $state(null);
 
 	let title = localStore('lastTitle', '');
+
+	/** @type {string[]} */
+	let disclaimerTags = $state([]);
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
@@ -122,7 +126,14 @@
 			// Upload images to S3.
 			await uploadImages(editor, id);
 
-			res = await editor.read(() => createPost(title.value, Y_POST_TYPES.ARTICLE, yjsDocMap));
+			res = await editor.read(() =>
+				createPost({
+					title: title.value,
+					type: Y_POST_TYPES.ARTICLE,
+					yDoc: yjsDocMap,
+					disclaimerTags,
+				})
+			);
 		} catch (err) {
 			console.error(err);
 			error = new Error(err?.toString());
@@ -200,6 +211,8 @@
 		{/if}
 	</label>
 
+	<TagSelect bind:disclaimerTags onchange={unsetError} />
+
 	{#if browser}
 		<Editor update={null} {id} {initialUpdate} />
 	{/if}
@@ -220,7 +233,7 @@
 			or deleted. <Clown />
 		</small>
 
-		{#if $page.data.session?.user}
+		{#if page.data.session?.user}
 			<Button disabled={!canEdit || isUploading || error} on:click={submit} title="Submit">
 				{#if isUploading}
 					<Spinner />

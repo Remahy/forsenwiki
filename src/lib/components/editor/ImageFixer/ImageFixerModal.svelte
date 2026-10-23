@@ -2,11 +2,11 @@
 	import { onMount } from 'svelte';
 	import { $nodesOfType as nodesOfType, mergeRegister } from 'lexical';
 	import { XIcon } from '@lucide/svelte';
-	import Button from '$lib/components/Button.svelte';
-	import { modal } from '$lib/stores/modal';
-	import { loadContent, saveContent } from '$lib/utils/indexedDb/content';
-	import Spinner from '$lib/components/Spinner.svelte';
-	import { ImageNode } from '$lib/lexical/custom';
+	import Button from '#lib/components/Button.svelte';
+	import { modal } from '#lib/stores/modal.js';
+	import { loadContent, saveContent } from '#lib/utils/indexedDb/content.js';
+	import Spinner from '#lib/components/Spinner.svelte';
+	import { ImageNode } from '#lib/lexical/custom.js';
 	import { editorGlobals } from '../editorGlobals.svelte';
 	import { getUniqueImageHashes } from '../utils/getImages';
 

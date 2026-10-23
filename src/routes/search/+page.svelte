@@ -4,23 +4,23 @@
 	import { enGB } from 'date-fns/locale';
 	import InfiniteLoading from 'svelte-infinite-loading';
 
-	import { page } from '$app/stores';
-	import { searchRequest } from '$lib/api/search';
-	import LinkBox from '$lib/components/LinkBox.svelte';
-	import Search from '$lib/components/Search/index.svelte';
-	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
-	import Box from '$lib/components/Box.svelte';
-	import ContentPreview from '$lib/components/content/ContentPreview.svelte';
-	import { parseSearchURL } from '$lib/components/Search/parseSearchURL';
-	import Button from '$lib/components/Button.svelte';
-	import { modal } from '$lib/stores/modal';
-	import UploadContentModal from '$lib/components/Search/UploadContentModal.svelte';
+	import { page } from '$app/state';
+	import { searchRequest } from '#lib/api/search/index.js';
+	import LinkBox from '#lib/components/LinkBox.svelte';
+	import Search from '#lib/components/Search/index.svelte';
+	import { getImageCacheURL } from '#lib/utils/getImageCacheURL.js';
+	import Box from '#lib/components/Box.svelte';
+	import ContentPreview from '#lib/components/content/ContentPreview.svelte';
+	import { parseSearchURL } from '#lib/components/Search/parseSearchURL.js';
+	import Button from '#lib/components/Button.svelte';
+	import { modal } from '#lib/stores/modal.js';
+	import UploadContentModal from '#lib/components/Search/UploadContentModal.svelte';
 	import { UploadIcon } from '@lucide/svelte';
 
 	/** @type {import('../api/search/+server').QueryResult[]} */
-	let results = $state($page.data.results);
+	let results = $state(page.data.results);
 
-	let currentQuery = $derived(parseSearchURL($page.url));
+	let currentQuery = $derived(parseSearchURL(page.url));
 
 	let currentPage = $derived(currentQuery.options.page);
 
@@ -28,8 +28,14 @@
 	function infiniteHandler({ detail: { complete, error, loaded } }) {
 		const newSearchRequest = structuredClone(currentQuery);
 		currentPage++;
-		$page.url.searchParams.set('page', String(currentPage));
+
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity
+		const searchParams = new URLSearchParams(page.url.searchParams);
+
+		searchParams.set('page', String(currentPage));
 		newSearchRequest.options.page = currentPage;
+
+		window.location.search = searchParams;
 
 		// Classic, good old, then & catch.
 		searchRequest(newSearchRequest.query, newSearchRequest.types, newSearchRequest.options)
@@ -87,7 +93,7 @@
 
 	<main class="flex flex-col gap-2">
 		{#if results?.length}
-			{#if $page.url.searchParams.get('query') === '' && (!$page.url.searchParams.get('order') || $page.url.searchParams.get('order') === 'desc')}
+			{#if page.url.searchParams.get('query') === '' && (!page.url.searchParams.get('order') || page.url.searchParams.get('order') === 'desc')}
 				<p><strong>Recently created articles & content.</strong></p>
 			{/if}
 			<Masonry items={results} animate={false} order="row-first">
@@ -153,7 +159,7 @@
 					</div>
 				</InfiniteLoading>
 			{/if}
-		{:else if $page.url.searchParams.get('query')}
+		{:else if page.url.searchParams.get('query')}
 			<p><strong>No search results found.</strong></p>
 		{/if}
 	</main>

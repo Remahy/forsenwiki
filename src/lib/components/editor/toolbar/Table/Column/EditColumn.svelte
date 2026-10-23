@@ -16,13 +16,13 @@
 	} from '@lexical/table';
 	import { getEditor } from 'svelte-lexical';
 
-	import Button from '$lib/components/Button.svelte';
+	import Button from '#lib/components/Button.svelte';
 	import EditorButton from '../../EditorButton.svelte';
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {import('$lib/lexical/custom').ATableNode} selectedTable
-	 * @property {import('$lib/lexical/custom').ATableCellNode} selectedCell
+	 * @property {import('#lib/lexical/custom.js').ATableNode} selectedTable
+	 * @property {import('#lib/lexical/custom.js').ATableCellNode} selectedCell
 	 */
 
 	/** @type {Props} */

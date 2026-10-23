@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
-import { readAuthorsForYPostByTitle, readRelationsToYPostTitle } from '$lib/db/post/read';
-import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
+import { readAuthorsForYPostByTitle, readRelationsToYPostTitle } from '#lib/db/post/read.js';
+import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
 import { _getYPostHTML } from '../../api/post/read/[title]/+server';
-import { getShouldCacheBust } from '$lib/utils/cacheBust';
+import { getShouldCacheBust } from '#lib/utils/cacheBust.js';
 
 /** @type {Map<string, number>} */
 const cacheBustRateLimit = new Map();

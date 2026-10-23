@@ -9,9 +9,9 @@
 	import { INSERT_TABLE_COMMAND } from '@lexical/table';
 	import { getEditor } from 'svelte-lexical';
 
-	import Select from '$lib/components/Select.svelte';
-	import { blockTypeLabels } from '$lib/constants/element';
-	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
+	import Select from '#lib/components/Select.svelte';
+	import { blockTypeLabels } from '#lib/constants/element.js';
+	import { $isGalleryNode as isGalleryNode } from '#lib/lexical/custom.js';
 
 	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
 	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';

@@ -1,5 +1,5 @@
 import { $nodesOfType as nodesOfType } from 'lexical';
-import { ImageNode } from '$lib/lexical/custom';
+import { ImageNode } from '#lib/lexical/custom.js';
 
 /**
  * @param {LexicalEditor} editor

@@ -1,3 +1,5 @@
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import adapter from '@sveltejs/adapter-node';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import path from 'path';
@@ -7,7 +9,14 @@ import tailwindcss from '@tailwindcss/vite';
 import modulePathPlugin from './modulePathPlugin';
 
 export default defineConfig({
-	plugins: [tailwindcss(), modulePathPlugin(), sveltekit()],
+	plugins: [
+		tailwindcss(),
+		modulePathPlugin(),
+		sveltekit({
+			preprocess: [vitePreprocess({})],
+			adapter: adapter({ out: 'build' }),
+		}),
+	],
 	server: {
 		proxy: {
 			'/usercontent': {

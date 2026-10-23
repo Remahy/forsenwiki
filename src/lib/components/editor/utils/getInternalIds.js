@@ -1,6 +1,6 @@
 import { $nodesOfType } from 'lexical';
 
-import { ALinkNode } from '$lib/lexical/custom';
+import { ALinkNode } from '#lib/lexical/custom.js';
 
 /** @param {ALinkNode[]} links */
 export const getOnlyInternalLinks = (links) => links.filter((node) => node.getIsInternal());

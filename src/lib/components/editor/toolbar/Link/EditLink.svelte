@@ -4,14 +4,14 @@
 	import { enGB } from 'date-fns/locale';
 	import isUrl from 'is-url';
 	import { getEditor } from 'svelte-lexical';
-	import Button from '$lib/components/Button.svelte';
-	import { searchRequest } from '$lib/api/search';
-	import Spinner from '$lib/components/Spinner.svelte';
+	import Button from '#lib/components/Button.svelte';
+	import { searchRequest } from '#lib/api/search/index.js';
+	import Spinner from '#lib/components/Spinner.svelte';
 	import { sanitizeUrl } from '../../utils/sanitizeUrl';
 	import { createDebouncedSearch } from '../../utils/debouncedSearch.svelte';
 
 	/**
-	 * @typedef {import('$lib/api/search').SearchResult} SearchResult
+	 * @typedef {import('#lib/api/search/index.js').SearchResult} SearchResult
 	 */
 
 	const IS_INTERNAL = true;
@@ -19,7 +19,7 @@
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {import('$lib/lexical/custom').ALinkNode} selectedNode
+	 * @property {import('#lib/lexical/custom.js').ALinkNode} selectedNode
 	 */
 
 	/** @type {Props} */

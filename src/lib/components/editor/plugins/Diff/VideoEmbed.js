@@ -1,4 +1,4 @@
-import { VideoEmbedNode } from '$lib/lexical/custom';
+import { VideoEmbedNode } from '#lib/lexical/custom.js';
 import { addInformationHover, applyCSSColorDiff } from './utils';
 
 /**

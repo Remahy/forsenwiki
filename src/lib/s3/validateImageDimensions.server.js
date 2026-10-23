@@ -1,7 +1,7 @@
 import { imageSize } from 'image-size';
-import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
-import { FileErrorCodes } from '$lib/components/editor/utils/handleNewFile';
-import { IMAGE_MAX_HEIGHT, IMAGE_MAX_WIDTH } from '$lib/constants/image';
+import { ErrorWithCode } from '#lib/errors/ErrorWithCode.js';
+import { FileErrorCodes } from '#lib/components/editor/utils/handleNewFile.js';
+import { IMAGE_MAX_HEIGHT, IMAGE_MAX_WIDTH } from '#lib/constants/image.js';
 
 /**
  * @param {Uint8Array} fileSnippet first 16KB of file
