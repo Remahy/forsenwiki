@@ -19,9 +19,13 @@
 		"prisma:migrate-deploy": "prisma migrate deploy",
 		"prisma:migrate-dev": "prisma migrate dev",
 		"prisma:seed": "node --experimental-transform-types ./prisma/seed/types.js",
-		"start": "node -r dotenv-expand/config build"
+		"start": "node -r dotenv-expand/config build",
+		"postinstall": "patch-package"
 	},
 	"overrides": {
+		"@authjs/sveltekit": {
+			"@sveltejs/kit": "^3.1.0"
+		},
 		"cookie": "$cookie",
 		"@lexical/clipboard": "$@lexical/clipboard",
 		"@lexical/code": "$@lexical/code",
@@ -112,8 +116,10 @@
 		"is-url": "1.2.4",
 		"json-diff": "1.0.6",
 		"lexical": "0.41.0",
+		"linkedom": "0.18.14",
 		"linkedom-global": "1.0.1",
 		"magika": "1.0.0",
+		"patch-package": "^8.0.1",
 		"pg": "8.22.0",
 		"sanitize-filename": "1.6.4",
 		"svelte-bricks": "0.5.0",

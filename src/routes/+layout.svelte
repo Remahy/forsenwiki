@@ -5,7 +5,7 @@
 
 	import Modal from '#lib/components/Modal.svelte';
 	import UploadModal from '#lib/components/UploadModal.svelte';
-	import Header from '#lib/components/Header.svelte';
+	import Header from '#lib/components/Header/index.svelte';
 	import Footer from '#lib/components/Footer.svelte';
 
 	import '../app.css';

@@ -1,6 +1,5 @@
 <script>
 	import { LogOutIcon, Settings } from '@lucide/svelte';
-	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 	import Logo from '#lib/components/Logo.svelte';
@@ -9,9 +8,10 @@
 	import { modal } from '#lib/stores/modal.js';
 	import SettingsModal from '#lib/components/SettingsModal.svelte';
 
-	import Search from './Search/index.svelte';
+	import Search from '../Search/index.svelte';
+	import Link from '../Link.svelte';
 	// import Announcement from './Announcement.svelte';
-	import Link from './Link.svelte';
+	import { signIn, signOut } from './authjs-client';
 
 	let isLoading = $state(false);
 

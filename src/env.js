@@ -4,6 +4,7 @@ export const variables = defineEnvVars({
 	AUTH_TWITCH_ID: { static: true },
 	AUTH_TWITCH_SECRET: { static: true },
 	AUTH_TRUST_HOST: { static: true },
+	AUTH_SECRET: { static: true },
 	CLOUDFLARE_API_TOKEN: { static: true },
 	CLOUDFLARE_ZONE_ID: { static: true },
 	GOATCOUNTER_API_KEY: { static: true },
