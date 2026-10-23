@@ -6,6 +6,8 @@
 }
 
 .tableCell:has(> table:only-child),
-.tableCell:has(> img:only-child) {
+.tableCell:has(> img:only-child),
+.tableCell:has(> video:only-child),
+.tableCell:has(> iframe:only-child) {
 	padding: 0 !important;
 }
