@@ -1,13 +1,13 @@
 <script>
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { Dice4Icon } from '@lucide/svelte';
 
-	import LinkButton from '$lib/components/LinkButton.svelte';
-	import Spinner from '$lib/components/Spinner.svelte';
+	import LinkButton from '#lib/components/LinkButton.svelte';
+	import Spinner from '#lib/components/Spinner.svelte';
 
 	let randomIsSpinning = $derived(false);
 
-	const hasRandomParameter = $page.url.searchParams.has('random');
+	const hasRandomParameter = page.url.searchParams.has('random');
 </script>
 
 {#if hasRandomParameter}

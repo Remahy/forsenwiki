@@ -1,5 +1,5 @@
 <script>
-	import { DISCLAIMER_TAGS } from '$lib/constants/constants';
+	import { DISCLAIMER_TAGS } from '#lib/constants/constants.js';
 
 	/** @type {{ [tag: string]: { label: string, description: string } }} */
 	const DISCLAIMER_TAG_INFO = {

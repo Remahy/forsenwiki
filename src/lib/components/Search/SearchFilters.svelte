@@ -1,5 +1,5 @@
 <script>
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Button from '../Button.svelte';
 	import Select from '../Select.svelte';
 	import { parseSearchURL } from './parseSearchURL';
@@ -14,8 +14,7 @@
 	let order = $state('desc');
 
 	$effect(() => {
-		const { url } = $page;
-
+		const { url } = page;
 		const {
 			types: t,
 			options: { orderBy: o, contentTypes: ct },

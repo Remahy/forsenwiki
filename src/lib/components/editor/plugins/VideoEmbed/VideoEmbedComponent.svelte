@@ -17,12 +17,12 @@
 		mergeRegister,
 	} from 'lexical';
 
-	import { DOMAIN } from '$lib/environment/environment';
+	import { DOMAIN } from '#lib/environment/environment.js';
 	import {
 		clearSelection,
 		createNodeSelectionStore,
-	} from '$lib/components/editor/utils/getSelection';
-	import { VIDEO_MIN_HEIGHT, VIDEO_MIN_WIDTH } from '$lib/constants/video';
+	} from '#lib/components/editor/utils/getSelection.js';
+	import { VIDEO_MIN_HEIGHT, VIDEO_MIN_WIDTH } from '#lib/constants/video.js';
 	import ImageResizer from '../Image/ImageResizer.svelte';
 	import { $isGalleryNode as isGalleryNode } from '../Gallery/Gallery';
 	import {
@@ -42,7 +42,7 @@
 	 * @property {'inherit' | number} height
 	 * @property {'inherit' | number} width
 	 * @property {string | undefined} altText
-	 * @property {import('$lib/s3/limits.js').MimetypeType | undefined} fileType
+	 * @property {import('#lib/s3/limits.js').MimetypeType | undefined} fileType
 	 * @property {boolean} resizable
 	 * @property {import('lexical').ElementFormatType} format
 	 * @property {import('lexical').LexicalEditor} editor

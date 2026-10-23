@@ -1,8 +1,8 @@
-import { WIKI_PATH } from '$lib/constants/constants';
+import { WIKI_PATH } from '#lib/constants/constants.js';
 import { $nodesOfType as nodesOfType } from 'lexical';
 import { _getYPostsByIds } from '../../../../routes/api/post/read/[title]/+server';
 import { getInternalIds, getOnlyInternalLinks } from '../utils/getInternalIds';
-import { ALinkNode } from '$lib/lexical/custom';
+import { ALinkNode } from '#lib/lexical/custom.js';
 
 /**
  * @param {LexicalEditor} editor

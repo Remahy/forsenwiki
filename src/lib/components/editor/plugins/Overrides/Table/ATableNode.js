@@ -1,6 +1,6 @@
 import { $applyNodeReplacement, $getNodeByKey, $isRootNode } from 'lexical';
 
-import { TableNode } from '$lib/lexical/index';
+import { TableNode } from '#lib/lexical/index.js';
 
 /**
  * @typedef {import('lexical').NodeKey} NodeKey

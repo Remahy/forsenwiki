@@ -1,8 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import { MaximizeIcon } from '@lucide/svelte';
-	import { modal } from '$lib/stores/modal';
-	import { STATIC_DOMAIN } from '$lib/environment/environment';
+	import { modal } from '#lib/stores/modal.js';
+	import { STATIC_DOMAIN } from '#lib/environment/environment.js';
 	import { initializeZoomWithDefaults } from '../editor/plugins/Gallery/zoom';
 
 	/** @type {{ src: string, name: string, onclose?: () => void }} */

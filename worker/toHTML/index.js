@@ -7,12 +7,12 @@ import { $generateHtmlFromNodes } from '@lexical/html';
 import { createHeadlessEditor } from '@lexical/headless';
 import { base64ToUint8Array } from 'uint8array-extras';
 
-import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { articleConfig } from '$lib/components/editor/config/article';
-import { diffConfig } from '$lib/components/editor/config/diff';
-import { EDITOR_IS_READONLY } from '$lib/constants/constants';
-import { ImageNode } from '$lib/lexical/custom';
-import { migrations } from '$lib/components/editor/migrations';
+import { getYjsAndEditor } from '#lib/yjs/getYjsAndEditor.js';
+import { articleConfig } from '#lib/components/editor/config/article.js';
+import { diffConfig } from '#lib/components/editor/config/diff.js';
+import { EDITOR_IS_READONLY } from '#lib/constants/constants.js';
+import { ImageNode } from '#lib/lexical/custom.js';
+import { migrations } from '#lib/components/editor/migrations/index.js';
 import { twitchThumbnailURL } from './twitchThumbnailURL';
 
 const $$getTextInEditor = () => {

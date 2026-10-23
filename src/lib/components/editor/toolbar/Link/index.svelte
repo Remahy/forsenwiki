@@ -3,8 +3,8 @@
 	import { $toggleLink as toggleLink } from '@lexical/link';
 	import { getEditor } from 'svelte-lexical';
 	import { UnlinkIcon } from '@lucide/svelte';
-	import Button from '$lib/components/Button.svelte';
-	import { $isALinkNode as isALinkNode } from '$lib/lexical/custom';
+	import Button from '#lib/components/Button.svelte';
+	import { $isALinkNode as isALinkNode } from '#lib/lexical/custom.js';
 	import Wrapper from '../components/Wrapper.svelte';
 	import Title from '../components/Title.svelte';
 	import EditLink from './EditLink.svelte';
@@ -14,13 +14,13 @@
 	 */
 	let { selectedNode = null } = $props();
 
-	/** @type {import('$lib/lexical/custom').ALinkNode | undefined} */
+	/** @type {import('#lib/lexical/custom.js').ALinkNode | undefined} */
 	let selectedLink = $state();
 
 	const editor = $derived(getEditor());
 
 	/**
-	 * @param {import('$lib/lexical/custom').ALinkNode} linkNode
+	 * @param {import('#lib/lexical/custom.js').ALinkNode} linkNode
 	 */
 	const onClickUnlink = (linkNode) => {
 		editor.update(() => {
@@ -67,7 +67,7 @@
 				return;
 			}
 
-			const closestALinkNode = /** @type {import('$lib/lexical/custom').ALinkNode} */ (
+			const closestALinkNode = /** @type {import('#lib/lexical/custom.js').ALinkNode} */ (
 				parents[closestALinkNodeIndex]
 			);
 

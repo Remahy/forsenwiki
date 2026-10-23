@@ -1,13 +1,13 @@
 <script>
 	import { SquarePenIcon, FileIcon } from '@lucide/svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
-	import Box from '$lib/components/Box.svelte';
-	import Container from '$lib/components/Container.svelte';
-	import Link from '$lib/components/Link.svelte';
-	import LinkButton from '$lib/components/LinkButton.svelte';
-	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
-	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+	import Box from '#lib/components/Box.svelte';
+	import Container from '#lib/components/Container.svelte';
+	import Link from '#lib/components/Link.svelte';
+	import LinkButton from '#lib/components/LinkButton.svelte';
+	import SuggestionBox from '#lib/components/SuggestionBox.svelte';
+	import StreamerModeShow from '#lib/components/StreamerModeShow.svelte';
 
 	let { data } = $props();
 
@@ -22,24 +22,35 @@
 </script>
 
 <svelte:head>
-	<title>&quot;{rawTitle}&quot; history - Community Forsen Wiki</title>
-	<meta name="og:title" content="&quot;{rawTitle}&quot; history - Community Forsen Wiki">
+	<title>{rawTitle} history - Community Forsen Wiki</title>
 
-	<meta name="description" content="History for &quot;{rawTitle}&quot; on forsen.wiki" />
-	<meta property="og:description" content="History for &quot;{rawTitle}&quot; on forsen.wiki" />
+	<meta
+		name="og:title"
+		content="{rawTitle} history - Community Forsen Wiki"
+	/>
 
-	<link rel="canonical" href="{$page.url.origin}/w/{title}" />
-	<meta property="og:url" content="{$page.url.origin}/w/{title}" />
+	<meta
+		name="description"
+		content="History for {rawTitle} on forsen.wiki"
+	/>
+
+	<meta
+		property="og:description"
+		content="History for {rawTitle} on forsen.wiki"
+	/>
+
+	<link rel="canonical" href="{page.url.origin}/w/{title}" />
+
+	<meta
+		property="og:url"
+		content="{page.url.origin}/w/{title}"
+	/>
 </svelte:head>
 
 <Container>
 	<SuggestionBox>
 		<div class="flex w-full gap-2">
-			<div class="flex grow items-center overflow-hidden">
-				<p>
-					<strong>History for &quot;{rawTitle}&quot;</strong>
-				</p>
-			</div>
+			<div class="flex grow items-center overflow-hidden"><p><strong>History for "{rawTitle}"</strong></p></div>
 
 			<div class="flex shrink-0 items-start gap-2">
 				<LinkButton href="/w/{title}" class="flex items-center gap-2 text-sm">
@@ -107,9 +118,9 @@
 									<small
 										>(<span class="font-bold">Title change:</span>
 										"{postUpdate.metadata.newTitle}"{#if postUpdate.metadata.oldTitle}
-											&nbsp;<i>was "{postUpdate.metadata.oldTitle}"</i>
-										{/if})</small
-									>
+											<i>was "{postUpdate.metadata.oldTitle}"</i>
+										{/if})
+									</small>
 								{/if}
 
 								{#if index === 0}

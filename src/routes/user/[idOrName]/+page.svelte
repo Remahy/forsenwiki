@@ -2,25 +2,25 @@
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
 	import { signOut } from '@auth/sveltekit/client';
-	import { page } from '$app/stores';
-	import { browser } from '$app/environment';
-	import Box from '$lib/components/Box.svelte';
-	import { listArticles, resetArticle } from '$lib/utils/indexedDb/article';
-	import Spinner from '$lib/components/Spinner.svelte';
-	import Link from '$lib/components/Link.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import { resetContent } from '$lib/utils/indexedDb/content';
-	import { deleteUser, getUserData } from '$lib/api/user';
-	import MyDataModal from '$lib/components/MyDataModal/index.svelte';
-	import { modal } from '$lib/stores/modal';
-	import { reviver } from '$lib/utils/json';
+	import { page } from '$app/state';
+	import { browser } from '$app/env';
+	import Box from '#lib/components/Box.svelte';
+	import { listArticles, resetArticle } from '#lib/utils/indexedDb/article.js';
+	import Spinner from '#lib/components/Spinner.svelte';
+	import Link from '#lib/components/Link.svelte';
+	import Button from '#lib/components/Button.svelte';
+	import { resetContent } from '#lib/utils/indexedDb/content.js';
+	import { deleteUser, getUserData } from '#lib/api/user/index.js';
+	import MyDataModal from '#lib/components/MyDataModal/index.svelte';
+	import { modal } from '#lib/stores/modal.js';
+	import { reviver } from '#lib/utils/json.js';
 
 	/** @type {{ editedArticles: number, uploadedContent: { total: number, images: number, videos: number, audio: number, documents: number } }} */
-	let stats = $state($page.data.stats);
+	let stats = $state(page.data.stats);
 	/** @type {{ name: string, createdAt: Date, image: string, permissions: Array<{ type: string }>, id: string }} */
-	let user = $state($page.data.user);
+	let user = $state(page.data.user);
 
-	const isMe = user.name === $page.data.session?.user?.name;
+	const isMe = user.name === page.data.session?.user?.name;
 
 	let localDrafts = $state(browser ? listArticles() : []);
 
@@ -143,7 +143,7 @@
 				<h1 class="mb-2 text-4xl font-bold">{user.name}</h1>
 				<h2 class="text-2xl">{stats.editedArticles ? 'Editor' : 'Lurker'}</h2>
 
-				<hr class="mb-4 forsen-wiki-theme-border" />
+				<hr class="forsen-wiki-theme-border mb-4" />
 
 				<div class="flex flex-wrap gap-8">
 					<div class="flex grow flex-col gap-2">
@@ -177,8 +177,9 @@
 									<tr>
 										<td>Images</td>
 										<td>
-											<Link href="/search?query={user.id}&type=content&contenttype=image" target="_blank"
-												>{stats.uploadedContent.images}</Link
+											<Link
+												href="/search?query={user.id}&type=content&contenttype=image"
+												target="_blank">{stats.uploadedContent.images}</Link
 											>
 										</td>
 									</tr>
@@ -186,8 +187,9 @@
 									<tr>
 										<td>Videos</td>
 										<td>
-											<Link href="/search?query={user.id}&type=content&contenttype=video" target="_blank"
-												>{stats.uploadedContent.videos}</Link
+											<Link
+												href="/search?query={user.id}&type=content&contenttype=video"
+												target="_blank">{stats.uploadedContent.videos}</Link
 											>
 										</td>
 									</tr>
@@ -195,8 +197,9 @@
 									<tr>
 										<td>Audio</td>
 										<td>
-											<Link href="/search?query={user.id}&type=content&contenttype=audio" target="_blank"
-												>{stats.uploadedContent.audio}</Link
+											<Link
+												href="/search?query={user.id}&type=content&contenttype=audio"
+												target="_blank">{stats.uploadedContent.audio}</Link
 											>
 										</td>
 									</tr>

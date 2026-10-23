@@ -1,32 +1,32 @@
 import { json, error, isHttpError } from '@sveltejs/kit';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
-import { ForbiddenError } from '$lib/errors/Forbidden';
-import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { InvalidPost } from '$lib/errors/InvalidPost';
-import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
-import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-import { createPost } from '$lib/db/post/create';
-import { readYPostByTitle } from '$lib/db/post/read';
-import { encodeYDocToUpdateV2 } from '$lib/yjs/utils';
-import { upsertHTML } from '$lib/db/post/html';
-import { articleConfig } from '$lib/components/editor/config/article';
-import toHTML from '$lib/worker/toHTML';
+import { ForbiddenError } from '#lib/errors/Forbidden.js';
+import { getYjsAndEditor } from '#lib/yjs/getYjsAndEditor.js';
+import { InvalidPost } from '#lib/errors/InvalidPost.js';
+import { getInternalIds } from '#lib/components/editor/utils/getInternalIds.js';
+import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
+import { createPost } from '#lib/db/post/create.js';
+import { readYPostByTitle } from '#lib/db/post/read.js';
+import { encodeYDocToUpdateV2 } from '#lib/yjs/utils.js';
+import { upsertHTML } from '#lib/db/post/html.js';
+import { articleConfig } from '#lib/components/editor/config/article.js';
+import toHTML from '#lib/worker/toHTML/index.js';
 import {
 	AVAILABLE_DISCLAIMER_TAGS,
 	// AVAILABLE_Y_POST_TYPES,
 	EDITOR_IS_READONLY,
 	Y_POST_TYPES,
-} from '$lib/constants/constants';
-import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages.js';
-import { pruneFailedUploads, validateUploads } from '$lib/s3/validateUploads.server.js';
-import { serverRunValidations } from '$lib/components/editor/validations/index.server.js';
+} from '#lib/constants/constants.js';
+import { getUniqueImageHashes } from '#lib/components/editor/utils/getImages.js';
+import { pruneFailedUploads, validateUploads } from '#lib/s3/validateUploads.server.js';
+import { serverRunValidations } from '#lib/components/editor/validations/index.server.js';
 
 /**
  * @typedef {Object} CreateBody
  * @property {string} content
  * @property {string} title
- * @property {import('$lib/constants/constants').Y_POST_TYPES_VALUES} type
+ * @property {import('#lib/constants/constants.js').Y_POST_TYPES_VALUES} type
  * @property {string[]} [disclaimerTags]
  */
 
@@ -127,10 +127,10 @@ export async function POST({ request, locals }) {
 
 	const internalIds = getInternalIds(editor);
 
-	/** @type {import('$lib/db/post/create').CreatePostData} */
+	/** @type {import('#lib/db/post/create.js').CreatePostData} */
 	const body = { title, data: { content: backendContent }, ids: internalIds, disclaimerTags };
 
-	/** @type {import('$lib/db/post/create').CreatePostMetadata} */
+	/** @type {import('#lib/db/post/create.js').CreatePostMetadata} */
 	const metadata = {
 		user: { name: session.user.name, id: session.user.id },
 		byteLength,
@@ -143,7 +143,7 @@ export async function POST({ request, locals }) {
 
 	await upsertHTML(createdPost.id, { content: html, text, image });
 
-	return json({
+	return Response.json({
 		...createdPost,
 	});
 }

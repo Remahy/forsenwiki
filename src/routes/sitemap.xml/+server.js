@@ -1,7 +1,7 @@
-import { Y_POST_TYPES } from '$lib/constants/constants';
-import { DOMAIN } from '$lib/environment/environment';
-import prisma from '$lib/prisma.server';
-import { getShouldCacheBust } from '$lib/utils/cacheBust';
+import { Y_POST_TYPES } from '#lib/constants/constants.js';
+import { DOMAIN } from '#lib/environment/environment.js';
+import prisma from '#lib/prisma.server.js';
+import { getShouldCacheBust } from '#lib/utils/cacheBust.js';
 
 /** @type {Map<string, number>} */
 const cacheBustRateLimit = new Map();

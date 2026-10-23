@@ -1,5 +1,5 @@
 import { isHTMLElement } from 'lexical';
-import { GalleryNode } from '$lib/lexical/custom';
+import { GalleryNode } from '#lib/lexical/custom.js';
 import { getYouTubeInfo } from '../../plugins/VideoEmbed/VideoEmbed';
 
 /**

@@ -1,6 +1,6 @@
 const headers = new Headers({ 'content-type': 'application/json' });
 
-/** @typedef {{ title: string, rawTitle: string, fileType?: import('$lib/s3/limits').MimetypeType, contentType?: string | null, createdTimestamp: string, id: string }} SearchResult */
+/** @typedef {{ title: string, rawTitle: string, fileType?: import('#lib/s3/limits.js').MimetypeType, contentType?: string | null, createdTimestamp: string, id: string }} SearchResult */
 
 /**
  * @param {string} query

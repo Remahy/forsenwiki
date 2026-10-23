@@ -9,7 +9,7 @@
 	} from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 
-	import { ctrlKey } from '$lib/environment/environment';
+	import { ctrlKey } from '#lib/environment/environment.js';
 	import EditorButton from '../EditorButton.svelte';
 	import EditLinkButton from './EditLinkButton.svelte';
 

@@ -12,8 +12,8 @@
 		RichTextPlugin,
 	} from 'svelte-lexical';
 
-	import { instantiateProvider } from '$lib/yjs/providerFactory';
-	import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
+	import { instantiateProvider } from '#lib/yjs/providerFactory.js';
+	import { EDITOR_IS_EDITABLE } from '#lib/constants/constants.js';
 	import EditorModal from '../EditorModal.svelte';
 	import Toolbar from './toolbar/index.svelte';
 	import TreeviewWrapper from './toolbar/TreeviewWrapper.svelte';

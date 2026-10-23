@@ -1,8 +1,8 @@
 <script>
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Button from './Button.svelte';
 
-	let streamerMode = $state($page.data.session?.user?.userSettings?.streamerMode);
+	let streamerMode = $state(page.data.session?.user?.userSettings?.streamerMode);
 	let show = $state(false);
 
 	let { children } = $props();
@@ -13,7 +13,7 @@
 {:else}
 	<Button
 		onclick={() => (show = true)}
-		class="inline-block min-h-[unset]! bg-transparent! p-0! underline text-inherit!"
+		class="inline-block min-h-[unset]! bg-transparent! p-0! text-inherit! underline"
 	>
 		Hidden
 	</Button>

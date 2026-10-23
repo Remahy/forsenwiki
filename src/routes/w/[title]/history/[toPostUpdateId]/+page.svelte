@@ -1,15 +1,15 @@
 <script>
 	import { FileIcon, GitCompareIcon, HistoryIcon } from '@lucide/svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
-	import '$lib/components/editor/Article.css';
+	import '#lib/components/editor/Article.css';
 
-	import Container from '$lib/components/Container.svelte';
-	import LinkButton from '$lib/components/LinkButton.svelte';
-	import Box from '$lib/components/Box.svelte';
-	import Article from '$lib/components/Article.svelte';
-	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
-	import Link from '$lib/components/Link.svelte';
+	import Container from '#lib/components/Container.svelte';
+	import LinkButton from '#lib/components/LinkButton.svelte';
+	import Box from '#lib/components/Box.svelte';
+	import Article from '#lib/components/Article.svelte';
+	import StreamerModeShow from '#lib/components/StreamerModeShow.svelte';
+	import Link from '#lib/components/Link.svelte';
 
 	let { data } = $props();
 
@@ -32,13 +32,16 @@
 
 <svelte:head>
 	<title>{displayTitle} - Community Forsen Wiki</title>
+
 	<meta name="og:title" content="{displayTitle} - Community Forsen Wiki" />
 
 	<meta name="description" content="{displayTitle} on forsen.wiki" />
+
 	<meta property="og:description" content="{displayTitle} on forsen.wiki" />
 
-	<link rel="canonical" href="{$page.url.origin}/w/{title}" />
-	<meta property="og:url" content="{$page.url.origin}/w/{title}" />
+	<link rel="canonical" href="{page.url.origin}/w/{title}" />
+
+	<meta property="og:url" content="{page.url.origin}/w/{title}" />
 </svelte:head>
 
 <Container>

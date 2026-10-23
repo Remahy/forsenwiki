@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit';
+import { error} from '@sveltejs/kit';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import {
@@ -7,27 +7,27 @@ import {
 	getStateVectorFromUpdateV2,
 	mergePostUpdatesV2,
 	postUpdatesToUint8Arr,
-} from '$lib/yjs/utils';
-import { ForbiddenError } from '$lib/errors/Forbidden';
-import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { InvalidPost } from '$lib/errors/InvalidPost';
-import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
-import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/post/read';
-import { updatePostTitle, updatePost } from '$lib/db/post/update';
-import { invalidatePostCache } from '$lib/cloudflare.server';
-import { upsertHTML } from '$lib/db/post/html';
-import { articleConfig } from '$lib/components/editor/config/article';
-import toHTML from '$lib/worker/toHTML';
+} from '#lib/yjs/utils.js';
+import { ForbiddenError } from '#lib/errors/Forbidden.js';
+import { getYjsAndEditor } from '#lib/yjs/getYjsAndEditor.js';
+import { InvalidPost } from '#lib/errors/InvalidPost.js';
+import { getInternalIds } from '#lib/components/editor/utils/getInternalIds.js';
+import { readSystemYPostRelations, readYPostByTitle } from '#lib/db/post/read.js';
+import { updatePostTitle, updatePost } from '#lib/db/post/update.js';
+import { invalidatePostCache } from '#lib/cloudflare.server.js';
+import { upsertHTML } from '#lib/db/post/html.js';
+import { articleConfig } from '#lib/components/editor/config/article.js';
+import toHTML from '#lib/worker/toHTML/index.js';
 import {
 	AVAILABLE_DISCLAIMER_TAGS,
 	EDITOR_IS_READONLY,
 	Y_POST_TYPES,
-} from '$lib/constants/constants';
-import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-import { isSystem } from '$lib/utils/isSystem';
-import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
-import { validateUploads, pruneFailedUploads } from '$lib/s3/validateUploads.server';
-import { serverRunValidations } from '$lib/components/editor/validations/index.server';
+} from '#lib/constants/constants.js';
+import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
+import { isSystem } from '#lib/utils/isSystem.js';
+import { getUniqueImageHashes } from '#lib/components/editor/utils/getImages.js';
+import { validateUploads, pruneFailedUploads } from '#lib/s3/validateUploads.server.js';
+import { serverRunValidations } from '#lib/components/editor/validations/index.server.js';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import { _emit } from '../../../adonis/frontpage/+server';
 
@@ -203,9 +203,9 @@ export async function POST({ request, locals, params }) {
 			? [...new Set(disclaimerRawTags.filter((tag) => AVAILABLE_DISCLAIMER_TAGS.includes(tag)))]
 			: undefined;
 
-	/** @type {import('$lib/db/post/update').UpdatePostData} */
+	/** @type {import('#lib/db/post/update.js').UpdatePostData} */
 	const body = { post, outRelations, disclaimerTags, content: contentBase64 };
-	/** @type {import('$lib/db/post/update').UpdatePostMetadata} */
+	/** @type {import('#lib/db/post/update.js').UpdatePostMetadata} */
 	const metadata = {
 		user: { id: session.user.id },
 		byteLength,
@@ -241,7 +241,7 @@ export async function POST({ request, locals, params }) {
 		authorId: session.user.id,
 	});
 
-	return json({
+	return Response.json({
 		...updatedPost,
 		title: _post.title,
 		partialErrors: partialErrors.length ? partialErrors : undefined,

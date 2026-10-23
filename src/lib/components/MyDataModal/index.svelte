@@ -1,6 +1,6 @@
 <script>
 	import { XIcon } from '@lucide/svelte';
-	import { modal } from '$lib/stores/modal';
+	import { modal } from '#lib/stores/modal.js';
 	import Button from '../Button.svelte';
 	import Link from '../Link.svelte';
 	import Spinner from '../Spinner.svelte';

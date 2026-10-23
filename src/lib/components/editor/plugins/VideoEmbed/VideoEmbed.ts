@@ -20,14 +20,14 @@ import type {
 } from 'lexical';
 import { $applyNodeReplacement } from 'lexical';
 
-import { DOMAIN, STATIC_DOMAIN } from '$lib/environment/environment';
+import { DOMAIN, STATIC_DOMAIN } from '#lib/environment/environment.js';
 import {
 	VIDEO_CONSTANTS,
 	VIDEO_MIN_HEIGHT,
 	VIDEO_MIN_WIDTH,
 	VIDEO_MAX_HEIGHT,
-} from '$lib/constants/video';
-import type { MimetypeType } from '$lib/s3/limits';
+} from '#lib/constants/video.js';
+import type { MimetypeType } from '#lib/s3/limits.js';
 
 import { sanitizeUrl } from '../../utils/sanitizeUrl';
 import { getFormatType } from '../../utils/elementUtils';
@@ -416,7 +416,7 @@ function generateCDNSrc(node: VideoEmbedNode, staticURL: string) {
 			track.setAttribute('label', `${subtitle.title} (${languageLabel})`);
 
 			if (index === 0) {
-				track.setAttribute('default', '')
+				track.setAttribute('default', '');
 				track.default = true;
 			}
 

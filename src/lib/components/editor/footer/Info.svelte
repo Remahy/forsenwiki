@@ -6,8 +6,8 @@
 	} from 'lexical';
 	import { getContext, onMount } from 'svelte';
 
-	import Divider from '$lib/components/Divider.svelte';
-	import { isDefined } from '$lib/utils/index';
+	import Divider from '#lib/components/Divider.svelte';
+	import { isDefined } from '#lib/utils/index.js';
 
 	/** @type {ComposerWritable} */
 	const c = getContext('COMPOSER');
