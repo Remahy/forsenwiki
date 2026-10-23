@@ -1,8 +1,8 @@
 import { flushSync } from 'svelte';
 import { get } from 'svelte/store';
 import { createZoomImageWheel } from '@zoom-image/core';
-import { modal } from '$lib/stores/modal';
-import ImageFocus from '$lib/components/content/ImageFocus.svelte';
+import { modal } from '#lib/stores/modal.js';
+import ImageFocus from '#lib/components/content/ImageFocus.svelte';
 
 /**
  * @param {HTMLElement} container

@@ -7,7 +7,7 @@ import {
 	TableCellNode,
 	TableRowNode,
 	TableNode,
-} from '$lib/lexical/index';
+} from '#lib/lexical/index.js';
 import {
 	ALinkNode,
 	$createALinkNode,
@@ -21,7 +21,7 @@ import {
 	ATableNode,
 	$createATableNode,
 	GalleryNode,
-} from '$lib/lexical/custom';
+} from '#lib/lexical/custom.js';
 import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
 import TableNodeDOMExport from './htmlExport/TableNodeDOMExport';
@@ -67,7 +67,7 @@ export const editableTheme = {
 		bold: 'font-semibold',
 		italic: 'italic',
 	},
-	link: 'pointer-events-none'
+	link: 'pointer-events-none',
 };
 
 export const htmlExport = new Map([

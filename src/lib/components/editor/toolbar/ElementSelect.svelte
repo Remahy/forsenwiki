@@ -25,11 +25,11 @@
 	import { $setBlocksType as setBlocksType } from '@lexical/selection';
 	import { getEditor } from 'svelte-lexical';
 
-	import Select from '$lib/components/Select.svelte';
-	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
-	import { getSelectedElements } from '$lib/components/editor/utils/getSelection';
-	import { ListNode } from '$lib/lexical/index';
-	import { blockTypeIcons } from '$lib/constants/blockTypeIcons';
+	import Select from '#lib/components/Select.svelte';
+	import { ELEMENT_CONSTANTS } from '#lib/constants/element.js';
+	import { getSelectedElements } from '#lib/components/editor/utils/getSelection.js';
+	import { ListNode } from '#lib/lexical/index.js';
+	import { blockTypeIcons } from '#lib/constants/blockTypeIcons.js';
 
 	const { TYPES } = ELEMENT_CONSTANTS;
 	const elementTypeOptions = Object.entries(TYPES);

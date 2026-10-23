@@ -1,8 +1,8 @@
-import { getContentByHash } from '$lib/api/content';
-import { STATIC_DOMAIN } from '$lib/environment/environment';
-import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
-import { getFileSizeLimit, getType } from '$lib/s3/limits';
-import { calculateChecksumSha256 } from '$lib/utils/sha256';
+import { getContentByHash } from '#lib/api/content/index.js';
+import { STATIC_DOMAIN } from '#lib/environment/environment.js';
+import { ErrorWithCode } from '#lib/errors/ErrorWithCode.js';
+import { getFileSizeLimit, getType } from '#lib/s3/limits.js';
+import { calculateChecksumSha256 } from '#lib/utils/sha256.js';
 
 export const FileErrorCodes = {
 	NO_FILE_SIZE: 'NO_FILE_SIZE',

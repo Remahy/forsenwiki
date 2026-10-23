@@ -1,8 +1,8 @@
 import { json } from '@sveltejs/kit';
-import prisma from '$lib/prisma.server.js';
+import prisma from '#lib/prisma.server.js';
 
 /**
- * @typedef {import('$lib/s3/limits.js').MimetypeType} MimetypeType
+ * @typedef {import('#lib/s3/limits.js').MimetypeType} MimetypeType
  */
 
 /**

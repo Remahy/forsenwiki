@@ -1,5 +1,5 @@
 <script>
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
 	import {
 		DOCUMENT_FILE_SIZE,
@@ -8,7 +8,7 @@
 		mimetypes,
 		supportedMimeTypes,
 		VIDEO_MAX_FILE_SIZE,
-	} from '$lib/s3/limits';
+	} from '#lib/s3/limits.js';
 
 	import { handleNewImage } from '../editor/utils/handleNewImage';
 	import { handleNewFile } from '../editor/utils/handleNewFile';
@@ -31,7 +31,7 @@
 			try {
 				switch (type) {
 					case 'image': {
-						const data = await handleNewImage(file, $page.data.isModerator);
+						const data = await handleNewImage(file, page.data.isModerator);
 
 						if (data.linkType === 'internal') {
 							uploadContentState.error += `Image "${file.name}" already exists as "${data.name}".\n`;

@@ -1,9 +1,9 @@
 import { error, json } from '@sveltejs/kit';
-import prisma from '$lib/prisma.server';
-import { ForbiddenError } from '$lib/errors/Forbidden';
-import { deleteContent } from '$lib/db/content/delete';
-import { updateContentName } from '$lib/db/content/updateName';
-import { deleteByKey } from '$lib/s3/index.server.js';
+import prisma from '#lib/prisma.server.js';
+import { ForbiddenError } from '#lib/errors/Forbidden.js';
+import { deleteContent } from '#lib/db/content/delete.js';
+import { updateContentName } from '#lib/db/content/updateName.js';
+import { deleteByKey } from '#lib/s3/index.server.js';
 
 export async function POST({ request, locals, params }) {
 	const { isBlocked, isModerator, auth } = locals;

@@ -1,4 +1,4 @@
-import { TableCellNode } from '$lib/lexical/index';
+import { TableCellNode } from '#lib/lexical/index.js';
 import { isHTMLElement } from 'lexical';
 
 /**

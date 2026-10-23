@@ -6,9 +6,9 @@ import {
 	CLOUDFLARE_R2_BUCKET_NAME,
 	CLOUDFLARE_R2_ENDPOINT,
 	CLOUDFLARE_R2_SECRET_ACCESS_KEY,
-} from '$env/static/private';
-import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
-import { FileErrorCodes } from '$lib/components/editor/utils/handleNewFile';
+} from '$app/env/private';
+import { ErrorWithCode } from '#lib/errors/ErrorWithCode.js';
+import { FileErrorCodes } from '#lib/components/editor/utils/handleNewFile.js';
 import { getFileSizeLimit, getType } from './limits';
 import { validateImageDimensions } from './validateImageDimensions.server';
 

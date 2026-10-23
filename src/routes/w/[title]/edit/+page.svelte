@@ -1,33 +1,37 @@
 <script>
 	import { getContext, onMount } from 'svelte';
 	import { FileIcon, FileUpIcon, HistoryIcon } from '@lucide/svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { browser } from '$app/environment';
+	import { browser } from '$app/env';
 
-	import { resetContent } from '$lib/utils/indexedDb/content';
-	import { resetArticle } from '$lib/utils/indexedDb/article';
-	import { updatePost } from '$lib/api/posts';
-	import Box from '$lib/components/Box.svelte';
-	import Link from '$lib/components/Link.svelte';
-	import Editor from '$lib/components/editor/editor.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import Clown from '$lib/components/Clown.svelte';
-	import Spinner from '$lib/components/Spinner.svelte';
-	import Container from '$lib/components/Container.svelte';
-	import TagSelect from '$lib/components/Disclaimer/TagSelect.svelte';
-	import LinkButton from '$lib/components/LinkButton.svelte';
-	import ResetCacheLink from '$lib/components/editor/footer/ResetCacheLink.svelte';
-	import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-	import { AVAILABLE_DISCLAIMER_TAGS, DISCLAIMER_TAGS, WIKI_PATH } from '$lib/constants/constants';
-	import { uploadImages } from '$lib/s3/uploadContentHandlers';
-	import { uploadModal } from '$lib/stores/modal';
-	import UploadingContentModal from '$lib/components/UploadingContentModal.svelte';
-	import { resetUploadingContentModalGlobals } from '$lib/components/uploadingContentModalGlobals.svelte';
-	import { runValidations } from '$lib/components/editor/validations';
-	import Satire from '$lib/components/Disclaimer/Satire.svelte';
-	import NSFW from '$lib/components/Disclaimer/NSFW.svelte';
+	import { resetContent } from '#lib/utils/indexedDb/content.js';
+	import { resetArticle } from '#lib/utils/indexedDb/article.js';
+	import { updatePost } from '#lib/api/posts/index.js';
+	import Box from '#lib/components/Box.svelte';
+	import Link from '#lib/components/Link.svelte';
+	import Editor from '#lib/components/editor/editor.svelte';
+	import Button from '#lib/components/Button.svelte';
+	import Clown from '#lib/components/Clown.svelte';
+	import Spinner from '#lib/components/Spinner.svelte';
+	import Container from '#lib/components/Container.svelte';
+	import TagSelect from '#lib/components/Disclaimer/TagSelect.svelte';
+	import LinkButton from '#lib/components/LinkButton.svelte';
+	import ResetCacheLink from '#lib/components/editor/footer/ResetCacheLink.svelte';
+	import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
+	import {
+		AVAILABLE_DISCLAIMER_TAGS,
+		DISCLAIMER_TAGS,
+		WIKI_PATH,
+	} from '#lib/constants/constants.js';
+	import { uploadImages } from '#lib/s3/uploadContentHandlers.js';
+	import { uploadModal } from '#lib/stores/modal.js';
+	import UploadingContentModal from '#lib/components/UploadingContentModal.svelte';
+	import { resetUploadingContentModalGlobals } from '#lib/components/uploadingContentModalGlobals.svelte.js';
+	import { runValidations } from '#lib/components/editor/validations/index.js';
+	import Satire from '#lib/components/Disclaimer/Satire.svelte';
+	import NSFW from '#lib/components/Disclaimer/NSFW.svelte';
 
 	/**
 	 * @type {import('./$types').PageProps}
@@ -65,9 +69,13 @@
 
 	/** @type {string[]} */
 	let disclaimerTags = $state(
-		/** @type {Array<{ isSystem: boolean, toPostId: string }>} */ (outRelations)
-			.filter(({ isSystem, toPostId }) => isSystem && AVAILABLE_DISCLAIMER_TAGS.includes(toPostId))
-			.map(({ toPostId }) => toPostId)
+		/** @type {Array<{ isSystem: boolean, toPostId: string }>} */ (
+			outRelations
+				.filter(
+					({ isSystem, toPostId }) => isSystem && AVAILABLE_DISCLAIMER_TAGS.includes(toPostId)
+				)
+				.map(({ toPostId }) => toPostId)
+		)
 	);
 
 	let isSatire = $derived(disclaimerTags.includes(DISCLAIMER_TAGS.SATIRE));
@@ -166,7 +174,7 @@
 			persistence.clearData();
 
 			const json = await res.json();
-			const { title /* postUpdate: { id } */, partialErrors } = json;
+			const { title, /* postUpdate: { id } */ partialErrors } = json;
 
 			// This is used to generate a searchParam string.
 			// eslint-disable-next-line svelte/prefer-svelte-reactivity
@@ -205,17 +213,17 @@
 </script>
 
 <svelte:head>
-	<title>Editing &quot;{rawTitle}&quot; - Community Forsen Wiki</title>
-	<meta name="og:title" content="Editing &quot;{rawTitle}&quot; - Community Forsen Wiki" />
+	<title>Editing "{rawTitle}" - Community Forsen Wiki</title>
 
-	<meta name="description" content="Edit the &quot;{rawTitle}&quot; article on forsen.wiki" />
-	<meta
-		property="og:description"
-		content="Edit the &quot;{rawTitle}&quot; article on forsen.wiki"
-	/>
+	<meta name="og:title" content="Editing {rawTitle} - Community Forsen Wiki" />
 
-	<link rel="canonical" href="{$page.url.origin}/w/{title}" />
-	<meta property="og:url" content="{$page.url.origin}/w/{title}" />
+	<meta name="description" content="Edit the {rawTitle} article on forsen.wiki" />
+
+	<meta property="og:description" content="Edit the {rawTitle} article on forsen.wiki" />
+
+	<link rel="canonical" href="{page.url.origin}/w/{title}" />
+
+	<meta property="og:url" content="{page.url.origin}/w/{title}" />
 </svelte:head>
 
 <Container>
@@ -311,7 +319,7 @@
 			<Clown />
 		</small>
 
-		{#if $page.data.session?.user}
+		{#if page.data.session?.user}
 			<Button disabled={!canEdit || isUploading || error} on:click={submit} title="Submit">
 				{#if isUploading}
 					<Spinner />
@@ -328,9 +336,7 @@
 		<ResetCacheLink
 			disabled={!canEdit || isUploading || !!error}
 			isLoading={isUploading}
-			onClickReset={() => reset()}
+			onClickReset={() => reset()}><span>Reset "{title}" draft cache</span></ResetCacheLink
 		>
-			<span>Reset &quot;{title}&quot; draft cache</span>
-		</ResetCacheLink>
 	</div>
 </Container>

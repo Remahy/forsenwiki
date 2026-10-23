@@ -1,5 +1,5 @@
 import { $createTableCellNode } from '@lexical/table';
-import { TableCellNode } from '$lib/lexical/index';
+import { TableCellNode } from '#lib/lexical/index.js';
 
 export class ATableCellNode extends TableCellNode {
 	$config() {

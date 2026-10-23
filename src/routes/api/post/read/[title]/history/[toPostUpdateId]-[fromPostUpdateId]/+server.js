@@ -2,18 +2,18 @@ import { error, json } from '@sveltejs/kit';
 /*
 import { createHeadlessEditor } from '@lexical/headless';
 
-import { mergePostUpdatesV2, postUpdatesToUint8Arr } from '$lib/yjs/utils';
-import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { getDiffJSON } from '$lib/diff/index.server';
-import { articleConfig } from '$lib/components/editor/config/article';
-import { diffConfig } from '$lib/components/editor/config/diff';
-import toHTML from '$lib/worker/toHTML';
-import { EDITOR_IS_READONLY } from '$lib/constants/constants';
+import { mergePostUpdatesV2, postUpdatesToUint8Arr } from '#lib/yjs/utils.js';
+import { getYjsAndEditor } from '#lib/yjs/getYjsAndEditor.js';
+import { getDiffJSON } from '#lib/diff/index.server.js';
+import { articleConfig } from '#lib/components/editor/config/article.js';
+import { diffConfig } from '#lib/components/editor/config/diff.js';
+import toHTML from '#lib/worker/toHTML/index.js';
+import { EDITOR_IS_READONLY } from '#lib/constants/constants.js';
 */
-import { readYPostUpdatesWithIdByTitle } from '$lib/db/post/read';
-import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
-import { replacer } from '$lib/utils/json';
-import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
+import { readYPostUpdatesWithIdByTitle } from '#lib/db/post/read.js';
+import { readAuthorForYPostUpdate } from '#lib/db/metadata/read.js';
+import { replacer } from '#lib/utils/json.js';
+import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
 
 /**
  * @param {string} title

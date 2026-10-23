@@ -4,15 +4,15 @@
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
 
-	import { page } from '$app/stores';
-	import Box from '$lib/components/Box.svelte';
-	import Link from '$lib/components/Link.svelte';
-	import LinkButton from '$lib/components/LinkButton.svelte';
-	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
-	import Container from '$lib/components/Container.svelte';
-	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+	import { page } from '$app/state';
+	import Box from '#lib/components/Box.svelte';
+	import Link from '#lib/components/Link.svelte';
+	import LinkButton from '#lib/components/LinkButton.svelte';
+	import SuggestionBox from '#lib/components/SuggestionBox.svelte';
+	import Container from '#lib/components/Container.svelte';
+	import StreamerModeShow from '#lib/components/StreamerModeShow.svelte';
 
-	let streamerMode = $state($page.data.session?.user?.userSettings?.streamerMode);
+	let streamerMode = $state(page.data.session?.user?.userSettings?.streamerMode);
 
 	/**
 	 * @typedef {import('./+page.server').LatestArticle} LatestArticle
@@ -21,11 +21,11 @@
 	 */
 
 	/** @type {Writable<LatestArticle[]>} */
-	const latestPosts = writable($page.data.latestArticles);
+	const latestPosts = writable(page.data.latestArticles);
 	/** @type {Writable<LatestUser[]>} */
-	const latestUsers = writable($page.data.latestUsers);
+	const latestUsers = writable(page.data.latestUsers);
 	/** @type {Writable<GoatCounterHit[]>} */
-	const popularArticles = writable($page.data.popularArticles);
+	const popularArticles = writable(page.data.popularArticles);
 
 	const ssePostCreate = source('/api/adonis/frontpage').select('post:create');
 	const sseUserCreate = source('/api/adonis/frontpage').select('user:create');
@@ -110,10 +110,9 @@
 						</Link>
 						<span
 							title={new Date(post.createdTimestamp).toUTCString()}
-							class="inline-block min-w-32"
+							class="inline-block min-w-32">{new Date(post.createdTimestamp).toDateString()}</span
 						>
-							{new Date(post.createdTimestamp).toDateString()}&nbsp;
-						</span>
+
 						<small class="inline-block">
 							<span class="font-bold">By:</span>
 							<StreamerModeShow>
@@ -135,7 +134,7 @@
 							<Link href={article.path} class="inline-block min-w-32"
 								><strong>{article.title}</strong></Link
 							>
-							&nbsp; <span>{article.count} hits</span>
+							<span>{article.count} hits</span>
 						</div>
 					{/each}
 				</Box>

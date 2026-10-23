@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
-import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-import { isSystem } from '$lib/utils/isSystem';
+import { sanitizeTitle } from '#lib/components/editor/utils/sanitizeTitle.js';
+import { isSystem } from '#lib/utils/isSystem.js';
 import { _getToYPostUpdateFromYPostUpdateByTitle } from '../../../../api/post/read/[title]/history/[toPostUpdateId]-[fromPostUpdateId]/+server';
 
 export async function load({ params }) {

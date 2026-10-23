@@ -1,4 +1,4 @@
-import { HeadingNode } from '$lib/lexical/index';
+import { HeadingNode } from '#lib/lexical/index.js';
 import { isHTMLElement } from 'lexical';
 
 /**

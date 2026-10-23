@@ -4,17 +4,17 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 
-	import { changeName, deleteContent } from '$lib/api/content';
-	import Box from '$lib/components/Box.svelte';
-	import Container from '$lib/components/Container.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import RandomButton from '$lib/components/RandomButton.svelte';
-	import ImagePreview from '$lib/components/content/ImagePreview.svelte';
-	import VideoPreview from '$lib/components/content/VideoPreview.svelte';
-	import AudioPreview from '$lib/components/content/AudioPreview.svelte';
-	import { STATIC_DOMAIN } from '$lib/environment/environment';
-	import DocumentPreview from '$lib/components/content/DocumentPreview.svelte';
-	import Link from '$lib/components/Link.svelte';
+	import { changeName, deleteContent } from '#lib/api/content/index.js';
+	import Box from '#lib/components/Box.svelte';
+	import Container from '#lib/components/Container.svelte';
+	import Button from '#lib/components/Button.svelte';
+	import RandomButton from '#lib/components/RandomButton.svelte';
+	import ImagePreview from '#lib/components/content/ImagePreview.svelte';
+	import VideoPreview from '#lib/components/content/VideoPreview.svelte';
+	import AudioPreview from '#lib/components/content/AudioPreview.svelte';
+	import { STATIC_DOMAIN } from '#lib/environment/environment.js';
+	import DocumentPreview from '#lib/components/content/DocumentPreview.svelte';
+	import Link from '#lib/components/Link.svelte';
 
 	const id = page.params.id;
 
@@ -114,7 +114,7 @@
 
 		if (res.status === 200) {
 			// eslint-disable-next-line svelte/no-navigation-without-resolve
-			goto(`${resolve('/search')}?query=${result.name}`);
+			goto(`${resolve('search')}?query=${result.name}`);
 		} else if (res.status >= 400) {
 			error = await res.json();
 		}
@@ -130,10 +130,7 @@
 		},
 		video: {
 			component: VideoPreview,
-			props: () => ({
-				src: `${STATIC_DOMAIN}/${hash}`,
-				contentType: contentType,
-			}),
+			props: () => ({ src: `${STATIC_DOMAIN}/${hash}`, contentType }),
 		},
 		audio: {
 			component: AudioPreview,
@@ -172,6 +169,7 @@
 		<meta name="description" content="User uploaded image on forsen.wiki." />
 
 		<meta property="og:description" content="User uploaded image on forsen.wiki." />
+
 		<meta property="og:image" content="{STATIC_DOMAIN}/{hash}" />
 
 		<meta name="twitter:card" content="summary_large_image" />
@@ -186,6 +184,7 @@
 		<meta name="description" content="User uploaded video on forsen.wiki." />
 
 		<meta property="og:description" content="User uploaded video on forsen.wiki." />
+
 		<meta property="og:video" content="{STATIC_DOMAIN}/{hash}" />
 
 		<meta name="twitter:card" content="player" />
@@ -202,6 +201,7 @@
 		<meta name="description" content="User uploaded audio on forsen.wiki." />
 
 		<meta property="og:description" content="User uploaded audio on forsen.wiki." />
+
 		<meta property="og:audio" content="{STATIC_DOMAIN}/{hash}" />
 
 		<meta name="twitter:card" content="player" />

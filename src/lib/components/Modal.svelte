@@ -1,8 +1,8 @@
 <script>
 	import { self } from 'svelte/legacy';
 
-	import { modal } from '$lib/stores/modal';
-	import { browser } from '$app/environment';
+	import { modal } from '#lib/stores/modal.js';
+	import { browser } from '$app/env';
 
 	const closeModal = () => {
 		$modal.isOpen = false;

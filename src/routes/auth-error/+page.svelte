@@ -1,6 +1,6 @@
 <script>
-	import Box from '$lib/components/Box.svelte';
-	import Link from '$lib/components/Link.svelte';
+	import Box from '#lib/components/Box.svelte';
+	import Link from '#lib/components/Link.svelte';
 </script>
 
 <svelte:head>

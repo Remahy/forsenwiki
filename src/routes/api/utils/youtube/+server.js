@@ -5,7 +5,7 @@ export async function POST({ request }) {
 
 	if (clip) {
 		try {
-			const { default: youtubeClipURL } = await import('$lib/worker/youtubeClipURL');
+			const { default: youtubeClipURL } = await import('#lib/worker/youtubeClipURL/index.js');
 
 			const res = await youtubeClipURL({ url: clip });
 

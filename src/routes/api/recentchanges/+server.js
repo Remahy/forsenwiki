@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
-import prisma from '$lib/prisma.server';
-import { getRecentChangesFilters } from '$lib/utils/recentChanges';
-import { replacer } from '$lib/utils/json';
+import prisma from '#lib/prisma.server.js';
+import { getRecentChangesFilters } from '#lib/utils/recentChanges.js';
+import { replacer } from '#lib/utils/json.js';
 
 /**
  * @param {ReturnType<getRecentChangesFilters>} filters

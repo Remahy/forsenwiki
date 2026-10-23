@@ -3,11 +3,11 @@
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import Logo from '$lib/components/Logo.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import Spinner from '$lib/components/Spinner.svelte';
-	import { modal } from '$lib/stores/modal';
-	import SettingsModal from '$lib/components/SettingsModal.svelte';
+	import Logo from '#lib/components/Logo.svelte';
+	import Button from '#lib/components/Button.svelte';
+	import Spinner from '#lib/components/Spinner.svelte';
+	import { modal } from '#lib/stores/modal.js';
+	import SettingsModal from '#lib/components/SettingsModal.svelte';
 
 	import Search from './Search/index.svelte';
 	// import Announcement from './Announcement.svelte';
@@ -76,7 +76,11 @@
 						>
 					</div>
 
-					<Button class="rounded-r-none! rounded-l-none! px-2! text-xs" onclick={openSettingsModal} title="Settings">
+					<Button
+						class="rounded-l-none! rounded-r-none! px-2! text-xs"
+						onclick={openSettingsModal}
+						title="Settings"
+					>
 						<Settings size="18" />
 					</Button>
 

@@ -1,11 +1,11 @@
 import { error, json } from '@sveltejs/kit';
 import { base64ToUint8Array } from 'uint8array-extras';
-import { getFileSizeLimit, getType } from '$lib/s3/limits.js';
-import { sniffMimetype } from '$lib/s3/sniffMimetype.server';
-import { validateImageDimensions } from '$lib/s3/validateImageDimensions.server.js';
-import { ForbiddenError } from '$lib/errors/Forbidden';
-import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
-import prisma from '$lib/prisma.server';
+import { getFileSizeLimit, getType } from '#lib/s3/limits.js';
+import { sniffMimetype } from '#lib/s3/sniffMimetype.server.js';
+import { validateImageDimensions } from '#lib/s3/validateImageDimensions.server.js';
+import { ForbiddenError } from '#lib/errors/Forbidden.js';
+import { ErrorWithCode } from '#lib/errors/ErrorWithCode.js';
+import prisma from '#lib/prisma.server.js';
 
 /**
  * @param {Array<FileUpload>} files

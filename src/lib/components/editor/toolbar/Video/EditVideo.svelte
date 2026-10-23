@@ -9,26 +9,26 @@
 	import { $getNodeByKey as getNodeByKey } from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 
-	import Select from '$lib/components/Select.svelte';
-	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
+	import Select from '#lib/components/Select.svelte';
+	import TwitchGlitch from '#lib/components/icons/TwitchGlitch.svelte';
 	import {
 		VIDEO_CONSTANTS,
 		VIDEO_MAX_HEIGHT,
 		VIDEO_MIN_HEIGHT,
 		VIDEO_MIN_WIDTH,
-	} from '$lib/constants/video';
-	import { DOMAIN } from '$lib/environment/environment';
-	import YouTube from '$lib/components/icons/YouTube.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import { modal } from '$lib/stores/modal';
-	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
+	} from '#lib/constants/video.js';
+	import { DOMAIN } from '#lib/environment/environment.js';
+	import YouTube from '#lib/components/icons/YouTube.svelte';
+	import Button from '#lib/components/Button.svelte';
+	import { modal } from '#lib/stores/modal.js';
+	import { $isGalleryNode as isGalleryNode } from '#lib/lexical/custom.js';
 	import { getURLAndTitle } from '../../plugins/VideoEmbed/VideoEmbed';
 	import EditVideoModal from './EditVideoModal.svelte';
 	import EditSubtitlesModal from './EditSubtitlesModal.svelte';
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {import('$lib/lexical/custom').VideoEmbedNode} selectedNode
+	 * @property {import('#lib/lexical/custom.js').VideoEmbedNode} selectedNode
 	 */
 
 	/** @type {Props} */

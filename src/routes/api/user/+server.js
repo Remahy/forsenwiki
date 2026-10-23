@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
-import prisma from '$lib/prisma.server';
-import { ForbiddenError } from '$lib/errors/Forbidden';
+import prisma from '#lib/prisma.server.js';
+import { ForbiddenError } from '#lib/errors/Forbidden.js';
 
 /**
  * @param {string} id

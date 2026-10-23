@@ -1,7 +1,7 @@
 <script>
 	import { Trash2Icon } from '@lucide/svelte';
 	import { getEditor } from 'svelte-lexical';
-	import Button from '$lib/components/Button.svelte';
+	import Button from '#lib/components/Button.svelte';
 
 	const editor = getEditor();
 

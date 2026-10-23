@@ -33,13 +33,13 @@
 	} from '@lexical/table';
 	import { signal } from '@lexical/extension';
 
-	import { modal } from '$lib/stores/modal';
-	import InsertTableDialog from '$lib/components/editor/toolbar/Table/InsertTableDialog.svelte';
+	import { modal } from '#lib/stores/modal.js';
+	import InsertTableDialog from '#lib/components/editor/toolbar/Table/InsertTableDialog.svelte';
 	import {
 		hasAdjacentNode,
 		insertFnc,
 		offsetIsAtEdges,
-	} from '$lib/components/editor/utils/insertUtils';
+	} from '#lib/components/editor/utils/insertUtils.js';
 	import { $isATableNode as isATableNode } from './ATableNode';
 
 	function wrapperInsertTable(payload: {
