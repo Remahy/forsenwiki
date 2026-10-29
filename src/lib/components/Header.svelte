@@ -1,5 +1,5 @@
 <script>
-	import { LogOutIcon, Settings } from '@lucide/svelte';
+	import { LogOutIcon, UploadIcon, Settings } from '@lucide/svelte';
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
@@ -8,6 +8,7 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { modal } from '$lib/stores/modal';
 	import SettingsModal from '$lib/components/SettingsModal.svelte';
+	import UploadContentModal from '$lib/components/Search/UploadContentModal.svelte';
 
 	import Search from './Search/index.svelte';
 	// import Announcement from './Announcement.svelte';
@@ -32,6 +33,10 @@
 		await signOut({ redirect: true });
 	};
 
+	const toggleUploadModal = () => {
+		modal.set({ isOpen: true, component: UploadContentModal });
+	};
+
 	let cachedImage = $state('');
 
 	if (page.data.session?.user?.image) {
@@ -51,32 +56,48 @@
 			</div>
 		</a>
 
-		<div class="mt-auto grow px-2 lg:px-16">
-			<div class="hidden sm:block">
+		<div class="mt-auto flex grow items-end gap-2 px-2 lg:px-16">
+			<div class="hidden grow sm:block">
 				<Search inline={true} />
 			</div>
 		</div>
 
-		<div class="mt-auto flex items-end overflow-hidden">
-			<div class="flex items-stretch justify-end overflow-hidden">
+		<div class="mt-auto flex items-end">
+			<div class="flex">
 				{#if page.data.session?.user}
-					<div class="violet flex max-w-20 gap-2 overflow-hidden p-2 lg:max-w-40">
+					<Button
+						onclick={toggleUploadModal}
+						class="suggestion-box mr-4 p-2!"
+						title="Upload content"
+					>
+						<UploadIcon size="18" />
+					</Button>
+
+					<div class="violet flex max-w-20 min-w-10 gap-2 overflow-hidden lg:max-w-40">
 						{#if cachedImage}
-							<img
-								src={cachedImage}
-								class="-my-2 -ml-2 hidden h-10 w-auto lg:block"
-								alt="Twitch avatar"
-							/>
+							<Link
+								href="/user/{page.data.session.user.id}"
+								reload
+								title={page.data.session.user.name}
+								class="shrink-0"
+							>
+								<img src={cachedImage} class="h-10 w-auto" alt="Twitch avatar" />
+							</Link>
+						{:else}
+							<Link
+								href="/user/{page.data.session.user.id}"
+								reload
+								class="content-center overflow-hidden p-2 text-xs font-medium text-ellipsis"
+								title={page.data.session.user.name}>{page.data.session.user.name}</Link
+							>
 						{/if}
-						<Link
-							href="/user/{page.data.session.user.id}"
-							reload
-							class="content-center overflow-hidden text-xs font-medium text-ellipsis"
-							title={page.data.session.user.name}>{page.data.session.user.name}</Link
-						>
 					</div>
 
-					<Button class="rounded-r-none! rounded-l-none! px-2! text-xs" onclick={openSettingsModal} title="Settings">
+					<Button
+						class="rounded-l-none! rounded-r-none! px-2! text-xs"
+						onclick={openSettingsModal}
+						title="Settings"
+					>
 						<Settings size="18" />
 					</Button>
 
@@ -88,14 +109,14 @@
 					>
 						<div class="hidden lg:block">
 							{#if isLoading}
-								<Spinner size="16" />
+								<Spinner size="18" />
 								<span>Logging out...</span>
 							{:else}
 								<span>Log out</span>
 							{/if}
 						</div>
 						<div class="block lg:hidden">
-							<LogOutIcon size="16" />
+							<LogOutIcon size="18" />
 							<span class="hidden">Log out</span>
 						</div>
 					</Button>

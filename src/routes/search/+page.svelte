@@ -12,10 +12,6 @@
 	import Box from '$lib/components/Box.svelte';
 	import ContentPreview from '$lib/components/content/ContentPreview.svelte';
 	import { parseSearchURL } from '$lib/components/Search/parseSearchURL';
-	import Button from '$lib/components/Button.svelte';
-	import { modal } from '$lib/stores/modal';
-	import UploadContentModal from '$lib/components/Search/UploadContentModal.svelte';
-	import { UploadIcon } from '@lucide/svelte';
 
 	/** @type {import('../api/search/+server').QueryResult[]} */
 	let results = $state($page.data.results);
@@ -51,10 +47,6 @@
 				error();
 			});
 	}
-
-	const toggleUploadModal = () => {
-		modal.set({ isOpen: true, component: UploadContentModal });
-	};
 </script>
 
 <svelte:head>
@@ -66,10 +58,6 @@
 </svelte:head>
 
 <section class="container mx-auto flex grow flex-col gap-4 p-4 lg:py-12">
-	<Button onclick={toggleUploadModal} class="self-start">
-		<UploadIcon /> <span>Upload content</span>
-	</Button>
-
 	<Box class="flex flex-col overflow-hidden p-4 lg:mb-0">
 		<div class="box-heading-wrapper mb-2">
 			<h2 class="text-2xl">Search</h2>
