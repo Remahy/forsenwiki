@@ -60,6 +60,8 @@
 	});
 </script>
 
+<EditLinkButton />
+
 <EditorButton title="Bold ({ctrlKey} B)" on:click={bold} isActive={isBold}>
 	<BoldIcon size="16" />
 </EditorButton>
@@ -83,5 +85,3 @@
 >
 	<SubscriptIcon size="16" />
 </EditorButton>
-
-<EditLinkButton />
