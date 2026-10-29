@@ -1,8 +1,9 @@
 <script>
 	import { TableOfContentsIcon } from '@lucide/svelte';
 	/* eslint-disable svelte/no-at-html-tags */
-	import Box from './Box.svelte';
-	import Button from './Button.svelte';
+	import Box from '../Box.svelte';
+	import Button from '../Button.svelte';
+	import { getHeadings } from './getHeadings';
 
 	/**
 	 * @type {string}
@@ -19,19 +20,9 @@
 
 		const article = doc.querySelector('main.article-root');
 
-		if (!article) {
-			return;
-		}
+		const headings = getHeadings(article);
 
-		const headings = [...(article?.querySelectorAll?.('h1, h2, h3, h4, h5') || [])].filter(
-			(element) => {
-				return (
-					element.parentElement instanceof HTMLElement && element.parentElement.tagName === 'MAIN'
-				);
-			}
-		);
-
-		if (!headings?.length) {
+		if (!headings.length) {
 			return;
 		}
 
