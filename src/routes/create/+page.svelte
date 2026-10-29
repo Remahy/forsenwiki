@@ -211,7 +211,9 @@
 		{/if}
 	</label>
 
-	<TagSelect bind:disclaimerTags onchange={unsetError} />
+	<Box class="p-4">
+		<TagSelect bind:disclaimerTags onchange={unsetError} />
+	</Box>
 
 	{#if browser}
 		<Editor update={null} {id} {initialUpdate} />
