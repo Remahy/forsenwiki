@@ -44,7 +44,6 @@
 
 	const update = () => {
 		editor.update(() => {
-			console.log('updated');
 			selectedNode.setIsInternal(currentIsInternal);
 
 			if (currentIsInternal) {
@@ -120,6 +119,10 @@
 				handleExternalLink(value);
 			}
 		}
+
+		setTimeout(() => {
+			target.focus();
+		});
 	};
 
 	const search = createDebouncedSearch(
