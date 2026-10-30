@@ -11,7 +11,10 @@
 	import { sanitizeUrl } from '../../utils/sanitizeUrl';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import Link from '$lib/components/Link.svelte';
+	import Select from '$lib/components/Select.svelte';
 	import { createDebouncedSearch } from '../../utils/debouncedSearch.svelte';
+	import { readPost } from '$lib/api/posts';
+	import { getHeadings } from '$lib/components/ToC/getHeadings';
 
 	/**
 	 * @typedef {import('@lexical/link').LinkAttributes} LinkAttributes
@@ -100,11 +103,73 @@
 		}
 	};
 
+	let heading = $state();
+	/**
+	 * @type {Array<{ label: string, id: string }>}
+	 */
+	let headings = $state([]);
+	let loadingHeadings = $state(false);
+
+	/** @param {string} title */
+	const loadHeadings = async (title) => {
+		loadingHeadings = true;
+
+		/** @type {Response?} */
+		let res;
+
+		try {
+			res = await readPost({ postTitle: title });
+		} catch (error) {
+			console.error(error);
+			headings = [];
+			loadingHeadings = false;
+			return;
+		}
+
+		if (!res || res.status !== 200) {
+			headings = [];
+			loadingHeadings = false;
+		}
+
+		try {
+			const json = await res.json();
+
+			const { html } = json;
+
+			const article = new DOMParser().parseFromString(`<main>${html}</main>`, 'text/html');
+
+			const foundHeadings = getHeadings(article.body);
+
+			headings = foundHeadings.map(({ id, textContent }) => ({ id, label: textContent }));
+			loadingHeadings = false;
+		} catch (error) {
+			console.error(error);
+			loadingHeadings = false;
+			headings = [];
+		}
+	};
+
 	/** @param {{ title: string, rawTitle: string, id: string }} value */
 	const handleInternalLink = (value) => {
 		finalUrl = '/w/' + value.title;
 		rawTitle = value.rawTitle;
 		internalId = value.id;
+		isInternal = true;
+		isValidLink = true;
+
+		heading = '';
+		loadHeadings(value.title);
+	};
+
+	/**
+	 * @param {HTMLSelectElement} target
+	 */
+	const handleHeadingChange = (target) => {
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity
+		const url = new URL(finalUrl, window.location.origin);
+		url.hash = target.value;
+		finalUrl = url.pathname + url.hash;
+
 		isInternal = true;
 		isValidLink = true;
 	};
@@ -188,13 +253,35 @@
 		</label>
 
 		{#if currentLinkType === 'internal' && finalUrl}
-			<div class="flex flex-col gap-2">
-				<strong>URL</strong>
-				<input
-					class="input-color mb-2 w-full rounded-sm p-2 opacity-50"
-					value={finalUrl}
-					disabled
-				/>
+			<div>
+				<div class="flex flex-col gap-2">
+					<strong>URL</strong>
+					<input
+						class="input-color mb-2 w-full rounded-sm p-2 opacity-50"
+						value={finalUrl}
+						disabled
+					/>
+				</div>
+
+				<div class="flex flex-col gap-2">
+					<strong>Heading</strong>
+					{#if !loadingHeadings}
+						<Select
+							title="Heading"
+							class="input-color w-full rounded-sm p-2"
+							onchange={(/** @type {{ currentTarget: HTMLSelectElement }} */ evt) =>
+								handleHeadingChange(evt.currentTarget)}
+							value={heading}
+						>
+							<option value=""></option>
+							{#each headings as heading (heading.id)}
+								<option value={heading.id}>{heading.label}</option>
+							{/each}
+						</Select>
+					{:else}
+						<div><Spinner /></div>
+					{/if}
+				</div>
 			</div>
 		{/if}
 
@@ -227,6 +314,15 @@
 
 					<div class="prose dark:prose-invert relative mt-2 flex max-w-[unset]">
 						<table class="w-full table-auto">
+							{#if search.results?.length}
+								<thead>
+									<tr>
+										<th>Title</th>
+										<th>Creation date</th>
+										<th></th>
+									</tr>
+								</thead>
+							{/if}
 							<tbody>
 								{#each search.results as result (result.id)}
 									<tr class={internalId === result.id ? `bg-black/10 dark:bg-white/10` : ''}>

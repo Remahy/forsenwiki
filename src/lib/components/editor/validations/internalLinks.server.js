@@ -1,4 +1,5 @@
 import { WIKI_PATH } from '$lib/constants/constants';
+import { DOMAIN } from '$lib/environment/environment';
 import { $nodesOfType as nodesOfType } from 'lexical';
 import { _getYPostsByIds } from '../../../../routes/api/post/read/[title]/+server';
 import { getInternalIds, getOnlyInternalLinks } from '../utils/getInternalIds';
@@ -37,8 +38,12 @@ export const adjustInternalLinks = async (editor) => {
 
 					for (let ii = 0; ii < relevantLinks.length; ii++) {
 						const link = relevantLinks[ii];
+
+						// TODO: Add validations for legitimate heading hashes.
+						const url = new URL(link.getURL(), DOMAIN);
+
 						// Hardcoded /w/ for now, needs to eventually support /content/
-						const newURL = `${WIKI_PATH}${relevantPost?.title}`;
+						const newURL = `${WIKI_PATH}${relevantPost?.title}${url.hash}`;
 
 						if (link.getURL() === newURL) {
 							continue;

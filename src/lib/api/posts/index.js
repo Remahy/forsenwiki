@@ -50,3 +50,11 @@ export const updatePost = async ({ postTitle, yDoc, newTitle, disclaimerTags }) 
 
 	return fetch(`/api/post/update/${postTitle}`, { method: 'POST', body, headers });
 };
+
+/**
+ * @param {object} Arg
+ * @param {string} Arg.postTitle
+ */
+export const readPost = ({ postTitle }) => {
+	return fetch(`/api/post/read/${postTitle}`, { headers });
+};
