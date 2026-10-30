@@ -146,6 +146,11 @@
 							</li>
 						{/each}
 					</ul>
+					<div
+						class="box-heading-wrapper mt-2 flex items-center justify-end border-t-2 border-b-0! pt-2 pb-0!"
+					>
+						<Link href="/w" target="_blank">All articles</Link>
+					</div>
 				</Box>
 			{/if}
 
