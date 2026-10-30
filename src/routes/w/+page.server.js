@@ -9,7 +9,12 @@ const OTHER = '#';
 
 /** @param {string} name */
 const getLetter = (name) => {
-	const first = name.trim().charAt(0).normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase();
+	const first = name
+		.trim()
+		.charAt(0)
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.toUpperCase();
 
 	return /[A-Z]/.test(first) ? first : OTHER;
 };
@@ -27,7 +32,9 @@ export async function load() {
 	/** @type {Map<string, IndexArticle[]>} */
 	const byLetter = new Map();
 
-	for (const article of articles) {
+	for (let index = 0; index < articles.length; index++) {
+		const article = articles[index];
+
 		const letter = getLetter(article.rawTitle);
 		const group = byLetter.get(letter);
 		if (group) {
@@ -39,7 +46,7 @@ export async function load() {
 
 	/** @type {IndexGroup[]} */
 	const groups = [...byLetter.entries()]
-		.sort(([a], [b]) => (a === OTHER ? -1 : b === OTHER ? 1 : a.localeCompare(b)))
+		.sort(([a], [b]) => a.localeCompare(b))
 		.map(([letter, articles]) => ({ letter, articles }));
 
 	return { groups, total: articles.length };
