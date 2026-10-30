@@ -96,7 +96,7 @@
 
 <svelte:head>
 	<title>Community Forsen Wiki</title>
-	<meta name="description" content="All things forsen, forsenbajs and more." />
+	<meta name="description" content="All things forsen, forsen community and more." />
 </svelte:head>
 
 <Container>
@@ -114,8 +114,11 @@
 				<Box class="mb-4 p-4">
 					<ul class="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2 xl:grid-cols-4">
 						{#each mostLinkedArticles as article (article.title)}
-							<li class="rounded-sm bg-black/10 p-2 dark:bg-white/5">
-								<Link href="/w/{article.title}" class="flex items-center gap-3">
+							<li class="suggestion-box rounded-sm p-2!">
+								<Link
+									href="/w/{article.title}"
+									class="flex items-center gap-3 no-underline! decoration-0!"
+								>
 									{#if article.image}
 										<img
 											src={getImageCacheURL(article.image, {
