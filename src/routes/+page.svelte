@@ -1,6 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Dice4Icon, RotateCcwClock, FolderSearchIcon, SquarePenIcon } from '@lucide/svelte';
+	import {
+		Dice4Icon,
+		RotateCcwClock,
+		FolderSearchIcon,
+		SquarePenIcon,
+		ImageIcon,
+	} from '@lucide/svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
 
@@ -11,6 +17,7 @@
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 	import Container from '$lib/components/Container.svelte';
 	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 
 	let streamerMode = $state($page.data.session?.user?.userSettings?.streamerMode);
 
@@ -18,7 +25,11 @@
 	 * @typedef {import('./+page.server').LatestArticle} LatestArticle
 	 * @typedef {import('./+page.server').LatestUser} LatestUser
 	 * @typedef {import('./+page.server').GoatCounterHit} GoatCounterHit
+	 * @typedef {import('./+page.server').MostLinkedArticle} MostLinkedArticle
 	 */
+
+	/** @type {MostLinkedArticle[]} */
+	const mostLinkedArticles = $page.data.mostLinkedArticles ?? [];
 
 	/** @type {Writable<LatestArticle[]>} */
 	const latestPosts = writable($page.data.latestArticles);
@@ -99,6 +110,45 @@
 
 	<div class="block grow gap-4 lg:flex">
 		<div class="mb-4 flex grow flex-col lg:mb-0">
+			{#if mostLinkedArticles.length}
+				<Box class="mb-4 p-4">
+					<ul class="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2 xl:grid-cols-4">
+						{#each mostLinkedArticles as article (article.title)}
+							<li class="rounded-sm bg-black/10 p-2 dark:bg-white/5">
+								<Link href="/w/{article.title}" class="flex items-center gap-3">
+									{#if article.image}
+										<img
+											src={getImageCacheURL(article.image, {
+												height: 112,
+												quality: 'low',
+											}).toString()}
+											alt=""
+											loading="lazy"
+											width="56"
+											height="56"
+											class="h-14 w-14 shrink-0 rounded-sm object-cover"
+										/>
+									{:else}
+										<span
+											aria-hidden="true"
+											class="flex h-14 w-14 shrink-0 items-center justify-center rounded-sm bg-black/10 opacity-50 dark:bg-white/5"
+										>
+											<ImageIcon />
+										</span>
+									{/if}
+									<span class="flex min-w-0 flex-col">
+										<strong class="wrap-break-words">{article.rawTitle}</strong>
+										{#if article.linkCount > 1}
+											<small>Linked in {article.linkCount} articles</small>
+										{/if}
+									</span>
+								</Link>
+							</li>
+						{/each}
+					</ul>
+				</Box>
+			{/if}
+
 			<Box class="grow p-4">
 				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">Latest articles</h2>
