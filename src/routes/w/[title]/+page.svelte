@@ -11,7 +11,7 @@
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 	import Box from '$lib/components/Box.svelte';
-	import ToC from '$lib/components/ToC.svelte';
+	import ToC from '$lib/components/ToC/index.svelte';
 	import RandomButton from '$lib/components/RandomButton.svelte';
 	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
 	import Link from '$lib/components/Link.svelte';

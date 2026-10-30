@@ -94,8 +94,6 @@
 		},
 		{ initialValue: [] }
 	);
-
-	$inspect(newSubtitles);
 </script>
 
 <div class="modal-color pointer-events-auto relative p-0">

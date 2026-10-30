@@ -112,7 +112,8 @@
 
 		isUploading = true;
 
-		let res;
+		/** @type {Response?} */
+		let res = null;
 
 		try {
 			if (!title.value) {

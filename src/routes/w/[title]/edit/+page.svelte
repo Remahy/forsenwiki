@@ -132,7 +132,8 @@
 
 		isUploading = true;
 
-		let res;
+		/** @type {Response?} */
+		let res = null;
 
 		try {
 			await runValidations(editor);
