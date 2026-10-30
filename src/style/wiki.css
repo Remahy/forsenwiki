@@ -83,7 +83,11 @@ html.forsen-wiki-theme {
 	}
 
 	.suggestion-box {
-		@apply rounded-sm bg-linear-to-br from-sky-100 to-violet-200 p-4 dark:from-slate-950/30 dark:to-violet-900/30;
+		@apply rounded-sm bg-linear-to-br from-sky-400 to-violet-600 p-4 text-white dark:from-slate-950/30 dark:to-violet-900/30;
+
+		.link {
+			@apply hover:text-white/70 dark:hover:text-indigo-400;
+		}
 	}
 
 	.element-placeholder-color {
