@@ -1,4 +1,5 @@
 import prisma from '$lib/prisma.server';
+import { Y_POST_TYPES } from '$lib/constants/constants';
 
 /**
  * @param {string} title
@@ -34,8 +35,8 @@ export async function readYPostUpdatesByTitle(title) {
 					metadata: {
 						select: {
 							userId: true,
-						}
-					}
+						},
+					},
 				},
 				orderBy: {
 					createdTimestamp: 'asc',
@@ -250,4 +251,72 @@ export async function readRelationsToYPostTitle(title) {
 			lastUpdated: 'asc',
 		},
 	});
+}
+
+export async function readAllArticleTitles() {
+	return prisma.yPost.findMany({
+		where: {
+			outRelations: {
+				some: {
+					isSystem: true,
+					toPostId: Y_POST_TYPES.ARTICLE,
+				},
+			},
+		},
+		select: {
+			title: true,
+			rawTitle: true,
+		},
+	});
+}
+
+/**
+ * @typedef {{
+ *	title: string,
+ *	rawTitle: string,
+ *	image: string | null,
+ *	linkCount: number
+ * }} MostLinkedArticle
+ */
+
+const articleFilter = {
+	outRelations: { some: { isSystem: true, toPostId: Y_POST_TYPES.ARTICLE } },
+};
+
+export async function readMostLinkedArticles(take = 8) {
+	const counts = await prisma.yPostRelation.groupBy({
+		by: ['toPostId'],
+		where: {
+			isSystem: false,
+			fromPost: articleFilter,
+			toPost: articleFilter,
+		},
+		_count: { fromPostId: true },
+		orderBy: { _count: { fromPostId: 'desc' } },
+		take,
+	});
+
+	const posts = await prisma.yPost.findMany({
+		where: { id: { in: counts.map((c) => c.toPostId) } },
+		select: { id: true, title: true, rawTitle: true, html: { select: { image: true } } },
+	});
+
+	const byId = new Map(posts.map((p) => [p.id, p]));
+
+	/** @type {MostLinkedArticle[]} */
+	const result = [];
+
+	for (const { toPostId, _count } of counts) {
+		const post = byId.get(toPostId);
+		if (post) {
+			result.push({
+				title: post.title,
+				rawTitle: post.rawTitle,
+				image: post.html?.image ?? null,
+				linkCount: _count.fromPostId,
+			});
+		}
+	}
+
+	return result;
 }

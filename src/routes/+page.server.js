@@ -2,11 +2,13 @@ import { GOATCOUNTER_API_KEY, GOATCOUNTER_DISABLED } from '$env/static/private';
 import prisma from '$lib/prisma.server';
 import { getPopularArticles } from '$lib/goatcounter.server';
 import { Y_POST_TYPES } from '$lib/constants/constants';
+import { readMostLinkedArticles } from '$lib/db/post/read';
 
 /**
  * @typedef {{ rawTitle: string, title: string, createdTimestamp: string, author: string | null, authorId: string | null }} LatestArticle
  * @typedef {{ name: string | null }} LatestUser
  * @typedef {import('$lib/goatcounter.server').GoatCounterHit} GoatCounterHit
+ * @typedef {import('$lib/db/post/read').MostLinkedArticle} MostLinkedArticle
  */
 
 /** @type {Prisma.Prisma.UserFindManyArgs} */
@@ -23,9 +25,10 @@ const usersQuery = {
 /** @type {{
  *	latestArticles: LatestArticle[],
  *	latestUsers: LatestUser[],
- *	popularArticles: GoatCounterHit[]
+ *	popularArticles: GoatCounterHit[],
+ *	mostLinkedArticles: MostLinkedArticle[]
  * }} */
-let cache = { latestArticles: [], latestUsers: [], popularArticles: [] };
+let cache = { latestArticles: [], latestUsers: [], popularArticles: [], mostLinkedArticles: [] };
 let lastCacheUpdate = Date.now() - 1_800_000;
 
 const getLatest = async () => {
@@ -84,7 +87,13 @@ const getLatest = async () => {
 
 	const users = prisma.user.findMany(usersQuery);
 
-	const [rawLatestArticles, latestUsers] = await Promise.all([yPosts, users]);
+	const mostLinked = readMostLinkedArticles(8);
+
+	const [rawLatestArticles, latestUsers, mostLinkedArticles] = await Promise.all([
+		yPosts,
+		users,
+		mostLinked,
+	]);
 
 	const latestArticles = rawLatestArticles.map((post) => ({
 		rawTitle: post.rawTitle,
@@ -98,6 +107,7 @@ const getLatest = async () => {
 		latestArticles,
 		latestUsers,
 		popularArticles,
+		mostLinkedArticles,
 	};
 	lastCacheUpdate = Date.now();
 
