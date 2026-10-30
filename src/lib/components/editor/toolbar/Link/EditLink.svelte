@@ -7,8 +7,11 @@
 	import Button from '$lib/components/Button.svelte';
 	import { searchRequest } from '$lib/api/search';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import { readPost } from '$lib/api/posts';
 	import { sanitizeUrl } from '../../utils/sanitizeUrl';
 	import { createDebouncedSearch } from '../../utils/debouncedSearch.svelte';
+	import { getHeadings } from '$lib/components/ToC/getHeadings';
+	import Select from '$lib/components/Select.svelte';
 
 	/**
 	 * @typedef {import('$lib/api/search').SearchResult} SearchResult
@@ -42,6 +45,14 @@
 	let currentInternalId = $derived(internalId);
 	let currentURL = $derived(url);
 
+	/** @param {boolean} isInternal */
+	const linkType = (isInternal) => {
+		currentIsInternal = isInternal;
+		error = '';
+
+		inputElement?.dispatchEvent(new Event('input', { bubbles: true }));
+	};
+
 	const update = () => {
 		editor.update(() => {
 			selectedNode.setIsInternal(currentIsInternal);
@@ -54,12 +65,63 @@
 		});
 	};
 
-	/** @param {boolean} isInternal */
-	const linkType = (isInternal) => {
-		currentIsInternal = isInternal;
-		error = '';
+	let heading = $state();
+	/**
+	 * @type {Array<{ label: string, id: string }>}
+	 */
+	let headings = $state([]);
+	let loadingHeadings = $state(false);
 
-		inputElement?.dispatchEvent(new Event('input', { bubbles: true }));
+	/** @param {string} title */
+	const loadHeadings = async (title) => {
+		loadingHeadings = true;
+
+		/** @type {Response?} */
+		let res;
+
+		try {
+			res = await readPost({ postTitle: title });
+		} catch (error) {
+			console.error(error);
+			headings = [];
+			loadingHeadings = false;
+			return;
+		}
+
+		if (!res || res.status !== 200) {
+			headings = [];
+			loadingHeadings = false;
+		}
+
+		try {
+			const json = await res.json();
+
+			const { html } = json;
+
+			const article = new DOMParser().parseFromString(`<main>${html}</main>`, 'text/html');
+
+			const foundHeadings = getHeadings(article.body);
+
+			headings = foundHeadings.map(({ id, textContent }) => ({ id, label: textContent }));
+			loadingHeadings = false;
+		} catch (error) {
+			console.error(error);
+			loadingHeadings = false;
+			headings = [];
+		}
+	};
+
+	/**
+	 * @param {HTMLSelectElement} target
+	 */
+	const handleHeadingChange = (target) => {
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity
+		const url = new URL(finalUrl, window.location.origin);
+		url.hash = target.value;
+		finalUrl = url.pathname + url.hash;
+
+		isInternal = true;
+		update();
 	};
 
 	/** @param {{ title: string, rawTitle: string, id: string }} value */
@@ -68,6 +130,7 @@
 		currentInternalId = value.id;
 		currentIsInternal = true;
 		update();
+		loadHeadings(value.title);
 	};
 
 	/** @param {string} _value */
@@ -191,6 +254,28 @@
 				</datalist>
 			{/if}
 		</label>
+
+		{#if currentIsInternal && internalId && headings.length}
+			<div class="flex flex-col gap-2">
+				<strong>Heading</strong>
+				{#if !loadingHeadings}
+					<Select
+						title="Heading"
+						class="input-color w-full rounded-sm p-2"
+						onchange={(/** @type {{ currentTarget: HTMLSelectElement }} */ evt) =>
+							handleHeadingChange(evt.currentTarget)}
+						value={heading}
+					>
+						<option value=""></option>
+						{#each headings as heading (heading.id)}
+							<option value={heading.id}>{heading.label}</option>
+						{/each}
+					</Select>
+				{:else}
+					<div><Spinner /></div>
+				{/if}
+			</div>
+		{/if}
 
 		{#if error || search.error}
 			<span class="font-bold text-red-700">{error || search.error}</span>

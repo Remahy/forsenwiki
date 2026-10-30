@@ -149,18 +149,6 @@
 		}
 	};
 
-	/** @param {{ title: string, rawTitle: string, id: string }} value */
-	const handleInternalLink = (value) => {
-		finalUrl = '/w/' + value.title;
-		rawTitle = value.rawTitle;
-		internalId = value.id;
-		isInternal = true;
-		isValidLink = true;
-
-		heading = '';
-		loadHeadings(value.title);
-	};
-
 	/**
 	 * @param {HTMLSelectElement} target
 	 */
@@ -172,6 +160,18 @@
 
 		isInternal = true;
 		isValidLink = true;
+	};
+
+	/** @param {{ title: string, rawTitle: string, id: string }} value */
+	const handleInternalLink = (value) => {
+		finalUrl = '/w/' + value.title;
+		rawTitle = value.rawTitle;
+		internalId = value.id;
+		isInternal = true;
+		isValidLink = true;
+
+		heading = '';
+		loadHeadings(value.title);
 	};
 
 	/** @param {Event} e */
