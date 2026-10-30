@@ -119,7 +119,7 @@
 									href="/w/{article.title}"
 									class="flex items-center gap-3 no-underline! decoration-0!"
 								>
-									{#if article.image}
+									{#if article.image && !streamerMode}
 										<img
 											src={getImageCacheURL(article.image, {
 												height: 112,
