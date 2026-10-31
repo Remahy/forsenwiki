@@ -25,6 +25,7 @@
 	import TablePlugin from './plugins/Overrides/Table/TablePlugin.svelte';
 	import FloatBlockPlugin from './plugins/FloatBlock/FloatBlockPlugin.svelte';
 	import SelectionOverrides from './plugins/SelectionOverrides.svelte';
+	import TripleClickSelection from './plugins/TripleClickSelection.svelte';
 	import GalleryPlugin from './plugins/Gallery/GalleryPlugin.svelte';
 	import ImageFixerModalButton from './ImageFixer/index.svelte';
 	import TreeviewPlugin from './Treeview/TreeviewPlugin.svelte';
@@ -81,6 +82,8 @@
 		<CollaborationPlugin {id} {providerFactory} shouldBootstrap={false} />
 
 		<SelectionOverrides />
+
+		<TripleClickSelection />
 
 		<TreeviewPlugin />
 
