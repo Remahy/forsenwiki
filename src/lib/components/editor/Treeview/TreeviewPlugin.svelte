@@ -10,19 +10,21 @@
 
 	import { treeviewState } from './treeviewState.svelte';
 	import { initTree } from './tree';
-	import { expandParents, updateItems } from './utils';
+	import { expandParents, hasTreeStructureChanged, updateItems } from './utils';
 
 	const editor = $state(getEditor());
 
 	onMount(() => {
 		treeviewState.tree = initTree(editor);
 
+		// Kept outside the debouncer, since it only sees the arguments of the last call.
+		let shouldUpdateTree = false;
+
 		const updateTreeDebouncer = useDebounce(
 			/**
 			 * @param {BaseSelection | null} selection
-			 * @param {boolean} shouldUpdateTree
 			 */
-			(selection, shouldUpdateTree) => {
+			(selection) => {
 				editor.read(() => {
 					if (!treeviewState.tree) {
 						return;
@@ -32,6 +34,7 @@
 
 					if (shouldUpdateTree) {
 						treeviewState.tree.rebuildTree();
+						shouldUpdateTree = false;
 					}
 
 					if (!selection || (isRangeSelection(selection) && !selection?.isCollapsed())) {
@@ -78,12 +81,12 @@
 
 		const unregister = mergeRegister(
 			editor.registerUpdateListener((payload) => {
-				const shouldUpdateTree = payload.mutatedNodes?.size;
+				shouldUpdateTree ||= hasTreeStructureChanged(payload.prevEditorState, payload.editorState);
 
 				if (!treeviewState.isTreeNodeSelection) {
 					const selection = payload.editorState.read(() => getSelection());
 
-					updateTreeDebouncer(selection, !!shouldUpdateTree);
+					updateTreeDebouncer(selection);
 				}
 			})
 		);
