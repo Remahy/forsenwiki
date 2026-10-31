@@ -34,7 +34,7 @@ const magikaExtend = {
 		['application/msword', 'doc'],
 		['text/plain', 'txt'],
 		['text/markdown', 'md'],
-		['text/vtt', 'vtt']
+		['text/vtt', 'vtt'],
 	]),
 };
 export const magikaTypeToMimetype = Object.entries(magikaExtend).reduce((acc, [, list]) => {

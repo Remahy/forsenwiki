@@ -13,7 +13,7 @@
 {:else}
 	<Button
 		onclick={() => (show = true)}
-		class="inline-block min-h-[unset]! bg-transparent! p-0! underline text-inherit!"
+		class="inline-block min-h-[unset]! bg-transparent! p-0! text-inherit! underline"
 	>
 		Hidden
 	</Button>

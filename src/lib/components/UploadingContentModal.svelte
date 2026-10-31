@@ -46,17 +46,17 @@
 			</div>
 
 			{#if uploaded.length}
-				<div class="flex flex-wrap gap-8 justify-between">
+				<div class="flex flex-wrap justify-between gap-8">
 					{#each uploaded as upload (upload.url)}
 						{@const type = getType(upload.contentType)}
 						<div
-							class="forsen-wiki-theme-border bg-dark flex w-fit min-w-64 max-w-64 flex-col justify-between gap-2 overflow-hidden rounded-sm border"
+							class="forsen-wiki-theme-border bg-dark flex w-fit max-w-64 min-w-64 flex-col justify-between gap-2 overflow-hidden rounded-sm border"
 						>
 							<div class="flex items-center gap-2 p-2" title={upload.name}>
 								<LinkButton
 									href="/content/{upload.id}"
 									target="_blank"
-									class="self-start truncate p-2! text-xs shrink-0"
+									class="shrink-0 self-start truncate p-2! text-xs"
 								>
 									<span>View</span>
 								</LinkButton>
