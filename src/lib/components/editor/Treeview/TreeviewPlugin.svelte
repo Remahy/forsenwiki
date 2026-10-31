@@ -81,7 +81,7 @@
 				const shouldUpdateTree = payload.mutatedNodes?.size;
 
 				if (!treeviewState.isTreeNodeSelection) {
-					const selection = editor.read(() => getSelection());
+					const selection = payload.editorState.read(() => getSelection());
 
 					updateTreeDebouncer(selection, !!shouldUpdateTree);
 				}
