@@ -36,11 +36,11 @@
 	/**
 	 * @typedef {Object} Props
 	 * @property {import('./VideoEmbed').VideoEmbedNode} node
-	 * @property {string} src
-	 * @property {import('./VideoEmbed').SupportedPlatforms} platform
+	 * @property {string | undefined} src
+	 * @property {import('./VideoEmbed').SupportedPlatforms | undefined} platform
 	 * @property {import('lexical').NodeKey} nodeKey
-	 * @property {'inherit' | number} height
-	 * @property {'inherit' | number} width
+	 * @property {'inherit' | number | undefined} height
+	 * @property {'inherit' | number | undefined} width
 	 * @property {string | undefined} altText
 	 * @property {import('$lib/s3/limits.js').MimetypeType | undefined} fileType
 	 * @property {boolean} resizable
@@ -73,7 +73,7 @@
 	let isResizing = $state(false);
 
 	let isFocused = $derived($isSelected || isResizing);
-	let parsedSrc = $derived(getURLAndTitle(platform, src, DOMAIN));
+	let parsedSrc = $derived(getURLAndTitle(platform, src || '', DOMAIN));
 	let url = $derived(parsedSrc.url);
 	let title = $derived(altText || parsedSrc.title);
 	let thumbnail = $derived(parsedSrc.thumbnail);
@@ -253,7 +253,7 @@
 						{width}
 						{height}
 						style={getIframeStyle(width, height, fileType)}
-						loading="lazy"
+						{...{ loading: 'lazy' }}
 						{title}
 					>
 						<source
@@ -289,7 +289,7 @@
 				<iframe
 					class="pointer-events-none"
 					srcdoc={!url
-						? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform.toUpperCase()} embed.</strong></p>`
+						? `<p style="color:#fff;"><strong>No valid URL is provided for this ${platform?.toUpperCase()} embed.</strong></p>`
 						: undefined}
 					{width}
 					{height}

@@ -10,17 +10,21 @@
 	import EditLink from './EditLink.svelte';
 
 	/**
+	 * @typedef {import('$lib/lexical/custom').ALinkNode} ALinkNode
+	 */
+
+	/**
 	 * @type {{ selectedNode: LexicalNode | null }}
 	 */
 	let { selectedNode = null } = $props();
 
-	/** @type {import('$lib/lexical/custom').ALinkNode | undefined} */
+	/** @type {ALinkNode | undefined} */
 	let selectedLink = $state();
 
 	const editor = $derived(getEditor());
 
 	/**
-	 * @param {import('$lib/lexical/custom').ALinkNode} linkNode
+	 * @param {ALinkNode} linkNode
 	 */
 	const onClickUnlink = (linkNode) => {
 		editor.update(() => {
@@ -67,9 +71,7 @@
 				return;
 			}
 
-			const closestALinkNode = /** @type {import('$lib/lexical/custom').ALinkNode} */ (
-				parents[closestALinkNodeIndex]
-			);
+			const closestALinkNode = /** @type {ALinkNode} */ (parents[closestALinkNodeIndex]);
 
 			selectedLink = closestALinkNode;
 		});
@@ -82,12 +84,13 @@
 </script>
 
 {#if selectedLink && isALinkNode(selectedLink)}
+	{@const node = selectedLink}
 	<Wrapper>
 		{#snippet title()}
 			<Title selectedNode={selectedLink} text="Link">
 				<Button
 					class="m-0! rounded-none! p-0! hover:bg-violet-500!"
-					onclick={() => onClickUnlink(selectedLink)}
+					onclick={() => onClickUnlink(node)}
 					title="Unlink"
 				>
 					<UnlinkIcon />
@@ -97,7 +100,7 @@
 
 		{#snippet content()}
 			<div class="p-2">
-				<EditLink selectedNode={selectedLink} />
+				<EditLink selectedNode={node} />
 			</div>
 		{/snippet}
 	</Wrapper>
