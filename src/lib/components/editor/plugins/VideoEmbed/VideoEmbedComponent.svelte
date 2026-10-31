@@ -229,9 +229,12 @@
 	>
 		{#if platform === 'usercontent'}
 			{#if error}
-				<div class="pointer-events-none" style={getIframeStyle(width, height, fileType)}></div>
+				<div
+					class="pointer-events-none"
+					style="{getIframeStyle(width, height, fileType)}width:{width}px;height:{height}px"
+				></div>
 				<div class="pointer-events-none absolute top-0 flex flex-col gap-2 p-2">
-					<p class="text-lg whitespace-break-spaces text-white">
+					<p class="text-lg whitespace-break-spaces text-white" style="">
 						Something went wrong loading this {fileType || 'content'}.
 					</p>
 					<p class="whitespace-break-spaces text-white">
