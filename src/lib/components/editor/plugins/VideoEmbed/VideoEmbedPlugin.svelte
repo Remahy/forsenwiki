@@ -112,8 +112,7 @@
 							continue;
 						}
 
-						/** @type {VideoEmbedNode | null} */
-						const node = getNodeByKey(key);
+						const node = /** @type {VideoEmbedNode | null} */ (getNodeByKey(key));
 						if (!node) {
 							console.warn(
 								'Could not find mutated VideoEmbedNode node by key',

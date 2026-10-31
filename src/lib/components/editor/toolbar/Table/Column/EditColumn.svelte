@@ -21,8 +21,8 @@
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {import('$lib/lexical/custom').ATableNode} selectedTable
-	 * @property {import('$lib/lexical/custom').ATableCellNode} selectedCell
+	 * @property {import('@lexical/table').TableNode} selectedTable
+	 * @property {import('@lexical/table').TableCellNode} selectedCell
 	 */
 
 	/** @type {Props} */
@@ -55,8 +55,9 @@
 
 			const tableColumnIndex = getTableColumnIndexFromTableCellNode(selectedCell);
 
-			/** @type {import('@lexical/table').TableRowNode[]} */
-			const tableRows = tableNode.getChildren();
+			const tableRows = /** @type {import('@lexical/table').TableRowNode[]} */ (
+				tableNode.getChildren()
+			);
 			const maxRowsLength = Math.max(...tableRows.map((row) => row.getChildren().length));
 
 			if (tableColumnIndex >= maxRowsLength || tableColumnIndex < 0) {

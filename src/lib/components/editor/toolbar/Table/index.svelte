@@ -12,10 +12,10 @@
 	 */
 	let { selectedNode = null } = $props();
 
-	/** @type {import('$lib/lexical/custom').ATableNode | null} */
+	/** @type {import('@lexical/table').TableNode | null} */
 	let selectedTable = $state(null);
 
-	/** @type {import('$lib/lexical/custom').ATableCellNode | null} */
+	/** @type {import('@lexical/table').TableCellNode | null} */
 	let selectedCell = $state(null);
 
 	const editor = getEditor();
@@ -57,9 +57,7 @@
 			const selection = getSelection();
 
 			if (isRangeSelection(selection)) {
-				selectedCell = /** @type {import('$lib/lexical/custom').ATableCellNode} */ (
-					parents[cellIndex]
-				);
+				selectedCell = /** @type {import('@lexical/table').TableCellNode} */ (parents[cellIndex]);
 			} else {
 				selectedCell = null;
 			}
