@@ -61,7 +61,7 @@
 	const INSERT_AFTER = false;
 
 	const insertParagraph = (atBefore = INSERT_BEFORE) => {
-		return editor.read(() => {
+		return editor.read('pending', () => {
 			const selection = getSelection();
 			if (!selection?.isCollapsed()) {
 				return false;

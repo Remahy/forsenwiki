@@ -20,7 +20,7 @@
 
 	/**
 	 * @typedef Props
-	 * @property {import('$lib/lexical/custom').ATableNode} selectedTable
+	 * @property {import('@lexical/table').TableNode} selectedTable
 	 * @property {import('@lexical/table').TableRowNode} selectedNode
 	 */
 

@@ -371,8 +371,7 @@
 							continue;
 						}
 
-						/** @type {ImageNode | null} */
-						const node = getNodeByKey(key);
+						const node = /** @type {ImageNode | null} */ (getNodeByKey(key));
 						if (!node) {
 							console.warn('Could not find mutated image node by key', key, 'that was', mutation);
 							continue;

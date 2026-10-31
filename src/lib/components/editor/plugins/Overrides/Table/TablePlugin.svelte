@@ -113,13 +113,12 @@
 	let composer = $derived($c);
 	let editor = $derived(composer?.getEditor?.() as LexicalEditor);
 	const hasNestedTables = signal(true);
-	const hasFitNestedTables = signal(true);
 
 	const INSERT_BEFORE = true;
 	const INSERT_AFTER = false;
 
 	const insertParagraph = (atBefore = INSERT_BEFORE) => {
-		return editor.read(() => {
+		return editor.read('pending', () => {
 			const selection = getSelection();
 			if (!selection?.isCollapsed()) {
 				return false;
@@ -191,7 +190,7 @@
 
 			const editor = composer.getEditor();
 
-			registerTablePlugin(editor, { hasNestedTables, hasFitNestedTables });
+			registerTablePlugin(editor, { hasNestedTables });
 			registerTableSelectionObserver(editor, hasTabHandler);
 			setScrollableTablesActive(editor, hasHorizontalScroll);
 

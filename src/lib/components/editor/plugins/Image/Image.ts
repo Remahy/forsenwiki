@@ -10,12 +10,13 @@ import type {
 	Spread,
 } from 'lexical';
 
-import { $applyNodeReplacement, DecoratorNode } from 'lexical';
+import { $applyNodeReplacement, $getNodeByKey, DecoratorNode } from 'lexical';
 import type { ComponentProps } from 'svelte';
 
 import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 
+import { $isGalleryNode } from '../Gallery/Gallery';
 import ImageComponent from './ImageComponent.svelte';
 
 export interface ImagePayload {
@@ -226,6 +227,13 @@ export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
 				props.editor = editor;
 			},
 		};
+	}
+
+	// Since Lexical 0.46 inline children of shadow roots get wrapped in a paragraph, which
+	// GalleryPlugin unwraps again, so transforms would loop forever on galleries with images.
+	// Looked up by key since the reconciler may call this on a node removed in the same update.
+	isInline() {
+		return !$isGalleryNode($getNodeByKey(this.getKey())?.getParent());
 	}
 
 	getTextContent() {

@@ -4,8 +4,8 @@
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {import('$lib/lexical/custom').ATableNode} selectedTable
-	 * @property {import('$lib/lexical/custom').ATableCellNode} selectedNode
+	 * @property {import('@lexical/table').TableNode} selectedTable
+	 * @property {import('@lexical/table').TableCellNode} selectedNode
 	 */
 
 	/** @type {Props} */

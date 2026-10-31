@@ -18,7 +18,7 @@
 
 		{#snippet content()}
 			<div class="p-2">
-				<EditImage selectedNode={selectedNode} />
+				<EditImage {selectedNode} />
 			</div>
 		{/snippet}
 	</Wrapper>

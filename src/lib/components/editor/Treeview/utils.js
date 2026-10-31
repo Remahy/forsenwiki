@@ -147,10 +147,52 @@ export const expandParents = (tree, item) => {
 
 	for (let index = 0; index < parentKeys.length; index++) {
 		const key = parentKeys[index];
-		tree.getItemInstance(key).expand();
+		const parent = tree.getItemInstance(key);
+
+		// expand() always rebuilds the tree, even if the item is already expanded.
+		if (!parent.isExpanded()) {
+			parent.expand();
+		}
 	}
 
-	item.expand();
+	if (!item.isExpanded()) {
+		item.expand();
+	}
+};
+
+/**
+ * Checks whether nodes were added, removed or moved. Unchanged nodes are shared
+ * between editor states, so only nodes that were actually edited get compared.
+ *
+ * @param {import('lexical').EditorState} prevEditorState
+ * @param {import('lexical').EditorState} editorState
+ */
+export const hasTreeStructureChanged = (prevEditorState, editorState) => {
+	const prevNodeMap = prevEditorState._nodeMap;
+	const nodeMap = editorState._nodeMap;
+
+	if (prevNodeMap.size !== nodeMap.size) {
+		return true;
+	}
+
+	for (const [key, node] of nodeMap) {
+		const prevNode = prevNodeMap.get(key);
+
+		if (prevNode === node) {
+			continue;
+		}
+
+		if (
+			!prevNode ||
+			prevNode.__parent !== node.__parent ||
+			prevNode.__prev !== node.__prev ||
+			prevNode.__next !== node.__next
+		) {
+			return true;
+		}
+	}
+
+	return false;
 };
 
 /**

@@ -24,7 +24,7 @@
 	 * @param {LexicalEditor} editor
 	 */
 	const selectionOverride = (editor, before = false) => {
-		return editor.read(() => {
+		return editor.read('pending', () => {
 			const siblingFn = before ? 'getPreviousSibling' : 'getNextSibling';
 			const selectionFn = before ? 'selectEnd' : 'selectStart';
 

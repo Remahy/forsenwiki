@@ -67,7 +67,7 @@ export const editableTheme = {
 		bold: 'font-semibold',
 		italic: 'italic',
 	},
-	link: 'pointer-events-none'
+	link: 'pointer-events-none',
 };
 
 export const htmlExport = new Map([
