@@ -416,7 +416,7 @@ function generateCDNSrc(node: VideoEmbedNode, staticURL: string) {
 			track.setAttribute('label', `${subtitle.title} (${languageLabel})`);
 
 			if (index === 0) {
-				track.setAttribute('default', '')
+				track.setAttribute('default', '');
 				track.default = true;
 			}
 
