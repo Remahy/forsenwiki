@@ -7,7 +7,7 @@ import workerPath from './worker?modulePath';
 
 /**
  * @param {{ config: 'article' | 'diff', update: string } | { config: 'article' | 'diff', content: string }} workerData
- * @returns {Promise<{ html: string, text: string, image?: string }>}
+ * @returns {Promise<{ html: string, text: string, image?: string, images: string[] }>}
  */
 export default async function toHTML(workerData) {
 	if (dev) {
@@ -39,7 +39,7 @@ export default async function toHTML(workerData) {
 		w.once(
 			'message',
 			(
-				/** @type {{ html: string, text: string, image?: string, error: null } | { error: string }} */ msg
+				/** @type {{ html: string, text: string, image?: string, images: string[], error: null } | { error: string }} */ msg
 			) => {
 				settle(() => (msg.error === null ? resolve(msg) : reject(new Error(msg.error))));
 			}

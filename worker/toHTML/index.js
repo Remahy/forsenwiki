@@ -19,11 +19,14 @@ const $$getTextInEditor = () => {
 	return $getRoot().getTextContent().trim().replace(/\n+/gm, '\n');
 };
 
-const $$getFirstImage = () => {
+const $$getImages = () => {
 	const images = $nodesOfType(ImageNode);
-	const firstImage = /** @type {ImageNode | null} */ (images?.[0]);
 
-	return firstImage?.getSrc() || '';
+	if (!images.length) {
+		return [];
+	}
+
+	return images.map((n) => n.getSrc());
 };
 
 const addTwitchThumbnails = async (html) => {
@@ -81,22 +84,24 @@ export const toHTMLWorker = async ({ config, content, update }) => {
 		migrations(editor);
 	}
 
-	const { html, text, image } = editor.read(() => {
+	const { html, text, images } = editor.read(() => {
 		const text = $$getTextInEditor().replace(/\n/g, ' ');
-		const image = $$getFirstImage();
+		const images = $$getImages().slice(0, 3);
 		const htmlString = $generateHtmlFromNodes(editor, null);
 
 		/**
-		 * @type {{ html: string, text: string, image?: string }}
+		 * @type {{ html: string, text: string, images: string[] }}
 		 */
-		const response = { html: htmlString, text, image };
+		const response = { html: htmlString, text, images };
 
 		return response;
 	});
 
 	let replacedHTMLString = await addTwitchThumbnails(html);
 
-	return { html: replacedHTMLString, text, image };
+	const image = images[0];
+
+	return { html: replacedHTMLString, text, image, images };
 };
 
 if (!isMainThread && parentPort && workerData) {
