@@ -57,7 +57,8 @@ export class DeprecatedVideoEmbedNode extends FallbackNode {
 	 */
 	static importJSON(serializedNode) {
 		const node = $createFallbackNode().updateFromJSON(serializedNode);
-		node.__type = DeprecatedVideoEmbedNode.getType();
+		// __type is readonly since Lexical 0.49.
+		/** @type {any} */ (node).__type = DeprecatedVideoEmbedNode.getType();
 		return node;
 	}
 
