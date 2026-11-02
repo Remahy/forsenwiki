@@ -51,6 +51,13 @@
 		editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
 	};
 
+	/** Keeps the editor focused.
+	 * @param {MouseEvent} event
+	 */
+	const preventDefault = (event) => {
+		event.preventDefault();
+	};
+
 	onMount(() => {
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
@@ -62,17 +69,28 @@
 
 <EditLinkButton />
 
-<EditorButton title="Bold ({ctrlKey} B)" on:click={bold} isActive={isBold}>
+<EditorButton
+	title="Bold ({ctrlKey} B)"
+	on:click={bold}
+	onmousedown={preventDefault}
+	isActive={isBold}
+>
 	<BoldIcon size="16" />
 </EditorButton>
 
-<EditorButton title="Italic ({ctrlKey} I)" on:click={italic} isActive={isItalic}>
+<EditorButton
+	title="Italic ({ctrlKey} I)"
+	on:click={italic}
+	onmousedown={preventDefault}
+	isActive={isItalic}
+>
 	<ItalicIcon size="16" />
 </EditorButton>
 
 <EditorButton
 	title="Superscript ({ctrlKey} Shift + Equals)"
 	on:click={superscript}
+	onmousedown={preventDefault}
 	isActive={isSuperscript}
 >
 	<SuperscriptIcon size="16" />
@@ -81,6 +99,7 @@
 <EditorButton
 	title="Subscript ({ctrlKey} Shift + Minus)"
 	on:click={subscript}
+	onmousedown={preventDefault}
 	isActive={isSubscript}
 >
 	<SubscriptIcon size="16" />
