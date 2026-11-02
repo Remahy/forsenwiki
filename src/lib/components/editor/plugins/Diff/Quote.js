@@ -61,10 +61,6 @@ export class DiffQuoteNode extends QuoteNode {
 		return dom;
 	}
 
-	static importDOM() {
-		return QuoteNode.importDOM();
-	}
-
 	exportJSON() {
 		return { ...super.exportJSON(), ___change: this.___change, type: DiffQuoteNode.getType() };
 	}

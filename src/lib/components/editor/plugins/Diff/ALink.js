@@ -77,10 +77,6 @@ export class DiffALinkNode extends ALinkNode {
 		return dom;
 	}
 
-	static importDOM() {
-		return ALinkNode.importDOM();
-	}
-
 	exportJSON() {
 		return { ...super.exportJSON(), ___change: this.___change, type: DiffALinkNode.getType() };
 	}

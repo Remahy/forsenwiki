@@ -61,10 +61,6 @@ export class DiffParagraphNode extends ParagraphNode {
 		return dom;
 	}
 
-	static importDOM() {
-		return ParagraphNode.importDOM();
-	}
-
 	exportJSON() {
 		return { ...super.exportJSON(), ___change: this.___change, type: DiffParagraphNode.getType() };
 	}

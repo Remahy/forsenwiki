@@ -60,10 +60,6 @@ export class DiffTableRowNode extends TableRowNode {
 		return dom;
 	}
 
-	static importDOM() {
-		return TableRowNode.importDOM();
-	}
-
 	exportJSON() {
 		return { ...super.exportJSON(), ___change: this.___change, type: DiffTableRowNode.getType() };
 	}
