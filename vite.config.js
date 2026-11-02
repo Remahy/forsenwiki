@@ -1,5 +1,5 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import path from 'path';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -57,5 +57,10 @@ export default defineConfig({
 				'./node_modules/@lexical/extension/dist/LexicalExtension.mjs'
 			),
 		},
+	},
+	test: {
+		include: ['src/**/*.test.ts'],
+		// Same DOM the toHTML worker uses.
+		setupFiles: ['linkedom-global'],
 	},
 });

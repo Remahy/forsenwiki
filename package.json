@@ -15,6 +15,7 @@
 		"generate-tpl": "node generateLicenses.js",
 		"lint": "prettier --check . && eslint .",
 		"preview": "vite preview",
+		"test": "vitest run",
 		"prisma:generate": "prisma generate",
 		"prisma:migrate-deploy": "prisma migrate deploy",
 		"prisma:migrate-dev": "prisma migrate dev",
@@ -160,7 +161,8 @@
 		"svelte-check": "4.7.3",
 		"tailwindcss": "4.3.3",
 		"typescript": "6.0.3",
-		"vite": "8.1.5"
+		"vite": "8.1.5",
+		"vitest": "5.0.5"
 	},
 	"allowScripts": {
 		"core-js@3.29.1": true,
