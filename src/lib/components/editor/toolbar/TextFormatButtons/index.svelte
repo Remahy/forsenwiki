@@ -10,6 +10,7 @@
 	import { getEditor } from 'svelte-lexical';
 
 	import { ctrlKey, shiftKey } from '$lib/environment/environment';
+	import { keepEditorFocus } from '$lib/components/editor/utils/keepEditorFocus';
 	import EditorButton from '../EditorButton.svelte';
 	import EditLinkButton from './EditLinkButton.svelte';
 
@@ -51,13 +52,6 @@
 		editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
 	};
 
-	/** Keeps the editor focused.
-	 * @param {MouseEvent} event
-	 */
-	const preventDefault = (event) => {
-		event.preventDefault();
-	};
-
 	onMount(() => {
 		return mergeRegister(
 			editor.registerUpdateListener(() => {
@@ -72,7 +66,7 @@
 <EditorButton
 	title="Bold ({ctrlKey}B)"
 	on:click={bold}
-	onmousedown={preventDefault}
+	onmousedown={keepEditorFocus}
 	isActive={isBold}
 >
 	<BoldIcon size="16" />
@@ -81,7 +75,7 @@
 <EditorButton
 	title="Italic ({ctrlKey}I)"
 	on:click={italic}
-	onmousedown={preventDefault}
+	onmousedown={keepEditorFocus}
 	isActive={isItalic}
 >
 	<ItalicIcon size="16" />
@@ -90,7 +84,7 @@
 <EditorButton
 	title="Superscript ({ctrlKey}{shiftKey}=)"
 	on:click={superscript}
-	onmousedown={preventDefault}
+	onmousedown={keepEditorFocus}
 	isActive={isSuperscript}
 >
 	<SuperscriptIcon size="16" />
@@ -99,7 +93,7 @@
 <EditorButton
 	title="Subscript ({ctrlKey}{shiftKey}-)"
 	on:click={subscript}
-	onmousedown={preventDefault}
+	onmousedown={keepEditorFocus}
 	isActive={isSubscript}
 >
 	<SubscriptIcon size="16" />
