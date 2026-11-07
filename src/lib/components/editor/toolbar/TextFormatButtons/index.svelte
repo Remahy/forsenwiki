@@ -9,7 +9,7 @@
 	} from 'lexical';
 	import { getEditor } from 'svelte-lexical';
 
-	import { ctrlKey } from '$lib/environment/environment';
+	import { ctrlKey, shiftKey } from '$lib/environment/environment';
 	import EditorButton from '../EditorButton.svelte';
 	import EditLinkButton from './EditLinkButton.svelte';
 
@@ -70,7 +70,7 @@
 <EditLinkButton />
 
 <EditorButton
-	title="Bold ({ctrlKey} B)"
+	title="Bold ({ctrlKey}B)"
 	on:click={bold}
 	onmousedown={preventDefault}
 	isActive={isBold}
@@ -79,7 +79,7 @@
 </EditorButton>
 
 <EditorButton
-	title="Italic ({ctrlKey} I)"
+	title="Italic ({ctrlKey}I)"
 	on:click={italic}
 	onmousedown={preventDefault}
 	isActive={isItalic}
@@ -88,7 +88,7 @@
 </EditorButton>
 
 <EditorButton
-	title="Superscript ({ctrlKey} Shift + Equals)"
+	title="Superscript ({ctrlKey}{shiftKey}=)"
 	on:click={superscript}
 	onmousedown={preventDefault}
 	isActive={isSuperscript}
@@ -97,7 +97,7 @@
 </EditorButton>
 
 <EditorButton
-	title="Subscript ({ctrlKey} Shift + Minus)"
+	title="Subscript ({ctrlKey}{shiftKey}-)"
 	on:click={subscript}
 	onmousedown={preventDefault}
 	isActive={isSubscript}
