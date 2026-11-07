@@ -2,7 +2,7 @@
 	// Based on umaranis' svelte-lexical
 	import './EditorTable.css';
 
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 	import {
 		$createParagraphNode as createParagraphNode,
 		$isTextNode as isTextNode,
@@ -182,65 +182,66 @@
 		});
 	};
 
-	onMount(() => {
-		c.subscribe((composer) => {
-			if (composer === null) {
-				return;
-			}
+	$effect(() => {
+		if (!editor) {
+			return;
+		}
 
-			const editor = composer.getEditor();
+		setScrollableTablesActive(editor, hasHorizontalScroll);
 
-			registerTablePlugin(editor, { hasNestedTables });
-			registerTableSelectionObserver(editor, hasTabHandler);
-			setScrollableTablesActive(editor, hasHorizontalScroll);
+		const unregisters = [
+			registerTablePlugin(editor, { hasNestedTables }),
+			registerTableSelectionObserver(editor, hasTabHandler),
 
-			// Unmerge cells when the feature isn't enabled
-			if (!hasCellMerge) {
-				registerTableCellUnmergeTransform(editor);
-			}
+			editor.registerCommand(
+				INSERT_TABLE_COMMAND,
+				({ columns, rows, includeHeaders }) => {
+					wrapperInsertTable({ columns, rows, includeHeaders });
 
-			// Remove cell background color when feature is disabled
-			if (!hasCellBackgroundColor) {
+					return true;
+				},
+				COMMAND_PRIORITY_NORMAL
+			),
+			editor.registerCommand(
+				KEY_ARROW_LEFT_COMMAND,
+				(payload) => {
+					if (payload.ctrlKey) {
+						return false;
+					}
+
+					return insertParagraph(INSERT_BEFORE);
+				},
+				COMMAND_PRIORITY_CRITICAL
+			),
+			editor.registerCommand(
+				KEY_ARROW_RIGHT_COMMAND,
+				(payload) => {
+					if (payload.ctrlKey) {
+						return false;
+					}
+
+					return insertParagraph(INSERT_AFTER);
+				},
+				COMMAND_PRIORITY_CRITICAL
+			),
+		];
+
+		// Unmerge cells when the feature isn't enabled
+		if (!hasCellMerge) {
+			unregisters.push(registerTableCellUnmergeTransform(editor));
+		}
+
+		// Remove cell background color when feature is disabled
+		if (!hasCellBackgroundColor) {
+			unregisters.push(
 				editor.registerNodeTransform(TableCellNode, (node) => {
 					if (node.getBackgroundColor() !== null) {
 						node.setBackgroundColor(null);
 					}
-				});
-			}
-
-			return mergeRegister(
-				editor.registerCommand(
-					INSERT_TABLE_COMMAND,
-					({ columns, rows, includeHeaders }) => {
-						wrapperInsertTable({ columns, rows, includeHeaders });
-
-						return true;
-					},
-					COMMAND_PRIORITY_NORMAL
-				),
-				editor.registerCommand(
-					KEY_ARROW_LEFT_COMMAND,
-					(payload) => {
-						if (payload.ctrlKey) {
-							return false;
-						}
-
-						return insertParagraph(INSERT_BEFORE);
-					},
-					COMMAND_PRIORITY_CRITICAL
-				),
-				editor.registerCommand(
-					KEY_ARROW_RIGHT_COMMAND,
-					(payload) => {
-						if (payload.ctrlKey) {
-							return false;
-						}
-
-						return insertParagraph(INSERT_AFTER);
-					},
-					COMMAND_PRIORITY_CRITICAL
-				)
+				})
 			);
-		});
+		}
+
+		return mergeRegister(...unregisters);
 	});
 </script>
