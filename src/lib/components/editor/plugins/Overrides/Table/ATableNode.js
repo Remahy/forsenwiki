@@ -9,33 +9,8 @@ import { TableNode } from '$lib/lexical/index';
  */
 
 export class ATableNode extends TableNode {
-	/**
-	 * @param {NodeKey} [key]
-	 */
-	constructor(key) {
-		super(key);
-	}
-
 	$config() {
 		return this.config('a-table', { extends: TableNode });
-	}
-
-	static getType() {
-		return 'a-table';
-	}
-
-	/**
-	 * @param {ATableNode} node
-	 */
-	static clone(node) {
-		return new ATableNode(node.__key);
-	}
-
-	/** @param {import('@lexical/table').SerializedTableNode} serializedNode */
-	static importJSON(serializedNode) {
-		const node = $createATableNode().updateFromJSON(serializedNode);
-
-		return node;
 	}
 
 	/**
@@ -87,13 +62,6 @@ export class ATableNode extends TableNode {
 		wrapper.append(wrapper2);
 
 		return wrapper;
-	}
-
-	exportJSON() {
-		return {
-			...super.exportJSON(),
-			type: ATableNode.getType(),
-		};
 	}
 }
 

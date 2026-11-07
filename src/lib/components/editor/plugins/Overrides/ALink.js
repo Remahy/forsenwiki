@@ -18,13 +18,14 @@ export class ALinkNode extends LinkNode {
 	__internalId = undefined;
 
 	/**
+	 * Every argument has a default, so $config can create getType, clone and importJSON.
 	 * @param {string} [url]
 	 * @param {LinkAttributes} [attrs]
 	 * @param {boolean} [internal]
 	 * @param {string} [internalId]
 	 * @param {string} [key]
 	 */
-	constructor(url, attrs, internal = false, internalId, key) {
+	constructor(url = '', attrs = {}, internal = false, internalId = undefined, key = undefined) {
 		super(url, { ...attrs, target: internal ? attrs?.target : '_blank' }, key);
 
 		this.__isInternal = internal;
@@ -35,31 +36,23 @@ export class ALinkNode extends LinkNode {
 		return this.config('a-link', { extends: LinkNode });
 	}
 
-	static getType() {
-		return 'a-link';
+	/** @param {this} prevNode */
+	afterCloneFrom(prevNode) {
+		super.afterCloneFrom(prevNode);
+
+		this.__isInternal = prevNode.__isInternal;
+		this.__internalId = prevNode.__internalId;
 	}
 
-	/**
-	 * @param {ALinkNode} node
-	 */
-	static clone(node) {
-		return new ALinkNode(
-			node.__url,
-			{ rel: node.__rel, target: node.__target, title: node.__title },
-			node.__isInternal,
-			node.__internalId,
-			node.__key
+	/** @param {import('lexical').LexicalUpdateJSON<import('@lexical/link').SerializedLinkNode & { __isInternal?: boolean, __internalId?: string }>} serializedNode */
+	updateFromJSON(serializedNode) {
+		return (
+			super
+				.updateFromJSON(serializedNode)
+				// Missing in links saved before it existed.
+				.setIsInternal(serializedNode.__isInternal ?? false)
+				.setInternalId(serializedNode.__internalId)
 		);
-	}
-
-	/** @param {import('@lexical/link').SerializedLinkNode & { __isInternal: boolean, __internalId?: string }} serializedNode */
-	static importJSON(serializedNode) {
-		const node = $createALinkNode()
-			.updateFromJSON(serializedNode)
-			.setIsInternal(serializedNode.__isInternal)
-			.setInternalId(serializedNode.__internalId);
-
-		return node;
 	}
 
 	// Getters
@@ -103,7 +96,6 @@ export class ALinkNode extends LinkNode {
 			...super.exportJSON(),
 			__isInternal: this.__isInternal,
 			__internalId: this.__internalId,
-			type: ALinkNode.getType(),
 		};
 	}
 

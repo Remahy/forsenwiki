@@ -66,32 +66,31 @@ export class FloatBlockNode extends ElementNode {
 		this.__hasBorder = hasBorder;
 	}
 
-	static getType() {
-		return 'float-block';
-	}
-
 	$config() {
 		return this.config('float-block', { extends: ElementNode });
 	}
 
-	/**
-	 * @param {FloatBlockNode} node
-	 */
-	static clone(node) {
-		return new FloatBlockNode(
-			node.__float,
-			node.__width,
-			node.__height,
-			node.__hasBorder,
-			node.__key
-		);
+	/** @param {this} prevNode */
+	afterCloneFrom(prevNode) {
+		super.afterCloneFrom(prevNode);
+
+		this.__float = prevNode.__float;
+		this.__width = prevNode.__width;
+		this.__height = prevNode.__height;
+		this.__hasBorder = prevNode.__hasBorder;
 	}
 
-	/** @param {SerializedFloatBlockNode} serializedNode */
-	static importJSON(serializedNode) {
-		const node = $createFloatBlockNode(serializedNode).updateFromJSON(serializedNode);
+	/** @param {import('lexical').LexicalUpdateJSON<SerializedFloatBlockNode>} serializedNode */
+	updateFromJSON(serializedNode) {
+		const self = super.updateFromJSON(serializedNode).getWritable();
 
-		return node;
+		// Raw values like the constructor, the setters would clamp and coerce them.
+		self.__float = serializedNode.float ?? 'none';
+		self.__width = serializedNode.width;
+		self.__height = serializedNode.height;
+		self.__hasBorder = serializedNode.hasBorder;
+
+		return self;
 	}
 
 	/**
@@ -101,7 +100,6 @@ export class FloatBlockNode extends ElementNode {
 		return {
 			...super.exportJSON(),
 			float: this.getFloat(),
-			type: FloatBlockNode.getType(),
 			width: this.getWidth(),
 			height: this.getHeight(),
 			hasBorder: this.getHasBorder(),
