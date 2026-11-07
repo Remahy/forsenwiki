@@ -1,64 +1,36 @@
-import { Worker } from 'node:worker_threads';
-
 import { dev } from '$app/environment';
+
+import { createKeepAliveWorker } from '../keepAliveWorker';
 
 // @ts-ignore
 import workerPath from './worker?modulePath';
 
-/** @type {string?} */
-let initialUpdateString = null;
+// The result is cached below, so the worker only runs once and can stop right away.
+/** @type {(data: {}) => Promise<string>} */
+const run = createKeepAliveWorker(workerPath, { name: 'initialUpdate', idleTimeout: 0 });
+
+/** @type {Promise<string>?} */
+let initialUpdatePromise = null;
 
 /**
  * @returns {Promise<string>}
  */
-export default async function initialUpdate() {
-	if (initialUpdateString) {
-		return initialUpdateString;
-	}
+export default function initialUpdate() {
+	// Cache the promise, so concurrent first calls share one worker.
+	initialUpdatePromise ??= (async () => {
+		if (dev) {
+			const { initialUpdateWorker } = await import('./worker');
 
-	if (dev) {
-		const { initialUpdateWorker } = await import('./worker');
+			return initialUpdateWorker();
+		}
 
-		/** @type {string} */
-		const m = initialUpdateWorker();
+		return run({});
+	})();
 
-		initialUpdateString = m;
-
-		return initialUpdateString;
-	}
-
-	return new Promise((resolve, reject) => {
-		const w = new Worker(workerPath, { workerData: {} });
-		let settled = false;
-
-		/** @param {() => void} fn */
-		const settle = (fn) => {
-			if (settled) {
-				return;
-			}
-
-			settled = true;
-
-			fn();
-
-			w.terminate();
-		};
-
-		w.once('message', (/** @type {{ update: string, error: null } | { error: string }} */ msg) => {
-			settle(() => {
-				if (msg.error === null) {
-					initialUpdateString = msg.update;
-					return resolve(msg.update);
-				}
-
-				reject(new Error(msg.error));
-			});
-		});
-
-		w.once('error', (err) => settle(() => reject(err)));
-
-		w.once('exit', (code) => {
-			settle(() => reject(new Error(`initialUpdateWorker exited (code ${code}) without a result`)));
-		});
+	// Retry next time if it failed.
+	initialUpdatePromise.catch(() => {
+		initialUpdatePromise = null;
 	});
+
+	return initialUpdatePromise;
 }

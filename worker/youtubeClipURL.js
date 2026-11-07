@@ -1,6 +1,6 @@
 import './registerDOM.js';
 
-import { workerData, parentPort, isMainThread } from 'node:worker_threads';
+import { handleJobs } from './handleJobs.js';
 
 const headers = new Headers();
 headers.set('User-Agent', 'facebookexternalhit/1.1');
@@ -15,7 +15,8 @@ export const youtubeClipURLWorker = async ({ url }) => {
 		return url;
 	}
 
-	const text = await (await fetch(url, { headers })).text();
+	// Fail this request on its own, the worker's timeout would stop every job in it.
+	const text = await (await fetch(url, { headers, signal: AbortSignal.timeout(10_000) })).text();
 
 	const html = new DOMParser().parseFromString(text, 'text/html');
 
@@ -30,9 +31,4 @@ export const youtubeClipURLWorker = async ({ url }) => {
 	return metaVideoURLTag?.content || url;
 };
 
-if (!isMainThread && parentPort && workerData) {
-	youtubeClipURLWorker(workerData).then(
-		(url) => parentPort.postMessage({ url, error: null }),
-		(err) => parentPort.postMessage({ error: String(err?.message ?? err) })
-	);
-}
+handleJobs(youtubeClipURLWorker);

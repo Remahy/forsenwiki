@@ -1,13 +1,21 @@
-import { Worker } from 'node:worker_threads';
-
 import { dev } from '$app/environment';
+
+import { createKeepAliveWorker } from '../keepAliveWorker';
 
 // @ts-ignore
 import workerPath from './worker?modulePath';
 
 /**
- * @param {{ config: 'article' | 'diff', update: string } | { config: 'article' | 'diff', content: string }} workerData
- * @returns {Promise<{ html: string, text: string, image?: string }>}
+ * @typedef {{ html: string, text: string, image?: string }} ToHTMLResult
+ * @typedef {{ config: 'article' | 'diff', update: string } | { config: 'article' | 'diff', content: string }} ToHTMLData
+ */
+
+/** @type {(data: ToHTMLData) => Promise<ToHTMLResult>} */
+const run = createKeepAliveWorker(workerPath, { name: 'toHTML' });
+
+/**
+ * @param {ToHTMLData} workerData
+ * @returns {Promise<ToHTMLResult>}
  */
 export default async function toHTML(workerData) {
 	if (dev) {
@@ -19,36 +27,5 @@ export default async function toHTML(workerData) {
 		return data;
 	}
 
-	return new Promise((resolve, reject) => {
-		const w = new Worker(workerPath, { workerData });
-		let settled = false;
-
-		/** @param {() => void} fn */
-		const settle = (fn) => {
-			if (settled) {
-				return;
-			}
-
-			settled = true;
-
-			fn();
-
-			w.terminate();
-		};
-
-		w.once(
-			'message',
-			(
-				/** @type {{ html: string, text: string, image?: string, error: null } | { error: string }} */ msg
-			) => {
-				settle(() => (msg.error === null ? resolve(msg) : reject(new Error(msg.error))));
-			}
-		);
-
-		w.once('error', (err) => settle(() => reject(err)));
-
-		w.once('exit', (code) => {
-			settle(() => reject(new Error(`toHTML exited (code ${code}) without a result`)));
-		});
-	});
+	return run(workerData);
 }

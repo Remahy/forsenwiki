@@ -1,4 +1,4 @@
-import { workerData, parentPort, isMainThread } from 'node:worker_threads';
+import { handleJobs } from './handleJobs.js';
 
 import { $createTextNode, $getRoot, $createParagraphNode } from 'lexical';
 
@@ -48,10 +48,4 @@ export const initialUpdateWorker = () => {
 	});
 };
 
-if (!isMainThread && parentPort && workerData) {
-	try {
-		parentPort.postMessage({ update: initialUpdateWorker(), error: null });
-	} catch (err) {
-		parentPort.postMessage({ error: String(err?.message ?? err) });
-	}
-}
+handleJobs(initialUpdateWorker);

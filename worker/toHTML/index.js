@@ -1,6 +1,6 @@
 import '../registerDOM.js';
 
-import { workerData, parentPort, isMainThread } from 'node:worker_threads';
+import { handleJobs } from '../handleJobs.js';
 
 import { $getRoot, $nodesOfType } from 'lexical';
 import { $generateHtmlFromNodes } from '@lexical/html';
@@ -103,9 +103,4 @@ export const toHTMLWorker = async ({ config, content, update }) => {
 	return { html: replacedHTMLString, text, image };
 };
 
-if (!isMainThread && parentPort && workerData) {
-	toHTMLWorker(workerData).then(
-		(data) => parentPort?.postMessage({ ...data, error: null }),
-		(err) => parentPort?.postMessage({ error: String(err?.message ?? err) })
-	);
-}
+handleJobs(toHTMLWorker);
