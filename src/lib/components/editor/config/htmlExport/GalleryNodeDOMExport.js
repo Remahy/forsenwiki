@@ -30,7 +30,8 @@ export default [
 				const emblaContainerDiv = document.createElement('div');
 				emblaContainerDiv.classList.add('embla__container');
 
-				const { children } = generatedElement;
+				// Copy, `children` is live and the loop below removes from it.
+				const children = [...generatedElement.children];
 
 				const galleryChildren = [];
 				for (let index = 0; index < children.length; index++) {
