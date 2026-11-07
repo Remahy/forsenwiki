@@ -5,6 +5,7 @@
 	import { UnlinkIcon } from '@lucide/svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { $isALinkNode as isALinkNode } from '$lib/lexical/custom';
+	import { focusEditor } from '$lib/components/editor/utils/focusEditor';
 	import Wrapper from '../components/Wrapper.svelte';
 	import Title from '../components/Title.svelte';
 	import EditLink from './EditLink.svelte';
@@ -27,6 +28,8 @@
 	 * @param {ALinkNode} linkNode
 	 */
 	const onClickUnlink = (linkNode) => {
+		focusEditor(editor);
+
 		editor.update(() => {
 			if (isALinkNode(linkNode)) {
 				const currentSelection = getSelection();

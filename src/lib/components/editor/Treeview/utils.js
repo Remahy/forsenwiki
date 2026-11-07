@@ -15,6 +15,7 @@ import {
 	$isVideoEmbedNode as isVideoEmbedNode,
 } from '$lib/lexical/custom';
 import { DOMAIN } from '$lib/environment/environment';
+import { focusEditor } from '../utils/focusEditor';
 import { getURLAndTitle } from '../plugins/VideoEmbed/VideoEmbed';
 
 /**
@@ -220,7 +221,7 @@ export const handleOnClickTreeNode = (state, editor, item) => {
 
 	updateItems(state);
 
-	editor._rootElement?.focus({ preventScroll: true });
+	focusEditor(editor);
 
 	editor.update(
 		() => {

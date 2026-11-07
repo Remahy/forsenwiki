@@ -12,6 +12,7 @@
 	import Select from '$lib/components/Select.svelte';
 	import { blockTypeLabels } from '$lib/constants/element';
 	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
+	import { focusEditor } from '$lib/components/editor/utils/focusEditor';
 
 	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
 	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';
@@ -123,6 +124,8 @@
 
 				return;
 			}
+
+			focusEditor(editor);
 
 			element.insertFunc();
 		}

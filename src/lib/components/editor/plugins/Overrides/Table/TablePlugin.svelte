@@ -40,6 +40,7 @@
 		insertFnc,
 		offsetIsAtEdges,
 	} from '$lib/components/editor/utils/insertUtils';
+	import { restoreEditorFocus } from '$lib/components/editor/utils/focusEditor';
 	import { $isATableNode as isATableNode } from './ATableNode';
 
 	function wrapperInsertTable(payload: {
@@ -53,6 +54,7 @@
 			columns: payload.columns,
 			rows: payload.rows,
 			includeHeaders: payload.includeHeaders,
+			onClose: () => restoreEditorFocus(editor),
 			onSubmit: (data: {
 				columns: string;
 				rows: string;

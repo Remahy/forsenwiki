@@ -16,6 +16,7 @@
 
 	import { ctrlKey } from '$lib/environment/environment';
 	import { getSelectedNode } from '$lib/components/editor/utils/getSelection';
+	import { restoreEditorFocus } from '$lib/components/editor/utils/focusEditor';
 	import { modal } from '$lib/stores/modal';
 	import { ALinkNode, $isALinkNode as isALinkNode } from '$lib/lexical/custom';
 	import EditorButton from '../EditorButton.svelte';
@@ -57,6 +58,7 @@
 			isOpen: true,
 			component: EditLinkButtonModal,
 			hasLink,
+			onClose: () => restoreEditorFocus(editor),
 			/**
 			 * @param {{ url: string, isInternal: boolean, internalId?: string, rawTitle?: string }} onSubmitArgs
 			 * @param {import('@lexical/link').LinkAttributes} [dAttrs]

@@ -28,6 +28,7 @@
 	import Select from '$lib/components/Select.svelte';
 	import { ELEMENT_CONSTANTS } from '$lib/constants/element';
 	import { getSelectedElements } from '$lib/components/editor/utils/getSelection';
+	import { focusEditor } from '$lib/components/editor/utils/focusEditor';
 	import { ListNode } from '$lib/lexical/index';
 	import { blockTypeIcons } from '$lib/constants/blockTypeIcons';
 
@@ -112,6 +113,7 @@
 
 			const func = blockTypeFunction[value];
 			if (func) {
+				focusEditor(editor);
 				func(value);
 			}
 		}

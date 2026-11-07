@@ -8,6 +8,8 @@
 		$modal.isOpen = false;
 	};
 
+	let wasOpen = false;
+
 	modal.subscribe((modal) => {
 		if (!browser || !modal) {
 			return;
@@ -17,7 +19,13 @@
 			document.body.classList.add('overflow-hidden');
 		} else {
 			document.body.classList.remove('overflow-hidden');
+
+			if (wasOpen) {
+				modal.onClose?.();
+			}
 		}
+
+		wasOpen = !!modal.isOpen;
 	});
 </script>
 

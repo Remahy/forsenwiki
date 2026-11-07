@@ -2,6 +2,7 @@
 	import { Trash2Icon } from '@lucide/svelte';
 	import { getEditor } from 'svelte-lexical';
 	import Button from '$lib/components/Button.svelte';
+	import { focusEditor } from '$lib/components/editor/utils/focusEditor';
 
 	const editor = getEditor();
 
@@ -27,7 +28,10 @@
 
 <Button
 	class="m-0! rounded-none! bg-red-400! p-0! hover:bg-red-600! dark:bg-red-600/50! dark:hover:bg-red-700!"
-	onclick={onClick}
+	onclick={() => {
+		focusEditor(editor);
+		onClick();
+	}}
 	title="Delete node"
 >
 	<Trash2Icon />

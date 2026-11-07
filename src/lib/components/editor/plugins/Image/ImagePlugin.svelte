@@ -47,6 +47,7 @@
 	import EditImageModal from '../../toolbar/Image/EditImageModal.svelte';
 	import { editorGlobals } from '../../editorGlobals.svelte';
 	import { handleNewImage } from '../../utils/handleNewImage';
+	import { restoreEditorFocus } from '../../utils/focusEditor';
 	import { migrateWSRVImageUsingElement } from '../../migrations/migrateWSRVImages';
 	import {
 		$createImageNode as createImageNode,
@@ -299,6 +300,7 @@
 			altText: placeholderNode.getAltText(),
 			width: placeholderNodeWidth,
 			height: placeholderNodeHeight,
+			onClose: () => restoreEditorFocus(editor),
 			/** @param {import('./Image').ImagePayload} data */
 			onSubmit: (data) => {
 				editor.update(() => {
