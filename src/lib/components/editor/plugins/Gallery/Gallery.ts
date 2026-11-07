@@ -5,13 +5,6 @@ import {
 	type SerializedElementNode,
 } from 'lexical';
 
-type SupportedGalleryEntryType = 'image' | 'audio' | 'video';
-
-type GalleryEntry = {
-	id: string;
-	type: SupportedGalleryEntryType;
-};
-
 export type GalleryNodePayload = any;
 
 export type SerializedGalleryNode = GalleryNodePayload & SerializedElementNode;

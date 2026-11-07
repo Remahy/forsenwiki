@@ -22,7 +22,11 @@
 	 * @param {ItemInstance} item
 	 */
 	const onClickExpandNode = (_, item) => {
-		item.isExpanded() ? item.collapse() : item.expand();
+		if (item.isExpanded()) {
+			item.collapse();
+		} else {
+			item.expand();
+		}
 		updateItems(treeviewState);
 	};
 

@@ -79,6 +79,8 @@
 
 	$effect(() => {
 		updateToolbar();
+		// This is to re-run updateToolbar when selectedNode is changed.
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		() => [selectedNode];
 	});
 </script>

@@ -110,6 +110,8 @@
 
 	$effect(() => {
 		updateToolbar();
+		// This is to re-run updateToolbar when selectedCell is changed.
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		() => [selectedCell];
 	});
 </script>

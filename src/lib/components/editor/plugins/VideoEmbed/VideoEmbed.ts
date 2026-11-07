@@ -186,7 +186,7 @@ export const getYouTubeInfo = (src?: string) => {
 	return {
 		url: `https://www.youtube-nocookie.com/embed/${id}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`.replace(
 			/\/\//g,
-			'\/'
+			'/'
 		),
 		title: 'Video',
 		thumbnail: `https://img.youtube.com/vi_webp/${id}/sddefault.jpg`,

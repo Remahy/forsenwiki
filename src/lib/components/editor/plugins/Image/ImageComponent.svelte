@@ -71,8 +71,8 @@
 
 	$effect(() => {
 		// These just refresh the effect.
-		width;
-		height;
+		void width;
+		void height;
 
 		url = '';
 

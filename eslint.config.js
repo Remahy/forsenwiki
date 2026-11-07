@@ -4,6 +4,7 @@ import eslint from '@eslint/js';
 import { includeIgnoreFile } from '@eslint/compat';
 import { defineConfig } from 'eslint/config';
 import svelte from 'eslint-plugin-svelte';
+import ts from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
 
 const gitignorePath = fileURLToPath(new URL('.gitignore', import.meta.url));
@@ -11,8 +12,21 @@ const gitignorePath = fileURLToPath(new URL('.gitignore', import.meta.url));
 /** @type { import('eslint').Linter.Config[] } */
 export default defineConfig([
 	eslint.configs.recommended,
+	ts.configs.recommended,
 	prettier,
 	...svelte.configs['flat/recommended'],
+	{
+		files: ['**/*.svelte', '**/*.svelte.js', '**/*.svelte.ts'],
+		languageOptions: {
+			parserOptions: {
+				parser: ts.parser,
+				extraFileExtensions: ['.svelte'],
+			},
+		},
+		rules: {
+			'no-undef': 'off',
+		},
+	},
 	includeIgnoreFile(gitignorePath, 'Imported .gitignore patterns'),
 	{
 		extends: [],
@@ -20,6 +34,10 @@ export default defineConfig([
 		rules: {
 			semi: ['error', 'always'],
 			curly: ['error'],
+			// JS files are typed with JSDoc, where `@ts-ignore` and `any` are sometimes needed.
+			'@typescript-eslint/ban-ts-comment': 'off',
+			'@typescript-eslint/no-explicit-any': 'off',
+			'@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
 		},
 		languageOptions: {
 			sourceType: 'module',
