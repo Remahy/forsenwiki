@@ -61,50 +61,44 @@
 	const INSERT_AFTER = false;
 
 	const insertParagraph = (atBefore = INSERT_BEFORE) => {
-		return editor.read('pending', () => {
-			const selection = getSelection();
-			if (!selection?.isCollapsed()) {
-				return false;
-			}
+		const selection = getSelection();
+		if (!selection?.isCollapsed()) {
+			return false;
+		}
 
-			const [anchor, focus] = /** @type {[PointType, PointType]} */ (selection.getStartEndPoints());
-			const anchorNode = anchor.getNode();
+		const [anchor, focus] = /** @type {[PointType, PointType]} */ (selection.getStartEndPoints());
+		const anchorNode = anchor.getNode();
 
-			const floatBlockParent = anchorNode.getParents().find((n) => isFloatBlockNode(n));
+		const floatBlockParent = anchorNode.getParents().find((n) => isFloatBlockNode(n));
 
-			if (!floatBlockParent) {
-				return false;
-			}
+		if (!floatBlockParent) {
+			return false;
+		}
 
-			let isAtStart;
-			let isAtEnd;
-			if (isTextNode(anchorNode)) {
-				const allTextNodes = floatBlockParent.getAllTextNodes();
+		let isAtStart;
+		let isAtEnd;
+		if (isTextNode(anchorNode)) {
+			const allTextNodes = floatBlockParent.getAllTextNodes();
 
-				isAtStart = anchor.offset === 0 && allTextNodes[0] === anchorNode;
-				isAtEnd = isAtNodeEnd(focus) && allTextNodes[allTextNodes.length - 1] === anchorNode;
-			} else {
-				isAtStart = anchor.offset === 0 && floatBlockParent.getFirstChild() === anchorNode;
-				isAtEnd = isAtNodeEnd(focus) && floatBlockParent.getLastChild() === anchorNode;
-			}
+			isAtStart = anchor.offset === 0 && allTextNodes[0] === anchorNode;
+			isAtEnd = isAtNodeEnd(focus) && allTextNodes[allTextNodes.length - 1] === anchorNode;
+		} else {
+			isAtStart = anchor.offset === 0 && floatBlockParent.getFirstChild() === anchorNode;
+			isAtEnd = isAtNodeEnd(focus) && floatBlockParent.getLastChild() === anchorNode;
+		}
 
-			const isAtEdge = isAtStart || isAtEnd;
+		const isAtEdge = isAtStart || isAtEnd;
 
-			const adjacentNode = hasAdjacentNode(atBefore, floatBlockParent);
+		const adjacentNode = hasAdjacentNode(atBefore, floatBlockParent);
 
-			if (!isAtEdge || adjacentNode) {
-				return false;
-			}
+		if (!isAtEdge || adjacentNode) {
+			return false;
+		}
 
-			editor.update(() => {
-				const newNode = createParagraphNode().append(createTextNode());
-				const n = insertFnc(atBefore, floatBlockParent, newNode);
+		const newNode = createParagraphNode().append(createTextNode());
+		insertFnc(atBefore, floatBlockParent, newNode).selectStart();
 
-				n.selectStart();
-			});
-
-			return true;
-		});
+		return true;
 	};
 
 	$effect(() => {

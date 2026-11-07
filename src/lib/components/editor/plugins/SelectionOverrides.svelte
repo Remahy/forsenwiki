@@ -24,84 +24,82 @@
 	 * @param {LexicalEditor} editor
 	 */
 	const selectionOverride = (editor, before = false) => {
-		return editor.read('pending', () => {
-			const siblingFn = before ? 'getPreviousSibling' : 'getNextSibling';
-			const selectionFn = before ? 'selectEnd' : 'selectStart';
+		const siblingFn = before ? 'getPreviousSibling' : 'getNextSibling';
+		const selectionFn = before ? 'selectEnd' : 'selectStart';
 
-			const selection = getSelection();
+		const selection = getSelection();
 
-			if (!selection) {
-				return false;
-			}
+		if (!selection) {
+			return false;
+		}
 
-			if (isNodeSelection(selection)) {
-				const nodes = selection.getNodes();
-				const node = nodes[0];
-
-				if (isRootOrShadowRoot(node)) {
-					// Move into the leaf inside this node.
-					editor.update(() => {
-						node[selectionFn]();
-					});
-
-					return false;
-				} else {
-					// Move to sibling.
-					const sibling = node[siblingFn]();
-
-					if (!sibling) {
-						return false;
-					}
-
-					editor.update(() => {
-						sibling[selectionFn]();
-					});
-
-					return false;
-				}
-			}
-
-			if (!isRangeSelection(selection) || !selection.isCollapsed()) {
-				return false;
-			}
-
+		if (isNodeSelection(selection)) {
 			const nodes = selection.getNodes();
 			const node = nodes[0];
 
-			if (!offsetIsAtEdges(before, selection.focus.offset, node.getTextContentSize())) {
-				return false;
-			}
-
-			const sibling = node[siblingFn]();
-
-			if (sibling) {
+			if (isRootOrShadowRoot(node)) {
+				// Move into the leaf inside this node.
 				editor.update(() => {
-					const newSelection = createNodeSelection();
-					newSelection.add(sibling.getKey());
-					setSelection(newSelection);
+					node[selectionFn]();
+				});
+
+				return false;
+			} else {
+				// Move to sibling.
+				const sibling = node[siblingFn]();
+
+				if (!sibling) {
+					return false;
+				}
+
+				editor.update(() => {
+					sibling[selectionFn]();
 				});
 
 				return false;
 			}
+		}
 
-			const parentNode = node.getParent();
-			if (!parentNode) {
-				return false;
-			}
+		if (!isRangeSelection(selection) || !selection.isCollapsed()) {
+			return false;
+		}
 
-			const parentSibling = parentNode[siblingFn]();
-			if (!parentSibling || !isDecoratorNode(parentSibling)) {
-				return false;
-			}
+		const nodes = selection.getNodes();
+		const node = nodes[0];
 
+		if (!offsetIsAtEdges(before, selection.focus.offset, node.getTextContentSize())) {
+			return false;
+		}
+
+		const sibling = node[siblingFn]();
+
+		if (sibling) {
 			editor.update(() => {
 				const newSelection = createNodeSelection();
-				newSelection.add(parentSibling.getKey());
+				newSelection.add(sibling.getKey());
 				setSelection(newSelection);
 			});
 
 			return false;
+		}
+
+		const parentNode = node.getParent();
+		if (!parentNode) {
+			return false;
+		}
+
+		const parentSibling = parentNode[siblingFn]();
+		if (!parentSibling || !isDecoratorNode(parentSibling)) {
+			return false;
+		}
+
+		editor.update(() => {
+			const newSelection = createNodeSelection();
+			newSelection.add(parentSibling.getKey());
+			setSelection(newSelection);
 		});
+
+		return false;
 	};
 
 	onMount(() => {

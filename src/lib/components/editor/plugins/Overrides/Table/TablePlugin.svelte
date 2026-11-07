@@ -117,69 +117,64 @@
 	const INSERT_BEFORE = true;
 	const INSERT_AFTER = false;
 
+	// Runs inside the KEY_ARROW command, which is already an editor update.
 	const insertParagraph = (atBefore = INSERT_BEFORE) => {
-		return editor.read('pending', () => {
-			const selection = getSelection();
-			if (!selection?.isCollapsed()) {
-				return false;
-			}
+		const selection = getSelection();
+		if (!selection?.isCollapsed()) {
+			return false;
+		}
 
-			const [anchor] = selection.getStartEndPoints() as [PointType, PointType];
-			const anchorNode = anchor.getNode();
+		const [anchor] = selection.getStartEndPoints() as [PointType, PointType];
+		const anchorNode = anchor.getNode();
 
-			const cellNode =
-				anchorNode.getParents().find((n) => isTableCellNode(n)) ||
-				(isTableCellNode(anchorNode) && anchorNode);
+		const cellNode =
+			anchorNode.getParents().find((n) => isTableCellNode(n)) ||
+			(isTableCellNode(anchorNode) && anchorNode);
 
-			if (!cellNode) {
-				return false;
-			}
+		if (!cellNode) {
+			return false;
+		}
 
-			const aTableNodeParent = anchorNode.getParents().find((n) => isATableNode(n));
+		const aTableNodeParent = anchorNode.getParents().find((n) => isATableNode(n));
 
-			if (!aTableNodeParent) {
-				return false;
-			}
+		if (!aTableNodeParent) {
+			return false;
+		}
 
-			const cell = getTableCellNodeFromLexicalNode(cellNode);
+		const cell = getTableCellNodeFromLexicalNode(cellNode);
 
-			if (!cell) {
-				return false;
-			}
+		if (!cell) {
+			return false;
+		}
 
-			const row = getTableRowNodeFromTableCellNodeOrThrow(cell);
-			const table = getTableNodeFromLexicalNodeOrThrow(cell);
+		const row = getTableRowNodeFromTableCellNodeOrThrow(cell);
+		const table = getTableNodeFromLexicalNodeOrThrow(cell);
 
-			const [tableMap] = computeTableMap(table, cell, cell);
+		const [tableMap] = computeTableMap(table, cell, cell);
 
-			const rows = tableMap.length;
-			const cols = tableMap[0].length;
-			const rowIndex = row.getIndexWithinParent();
-			const colIndex = cell.getIndexWithinParent();
+		const rows = tableMap.length;
+		const cols = tableMap[0].length;
+		const rowIndex = row.getIndexWithinParent();
+		const colIndex = cell.getIndexWithinParent();
 
-			const isLastCell = rowIndex === rows - 1 && colIndex === cols - 1;
-			const isFirstCell = rowIndex === 0 && colIndex === 0;
+		const isLastCell = rowIndex === rows - 1 && colIndex === cols - 1;
+		const isFirstCell = rowIndex === 0 && colIndex === 0;
 
-			if (!isLastCell && !isFirstCell) {
-				return false;
-			}
+		if (!isLastCell && !isFirstCell) {
+			return false;
+		}
 
-			const isAtEdge = offsetIsAtEdges(atBefore, anchor.offset, cellNode.getTextContentSize());
-			const adjacentNode = hasAdjacentNode(atBefore, aTableNodeParent);
+		const isAtEdge = offsetIsAtEdges(atBefore, anchor.offset, cellNode.getTextContentSize());
+		const adjacentNode = hasAdjacentNode(atBefore, aTableNodeParent);
 
-			if (!isAtEdge || adjacentNode) {
-				return false;
-			}
+		if (!isAtEdge || adjacentNode) {
+			return false;
+		}
 
-			editor.update(() => {
-				const newNode = createParagraphNode().append(createTextNode());
-				const n = insertFnc(atBefore, aTableNodeParent, newNode);
+		const newNode = createParagraphNode().append(createTextNode());
+		insertFnc(atBefore, aTableNodeParent, newNode).selectStart();
 
-				n.selectStart();
-			});
-
-			return true;
-		});
+		return true;
 	};
 
 	$effect(() => {

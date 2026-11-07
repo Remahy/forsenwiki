@@ -1,4 +1,4 @@
-import { $applyNodeReplacement, $getNodeByKey, $isRootNode } from 'lexical';
+import { $applyNodeReplacement, $isRootNode } from 'lexical';
 
 import { TableNode } from '$lib/lexical/index';
 
@@ -20,15 +20,8 @@ export class ATableNode extends TableNode {
 	createDOM(config, editor) {
 		const dom = super.createDOM(config, editor);
 
-		const parentIsRoot = editor.read(() => {
-			const n = $getNodeByKey(this.getKey());
-			const parent = n?.getParent();
-			if (!parent) {
-				return false;
-			}
-
-			return $isRootNode(parent);
-		});
+		// createDOM runs while the editor state is being reconciled, so it can be read directly.
+		const parentIsRoot = $isRootNode(this.getParent());
 
 		const tcs = [...dom.querySelectorAll('td'), ...dom.querySelectorAll('th')];
 
