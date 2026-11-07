@@ -1,4 +1,4 @@
-import 'linkedom-global';
+import './registerDOM.js';
 
 import { workerData, parentPort, isMainThread } from 'node:worker_threads';
 

@@ -1,4 +1,4 @@
-import 'linkedom-global';
+import '../registerDOM.js';
 
 /**
  * @typedef {{ kind: 'video'; id: string } | { kind: 'clip'; slug: string }} TwitchRef

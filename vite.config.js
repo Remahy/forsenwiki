@@ -59,8 +59,27 @@ export default defineConfig({
 		},
 	},
 	test: {
-		include: ['src/**/*.test.ts'],
-		// Same DOM the toHTML worker uses.
-		setupFiles: ['linkedom-global'],
+		projects: [
+			{
+				extends: true,
+				test: {
+					name: 'server',
+					include: ['src/**/*.test.ts'],
+					exclude: ['src/**/*.svelte.test.ts'],
+					// Same DOM the toHTML worker uses.
+					environment: 'jsdom',
+				},
+			},
+			{
+				extends: true,
+				// Mount components with Svelte's client build.
+				resolve: { conditions: ['browser'] },
+				test: {
+					name: 'client',
+					include: ['src/**/*.svelte.test.ts'],
+					environment: 'jsdom',
+				},
+			},
+		],
 	},
 });

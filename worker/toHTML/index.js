@@ -1,4 +1,4 @@
-import 'linkedom-global';
+import '../registerDOM.js';
 
 import { workerData, parentPort, isMainThread } from 'node:worker_threads';
 
@@ -26,26 +26,30 @@ const $$getFirstImage = () => {
 	return firstImage?.getSrc() || '';
 };
 
+/**
+ * @param {string} html
+ */
 const addTwitchThumbnails = async (html) => {
 	const replacedHTML = new DOMParser().parseFromString(
 		`<html><body>${html}</body></html>`,
 		'text/html'
 	);
+	/** @type {NodeListOf<HTMLImageElement>} */
 	const twitchImages = replacedHTML.querySelectorAll('img[data-lexical-twitch][data-replace-me]');
 
 	for (let index = 0; index < twitchImages.length; index++) {
-		/** @type {HTMLImageElement} */
 		const image = twitchImages[index];
 		const thumbnailURL = await twitchThumbnailURL({ url: image.src });
 
-		image.src = thumbnailURL;
+		// A missing thumbnail becomes `src="null"`, same as before.
+		image.src = /** @type {string} */ (thumbnailURL);
 	}
 
 	return replacedHTML.body.innerHTML;
 };
 
 /**
- * @param {{ config: string, update: string } | { config: string, content: string }} data
+ * @param {{ config: string, update?: string, content?: string }} data
  */
 export const toHTMLWorker = async ({ config, content, update }) => {
 	if (!config) {
@@ -76,7 +80,7 @@ export const toHTMLWorker = async ({ config, content, update }) => {
 	} else {
 		editor = createHeadlessEditor(cfg(null, EDITOR_IS_READONLY, null));
 
-		editor.setEditorState(editor.parseEditorState(content));
+		editor.setEditorState(editor.parseEditorState(/** @type {string} */ (content)));
 
 		migrations(editor);
 	}
@@ -101,7 +105,7 @@ export const toHTMLWorker = async ({ config, content, update }) => {
 
 if (!isMainThread && parentPort && workerData) {
 	toHTMLWorker(workerData).then(
-		(data) => parentPort.postMessage({ ...data, error: null }),
-		(err) => parentPort.postMessage({ error: String(err?.message ?? err) })
+		(data) => parentPort?.postMessage({ ...data, error: null }),
+		(err) => parentPort?.postMessage({ error: String(err?.message ?? err) })
 	);
 }
