@@ -86,6 +86,28 @@ describe('FallbackNode', () => {
 		);
 	});
 
+	test('text content is the original link', () => {
+		const editor = createHeadlessEditor(config());
+		editor.update(
+			() => {
+				$getRoot().append(
+					$parseSerializedNode(legacyYouTube),
+					$createFallbackNode({ data: JSON.stringify({ type: 'link', url: 'https://forsen.tv' }) }),
+					$createFallbackNode({ data: JSON.stringify({ type: 'mystery', src: 42 }) }),
+					$createDeprecatedVideoEmbedNode('')
+				);
+			},
+			{ discrete: true }
+		);
+
+		editor.read(() => {
+			const texts = $getRoot()
+				.getChildren()
+				.map((node) => node.getTextContent());
+			expect(texts).toEqual(['https://youtu.be/abc', 'https://forsen.tv', '', '']);
+		});
+	});
+
 	test('keeps its format when cloned', () => {
 		const editor = createHeadlessEditor(config());
 		editor.update(() => $getRoot().append($createFallbackNode({ data: '{}', format: 'center' })), {

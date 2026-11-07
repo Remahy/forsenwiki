@@ -22,10 +22,9 @@ type FallbackNodeType = {
 
 export type SerializedFallbackNode = Spread<{ data?: string }, SerializedDecoratorBlockNode>;
 
-/**
- * `data` is the JSON of the original node, but it may come from old or broken documents.
- */
-export function parseFallbackData(data: string | undefined): { type?: string } | null {
+export function parseFallbackData(
+	data: string | undefined
+): ({ type?: string } & Record<string, unknown>) | null {
 	try {
 		const parsed = JSON.parse(data || '');
 		return parsed && typeof parsed === 'object' ? parsed : null;
@@ -117,7 +116,11 @@ export class FallbackNode extends DecoratorBlockNode {
 		_includeInert?: boolean | undefined,
 		_includeDirectionless?: false | undefined
 	): string {
-		return this.__data || '';
+		// The raw JSON would end up in the article text, so only use the original node's link.
+		const data = parseFallbackData(this.getLatest().__data);
+		const link = ['src', 'url', 'href'].map((key) => data?.[key]).find((value) => value);
+
+		return typeof link === 'string' ? link : '';
 	}
 
 	decorate(editor: LexicalEditor): FallbackNodeType {
