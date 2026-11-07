@@ -5,6 +5,7 @@ import type {
 	EditorConfig,
 	LexicalEditor,
 	LexicalNode,
+	LexicalUpdateJSON,
 	NodeKey,
 	SerializedLexicalNode,
 	Spread,
@@ -82,15 +83,19 @@ export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
 	}
 
 	static importJSON(serializedNode: SerializedImageNode): ImageNode {
-		const { altText, height, width, src } = serializedNode;
-		const node = $createImageNode({
-			src,
-			altText,
-			width,
-			height,
-		});
+		return $createImageNode().updateFromJSON(serializedNode);
+	}
 
-		return node;
+	updateFromJSON(serializedNode: LexicalUpdateJSON<SerializedImageNode>): this {
+		const self = super.updateFromJSON(serializedNode).getWritable();
+
+		// Raw values like the constructor, setWidthAndHeight would round and clamp them.
+		self.__src = serializedNode.src;
+		self.__altText = serializedNode.altText;
+		self.__width = serializedNode.width || 'inherit';
+		self.__height = serializedNode.height || 'inherit';
+
+		return self;
 	}
 
 	static importDOM(): DOMConversionMap | null {

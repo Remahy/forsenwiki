@@ -18,6 +18,7 @@ import { $createALinkNode } from './Overrides/ALink';
 import { $createFloatBlockNode } from './FloatBlock/FloatBlock';
 import { $createGalleryNode } from './Gallery/Gallery';
 import { $createImageNode } from './Image/Image';
+import { $createVideoEmbedNode } from './VideoEmbed/VideoEmbed';
 
 const config = () => articleConfig(null, true, null);
 
@@ -36,7 +37,18 @@ const $build = () => {
 		$createFloatBlockNode({ float: 'right', width: 300, height: 200, hasBorder: true }).append(
 			$createParagraphNode().append($createTextNode('in float'))
 		),
-		$createGalleryNode().append($createImageNode({ src: 'https://example.com/a.png' }))
+		$createGalleryNode().append($createImageNode({ src: 'https://example.com/a.png' })),
+		$createImageNode({ src: 'https://example.com/b.png', altText: 'b', width: 320, height: 240 }),
+		$createVideoEmbedNode({
+			platform: 'usercontent',
+			src: 'abc.mp4',
+			width: 640,
+			height: 360,
+			altText: 'video',
+			fileType: 'video',
+			subtitles: [{ id: 'sub', src: 'sv.vtt', title: 'Svenska', language: 'sv' }],
+			format: 'center',
+		}).setDirection('rtl')
 	);
 };
 

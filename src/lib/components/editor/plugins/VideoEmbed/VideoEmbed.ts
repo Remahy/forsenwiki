@@ -15,6 +15,7 @@ import type {
 	ElementFormatType,
 	LexicalEditor,
 	LexicalNode,
+	LexicalUpdateJSON,
 	NodeKey,
 	Spread,
 } from 'lexical';
@@ -636,20 +637,22 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	}
 
 	static importJSON(serializedNode: SerializedVideoEmbedNode): VideoEmbedNode {
-		const node = new VideoEmbedNode(
-			serializedNode.platform,
-			serializedNode.src,
-			serializedNode.width,
-			serializedNode.height,
-			serializedNode.altText,
-			serializedNode.fileType,
-			serializedNode.subtitles,
-			serializedNode.format
-		);
+		return $createVideoEmbedNode().updateFromJSON(serializedNode);
+	}
 
-		node.setFormat(serializedNode.format);
+	// DecoratorBlockNode reads `format` and `direction`.
+	updateFromJSON(serializedNode: LexicalUpdateJSON<SerializedVideoEmbedNode>): this {
+		const self = super.updateFromJSON(serializedNode).getWritable();
 
-		return node;
+		self.__platform = serializedNode.platform;
+		self.__src = serializedNode.src;
+		self.__width = serializedNode.width;
+		self.__height = serializedNode.height;
+		self.__altText = serializedNode.altText;
+		self.__fileType = serializedNode.fileType;
+		self.__subtitles = serializedNode.subtitles;
+
+		return self;
 	}
 
 	static importDOM(): DOMConversionMap | null {

@@ -56,6 +56,13 @@ export class DecoratorBlockNode extends DecoratorNode<unknown> {
 		}
 	}
 
+	afterCloneFrom(prevNode: this) {
+		super.afterCloneFrom(prevNode);
+
+		this.__format = prevNode.__format;
+		this.__dir = prevNode.__dir;
+	}
+
 	setFormat(type: ElementFormatType) {
 		const self = this.getWritable();
 		self.__format = getFormat(type);
