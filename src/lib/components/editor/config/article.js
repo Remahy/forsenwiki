@@ -28,6 +28,7 @@ import { LinkExtension } from '@lexical/link';
 import { ListExtension } from '@lexical/list';
 import { RichTextExtension } from '@lexical/rich-text';
 import { TableExtension } from '@lexical/table';
+import { GalleryExtension } from '../plugins/Gallery/GalleryExtension';
 import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
 import TableNodeDOMExport from './htmlExport/TableNodeDOMExport';
@@ -181,6 +182,7 @@ export const articleExtension = (theme, editable, editorState, onError = onError
 				hasHorizontalScroll: false,
 				hasNestedTables: true,
 			}),
+			GalleryExtension,
 		],
 		$initialEditorState,
 		...config,

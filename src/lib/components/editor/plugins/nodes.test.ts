@@ -156,3 +156,22 @@ test('the extension keeps the node replacements', () => {
 	expect(types).toEqual(['a-link', 'a-table']);
 	editor.dispose();
 });
+
+test('a headless editor strips everything but images and videos from a gallery', () => {
+	const editor = buildEditorFromExtensions(HeadlessExtension, config());
+	editor.update(
+		() => {
+			$getRoot().append(
+				$createGalleryNode().append(
+					$createImageNode({ src: 'https://example.com/a.png' }),
+					$createParagraphNode().append($createTextNode('text')),
+					$createVideoEmbedNode({ platform: 'youtube', src: 'https://youtube.com/watch?v=1' })
+				)
+			);
+		},
+		{ discrete: true }
+	);
+
+	const gallery = json(editor).root.children[0] as unknown as { children: { type: string }[] };
+	expect(gallery.children.map(({ type }) => type)).toEqual(['image', 'videoembed']);
+});
