@@ -10,7 +10,8 @@ import {
 } from 'lexical';
 import { buildEditorFromExtensions } from '@lexical/extension';
 import { HeadlessExtension } from '@lexical/headless';
-import { $createTableNodeWithDimensions } from '@lexical/table';
+import { $createLinkNode } from '@lexical/link';
+import { $createTableNode, $createTableNodeWithDimensions } from '@lexical/table';
 
 import { articleExtension } from '../config/article';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
@@ -118,7 +119,17 @@ test('legacy link JSON without __isInternal is external', () => {
 				type: 'a-link',
 				version: 1,
 				url: 'https://example.com',
-				children: [],
+				children: [
+					{
+						type: 'text',
+						version: 1,
+						text: 'link',
+						detail: 0,
+						format: 0,
+						mode: 'normal',
+						style: '',
+					},
+				],
 				direction: null,
 				format: '',
 				indent: 0,
@@ -130,4 +141,18 @@ test('legacy link JSON without __isInternal is external', () => {
 
 	const link = json(editor).root.children[0] as unknown as { children: Record<string, unknown>[] };
 	expect(link.children[0]).toMatchObject({ __isInternal: false, target: '_blank' });
+});
+
+test('the extension keeps the node replacements', () => {
+	const editor = buildEditorFromExtensions(config());
+	let types: string[] = [];
+	editor.update(
+		() => {
+			types = [$createLinkNode('https://example.com').getType(), $createTableNode().getType()];
+		},
+		{ discrete: true }
+	);
+
+	expect(types).toEqual(['a-link', 'a-table']);
+	editor.dispose();
 });

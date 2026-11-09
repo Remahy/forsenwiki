@@ -15,7 +15,6 @@ import {
 	type LexicalNode,
 } from 'lexical';
 import { buildEditorFromExtensions } from '@lexical/extension';
-import { registerRichText } from '@lexical/rich-text';
 
 import { articleExtension } from '../config/article';
 import { $createGalleryNode as createGalleryNode } from './Gallery/Gallery';
@@ -36,7 +35,6 @@ const setup = (build: () => LexicalNode[]) => {
 	const root = document.body.appendChild(document.createElement('div'));
 	root.contentEditable = 'true';
 	editor.setRootElement(root);
-	cleanups.push(registerRichText(editor));
 
 	const component = mount(SelectionOverrides, {
 		target: document.body,

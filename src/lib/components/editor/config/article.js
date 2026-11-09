@@ -22,7 +22,11 @@ import {
 	$createATableNode,
 	GalleryNode,
 } from '$lib/lexical/custom';
-import { defineExtension } from '@lexical/extension';
+import isUrl from 'is-url';
+import { configExtension, defineExtension } from '@lexical/extension';
+import { LinkExtension } from '@lexical/link';
+import { ListExtension } from '@lexical/list';
+import { RichTextExtension } from '@lexical/rich-text';
 import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
 import TableNodeDOMExport from './htmlExport/TableNodeDOMExport';
@@ -164,5 +168,14 @@ export const articleExtension = (theme, editable, editorState, onError = onError
 		editorState,
 		onError
 	);
-	return defineExtension({ name: 'article', $initialEditorState, ...config });
+	return defineExtension({
+		name: 'article',
+		dependencies: [
+			RichTextExtension,
+			ListExtension,
+			configExtension(LinkExtension, { validateUrl: isUrl }),
+		],
+		$initialEditorState,
+		...config,
+	});
 };

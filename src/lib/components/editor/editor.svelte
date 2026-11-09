@@ -2,12 +2,8 @@
 	import './Article.css';
 
 	import { getAllContexts, getContext, onDestroy, onMount } from 'svelte';
-	import isUrl from 'is-url';
 	import { mergeRegister } from 'lexical';
-	import { buildEditorFromExtensions, namedSignals } from '@lexical/extension';
-	import { registerLink } from '@lexical/link';
-	import { registerList } from '@lexical/list';
-	import { registerRichText } from '@lexical/rich-text';
+	import { buildEditorFromExtensions } from '@lexical/extension';
 
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
 	import { registerCollaboration } from '$lib/yjs/registerCollaboration';
@@ -25,7 +21,6 @@
 	import TablePlugin from './plugins/Overrides/Table/TablePlugin.svelte';
 	import FloatBlockPlugin from './plugins/FloatBlock/FloatBlockPlugin.svelte';
 	import SelectionOverrides from './plugins/SelectionOverrides.svelte';
-	import TripleClickSelection from './plugins/TripleClickSelection.svelte';
 	import GalleryPlugin from './plugins/Gallery/GalleryPlugin.svelte';
 	import ImageFixerModalButton from './ImageFixer/index.svelte';
 	import TreeviewPlugin from './Treeview/TreeviewPlugin.svelte';
@@ -56,9 +51,6 @@
 	// svelte-ignore state_referenced_locally
 	onDestroy(
 		mergeRegister(
-			registerRichText(editor),
-			registerList(editor),
-			registerLink(editor, namedSignals({ validateUrl: isUrl, attributes: undefined })),
 			registerSvelteDecorators(editor, getAllContexts()),
 			registerCollaboration(editor, { id, provider, docMap }),
 			() => editor.dispose()
@@ -105,8 +97,6 @@
 	<FloatBlockPlugin />
 
 	<SelectionOverrides />
-
-	<TripleClickSelection />
 
 	<TreeviewPlugin />
 
