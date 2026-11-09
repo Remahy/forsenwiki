@@ -5,6 +5,7 @@ import { SelectionOverridesExtension } from '../plugins/SelectionOverridesExtens
 import { FloatBlockExtension } from '../plugins/FloatBlock/FloatBlockExtension';
 import { EditorShortcutsExtension } from '../plugins/EditorShortcutsExtension';
 import { GalleryEmblaExtension } from '../plugins/Gallery/GalleryEmblaExtension';
+import { ImageExtension } from '../plugins/Image/ImageExtension';
 import { VideoEmbedExtension } from '../plugins/VideoEmbed/VideoEmbedExtension';
 
 export const editorExtension = defineExtension({
@@ -15,6 +16,7 @@ export const editorExtension = defineExtension({
 		FloatBlockExtension,
 		EditorShortcutsExtension,
 		GalleryEmblaExtension,
+		ImageExtension,
 		VideoEmbedExtension,
 	],
 });

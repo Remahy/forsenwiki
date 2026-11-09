@@ -1,4 +1,6 @@
+// Based on umaranis' svelte-lexical
 import { mount, unmount } from 'svelte';
+import { defineExtension } from '@lexical/extension';
 
 /**
  * @typedef {{ componentClass: import('svelte').Component<any>, updateProps: (props: Record<string, any>) => void }} SvelteDecorator
@@ -69,3 +71,10 @@ export const registerSvelteDecorators = (editor, context) => {
 		}
 	};
 };
+
+export const SvelteDecoratorsExtension = defineExtension({
+	name: 'article/svelte-decorators',
+	// eslint-disable-next-line svelte/prefer-svelte-reactivity
+	config: /** @type {{ context: Map<any, any> }} */ ({ context: new Map() }),
+	register: (editor, { context }) => registerSvelteDecorators(editor, context),
+});

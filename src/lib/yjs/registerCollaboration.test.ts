@@ -11,12 +11,13 @@ import {
 	UNDO_COMMAND,
 	type LexicalEditor,
 } from 'lexical';
-import { buildEditorFromExtensions } from '@lexical/extension';
+import { buildEditorFromExtensions, configExtension } from '@lexical/extension';
 import type { Provider } from '@lexical/yjs';
 
 import { articleExtension } from '$lib/components/editor/config/article';
 import { EDITOR_IS_EDITABLE, EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { getYjsAndEditor } from './getYjsAndEditor';
+import { CollaborationExtension } from './CollaborationExtension';
 import { registerCollaboration } from './registerCollaboration';
 import { applyDiffToYDoc, createNewYDoc, encodeYDocToUpdate, encodeYDocToUpdateV2 } from './utils';
 
@@ -159,4 +160,24 @@ test('connects, and disconnects and stops syncing when unregistered', async () =
 
 	await applyRemote(doc, 'remote');
 	expect(readText(editor)).toBe('local');
+});
+
+test('the extension syncs through its configured provider and disconnects on dispose', () => {
+	const doc = createNewYDoc();
+	const provider = createProvider();
+	const editor = buildEditorFromExtensions(
+		articleExtension(null, EDITOR_IS_EDITABLE, null),
+		configExtension(CollaborationExtension, {
+			id: 'test',
+			provider,
+			docMap: new Map([['test', doc]]),
+		})
+	);
+
+	write(editor, 'hello');
+	expect(readDoc(doc)).toBe('hello');
+	expect(provider.connect).toHaveBeenCalledOnce();
+
+	editor.dispose();
+	expect(provider.disconnect).toHaveBeenCalledOnce();
 });

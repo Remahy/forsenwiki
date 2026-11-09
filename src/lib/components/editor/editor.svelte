@@ -2,14 +2,13 @@
 	import './Article.css';
 
 	import { getAllContexts, getContext, onDestroy, onMount } from 'svelte';
-	import { mergeRegister } from 'lexical';
-	import { buildEditorFromExtensions } from '@lexical/extension';
+	import { buildEditorFromExtensions, configExtension } from '@lexical/extension';
 
 	import { instantiateProvider } from '$lib/yjs/providerFactory';
-	import { registerCollaboration } from '$lib/yjs/registerCollaboration';
+	import { CollaborationExtension } from '$lib/yjs/CollaborationExtension';
 	import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
 	import { setEditor } from './context';
-	import { registerSvelteDecorators } from './core/registerSvelteDecorators.svelte';
+	import { SvelteDecoratorsExtension } from './core/registerSvelteDecorators.svelte';
 	import EditorModal from '../EditorModal.svelte';
 	import Toolbar from './toolbar/index.svelte';
 	import TreeviewWrapper from './toolbar/TreeviewWrapper.svelte';
@@ -17,7 +16,7 @@
 	import Footer from './footer/index.svelte';
 	import { articleExtension, editableTheme } from './config/article';
 	import { editorExtension } from './config/editor';
-	import ImagePlugin from './plugins/Image/ImagePlugin.svelte';
+	import { ImageExtension } from './plugins/Image/ImageExtension';
 	import ImageFixerModalButton from './ImageFixer/index.svelte';
 	import TreeviewPlugin from './Treeview/TreeviewPlugin.svelte';
 	import { editorGlobals } from './editorGlobals.svelte';
@@ -32,26 +31,22 @@
 	/** @type {Props} */
 	let { id, update, initialUpdate = null } = $props();
 
-	const editor = buildEditorFromExtensions(
-		articleExtension(editableTheme, EDITOR_IS_EDITABLE, null),
-		editorExtension
-	);
-	setEditor(editor);
-
 	/** @type {Map<string, YDoc>} */
 	const docMap = new Map();
 	// svelte-ignore state_referenced_locally
 	const provider = instantiateProvider(update, initialUpdate)(id, docMap);
 
-	// Registered before the plugins below mount.
 	// svelte-ignore state_referenced_locally
-	onDestroy(
-		mergeRegister(
-			registerSvelteDecorators(editor, getAllContexts()),
-			registerCollaboration(editor, { id, provider, docMap }),
-			() => editor.dispose()
-		)
+	const editor = buildEditorFromExtensions(
+		articleExtension(editableTheme, EDITOR_IS_EDITABLE, null),
+		editorExtension,
+		configExtension(ImageExtension, { articleId: id }),
+		configExtension(SvelteDecoratorsExtension, { context: getAllContexts() }),
+		configExtension(CollaborationExtension, { id, provider, docMap })
 	);
+	setEditor(editor);
+
+	onDestroy(() => editor.dispose());
 
 	/** @type {HTMLDivElement} */
 	let rootElement;
@@ -84,8 +79,6 @@
 </script>
 
 <div class="relative flex min-h-96 gap-4">
-	<ImagePlugin />
-
 	<TreeviewPlugin />
 
 	<div class="min-w-0 flex-1">

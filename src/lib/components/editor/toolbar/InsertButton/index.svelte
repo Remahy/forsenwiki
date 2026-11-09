@@ -14,7 +14,7 @@
 	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
 	import { focusEditor } from '$lib/components/editor/utils/focusEditor';
 
-	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
+	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImageExtension';
 	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedExtension';
 	import { INSERT_FLOATBLOCK_COMMAND } from '../../plugins/FloatBlock/FloatBlockExtension';
 	import { INSERT_GALLERY_COMMAND } from '../../plugins/Gallery/GalleryExtension';

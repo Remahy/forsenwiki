@@ -3,13 +3,17 @@ import { flushSync } from 'svelte';
 import {
 	$getNodeByKey as getNodeByKey,
 	$getRoot as getRoot,
-	createEditor,
 	DecoratorNode,
 	type NodeKey,
 } from 'lexical';
 
+import { buildEditorFromExtensions, configExtension } from '@lexical/extension';
+
 import DecoratorFixture from './DecoratorFixture.test.svelte';
-import { registerSvelteDecorators } from './registerSvelteDecorators.svelte';
+import {
+	registerSvelteDecorators,
+	SvelteDecoratorsExtension,
+} from './registerSvelteDecorators.svelte';
 
 const log: string[] = [];
 
@@ -59,19 +63,16 @@ class TestDecoratorNode extends DecoratorNode<{
 	}
 }
 
-const setup = () => {
-	const editor = createEditor({
-		nodes: [TestDecoratorNode],
-		onError: (error) => {
-			throw error;
-		},
-	});
+const nodes = { name: 'test', nodes: [TestDecoratorNode] };
+
+const setup = (...extensions: Parameters<typeof buildEditorFromExtensions>) => {
+	const editor = buildEditorFromExtensions(nodes, ...extensions);
 	const root = document.body.appendChild(document.createElement('div'));
 	editor.setRootElement(root);
 	return editor;
 };
 
-const appendNode = (editor: ReturnType<typeof createEditor>, label: string) => {
+const appendNode = (editor: ReturnType<typeof setup>, label: string) => {
 	let key = '';
 	editor.update(
 		() => {
@@ -85,7 +86,7 @@ const appendNode = (editor: ReturnType<typeof createEditor>, label: string) => {
 	return key;
 };
 
-const updateNode = (editor: ReturnType<typeof createEditor>, fn: () => void) => {
+const updateNode = (editor: ReturnType<typeof setup>, fn: () => void) => {
 	editor.update(fn, { discrete: true });
 	flushSync();
 };
@@ -171,4 +172,18 @@ test('unmounts everything when unregistered', () => {
 	flushSync();
 
 	expect(log).toEqual(['mount', 'mount', 'destroy', 'destroy']);
+});
+
+test('the extension passes its configured context and unmounts on dispose', () => {
+	const editor = setup(
+		configExtension(SvelteDecoratorsExtension, { context: new Map([['suffix', '!']]) })
+	);
+	const key = appendNode(editor, 'first');
+
+	expect(editor.getElementByKey(key)?.textContent).toBe('first!');
+
+	editor.dispose();
+	flushSync();
+
+	expect(log).toEqual(['mount', 'destroy']);
 });
