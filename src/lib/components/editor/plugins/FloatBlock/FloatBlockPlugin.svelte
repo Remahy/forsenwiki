@@ -23,7 +23,7 @@
 		$insertNodeToNearestRoot as insertNodeToNearestRoot,
 		mergeRegister,
 	} from '@lexical/utils';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 	import { $isAtNodeEnd as isAtNodeEnd } from '@lexical/selection';
 
 	import { hasAdjacentNode, insertFnc } from '../../utils/insertUtils';

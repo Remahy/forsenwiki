@@ -12,7 +12,7 @@
 	} from 'lexical';
 	import { TOGGLE_LINK_COMMAND, $toggleLink as toggleLink } from '@lexical/link';
 	import { $getNearestNodeOfType as getNearestNodeOfType, mergeRegister } from '@lexical/utils';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
 	import { ctrlKey } from '$lib/environment/environment';
 	import { getSelectedNode } from '$lib/components/editor/utils/getSelection';

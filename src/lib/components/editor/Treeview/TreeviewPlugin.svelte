@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 	import {
 		$getSelection as getSelection,
 		$isRangeSelection as isRangeSelection,

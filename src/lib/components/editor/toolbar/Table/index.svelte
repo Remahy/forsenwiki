@@ -1,7 +1,7 @@
 <script>
 	import { $getSelection as getSelection, $isRangeSelection as isRangeSelection } from 'lexical';
 	import { $isTableCellNode as isTableCellNode, $isTableNode as isTableNode } from '@lexical/table';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
 	import Row from './Row/index.svelte';
 	import Column from './Column/index.svelte';

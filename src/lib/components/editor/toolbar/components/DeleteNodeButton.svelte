@@ -1,6 +1,6 @@
 <script>
 	import { Trash2Icon } from '@lucide/svelte';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 	import Button from '$lib/components/Button.svelte';
 	import { focusEditor } from '$lib/components/editor/utils/focusEditor';
 

@@ -22,7 +22,7 @@
 		mergeRegister,
 		$isNodeSelection as isNodeSelection,
 	} from 'lexical';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
 	import { getYouTubeClipURL } from '$lib/api/utils';
 	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';

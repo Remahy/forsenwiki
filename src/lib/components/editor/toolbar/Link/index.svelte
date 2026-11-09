@@ -1,7 +1,7 @@
 <script>
 	import { $setSelection as setSelection, $getSelection as getSelection } from 'lexical';
 	import { $toggleLink as toggleLink } from '@lexical/link';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 	import { UnlinkIcon } from '@lucide/svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { $isALinkNode as isALinkNode } from '$lib/lexical/custom';

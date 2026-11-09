@@ -37,7 +37,7 @@
 		mergeRegister,
 		$insertNodeToNearestRoot as insertNodeToNearestRoot,
 	} from '@lexical/utils';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
 	import { modal } from '$lib/stores/modal';
 	import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';

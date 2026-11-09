@@ -11,7 +11,7 @@
 	import { onMount } from 'svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 	import { COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 	import {
 		$insertNodeToNearestRoot as insertNodeToNearestRoot,
 		mergeRegister,

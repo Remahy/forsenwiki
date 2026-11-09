@@ -14,7 +14,7 @@
 		$isTableCellNode as isTableCellNode,
 		TableCellHeaderStates,
 	} from '@lexical/table';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
 	import Button from '$lib/components/Button.svelte';
 	import EditorButton from '../../EditorButton.svelte';

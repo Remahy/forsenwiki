@@ -7,7 +7,7 @@
 		$getSelection as getSelection,
 		mergeRegister,
 	} from 'lexical';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
 	import { ctrlKey, shiftKey } from '$lib/environment/environment';
 	import { keepEditorFocus } from '$lib/components/editor/utils/keepEditorFocus';

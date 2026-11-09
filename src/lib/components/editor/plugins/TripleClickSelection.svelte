@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { NormalizeTripleClickSelectionExtension } from '@lexical/extension';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
 	/** @type {import('lexical').LexicalEditor} */
 	const editor = getEditor();

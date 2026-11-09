@@ -13,7 +13,7 @@
 		mergeRegister,
 		$isDecoratorNode as isDecoratorNode,
 	} from 'lexical';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 	import { offsetIsAtEdges } from '../utils/insertUtils';
 
 	/** @type {import('lexical').LexicalEditor} */

@@ -1,5 +1,5 @@
 <script>
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 	import { ChevronDownIcon, ChevronRightIcon } from '@lucide/svelte';
 
 	import './treeview.css';

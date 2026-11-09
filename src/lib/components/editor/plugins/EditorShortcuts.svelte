@@ -6,7 +6,7 @@
 		KEY_DOWN_COMMAND,
 		mergeRegister,
 	} from 'lexical';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
 	/** @type {import('lexical').LexicalEditor} */
 	const editor = getEditor();

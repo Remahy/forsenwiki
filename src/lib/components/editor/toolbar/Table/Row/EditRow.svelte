@@ -6,7 +6,7 @@
 		$createNodeSelection as createNodeSelection,
 		$setSelection as setSelection,
 	} from 'lexical';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 	import {
 		$insertTableRowAtSelection as insertTableRowAtSelection,
 		$getTableRowIndexFromTableCellNode as getTableRowIndexFromTableCellNode,

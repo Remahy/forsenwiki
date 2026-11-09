@@ -9,7 +9,7 @@
 		RectangleVerticalIcon,
 		SquareDashedIcon,
 	} from '@lucide/svelte';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 	import Select from '$lib/components/Select.svelte';
 	import EditorButton from '../EditorButton.svelte';
 
