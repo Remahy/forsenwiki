@@ -16,15 +16,10 @@
 	import MobileToolbar from './toolbar/MobileToolbar.svelte';
 	import Footer from './footer/index.svelte';
 	import { articleExtension, editableTheme } from './config/article';
+	import { editorExtension } from './config/editor';
 	import ImagePlugin from './plugins/Image/ImagePlugin.svelte';
-	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
-	import { ATableExtension } from './plugins/Overrides/Table/ATableExtension';
-	import FloatBlockPlugin from './plugins/FloatBlock/FloatBlockPlugin.svelte';
-	import SelectionOverrides from './plugins/SelectionOverrides.svelte';
-	import GalleryPlugin from './plugins/Gallery/GalleryPlugin.svelte';
 	import ImageFixerModalButton from './ImageFixer/index.svelte';
 	import TreeviewPlugin from './Treeview/TreeviewPlugin.svelte';
-	import EditorShortcuts from './plugins/EditorShortcuts.svelte';
 	import { editorGlobals } from './editorGlobals.svelte';
 
 	/**
@@ -39,7 +34,7 @@
 
 	const editor = buildEditorFromExtensions(
 		articleExtension(editableTheme, EDITOR_IS_EDITABLE, null),
-		ATableExtension
+		editorExtension
 	);
 	setEditor(editor);
 
@@ -91,17 +86,7 @@
 <div class="relative flex min-h-96 gap-4">
 	<ImagePlugin />
 
-	<VideoEmbedPlugin />
-
-	<FloatBlockPlugin />
-
-	<SelectionOverrides />
-
 	<TreeviewPlugin />
-
-	<GalleryPlugin />
-
-	<EditorShortcuts />
 
 	<div class="min-w-0 flex-1">
 		<div class="editor-border sticky top-0 z-40 hidden w-full xl:block">

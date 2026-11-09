@@ -1,5 +1,4 @@
 import { afterEach, expect, test } from 'vitest';
-import { flushSync, mount, unmount } from 'svelte';
 import {
 	$createNodeSelection as createNodeSelection,
 	$createParagraphNode as createParagraphNode,
@@ -20,7 +19,7 @@ import { articleExtension } from '../config/article';
 import { $createGalleryNode as createGalleryNode } from './Gallery/Gallery';
 import { $createImageNode as createImageNode } from './Image/Image';
 import { $createVideoEmbedNode as createVideoEmbedNode } from './VideoEmbed/VideoEmbed';
-import SelectionOverrides from './SelectionOverrides.svelte';
+import { SelectionOverridesExtension } from './SelectionOverridesExtension';
 
 const cleanups: Array<() => void> = [];
 
@@ -31,17 +30,14 @@ afterEach(() => {
 
 /** `build` returns the nodes to node-select. */
 const setup = (build: () => LexicalNode[]) => {
-	const editor = buildEditorFromExtensions(articleExtension(null, true, null));
+	const editor = buildEditorFromExtensions(
+		articleExtension(null, true, null),
+		SelectionOverridesExtension
+	);
+	cleanups.push(() => editor.dispose());
 	const root = document.body.appendChild(document.createElement('div'));
 	root.contentEditable = 'true';
 	editor.setRootElement(root);
-
-	const component = mount(SelectionOverrides, {
-		target: document.body,
-		context: new Map([['editor', editor]]),
-	});
-	flushSync();
-	cleanups.push(() => unmount(component));
 
 	editor.update(
 		() => {
