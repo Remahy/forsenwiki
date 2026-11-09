@@ -5,10 +5,9 @@ import tailwindcss from '@tailwindcss/vite';
 
 // vite needs to work on proper support for Node.js worker_threads...
 import modulePathPlugin from './modulePathPlugin';
-import svelteLexicalCodePlugin from './svelteLexicalCodePlugin';
 
 export default defineConfig({
-	plugins: [tailwindcss(), modulePathPlugin(), svelteLexicalCodePlugin(), sveltekit()],
+	plugins: [tailwindcss(), modulePathPlugin(), sveltekit()],
 	server: {
 		proxy: {
 			'/usercontent': {
@@ -19,10 +18,6 @@ export default defineConfig({
 	},
 	optimizeDeps: {
 		exclude: ['yjs'],
-		// svelte-lexical gets pre-bundled in dev, which skips the regular plugins.
-		rolldownOptions: {
-			plugins: [svelteLexicalCodePlugin()],
-		},
 	},
 	resolve: {
 		dedupe: ['yjs'],

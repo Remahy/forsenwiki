@@ -6,8 +6,8 @@
 	/** @type {import('lexical').LexicalEditor} */
 	const editor = getEditor();
 
-	// Since Lexical 0.45 this is only included with RichTextExtension, but svelte-lexical's
-	// RichTextPlugin uses registerRichText, so triple clicks would select into the next block.
+	// Since Lexical 0.45 this is only included with RichTextExtension, but the editor uses
+	// registerRichText, so triple clicks would select into the next block.
 	onMount(() => {
 		/** @type {any} */
 		const { build, config, register } = NormalizeTripleClickSelectionExtension;
