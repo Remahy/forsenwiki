@@ -17,6 +17,8 @@ import {
 	DiffGalleryNode,
 } from '$lib/lexical/custom';
 
+import { defineExtension } from '@lexical/extension';
+
 import { articleTheme, articleNodes, htmlExport } from './article';
 
 /**
@@ -34,7 +36,7 @@ const onErrorDefault = (error) => {
  * @param {typeof onErrorDefault} onError
  * @returns {import('lexical').CreateEditorArgs}
  */
-export const diffConfig = (theme, editable, editorState, onError = onErrorDefault) => ({
+const diffConfig = (theme, editable, editorState, onError = onErrorDefault) => ({
 	theme: theme || articleTheme,
 	namespace: 'diff-editor',
 	editable,
@@ -67,3 +69,19 @@ export const diffConfig = (theme, editable, editorState, onError = onErrorDefaul
 		export: htmlExport,
 	},
 });
+
+/**
+ * @param {any} theme
+ * @param {boolean} editable
+ * @param {any} editorState
+ * @param {typeof onErrorDefault} onError
+ */
+export const diffExtension = (theme, editable, editorState, onError = onErrorDefault) => {
+	const { editorState: $initialEditorState, ...config } = diffConfig(
+		theme,
+		editable,
+		editorState,
+		onError
+	);
+	return defineExtension({ name: 'diff', $initialEditorState, ...config });
+};

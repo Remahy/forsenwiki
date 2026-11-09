@@ -16,7 +16,7 @@ import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/post/read';
 import { updatePostTitle, updatePost } from '$lib/db/post/update';
 import { invalidatePostCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/post/html';
-import { articleConfig } from '$lib/components/editor/config/article';
+import { articleExtension } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
 import {
 	AVAILABLE_DISCLAIMER_TAGS,
@@ -141,13 +141,13 @@ export async function POST({ request, locals, params }) {
 
 	let e;
 	try {
-		e = getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), combinedInitialUpdate);
+		e = getYjsAndEditor(articleExtension(null, EDITOR_IS_READONLY, null), combinedInitialUpdate);
 		const editor = e.editor;
 
 		await serverRunValidations(editor);
 
 		const oldImageHashes = getUniqueImageHashes(
-			getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), currentUpdate).editor
+			getYjsAndEditor(articleExtension(null, EDITOR_IS_READONLY, null), currentUpdate).editor
 		);
 		const currentImageHashes = getUniqueImageHashes(editor).map((hash, index) => ({ index, hash }));
 		const newHashes = currentImageHashes.filter(({ hash }) => !oldImageHashes.includes(hash));

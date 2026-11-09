@@ -1,13 +1,13 @@
 import { expect, test, vi } from 'vitest';
 import { flushSync, mount, unmount } from 'svelte';
 import { writable } from 'svelte/store';
-import { createEditor } from 'lexical';
+import { buildEditorFromExtensions } from '@lexical/extension';
 
-import { articleConfig } from '../../../config/article';
+import { articleExtension } from '../../../config/article';
 import TablePlugin from './TablePlugin.svelte';
 
 test('unregisters everything when unmounted', () => {
-	const editor = createEditor(articleConfig(null, true, null));
+	const editor = buildEditorFromExtensions(articleExtension(null, true, null));
 	const unregisters: Array<ReturnType<typeof vi.fn>> = [];
 
 	for (const method of [

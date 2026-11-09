@@ -1,12 +1,13 @@
 import { expect, test, vi } from 'vitest';
 import { get } from 'svelte/store';
 import { $createNodeSelection, $createParagraphNode, $getRoot, $setSelection } from 'lexical';
-import { createHeadlessEditor } from '@lexical/headless';
+import { buildEditorFromExtensions } from '@lexical/extension';
+import { HeadlessExtension } from '@lexical/headless';
 
 import { createNodeSelectionStore } from './getSelection';
 
 test('only listens to the editor while subscribed', () => {
-	const editor = createHeadlessEditor();
+	const editor = buildEditorFromExtensions(HeadlessExtension);
 	const unregister = vi.fn();
 	const register = vi.spyOn(editor, 'registerUpdateListener').mockReturnValue(unregister);
 
@@ -21,7 +22,7 @@ test('only listens to the editor while subscribed', () => {
 });
 
 test('follows the editor selection', () => {
-	const editor = createHeadlessEditor();
+	const editor = buildEditorFromExtensions(HeadlessExtension);
 	let key = '';
 	editor.update(
 		() => {

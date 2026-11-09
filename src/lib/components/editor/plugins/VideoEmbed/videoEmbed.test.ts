@@ -1,14 +1,15 @@
 import { expect, test } from 'vitest';
 import { $getRoot, $insertNodes, type ElementFormatType } from 'lexical';
-import { createHeadlessEditor } from '@lexical/headless';
+import { buildEditorFromExtensions } from '@lexical/extension';
+import { HeadlessExtension } from '@lexical/headless';
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 
-import { articleConfig } from '../../config/article';
+import { articleExtension } from '../../config/article';
 import { $createVideoEmbedNode, $isVideoEmbedNode, type VideoEmbedPayload } from './VideoEmbed';
 import { STATIC_DOMAIN } from '$lib/environment/environment';
 
 const importHTML = (html: string) => {
-	const editor = createHeadlessEditor(articleConfig(null, true, null));
+	const editor = buildEditorFromExtensions(HeadlessExtension, articleExtension(null, true, null));
 	editor.update(
 		() => {
 			const dom = new DOMParser().parseFromString(html, 'text/html');
@@ -60,7 +61,7 @@ const videos: Array<VideoEmbedPayload & { format: ElementFormatType }> = [
 ];
 
 test.each(videos)('$platform video survives exporting and importing HTML', (video) => {
-	const editor = createHeadlessEditor(articleConfig(null, true, null));
+	const editor = buildEditorFromExtensions(HeadlessExtension, articleExtension(null, true, null));
 	editor.update(() => $getRoot().append($createVideoEmbedNode(video)), { discrete: true });
 	const html = editor.read(() => $generateHtmlFromNodes(editor, null));
 

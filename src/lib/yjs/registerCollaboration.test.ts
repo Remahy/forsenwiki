@@ -6,15 +6,15 @@ import {
 	CAN_REDO_COMMAND,
 	CAN_UNDO_COMMAND,
 	COMMAND_PRIORITY_CRITICAL,
-	createEditor,
 	REDO_COMMAND,
 	SKIP_COLLAB_TAG,
 	UNDO_COMMAND,
 	type LexicalEditor,
 } from 'lexical';
+import { buildEditorFromExtensions } from '@lexical/extension';
 import type { Provider } from '@lexical/yjs';
 
-import { articleConfig } from '$lib/components/editor/config/article';
+import { articleExtension } from '$lib/components/editor/config/article';
 import { EDITOR_IS_EDITABLE, EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { getYjsAndEditor } from './getYjsAndEditor';
 import { registerCollaboration } from './registerCollaboration';
@@ -39,7 +39,7 @@ const createProvider = () =>
 	}) satisfies Provider;
 
 const setup = () => {
-	const editor = createEditor(articleConfig(null, EDITOR_IS_EDITABLE, null));
+	const editor = buildEditorFromExtensions(articleExtension(null, EDITOR_IS_EDITABLE, null));
 	const doc = createNewYDoc();
 	const provider = createProvider();
 	const unregister = registerCollaboration(editor, {
@@ -65,7 +65,8 @@ const readText = (editor: LexicalEditor) =>
 /** How the backend reads an article from its Yjs update. */
 const readDoc = (doc: YDoc) =>
 	readText(
-		getYjsAndEditor(articleConfig(null, EDITOR_IS_READONLY, null), encodeYDocToUpdateV2(doc)).editor
+		getYjsAndEditor(articleExtension(null, EDITOR_IS_READONLY, null), encodeYDocToUpdateV2(doc))
+			.editor
 	);
 
 // Lexical commits the updates that come from Yjs in a microtask.

@@ -9,7 +9,7 @@ import {
 	createNewYDoc,
 	YXmlText,
 } from '$lib/yjs/utils';
-import { articleConfig } from '$lib/components/editor/config/article';
+import { articleExtension } from '$lib/components/editor/config/article';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 
 /**
@@ -24,7 +24,7 @@ export const initialUpdateWorker = () => {
 	}
 
 	const { doc, editor } = getYjsAndEditor(
-		articleConfig(null, EDITOR_IS_READONLY, null),
+		articleExtension(null, EDITOR_IS_READONLY, null),
 		emptyUpdate
 	);
 

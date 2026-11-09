@@ -4,12 +4,13 @@ import { handleJobs } from '../handleJobs.js';
 
 import { $getRoot, $nodesOfType } from 'lexical';
 import { $generateHtmlFromNodes } from '@lexical/html';
-import { createHeadlessEditor } from '@lexical/headless';
+import { buildEditorFromExtensions } from '@lexical/extension';
+import { HeadlessExtension } from '@lexical/headless';
 import { base64ToUint8Array } from 'uint8array-extras';
 
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { articleConfig } from '$lib/components/editor/config/article';
-import { diffConfig } from '$lib/components/editor/config/diff';
+import { articleExtension } from '$lib/components/editor/config/article';
+import { diffExtension } from '$lib/components/editor/config/diff';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { ImageNode } from '$lib/lexical/custom';
 import { migrations } from '$lib/components/editor/migrations';
@@ -63,10 +64,10 @@ export const toHTMLWorker = async ({ config, content, update }) => {
 	let cfg;
 	switch (config) {
 		case 'diff':
-			cfg = diffConfig;
+			cfg = diffExtension;
 			break;
 		default:
-			cfg = articleConfig;
+			cfg = articleExtension;
 			break;
 	}
 
@@ -78,7 +79,7 @@ export const toHTMLWorker = async ({ config, content, update }) => {
 		const eY = getYjsAndEditor(cfg(null, EDITOR_IS_READONLY, null), base64ToUint8Array(update));
 		editor = eY.editor;
 	} else {
-		editor = createHeadlessEditor(cfg(null, EDITOR_IS_READONLY, null));
+		editor = buildEditorFromExtensions(HeadlessExtension, cfg(null, EDITOR_IS_READONLY, null));
 
 		editor.setEditorState(editor.parseEditorState(/** @type {string} */ (content)));
 

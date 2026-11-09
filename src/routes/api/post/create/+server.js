@@ -10,7 +10,7 @@ import { createPost } from '$lib/db/post/create';
 import { readYPostByTitle } from '$lib/db/post/read';
 import { encodeYDocToUpdateV2 } from '$lib/yjs/utils';
 import { upsertHTML } from '$lib/db/post/html';
-import { articleConfig } from '$lib/components/editor/config/article';
+import { articleExtension } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
 import {
 	AVAILABLE_DISCLAIMER_TAGS,
@@ -86,7 +86,7 @@ export async function POST({ request, locals }) {
 		}
 
 		const data = getYjsAndEditor(
-			articleConfig(null, EDITOR_IS_READONLY, null),
+			articleExtension(null, EDITOR_IS_READONLY, null),
 			base64ToUint8Array(content)
 		);
 		editor = data.editor;

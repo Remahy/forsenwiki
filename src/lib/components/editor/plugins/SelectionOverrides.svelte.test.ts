@@ -10,14 +10,14 @@ import {
 	$isRangeSelection as isRangeSelection,
 	$setSelection as setSelection,
 	BEFORE_INPUT_COMMAND,
-	createEditor,
 	type ElementNode,
 	type LexicalEditor,
 	type LexicalNode,
 } from 'lexical';
+import { buildEditorFromExtensions } from '@lexical/extension';
 import { registerRichText } from '@lexical/rich-text';
 
-import { articleConfig } from '../config/article';
+import { articleExtension } from '../config/article';
 import { $createGalleryNode as createGalleryNode } from './Gallery/Gallery';
 import { $createImageNode as createImageNode } from './Image/Image';
 import { $createVideoEmbedNode as createVideoEmbedNode } from './VideoEmbed/VideoEmbed';
@@ -32,7 +32,7 @@ afterEach(() => {
 
 /** `build` returns the nodes to node-select. */
 const setup = (build: () => LexicalNode[]) => {
-	const editor = createEditor(articleConfig(null, true, null));
+	const editor = buildEditorFromExtensions(articleExtension(null, true, null));
 	const root = document.body.appendChild(document.createElement('div'));
 	root.contentEditable = 'true';
 	editor.setRootElement(root);

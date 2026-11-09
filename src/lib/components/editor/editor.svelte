@@ -3,8 +3,8 @@
 
 	import { getAllContexts, getContext, onDestroy, onMount } from 'svelte';
 	import isUrl from 'is-url';
-	import { createEditor, mergeRegister } from 'lexical';
-	import { namedSignals } from '@lexical/extension';
+	import { mergeRegister } from 'lexical';
+	import { buildEditorFromExtensions, namedSignals } from '@lexical/extension';
 	import { registerLink } from '@lexical/link';
 	import { registerList } from '@lexical/list';
 	import { registerRichText } from '@lexical/rich-text';
@@ -19,7 +19,7 @@
 	import TreeviewWrapper from './toolbar/TreeviewWrapper.svelte';
 	import MobileToolbar from './toolbar/MobileToolbar.svelte';
 	import Footer from './footer/index.svelte';
-	import { articleConfig, editableTheme } from './config/article';
+	import { articleExtension, editableTheme } from './config/article';
 	import ImagePlugin from './plugins/Image/ImagePlugin.svelte';
 	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
 	import TablePlugin from './plugins/Overrides/Table/TablePlugin.svelte';
@@ -42,7 +42,9 @@
 	/** @type {Props} */
 	let { id, update, initialUpdate = null } = $props();
 
-	const editor = createEditor(articleConfig(editableTheme, EDITOR_IS_EDITABLE, null));
+	const editor = buildEditorFromExtensions(
+		articleExtension(editableTheme, EDITOR_IS_EDITABLE, null)
+	);
 	setEditor(editor);
 
 	/** @type {Map<string, YDoc>} */
@@ -58,7 +60,8 @@
 			registerList(editor),
 			registerLink(editor, namedSignals({ validateUrl: isUrl, attributes: undefined })),
 			registerSvelteDecorators(editor, getAllContexts()),
-			registerCollaboration(editor, { id, provider, docMap })
+			registerCollaboration(editor, { id, provider, docMap }),
+			() => editor.dispose()
 		)
 	);
 

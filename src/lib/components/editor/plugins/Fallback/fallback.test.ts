@@ -1,9 +1,10 @@
 import { describe, expect, test } from 'vitest';
 import { $getRoot, $parseSerializedNode, type SerializedLexicalNode } from 'lexical';
-import { createHeadlessEditor } from '@lexical/headless';
+import { buildEditorFromExtensions } from '@lexical/extension';
+import { HeadlessExtension } from '@lexical/headless';
 import { $generateHtmlFromNodes } from '@lexical/html';
 
-import { articleConfig } from '../../config/article';
+import { articleExtension } from '../../config/article';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { createNewYDoc, encodeYDocToUpdateV2 } from '$lib/yjs/utils';
@@ -21,7 +22,7 @@ const legacyYouTube = {
 	src: 'https://youtu.be/abc',
 };
 
-const config = () => articleConfig(null, EDITOR_IS_READONLY, null);
+const config = () => articleExtension(null, EDITOR_IS_READONLY, null);
 
 const $firstChild = () => $getRoot().getFirstChildOrThrow() as FallbackNode;
 
@@ -37,7 +38,7 @@ const htmlFromYjs = (build: () => void) => {
 
 describe('FallbackNode', () => {
 	test('legacy node keeps its type and original JSON', () => {
-		const editor = createHeadlessEditor(config());
+		const editor = buildEditorFromExtensions(HeadlessExtension, config());
 		editor.update(() => $getRoot().append($parseSerializedNode(legacyYouTube)), { discrete: true });
 
 		editor.read(() => {
@@ -64,13 +65,13 @@ describe('FallbackNode', () => {
 
 	test('round trips through JSON', () => {
 		const data = JSON.stringify({ type: 'mystery' });
-		const editor = createHeadlessEditor(config());
+		const editor = buildEditorFromExtensions(HeadlessExtension, config());
 		editor.update(() => $getRoot().append($createFallbackNode({ data, format: 'right' })), {
 			discrete: true,
 		});
 
 		const json = editor.read(() => $firstChild().exportJSON());
-		const imported = createHeadlessEditor(config());
+		const imported = buildEditorFromExtensions(HeadlessExtension, config());
 		imported.update(() => $getRoot().append($parseSerializedNode(json as SerializedLexicalNode)), {
 			discrete: true,
 		});
@@ -87,7 +88,7 @@ describe('FallbackNode', () => {
 	});
 
 	test('text content is the original link', () => {
-		const editor = createHeadlessEditor(config());
+		const editor = buildEditorFromExtensions(HeadlessExtension, config());
 		editor.update(
 			() => {
 				$getRoot().append(
@@ -109,7 +110,7 @@ describe('FallbackNode', () => {
 	});
 
 	test('keeps its format when cloned', () => {
-		const editor = createHeadlessEditor(config());
+		const editor = buildEditorFromExtensions(HeadlessExtension, config());
 		editor.update(() => $getRoot().append($createFallbackNode({ data: '{}', format: 'center' })), {
 			discrete: true,
 		});

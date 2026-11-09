@@ -22,6 +22,7 @@ import {
 	$createATableNode,
 	GalleryNode,
 } from '$lib/lexical/custom';
+import { defineExtension } from '@lexical/extension';
 import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
 import TableNodeDOMExport from './htmlExport/TableNodeDOMExport';
@@ -137,7 +138,7 @@ export const articleNodes = [
  * @param {typeof onErrorDefault} onError
  * @returns {import('lexical').CreateEditorArgs}
  */
-export const articleConfig = (theme, editable, editorState, onError = onErrorDefault) => ({
+const articleConfig = (theme, editable, editorState, onError = onErrorDefault) => ({
 	theme: theme || articleTheme,
 	namespace: 'editor',
 	editable,
@@ -149,3 +150,19 @@ export const articleConfig = (theme, editable, editorState, onError = onErrorDef
 		export: htmlExport,
 	},
 });
+
+/**
+ * @param {any} theme
+ * @param {boolean} editable
+ * @param {any} editorState
+ * @param {typeof onErrorDefault} onError
+ */
+export const articleExtension = (theme, editable, editorState, onError = onErrorDefault) => {
+	const { editorState: $initialEditorState, ...config } = articleConfig(
+		theme,
+		editable,
+		editorState,
+		onError
+	);
+	return defineExtension({ name: 'article', $initialEditorState, ...config });
+};

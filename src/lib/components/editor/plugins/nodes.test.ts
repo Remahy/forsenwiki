@@ -8,10 +8,11 @@ import {
 	type LexicalEditor,
 	type SerializedLexicalNode,
 } from 'lexical';
-import { createHeadlessEditor } from '@lexical/headless';
+import { buildEditorFromExtensions } from '@lexical/extension';
+import { HeadlessExtension } from '@lexical/headless';
 import { $createTableNodeWithDimensions } from '@lexical/table';
 
-import { articleConfig } from '../config/article';
+import { articleExtension } from '../config/article';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { createNewYDoc, encodeYDocToUpdateV2 } from '$lib/yjs/utils';
 import { $createALinkNode } from './Overrides/ALink';
@@ -20,7 +21,7 @@ import { $createGalleryNode } from './Gallery/Gallery';
 import { $createImageNode } from './Image/Image';
 import { $createVideoEmbedNode } from './VideoEmbed/VideoEmbed';
 
-const config = () => articleConfig(null, true, null);
+const config = () => articleExtension(null, true, null);
 
 // Custom fields use values that differ from the constructor defaults.
 const $build = () => {
@@ -55,7 +56,7 @@ const $build = () => {
 const json = (editor: LexicalEditor) => editor.getEditorState().toJSON();
 
 const createEditor = () => {
-	const editor = createHeadlessEditor(config());
+	const editor = buildEditorFromExtensions(HeadlessExtension, config());
 	editor.update($build, { discrete: true });
 	return editor;
 };
@@ -71,7 +72,7 @@ test('nodes keep their type and fields', () => {
 
 test('nodes survive a JSON round trip', () => {
 	const editor = createEditor();
-	const imported = createHeadlessEditor(config());
+	const imported = buildEditorFromExtensions(HeadlessExtension, config());
 	imported.setEditorState(imported.parseEditorState(json(editor)));
 
 	expect(json(imported)).toEqual(json(editor));
@@ -110,7 +111,7 @@ test('nodes keep their fields when cloned', () => {
 });
 
 test('legacy link JSON without __isInternal is external', () => {
-	const editor = createHeadlessEditor(config());
+	const editor = buildEditorFromExtensions(HeadlessExtension, config());
 	editor.update(
 		() => {
 			const link = $parseSerializedNode({

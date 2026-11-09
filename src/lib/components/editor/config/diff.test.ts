@@ -10,13 +10,14 @@ import {
 	type SerializedEditorState,
 	type SerializedLexicalNode,
 } from 'lexical';
-import { createHeadlessEditor } from '@lexical/headless';
+import { buildEditorFromExtensions } from '@lexical/extension';
+import { HeadlessExtension } from '@lexical/headless';
 import { $generateNodesFromDOM } from '@lexical/html';
 import { $createHeadingNode, HeadingNode } from '@lexical/rich-text';
 import { $createListItemNode, $createListNode, ListItemNode, ListNode } from '@lexical/list';
 
-import { articleConfig } from './article';
-import { diffConfig } from './diff';
+import { articleExtension } from './article';
+import { diffExtension } from './diff';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import {
 	$createALinkNode,
@@ -81,7 +82,10 @@ const textChange: ___ChangeTextNode = {
 
 /** Builds an article, then turns some of its nodes into Diff nodes. */
 const createMixedEditorState = () => {
-	const article = createHeadlessEditor(articleConfig(null, EDITOR_IS_READONLY, null));
+	const article = buildEditorFromExtensions(
+		HeadlessExtension,
+		articleExtension(null, EDITOR_IS_READONLY, null)
+	);
 
 	article.update(
 		() => {
@@ -123,7 +127,10 @@ const createMixedEditorState = () => {
 };
 
 const createDiffEditor = (editorState: SerializedEditorState) => {
-	const editor = createHeadlessEditor(diffConfig(null, EDITOR_IS_READONLY, null));
+	const editor = buildEditorFromExtensions(
+		HeadlessExtension,
+		diffExtension(null, EDITOR_IS_READONLY, null)
+	);
 
 	editor.setEditorState(editor.parseEditorState(editorState));
 
