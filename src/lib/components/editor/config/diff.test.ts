@@ -153,7 +153,7 @@ describe('diff editor with Diff and normal nodes', () => {
 
 			expect(linkParagraph.constructor).toBe(ParagraphNode);
 			expect(linkParagraph.getFirstChildOrThrow().constructor).toBe(TextNode);
-			const link = linkParagraph.getLastChildOrThrow<DiffALinkNode>();
+			const link = linkParagraph.getLastChildOrThrow() as DiffALinkNode;
 			expect(link).toBeInstanceOf(DiffALinkNode);
 			expect(link.getURL()).toBe('https://forsen.wiki');
 			expect(link.getFirstChildOrThrow().constructor).toBe(TextNode);
@@ -162,7 +162,7 @@ describe('diff editor with Diff and normal nodes', () => {
 			expect(textParagraph.getFirstChildOrThrow()).toBeInstanceOf(DiffTextNode);
 
 			expect(list.constructor).toBe(ListNode);
-			const [kept, removed] = list.getChildren<ListItemNode>();
+			const [kept, removed] = list.getChildren() as ListItemNode[];
 			expect(kept.constructor).toBe(ListItemNode);
 			expect(removed).toBeInstanceOf(DiffListItemNode);
 			expect(removed.getTextContent()).toBe('Removed');
@@ -197,9 +197,9 @@ describe('diff editor with Diff and normal nodes', () => {
 
 				// Forces clones of both Diff and normal nodes.
 				heading.setTag('h3');
-				textParagraph.getFirstChildOrThrow<DiffTextNode>().setTextContent('Hello world!');
+				(textParagraph.getFirstChildOrThrow() as DiffTextNode).setTextContent('Hello world!');
 				textParagraph.append($createTextNode(' Appended'));
-				linkParagraph.getFirstChildOrThrow<TextNode>().setTextContent('Still unchanged ');
+				(linkParagraph.getFirstChildOrThrow() as TextNode).setTextContent('Still unchanged ');
 			},
 			{ discrete: true }
 		);

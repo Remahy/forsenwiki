@@ -23,7 +23,7 @@ const legacyYouTube = {
 
 const config = () => articleConfig(null, EDITOR_IS_READONLY, null);
 
-const $firstChild = () => $getRoot().getFirstChildOrThrow<FallbackNode>();
+const $firstChild = () => $getRoot().getFirstChildOrThrow() as FallbackNode;
 
 /** Same as the toHTML worker, which reads the article from its Yjs update. */
 const htmlFromYjs = (build: () => void) => {
