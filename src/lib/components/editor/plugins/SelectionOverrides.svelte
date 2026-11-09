@@ -12,8 +12,13 @@
 		$isRootOrShadowRoot as isRootOrShadowRoot,
 		mergeRegister,
 		$isDecoratorNode as isDecoratorNode,
+		$createParagraphNode as createParagraphNode,
+		$isElementNode as isElementNode,
+		BEFORE_INPUT_COMMAND,
+		COMMAND_PRIORITY_LOW,
 	} from 'lexical';
 	import { getEditor } from '$lib/components/editor/context';
+	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
 	import { offsetIsAtEdges } from '../utils/insertUtils';
 
 	/** @type {import('lexical').LexicalEditor} */
@@ -102,8 +107,51 @@
 		return false;
 	};
 
+	// Delete this this after https://github.com/meta/lexical/issues/9282 lands.
+	// Lexical removes the browser's range for a node selection, so the browser would type at the
+	// top of the document. Move the caret next to the node and let Lexical's handler insert the text.
+	// Based on the fix for block decorators in @lexical/rich-text after 0.53.0.
+	/** @param {InputEvent} event */
+	const typeNextToNodeSelection = (event) => {
+		const selection = getSelection();
+
+		if (!isNodeSelection(selection) || event.inputType !== 'insertText') {
+			return false;
+		}
+
+		const nodes = selection.getNodes();
+
+		if (nodes.length !== 1) {
+			event.preventDefault();
+			return true;
+		}
+
+		const [node] = nodes;
+
+		if (node.isInline()) {
+			node.selectNext(0, 0);
+			return false;
+		}
+
+		const parent = node.getParent();
+		const block = isGalleryNode(parent) ? parent : node;
+		const next = block.getNextSibling();
+
+		if (isElementNode(next) && !next.isInline()) {
+			next.selectStart();
+		} else {
+			const paragraph = createParagraphNode();
+			block.insertAfter(paragraph);
+			paragraph.select();
+		}
+
+		return false;
+	};
+
 	onMount(() => {
 		return mergeRegister(
+			editor.registerCommand(BEFORE_INPUT_COMMAND, typeNextToNodeSelection, COMMAND_PRIORITY_LOW),
+
 			editor.registerCommand(
 				KEY_ARROW_RIGHT_COMMAND,
 				() => selectionOverride(editor, false),
