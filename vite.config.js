@@ -25,6 +25,9 @@ export default defineConfig({
 			yjs: path.resolve('./node_modules/yjs/dist/yjs.mjs'),
 		},
 	},
+	ssr: {
+		noExternal: ['@lexical/yjs'],
+	},
 	test: {
 		projects: [
 			{
