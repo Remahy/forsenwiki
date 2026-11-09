@@ -18,7 +18,7 @@
 	import { articleExtension, editableTheme } from './config/article';
 	import ImagePlugin from './plugins/Image/ImagePlugin.svelte';
 	import VideoEmbedPlugin from './plugins/VideoEmbed/VideoEmbedPlugin.svelte';
-	import TablePlugin from './plugins/Overrides/Table/TablePlugin.svelte';
+	import { ATableExtension } from './plugins/Overrides/Table/ATableExtension';
 	import FloatBlockPlugin from './plugins/FloatBlock/FloatBlockPlugin.svelte';
 	import SelectionOverrides from './plugins/SelectionOverrides.svelte';
 	import GalleryPlugin from './plugins/Gallery/GalleryPlugin.svelte';
@@ -38,7 +38,8 @@
 	let { id, update, initialUpdate = null } = $props();
 
 	const editor = buildEditorFromExtensions(
-		articleExtension(editableTheme, EDITOR_IS_EDITABLE, null)
+		articleExtension(editableTheme, EDITOR_IS_EDITABLE, null),
+		ATableExtension
 	);
 	setEditor(editor);
 
@@ -91,8 +92,6 @@
 	<ImagePlugin />
 
 	<VideoEmbedPlugin />
-
-	<TablePlugin hasCellBackgroundColor={false} />
 
 	<FloatBlockPlugin />
 
