@@ -7,13 +7,6 @@ export class ATableCellNode extends TableCellNode {
 	}
 
 	/**
-	 * @param {ATableCellNode} node
-	 */
-	static clone(node) {
-		return TableCellNode.clone(node);
-	}
-
-	/**
 	 * @param {import("@lexical/table").SerializedTableCellNode} serializedNode
 	 */
 	static importJSON(serializedNode) {

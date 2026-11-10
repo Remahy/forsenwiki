@@ -4,7 +4,7 @@
 		$isTableCellNode as isTableCellNode,
 		$deleteTableColumnAtSelection as deleteTableColumnAtSelection,
 	} from '@lexical/table';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 	import Wrapper from '../../components/Wrapper.svelte';
 	import Title from '../../components/Title.svelte';
 	import DeleteNodeButton from '../../components/DeleteNodeButton.svelte';

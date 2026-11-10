@@ -13,7 +13,7 @@
 		mergeRegister,
 	} from 'lexical';
 	import { clearSelection, createNodeSelectionStore } from '../../utils/getSelection';
-	import { $isFallbackNode as isFallbackNode } from './Fallback';
+	import { $isFallbackNode as isFallbackNode, parseFallbackData } from './Fallback';
 
 	/**
 	 * @typedef {Object} Props
@@ -25,6 +25,8 @@
 
 	/** @type {Props} */
 	let { node, nodeKey, data, editor } = $props();
+
+	const parsedData = $derived(parseFallbackData(data));
 
 	/** @type {BaseSelection | null} */
 	// let selection = $state(null);
@@ -111,9 +113,9 @@
 >
 	<div class="pointer-events-none text-xs">
 		<p class="m-0 h-[unset] leading-none">
-			<strong>Invalid node of type: &quot;{JSON.parse(data).type}&quot;</strong>
+			<strong>Invalid node of type: &quot;{parsedData?.type || node.getType()}&quot;</strong>
 		</p>
-		<pre class="m-0">{JSON.stringify(JSON.parse(data), null, 2)}</pre>
+		<pre class="m-0">{parsedData ? JSON.stringify(parsedData, null, 2) : data}</pre>
 		<p class="m-0 h-[unset] leading-none"><strong>Delete or migrate node.</strong></p>
 	</div>
 </div>

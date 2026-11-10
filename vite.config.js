@@ -1,5 +1,5 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import path from 'path';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -23,27 +23,33 @@ export default defineConfig({
 		dedupe: ['yjs'],
 		alias: {
 			yjs: path.resolve('./node_modules/yjs/dist/yjs.mjs'),
-			'@lexical/yjs': path.resolve('./node_modules/@lexical/yjs/LexicalYjs.mjs'),
-			'@lexical/clipboard': path.resolve('./node_modules/@lexical/clipboard/LexicalClipboard.mjs'),
-			'@lexical/code': path.resolve('./node_modules/@lexical/code/LexicalCode.mjs'),
-			'@lexical/file': path.resolve('./node_modules/@lexical/file/LexicalFile.mjs'),
-			'@lexical/hashtag': path.resolve('./node_modules/@lexical/hashtag/LexicalHashtag.mjs'),
-			'@lexical/history': path.resolve('./node_modules/@lexical/history/LexicalHistory.mjs'),
-			'@lexical/html': path.resolve('./node_modules/@lexical/html/LexicalHtml.mjs'),
-			'@lexical/link': path.resolve('./node_modules/@lexical/link/LexicalLink.mjs'),
-			'@lexical/list': path.resolve('./node_modules/@lexical/list/LexicalList.mjs'),
-			'@lexical/mark': path.resolve('./node_modules/@lexical/mark/LexicalMark.mjs'),
-			'@lexical/overflow': path.resolve('./node_modules/@lexical/overflow/LexicalOverflow.mjs'),
-			'@lexical/plain-text': path.resolve(
-				'./node_modules/@lexical/plain-text/LexicalPlainText.mjs'
-			),
-			'@lexical/rich-text': path.resolve('./node_modules/@lexical/rich-text/LexicalRichText.mjs'),
-			'@lexical/selection': path.resolve('./node_modules/@lexical/selection/LexicalSelection.mjs'),
-			'@lexical/table': path.resolve('./node_modules/@lexical/table/LexicalTable.mjs'),
-			'@lexical/utils': path.resolve('./node_modules/@lexical/utils/LexicalUtils.mjs'),
-			'@lexical/markdown': path.resolve('./node_modules/@lexical/markdown/LexicalMarkdown.mjs'),
-			'@lexical/text': path.resolve('./node_modules/@lexical/text/LexicalText.mjs'),
-			'@lexical/extension': path.resolve('./node_modules/@lexical/extension/LexicalExtension.mjs'),
 		},
+	},
+	ssr: {
+		noExternal: ['@lexical/yjs'],
+	},
+	test: {
+		projects: [
+			{
+				extends: true,
+				test: {
+					name: 'server',
+					include: ['src/**/*.test.ts'],
+					exclude: ['src/**/*.svelte.test.ts'],
+					// Same DOM the toHTML worker uses.
+					environment: 'jsdom',
+				},
+			},
+			{
+				extends: true,
+				// Mount components with Svelte's client build.
+				resolve: { conditions: ['browser'] },
+				test: {
+					name: 'client',
+					include: ['src/**/*.svelte.test.ts'],
+					environment: 'jsdom',
+				},
+			},
+		],
 	},
 });

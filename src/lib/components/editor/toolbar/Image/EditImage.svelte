@@ -1,6 +1,6 @@
 <script>
 	import { $getNodeByKey as getNodeByKey } from 'lexical';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 	import { RectangleHorizontalIcon, RectangleVerticalIcon } from '@lucide/svelte';
 
 	import Button from '$lib/components/Button.svelte';

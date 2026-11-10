@@ -17,8 +17,7 @@ export async function load() {
 		 * @type {[Prisma.YPost]}
 		 */
 		// DO NOT pass in or accept user input here
-		const [randomPost] =
-			await prisma.$queryRaw`SELECT * FROM "YPost" ORDER BY RANDOM() LIMIT 1;`;
+		const [randomPost] = await prisma.$queryRaw`SELECT * FROM "YPost" ORDER BY RANDOM() LIMIT 1;`;
 
 		randomURL = `/w/${randomPost.title}?random`;
 	} else {

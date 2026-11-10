@@ -3,25 +3,25 @@
 	import { editorModal } from '$lib/stores/modal';
 	import Button from '$lib/components/Button.svelte';
 	import TreeviewWrapper from '../toolbar/TreeviewWrapper.svelte';
-	import { treeviewState } from './treeviewState.svelte';
+	import { getExtensionDependencyFromEditor } from '@lexical/extension';
+	import { getEditor } from '$lib/components/editor/context';
+	import { TreeviewExtension } from './TreeviewExtension';
 	import { expandParents } from './utils';
+
+	const { tree } = getExtensionDependencyFromEditor(getEditor(), TreeviewExtension).output;
 
 	const cancel = () => {
 		$editorModal.isOpen = false;
 	};
 
 	$effect(() => {
-		if (!treeviewState.tree) {
-			return;
-		}
+		const treeviewElement = tree.getElement();
 
-		const treeviewElement = treeviewState.tree.getElement();
-
-		const selectedItems = treeviewState.tree.getSelectedItems();
+		const selectedItems = tree.getSelectedItems();
 
 		if (selectedItems.length === 1) {
 			const item = selectedItems[0];
-			expandParents(treeviewState.tree, item);
+			expandParents(tree, item);
 
 			if (!treeviewElement) {
 				return;

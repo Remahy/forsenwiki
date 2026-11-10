@@ -1,7 +1,10 @@
 <script>
 	import { ChevronDownIcon, ChevronRightIcon } from '@lucide/svelte';
 	import Treeview from '../Treeview/index.svelte';
-	import { treeviewState } from '../Treeview/treeviewState.svelte';
+	import { getExtensionDependencyFromEditor } from '@lexical/extension';
+	import { getEditor } from '$lib/components/editor/context';
+	import { fromSignal } from '$lib/utils/fromSignal.svelte';
+	import { TreeviewExtension } from '../Treeview/TreeviewExtension';
 	import Title from './components/Title.svelte';
 	import Image from './Image/index.svelte';
 	import Video from './Video/index.svelte';
@@ -12,7 +15,10 @@
 	import InsertButton from './InsertButton/index.svelte';
 	import Gallery from './Gallery/index.svelte';
 
-	let selectedNode = $derived(treeviewState.selected);
+	const selected = fromSignal(
+		getExtensionDependencyFromEditor(getEditor(), TreeviewExtension).output.selected
+	);
+	let selectedNode = $derived(selected.current);
 
 	let isOpen = $state(true);
 </script>

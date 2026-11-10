@@ -5,17 +5,19 @@ import type {
 	EditorConfig,
 	LexicalEditor,
 	LexicalNode,
+	LexicalUpdateJSON,
 	NodeKey,
 	SerializedLexicalNode,
 	Spread,
 } from 'lexical';
 
-import { $applyNodeReplacement, DecoratorNode } from 'lexical';
+import { $applyNodeReplacement, $getNodeByKey, DecoratorNode } from 'lexical';
 import type { ComponentProps } from 'svelte';
 
 import { IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '$lib/constants/image';
 import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 
+import { $isGalleryNode } from '../Gallery/Gallery';
 import ImageComponent from './ImageComponent.svelte';
 
 export interface ImagePayload {
@@ -81,15 +83,19 @@ export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
 	}
 
 	static importJSON(serializedNode: SerializedImageNode): ImageNode {
-		const { altText, height, width, src } = serializedNode;
-		const node = $createImageNode({
-			src,
-			altText,
-			width,
-			height,
-		});
+		return $createImageNode().updateFromJSON(serializedNode);
+	}
 
-		return node;
+	updateFromJSON(serializedNode: LexicalUpdateJSON<SerializedImageNode>): this {
+		const self = super.updateFromJSON(serializedNode).getWritable();
+
+		// Raw values like the constructor, setWidthAndHeight would round and clamp them.
+		self.__src = serializedNode.src;
+		self.__altText = serializedNode.altText;
+		self.__width = serializedNode.width || 'inherit';
+		self.__height = serializedNode.height || 'inherit';
+
+		return self;
 	}
 
 	static importDOM(): DOMConversionMap | null {
@@ -226,6 +232,13 @@ export class ImageNode extends DecoratorNode<DecoratorImageNodeType> {
 				props.editor = editor;
 			},
 		};
+	}
+
+	// Since Lexical 0.46 inline children of shadow roots get wrapped in a paragraph, which
+	// GalleryPlugin unwraps again, so transforms would loop forever on galleries with images.
+	// Looked up by key since the reconciler may call this on a node removed in the same update.
+	isInline() {
+		return !$isGalleryNode($getNodeByKey(this.getKey())?.getParent());
 	}
 
 	getTextContent() {

@@ -22,6 +22,13 @@ import {
 	$createATableNode,
 	GalleryNode,
 } from '$lib/lexical/custom';
+import isUrl from 'is-url';
+import { BlockIdExtension, configExtension, defineExtension } from '@lexical/extension';
+import { LinkExtension } from '@lexical/link';
+import { ListExtension } from '@lexical/list';
+import { RichTextExtension } from '@lexical/rich-text';
+import { TableExtension } from '@lexical/table';
+import { GalleryExtension } from '../plugins/Gallery/GalleryExtension';
 import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
 import TableNodeDOMExport from './htmlExport/TableNodeDOMExport';
@@ -67,7 +74,7 @@ export const editableTheme = {
 		bold: 'font-semibold',
 		italic: 'italic',
 	},
-	link: 'pointer-events-none'
+	link: 'pointer-events-none',
 };
 
 export const htmlExport = new Map([
@@ -137,7 +144,7 @@ export const articleNodes = [
  * @param {typeof onErrorDefault} onError
  * @returns {import('lexical').CreateEditorArgs}
  */
-export const articleConfig = (theme, editable, editorState, onError = onErrorDefault) => ({
+const articleConfig = (theme, editable, editorState, onError = onErrorDefault) => ({
 	theme: theme || articleTheme,
 	namespace: 'editor',
 	editable,
@@ -149,3 +156,36 @@ export const articleConfig = (theme, editable, editorState, onError = onErrorDef
 		export: htmlExport,
 	},
 });
+
+/**
+ * @param {any} theme
+ * @param {boolean} editable
+ * @param {any} editorState
+ * @param {typeof onErrorDefault} onError
+ */
+export const articleExtension = (theme, editable, editorState, onError = onErrorDefault) => {
+	const { editorState: $initialEditorState, ...config } = articleConfig(
+		theme,
+		editable,
+		editorState,
+		onError
+	);
+	return defineExtension({
+		name: 'article',
+		dependencies: [
+			RichTextExtension,
+			ListExtension,
+			configExtension(LinkExtension, { validateUrl: isUrl }),
+			configExtension(TableExtension, {
+				hasCellMerge: false,
+				hasCellBackgroundColor: false,
+				hasHorizontalScroll: false,
+				hasNestedTables: true,
+			}),
+			GalleryExtension,
+			BlockIdExtension,
+		],
+		$initialEditorState,
+		...config,
+	});
+};

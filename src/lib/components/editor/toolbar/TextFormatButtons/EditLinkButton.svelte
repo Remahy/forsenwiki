@@ -12,10 +12,11 @@
 	} from 'lexical';
 	import { TOGGLE_LINK_COMMAND, $toggleLink as toggleLink } from '@lexical/link';
 	import { $getNearestNodeOfType as getNearestNodeOfType, mergeRegister } from '@lexical/utils';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
 	import { ctrlKey } from '$lib/environment/environment';
 	import { getSelectedNode } from '$lib/components/editor/utils/getSelection';
+	import { restoreEditorFocus } from '$lib/components/editor/utils/focusEditor';
 	import { modal } from '$lib/stores/modal';
 	import { ALinkNode, $isALinkNode as isALinkNode } from '$lib/lexical/custom';
 	import EditorButton from '../EditorButton.svelte';
@@ -57,6 +58,7 @@
 			isOpen: true,
 			component: EditLinkButtonModal,
 			hasLink,
+			onClose: () => restoreEditorFocus(editor),
 			/**
 			 * @param {{ url: string, isInternal: boolean, internalId?: string, rawTitle?: string }} onSubmitArgs
 			 * @param {import('@lexical/link').LinkAttributes} [dAttrs]

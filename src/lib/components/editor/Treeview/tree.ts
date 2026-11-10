@@ -22,10 +22,12 @@ import {
 import { getLabelForNode } from './utils';
 
 declare module '@headless-tree/core' {
+	// Must keep the same type parameter as the original interface.
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	export interface ItemInstance<T> {
 		getParentKeys: () => string[];
 		isDraggable: () => boolean;
-		acceptableDropParents: () => Function[];
+		acceptableDropParents: () => Array<(node: LexicalNode) => boolean>;
 	}
 }
 

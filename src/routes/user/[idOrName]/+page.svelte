@@ -143,7 +143,7 @@
 				<h1 class="mb-2 text-4xl font-bold">{user.name}</h1>
 				<h2 class="text-2xl">{stats.editedArticles ? 'Editor' : 'Lurker'}</h2>
 
-				<hr class="mb-4 forsen-wiki-theme-border" />
+				<hr class="forsen-wiki-theme-border mb-4" />
 
 				<div class="flex flex-wrap gap-8">
 					<div class="flex grow flex-col gap-2">
@@ -177,8 +177,9 @@
 									<tr>
 										<td>Images</td>
 										<td>
-											<Link href="/search?query={user.id}&type=content&contenttype=image" target="_blank"
-												>{stats.uploadedContent.images}</Link
+											<Link
+												href="/search?query={user.id}&type=content&contenttype=image"
+												target="_blank">{stats.uploadedContent.images}</Link
 											>
 										</td>
 									</tr>
@@ -186,8 +187,9 @@
 									<tr>
 										<td>Videos</td>
 										<td>
-											<Link href="/search?query={user.id}&type=content&contenttype=video" target="_blank"
-												>{stats.uploadedContent.videos}</Link
+											<Link
+												href="/search?query={user.id}&type=content&contenttype=video"
+												target="_blank">{stats.uploadedContent.videos}</Link
 											>
 										</td>
 									</tr>
@@ -195,8 +197,9 @@
 									<tr>
 										<td>Audio</td>
 										<td>
-											<Link href="/search?query={user.id}&type=content&contenttype=audio" target="_blank"
-												>{stats.uploadedContent.audio}</Link
+											<Link
+												href="/search?query={user.id}&type=content&contenttype=audio"
+												target="_blank">{stats.uploadedContent.audio}</Link
 											>
 										</td>
 									</tr>

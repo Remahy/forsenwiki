@@ -1,4 +1,4 @@
-import { $applyNodeReplacement, $getNodeByKey, $isRootNode } from 'lexical';
+import { $applyNodeReplacement, $isRootNode } from 'lexical';
 
 import { TableNode } from '$lib/lexical/index';
 
@@ -9,33 +9,8 @@ import { TableNode } from '$lib/lexical/index';
  */
 
 export class ATableNode extends TableNode {
-	/**
-	 * @param {NodeKey} [key]
-	 */
-	constructor(key) {
-		super(key);
-	}
-
 	$config() {
 		return this.config('a-table', { extends: TableNode });
-	}
-
-	static getType() {
-		return 'a-table';
-	}
-
-	/**
-	 * @param {ATableNode} node
-	 */
-	static clone(node) {
-		return new ATableNode(node.__key);
-	}
-
-	/** @param {import('@lexical/table').SerializedTableNode} serializedNode */
-	static importJSON(serializedNode) {
-		const node = $createATableNode().updateFromJSON(serializedNode);
-
-		return node;
 	}
 
 	/**
@@ -45,15 +20,8 @@ export class ATableNode extends TableNode {
 	createDOM(config, editor) {
 		const dom = super.createDOM(config, editor);
 
-		const parentIsRoot = editor.read(() => {
-			const n = $getNodeByKey(this.getKey());
-			const parent = n?.getParent();
-			if (!parent) {
-				return false;
-			}
-
-			return $isRootNode(parent);
-		});
+		// createDOM runs while the editor state is being reconciled, so it can be read directly.
+		const parentIsRoot = $isRootNode(this.getParent());
 
 		const tcs = [...dom.querySelectorAll('td'), ...dom.querySelectorAll('th')];
 
@@ -87,13 +55,6 @@ export class ATableNode extends TableNode {
 		wrapper.append(wrapper2);
 
 		return wrapper;
-	}
-
-	exportJSON() {
-		return {
-			...super.exportJSON(),
-			type: ATableNode.getType(),
-		};
 	}
 }
 

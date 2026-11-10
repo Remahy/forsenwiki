@@ -1,6 +1,6 @@
 <script>
 	/* eslint-disable svelte/no-at-html-tags */
-	import { SquarePenIcon, RotateCcwClock } from '@lucide/svelte';
+	import { SquarePenIcon, HistoryIcon } from '@lucide/svelte';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
 	import { page } from '$app/state';
@@ -197,7 +197,7 @@
 
 						<div class="flex shrink-0 items-start gap-2">
 							<LinkButton href="/w/{title}/history" class="flex items-center gap-2 text-sm">
-								<RotateCcwClock size="16" /><span class="hidden md:inline">History</span>
+								<HistoryIcon size="16" /><span class="hidden md:inline">History</span>
 							</LinkButton>
 
 							<LinkButton href="/w/{title}/edit" reload class="flex items-center gap-2 text-sm">

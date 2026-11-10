@@ -7,16 +7,17 @@
 		mergeRegister,
 	} from 'lexical';
 	import { INSERT_TABLE_COMMAND } from '@lexical/table';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
 	import Select from '$lib/components/Select.svelte';
 	import { blockTypeLabels } from '$lib/constants/element';
 	import { $isGalleryNode as isGalleryNode } from '$lib/lexical/custom';
+	import { focusEditor } from '$lib/components/editor/utils/focusEditor';
 
-	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImagePlugin.svelte';
-	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedPlugin.svelte';
-	import { INSERT_FLOATBLOCK_COMMAND } from '../../plugins/FloatBlock/FloatBlockPlugin.svelte';
-	import { INSERT_GALLERY_COMMAND } from '../../plugins/Gallery/GalleryPlugin.svelte';
+	import { INSERT_IMAGE_COMMAND } from '../../plugins/Image/ImageExtension';
+	import { INSERT_VIDEOEMBED_COMMAND } from '../../plugins/VideoEmbed/VideoEmbedExtension';
+	import { INSERT_FLOATBLOCK_COMMAND } from '../../plugins/FloatBlock/FloatBlockExtension';
+	import { INSERT_GALLERY_COMMAND } from '../../plugins/Gallery/GalleryExtension';
 	import { insertParagraph } from './insertParagraph';
 
 	let isDisabled = $state(false);
@@ -123,6 +124,8 @@
 
 				return;
 			}
+
+			focusEditor(editor);
 
 			element.insertFunc();
 		}

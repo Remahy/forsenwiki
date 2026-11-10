@@ -28,7 +28,6 @@ declare global {
 	export type ElementNode = import('lexical').ElementNode;
 
 	export type ComposerWritable = Writable<{ getEditor: () => LexicalEditor } | null>;
-	export type Composer = import('svelte-lexical').Composer;
 
 	export type YDoc = import('yjs').Doc;
 	export type YEvent<T> = import('yjs').YEvent<T>;

@@ -5,38 +5,13 @@ import {
 	type SerializedElementNode,
 } from 'lexical';
 
-type SupportedGalleryEntryType = 'image' | 'audio' | 'video';
-
-type GalleryEntry = {
-	id: string;
-	type: SupportedGalleryEntryType;
-};
-
 export type GalleryNodePayload = any;
 
 export type SerializedGalleryNode = GalleryNodePayload & SerializedElementNode;
 
 export class GalleryNode extends ElementNode {
-	constructor(key?: NodeKey) {
-		super(key);
-	}
-
-	static getType() {
-		return 'gallery';
-	}
-
-	static clone(node: GalleryNode) {
-		return new GalleryNode(node.__key);
-	}
-
-	static importJSON(serializedNode: SerializedGalleryNode) {
-		const node = $createGalleryNode(serializedNode).updateFromJSON(serializedNode);
-
-		return node;
-	}
-
 	$config() {
-		return this.config(GalleryNode.getType(), { extends: ElementNode });
+		return this.config('gallery', { extends: ElementNode });
 	}
 
 	createDOM() {

@@ -1,9 +1,10 @@
 # postgres migration
 
 0. Downgrade `docker-compose.yml` postgres to the last working version.
-1. docker exec -it [postgres-container-id] pg_dumpall -U postgres > db_backup.sql
-2. docker stop [postgres-container-id]
-3. Update `docker-compose.yml`:
+1. docker ps
+2. docker exec -it [postgres-container-id] pg_dumpall -U postgres > db_backup.sql
+3. docker stop [postgres-container-id]
+4. Update `docker-compose.yml`:
 
 ```yaml
 postgres:

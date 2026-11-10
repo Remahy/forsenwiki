@@ -5,15 +5,33 @@ import {
 	type ElementFormatType,
 	type LexicalEditor,
 	type LexicalNode,
+	type LexicalUpdateJSON,
 	type NodeKey,
+	type Spread,
 } from 'lexical';
-import { DecoratorBlockNode } from '../VideoEmbed/DecoratorBlockNode';
+import {
+	DecoratorBlockNode,
+	type SerializedDecoratorBlockNode,
+} from '../VideoEmbed/DecoratorBlockNode';
 import FallbackComponent from './FallbackComponent.svelte';
 
 type FallbackNodeType = {
 	componentClass: typeof FallbackComponent;
 	updateProps: (props: ComponentProps<typeof FallbackComponent>) => void;
 };
+
+export type SerializedFallbackNode = Spread<{ data?: string }, SerializedDecoratorBlockNode>;
+
+export function parseFallbackData(
+	data: string | undefined
+): ({ type?: string } & Record<string, unknown>) | null {
+	try {
+		const parsed = JSON.parse(data || '');
+		return parsed && typeof parsed === 'object' ? parsed : null;
+	} catch {
+		return null;
+	}
+}
 
 export class FallbackNode extends DecoratorBlockNode {
 	__data: string | undefined;
@@ -27,8 +45,12 @@ export class FallbackNode extends DecoratorBlockNode {
 		return 'fallback';
 	}
 
-	static clone(node: any): FallbackNode {
-		return new FallbackNode(node.__data, node.__format, node.__key);
+	static clone(node: FallbackNode): FallbackNode {
+		return new FallbackNode(node.__data, node.getFormatType(), node.__key);
+	}
+
+	getDataType(): string {
+		return parseFallbackData(this.getLatest().__data)?.type || this.getType();
 	}
 
 	exportDOM(): DOMExportOutput {
@@ -43,10 +65,8 @@ export class FallbackNode extends DecoratorBlockNode {
 		p.style.padding = '1rem';
 		p.style.borderRadius = '8px';
 
-		const data = JSON.parse(this.__data || '');
-
 		italic.style.color = '#000';
-		italic.textContent = `Invalid node of type: "${data?.type}"`;
+		italic.textContent = `Invalid node of type: "${this.getDataType()}"`;
 
 		strong.appendChild(italic);
 		p.appendChild(strong);
@@ -59,18 +79,27 @@ export class FallbackNode extends DecoratorBlockNode {
 		return DecoratorBlockNode.importDOM ? DecoratorBlockNode.importDOM() : null;
 	}
 
-	static importJSON(serializedNode: any): FallbackNode {
-		const node = new FallbackNode(serializedNode);
-
-		node.setFormat(serializedNode.format);
-
-		return node;
+	static importJSON(serializedNode: SerializedFallbackNode): FallbackNode {
+		return $createFallbackNode().updateFromJSON(serializedNode);
 	}
 
-	exportJSON() {
+	updateFromJSON(serializedNode: LexicalUpdateJSON<SerializedFallbackNode>): this {
+		// A node exported by us carries `data`, anything else is the original node itself.
+		const data =
+			typeof serializedNode.data === 'string'
+				? serializedNode.data
+				: JSON.stringify(serializedNode);
+
+		const self = super.updateFromJSON(serializedNode).getWritable();
+		self.__data = data;
+
+		return self;
+	}
+
+	exportJSON(): SerializedFallbackNode {
 		return {
 			...super.exportJSON(),
-			type: FallbackNode.getType(),
+			type: this.getType(),
 			data: this.__data,
 		};
 	}
@@ -87,7 +116,11 @@ export class FallbackNode extends DecoratorBlockNode {
 		_includeInert?: boolean | undefined,
 		_includeDirectionless?: false | undefined
 	): string {
-		return this.__data || '';
+		// The raw JSON would end up in the article text, so only use the original node's link.
+		const data = parseFallbackData(this.getLatest().__data);
+		const link = ['src', 'url', 'href'].map((key) => data?.[key]).find((value) => value);
+
+		return typeof link === 'string' ? link : '';
 	}
 
 	decorate(editor: LexicalEditor): FallbackNodeType {

@@ -1,28 +1,35 @@
 <script>
 	import { $setSelection as setSelection, $getSelection as getSelection } from 'lexical';
 	import { $toggleLink as toggleLink } from '@lexical/link';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 	import { UnlinkIcon } from '@lucide/svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { $isALinkNode as isALinkNode } from '$lib/lexical/custom';
+	import { focusEditor } from '$lib/components/editor/utils/focusEditor';
 	import Wrapper from '../components/Wrapper.svelte';
 	import Title from '../components/Title.svelte';
 	import EditLink from './EditLink.svelte';
+
+	/**
+	 * @typedef {import('$lib/lexical/custom').ALinkNode} ALinkNode
+	 */
 
 	/**
 	 * @type {{ selectedNode: LexicalNode | null }}
 	 */
 	let { selectedNode = null } = $props();
 
-	/** @type {import('$lib/lexical/custom').ALinkNode | undefined} */
+	/** @type {ALinkNode | undefined} */
 	let selectedLink = $state();
 
 	const editor = $derived(getEditor());
 
 	/**
-	 * @param {import('$lib/lexical/custom').ALinkNode} linkNode
+	 * @param {ALinkNode} linkNode
 	 */
 	const onClickUnlink = (linkNode) => {
+		focusEditor(editor);
+
 		editor.update(() => {
 			if (isALinkNode(linkNode)) {
 				const currentSelection = getSelection();
@@ -67,9 +74,7 @@
 				return;
 			}
 
-			const closestALinkNode = /** @type {import('$lib/lexical/custom').ALinkNode} */ (
-				parents[closestALinkNodeIndex]
-			);
+			const closestALinkNode = /** @type {ALinkNode} */ (parents[closestALinkNodeIndex]);
 
 			selectedLink = closestALinkNode;
 		});
@@ -77,17 +82,20 @@
 
 	$effect(() => {
 		updateToolbar();
+		// This is to re-run updateToolbar when selectedNode is changed.
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		() => [selectedNode];
 	});
 </script>
 
 {#if selectedLink && isALinkNode(selectedLink)}
+	{@const node = selectedLink}
 	<Wrapper>
 		{#snippet title()}
 			<Title selectedNode={selectedLink} text="Link">
 				<Button
 					class="m-0! rounded-none! p-0! hover:bg-violet-500!"
-					onclick={() => onClickUnlink(selectedLink)}
+					onclick={() => onClickUnlink(node)}
 					title="Unlink"
 				>
 					<UnlinkIcon />
@@ -97,7 +105,7 @@
 
 		{#snippet content()}
 			<div class="p-2">
-				<EditLink selectedNode={selectedLink} />
+				<EditLink selectedNode={node} />
 			</div>
 		{/snippet}
 	</Wrapper>

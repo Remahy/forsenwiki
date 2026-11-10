@@ -1,9 +1,4 @@
-import {
-	$createNodeSelection as createNodeSelection,
-	$setSelection as setSelection,
-	$isParagraphNode as isParagraphNode,
-	$isTextNode as isTextNode,
-} from 'lexical';
+import { $isParagraphNode as isParagraphNode, $isTextNode as isTextNode } from 'lexical';
 import { $getNearestNodeOfType as getNearestNodeOfType } from '@lexical/utils';
 import { $isListItemNode as isListItemNode, $isListNode as isListNode } from '@lexical/list';
 import { $isQuoteNode as isQuoteNode, $isHeadingNode as isHeadingNode } from '@lexical/rich-text';
@@ -147,62 +142,52 @@ export const expandParents = (tree, item) => {
 
 	for (let index = 0; index < parentKeys.length; index++) {
 		const key = parentKeys[index];
-		tree.getItemInstance(key).expand();
+		const parent = tree.getItemInstance(key);
+
+		// expand() always rebuilds the tree, even if the item is already expanded.
+		if (!parent.isExpanded()) {
+			parent.expand();
+		}
 	}
 
-	item.expand();
+	if (!item.isExpanded()) {
+		item.expand();
+	}
 };
 
 /**
- * @param {typeof import('./treeviewState.svelte').treeviewState} state
+ * Checks whether nodes were added, removed or moved. Unchanged nodes are shared
+ * between editor states, so only nodes that were actually edited get compared.
+ *
+ * @param {import('lexical').EditorState} prevEditorState
+ * @param {import('lexical').EditorState} editorState
  */
-export const updateItems = (state) => {
-	if (!state.tree) {
-		return;
+export const hasTreeStructureChanged = (prevEditorState, editorState) => {
+	const prevNodeMap = prevEditorState._nodeMap;
+	const nodeMap = editorState._nodeMap;
+
+	if (prevNodeMap.size !== nodeMap.size) {
+		return true;
 	}
 
-	state.items = state.tree.getItems();
-};
+	for (const [key, node] of nodeMap) {
+		const prevNode = prevNodeMap.get(key);
 
-/**
- * @param {typeof import('./treeviewState.svelte').treeviewState} state
- * @param {LexicalEditor} editor
- * @param {ItemInstance} item
- */
-export const handleOnClickTreeNode = (state, editor, item) => {
-	state.isTreeNodeSelection = true;
+		if (prevNode === node) {
+			continue;
+		}
 
-	const node = item.getItemData();
+		if (
+			!prevNode ||
+			prevNode.__parent !== node.__parent ||
+			prevNode.__prev !== node.__prev ||
+			prevNode.__next !== node.__next
+		) {
+			return true;
+		}
+	}
 
-	state.tree?.setSelectedItems([item.getId()]);
-
-	updateItems(state);
-
-	editor._rootElement?.focus({ preventScroll: true });
-
-	editor.update(
-		() => {
-			if (isParagraphNode(node) || isTextNode(node)) {
-				node.selectEnd();
-			} else {
-				const selection = createNodeSelection();
-				selection.add(node.getKey());
-				setSelection(selection);
-			}
-
-			const element = editor.getElementByKey(node.getKey());
-			element?.scrollIntoView({
-				behavior: 'instant',
-				block: 'center',
-				inline: 'center',
-			});
-
-			state.selected = node;
-		},
-		{ discrete: true }
-	);
-
-	state.isTreeNodeSelection = false;
+	return false;
 };
 
 /**

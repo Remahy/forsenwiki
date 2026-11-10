@@ -1,7 +1,7 @@
 <script>
 	import { $getSelection as getSelection, $isRangeSelection as isRangeSelection } from 'lexical';
 	import { $isTableCellNode as isTableCellNode, $isTableNode as isTableNode } from '@lexical/table';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
 	import Row from './Row/index.svelte';
 	import Column from './Column/index.svelte';
@@ -12,10 +12,10 @@
 	 */
 	let { selectedNode = null } = $props();
 
-	/** @type {import('$lib/lexical/custom').ATableNode | null} */
+	/** @type {import('@lexical/table').TableNode | null} */
 	let selectedTable = $state(null);
 
-	/** @type {import('$lib/lexical/custom').ATableCellNode | null} */
+	/** @type {import('@lexical/table').TableCellNode | null} */
 	let selectedCell = $state(null);
 
 	const editor = getEditor();
@@ -57,9 +57,7 @@
 			const selection = getSelection();
 
 			if (isRangeSelection(selection)) {
-				selectedCell = /** @type {import('$lib/lexical/custom').ATableCellNode} */ (
-					parents[cellIndex]
-				);
+				selectedCell = /** @type {import('@lexical/table').TableCellNode} */ (parents[cellIndex]);
 			} else {
 				selectedCell = null;
 			}
@@ -68,6 +66,8 @@
 
 	$effect(() => {
 		updateToolbar();
+		// This is to re-run updateToolbar when selectedNode is changed.
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		() => [selectedNode];
 	});
 </script>

@@ -7,7 +7,7 @@
 		RectangleVerticalIcon,
 	} from '@lucide/svelte';
 	import { $getNodeByKey as getNodeByKey } from 'lexical';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
 	import Select from '$lib/components/Select.svelte';
 	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';

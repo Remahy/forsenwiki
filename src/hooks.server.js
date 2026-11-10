@@ -12,7 +12,7 @@ if (!STATIC_DOMAIN) {
 	throw new Error('Environment value VITE_STATIC_DOMAIN has not been set.');
 }
 
-if ((CLOUDFLARE_API_TOKEN && CLOUDFLARE_ZONE_ID) && !building) {
+if (CLOUDFLARE_API_TOKEN && CLOUDFLARE_ZONE_ID && !building) {
 	const result = await validateToken();
 	if (!result) {
 		console.error(new Error('Could not validate Cloudflare token!'));

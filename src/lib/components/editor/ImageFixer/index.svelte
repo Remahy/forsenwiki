@@ -1,5 +1,5 @@
 <script>
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 	import Button from '$lib/components/Button.svelte';
 	import { modal } from '$lib/stores/modal';
 	import ImageFixerModal from './ImageFixerModal.svelte';

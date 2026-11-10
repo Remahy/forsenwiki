@@ -59,10 +59,6 @@ export class DiffATableNode extends ATableNode {
 		return dom;
 	}
 
-	static importDOM() {
-		return ATableNode.importDOM();
-	}
-
 	exportJSON() {
 		return { ...super.exportJSON(), ___change: this.___change, type: DiffATableNode.getType() };
 	}

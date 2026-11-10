@@ -1,12 +1,13 @@
 import { error, json } from '@sveltejs/kit';
 /*
-import { createHeadlessEditor } from '@lexical/headless';
+import { buildEditorFromExtensions } from '@lexical/extension';
+import { HeadlessExtension } from '@lexical/headless';
 
 import { mergePostUpdatesV2, postUpdatesToUint8Arr } from '$lib/yjs/utils';
 import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
 import { getDiffJSON } from '$lib/diff/index.server';
-import { articleConfig } from '$lib/components/editor/config/article';
-import { diffConfig } from '$lib/components/editor/config/diff';
+import { articleExtension } from '$lib/components/editor/config/article';
+import { diffExtension } from '$lib/components/editor/config/diff';
 import toHTML from '$lib/worker/toHTML';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 */
@@ -83,12 +84,12 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 	const updatesFrom = mergePostUpdatesV2(fromPostUpdates);
 
 	const { editor: tEditor } = getYjsAndEditor(
-		articleConfig(null, EDITOR_IS_READONLY, null),
+		articleExtension(null, EDITOR_IS_READONLY, null),
 		updatesTo
 	);
 	const toUpdate = tEditor.toJSON();
 	const { editor: fEditor } = getYjsAndEditor(
-		articleConfig(null, EDITOR_IS_READONLY, null),
+		articleExtension(null, EDITOR_IS_READONLY, null),
 		updatesFrom
 	);
 	const fromUpdate = fEditor.toJSON();
@@ -118,7 +119,7 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 	/*
 	const diffJSON = getDiffJSON(toUpdate, fromUpdate);
 
-	const editor = createHeadlessEditor(diffConfig(null, EDITOR_IS_READONLY, null));
+	const editor = buildEditorFromExtensions(HeadlessExtension, diffExtension(null, EDITOR_IS_READONLY, null));
 
 	editor.setEditorState(editor.parseEditorState(diffJSON.editorState));
 

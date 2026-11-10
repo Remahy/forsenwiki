@@ -1,5 +1,6 @@
 // Realistically only used by backend.
-import { createHeadlessEditor } from '@lexical/headless';
+import { buildEditorFromExtensions } from '@lexical/extension';
+import { HeadlessExtension } from '@lexical/headless';
 import { createBinding, syncLexicalUpdateToYjs, syncYjsChangesToLexical } from '@lexical/yjs';
 
 import { applyDiffToYDoc, convertUpdateFormatV2ToV1, createNewYDoc } from './utils';
@@ -43,12 +44,12 @@ function registerCollaborationListeners(provider, binding) {
 }
 
 /**
- * @param {any} config
+ * @param {import('lexical').AnyLexicalExtensionArgument} extension
  * @param {Uint8Array} update
  * @returns {{editor: LexicalEditor, doc: YDoc}}
  */
-export function getYjsAndEditor(config, update) {
-	const editor = createHeadlessEditor(config);
+export function getYjsAndEditor(extension, update) {
+	const editor = buildEditorFromExtensions(HeadlessExtension, extension);
 
 	const dummyId = 'dummy-id';
 	const doc = createNewYDoc();

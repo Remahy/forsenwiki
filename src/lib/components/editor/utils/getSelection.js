@@ -115,10 +115,13 @@ export function clearSelection(editor) {
  * @param {string} nodeKey
  */
 export function createNodeSelectionStore(editor, nodeKey) {
-	const { subscribe, set /*, update*/ } = writable(false);
-
-	editor.registerUpdateListener(() => {
+	// Only listen while subscribed, so the listener is removed when the component is destroyed.
+	const { subscribe } = writable(false, (set) => {
 		set(isNodeSelected(editor, nodeKey));
+
+		return editor.registerUpdateListener(() => {
+			set(isNodeSelected(editor, nodeKey));
+		});
 	});
 
 	return {

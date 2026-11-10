@@ -15,6 +15,7 @@ import type {
 	ElementFormatType,
 	LexicalEditor,
 	LexicalNode,
+	LexicalUpdateJSON,
 	NodeKey,
 	Spread,
 } from 'lexical';
@@ -40,6 +41,10 @@ import {
 } from './DecoratorBlockNode';
 
 export type Subtitle = { id: string; title: string; src: string; language: string };
+
+/** The label shown for a subtitle track, e.g. "Commentary (English)". */
+const getSubtitleLabel = ({ title, language }: Pick<Subtitle, 'title' | 'language'>) =>
+	`${title} (${bcp47.find((l) => l.lang === language)?.label})`;
 
 export type SupportedPlatforms = 'twitch' | 'youtube' | 'usercontent';
 
@@ -186,7 +191,7 @@ export const getYouTubeInfo = (src?: string) => {
 	return {
 		url: `https://www.youtube-nocookie.com/embed/${id}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`.replace(
 			/\/\//g,
-			'\/'
+			'/'
 		),
 		title: 'Video',
 		thumbnail: `https://img.youtube.com/vi_webp/${id}/sddefault.jpg`,
@@ -407,16 +412,16 @@ function generateCDNSrc(node: VideoEmbedNode, staticURL: string) {
 
 		for (let index = 0; index < subtitles.length; index++) {
 			const subtitle = subtitles[index];
-			const languageLabel = bcp47.find((l) => l.lang === subtitle.language)?.label;
 
 			const track = document.createElement('track');
 			track.setAttribute('src', `${STATIC_DOMAIN}/${subtitle.src}`);
 			track.setAttribute('srclang', subtitle.language);
 			track.setAttribute('kind', 'subtitles');
-			track.setAttribute('label', `${subtitle.title} (${languageLabel})`);
+			track.setAttribute('label', getSubtitleLabel(subtitle));
+			track.setAttribute('data-lexical-subtitle-id', subtitle.id);
 
 			if (index === 0) {
-				track.setAttribute('default', '')
+				track.setAttribute('default', '');
 				track.default = true;
 			}
 
@@ -432,11 +437,67 @@ function generateCDNSrc(node: VideoEmbedNode, staticURL: string) {
 	return { element };
 }
 
+/** Exported sizes are a number or `inherit`. */
+const toVideoSize = (value: string | null): number | 'inherit' => {
+	const size = Number(value);
+
+	return value && Number.isFinite(size) ? size : 'inherit';
+};
+
+/** Reverses decoratorFormatToMarginStyle, which the export uses for alignment. */
+const getFormatFromMargins = ({ style }: HTMLElement): ElementFormatType => {
+	const isAuto = (property: string) => style.getPropertyValue(property) === 'auto';
+
+	if (isAuto('margin-left') && isAuto('margin-right')) {
+		return 'center';
+	}
+
+	if (isAuto('margin-right')) {
+		return 'left';
+	}
+
+	if (isAuto('margin-left')) {
+		return 'right';
+	}
+
+	if (isAuto('margin-inline-start')) {
+		return 'start';
+	}
+
+	if (isAuto('margin-inline-end')) {
+		return 'end';
+	}
+
+	return '';
+};
+
+/** Reverses the <track> elements made by generateCDNSrc. */
+const getSubtitlesFromTracks = (domNode: HTMLElement): Subtitle[] | undefined => {
+	const tracks = [...domNode.querySelectorAll('track[kind="subtitles"]')];
+
+	if (!tracks.length) {
+		return;
+	}
+
+	return tracks.map((track) => {
+		const language = track.getAttribute('srclang') || '';
+		const label = track.getAttribute('label') || '';
+		const labelSuffix = getSubtitleLabel({ title: '', language });
+		const url = track.getAttribute('src') || '';
+
+		return {
+			id: track.getAttribute('data-lexical-subtitle-id') || '',
+			src: url.startsWith(`${STATIC_DOMAIN}/`) ? url.slice(STATIC_DOMAIN.length + 1) : url,
+			title: label.endsWith(labelSuffix) ? label.slice(0, -labelSuffix.length) : label,
+			language,
+		};
+	});
+};
+
 function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput {
-	const width = domNode.getAttribute('width') ? Number(domNode.getAttribute('width')) : 'inherit';
-	const height = domNode.getAttribute('height')
-		? Number(domNode.getAttribute('height'))
-		: 'inherit';
+	const width = toVideoSize(domNode.getAttribute('width'));
+	const height = toVideoSize(domNode.getAttribute('height'));
+	const format = getFormatFromMargins(domNode);
 
 	const youtubeVideoSrc = domNode.getAttribute('data-lexical-youtube');
 	if (youtubeVideoSrc) {
@@ -445,13 +506,20 @@ function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput 
 			src: youtubeVideoSrc,
 			width,
 			height,
+			format,
 		});
 		return { node };
 	}
 
 	const twitchClipSrc = domNode.getAttribute('data-lexical-twitch');
 	if (twitchClipSrc) {
-		const node = $createVideoEmbedNode({ platform: 'twitch', src: twitchClipSrc, width, height });
+		const node = $createVideoEmbedNode({
+			platform: 'twitch',
+			src: twitchClipSrc,
+			width,
+			height,
+			format,
+		});
 		return { node };
 	}
 
@@ -462,6 +530,8 @@ function $convertVideoElement(domNode: HTMLElement): null | DOMConversionOutput 
 			src: userContentSrc,
 			width,
 			height,
+			format,
+			subtitles: getSubtitlesFromTracks(domNode),
 		});
 		return { node };
 	}
@@ -567,29 +637,39 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 	}
 
 	static importJSON(serializedNode: SerializedVideoEmbedNode): VideoEmbedNode {
-		const node = new VideoEmbedNode(
-			serializedNode.platform,
-			serializedNode.src,
-			serializedNode.width,
-			serializedNode.height,
-			serializedNode.altText,
-			serializedNode.fileType,
-			serializedNode.subtitles,
-			serializedNode.format
-		);
+		return $createVideoEmbedNode().updateFromJSON(serializedNode);
+	}
 
-		node.setFormat(serializedNode.format);
+	// DecoratorBlockNode reads `format` and `direction`.
+	updateFromJSON(serializedNode: LexicalUpdateJSON<SerializedVideoEmbedNode>): this {
+		const self = super.updateFromJSON(serializedNode).getWritable();
 
-		return node;
+		self.__platform = serializedNode.platform;
+		self.__src = serializedNode.src;
+		self.__width = serializedNode.width;
+		self.__height = serializedNode.height;
+		self.__altText = serializedNode.altText;
+		self.__fileType = serializedNode.fileType;
+		self.__subtitles = serializedNode.subtitles;
+
+		return self;
 	}
 
 	static importDOM(): DOMConversionMap | null {
 		return {
 			iframe: (domNode: HTMLElement) => {
 				if (
-					!domNode.hasAttribute('data-lexical-youtube') ||
+					!domNode.hasAttribute('data-lexical-youtube') &&
 					!domNode.hasAttribute('data-lexical-twitch')
 				) {
+					return null;
+				}
+
+				return { conversion: $convertVideoElement, priority: 1 };
+			},
+			// Uploaded videos are exported as <video>, see generateCDNSrc.
+			video: (domNode: HTMLElement) => {
+				if (!domNode.hasAttribute('data-lexical-usercontent')) {
 					return null;
 				}
 

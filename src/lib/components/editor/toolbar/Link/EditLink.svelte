@@ -3,7 +3,7 @@
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
 	import isUrl from 'is-url';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 	import Button from '$lib/components/Button.svelte';
 	import { searchRequest } from '$lib/api/search';
 	import Spinner from '$lib/components/Spinner.svelte';

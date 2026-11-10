@@ -1,4 +1,4 @@
-import { workerData, parentPort, isMainThread } from 'node:worker_threads';
+import { handleJobs } from './handleJobs.js';
 
 import { $createTextNode, $getRoot, $createParagraphNode } from 'lexical';
 
@@ -9,7 +9,7 @@ import {
 	createNewYDoc,
 	YXmlText,
 } from '$lib/yjs/utils';
-import { articleConfig } from '$lib/components/editor/config/article';
+import { articleExtension } from '$lib/components/editor/config/article';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 
 /**
@@ -24,7 +24,7 @@ export const initialUpdateWorker = () => {
 	}
 
 	const { doc, editor } = getYjsAndEditor(
-		articleConfig(null, EDITOR_IS_READONLY, null),
+		articleExtension(null, EDITOR_IS_READONLY, null),
 		emptyUpdate
 	);
 
@@ -48,10 +48,4 @@ export const initialUpdateWorker = () => {
 	});
 };
 
-if (!isMainThread && parentPort && workerData) {
-	try {
-		parentPort.postMessage({ update: initialUpdateWorker(), error: null });
-	} catch (err) {
-		parentPort.postMessage({ error: String(err?.message ?? err) });
-	}
-}
+handleJobs(initialUpdateWorker);

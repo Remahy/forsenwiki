@@ -1,5 +1,5 @@
 import { ATableNode } from '$lib/lexical/custom';
-import { $isRootNode as isRootNode, $getNodeByKey as getNodeByKey } from 'lexical';
+import { $isRootNode as isRootNode } from 'lexical';
 
 /**
  * @type {[import("lexical").Klass<LexicalNode>, (editor: LexicalEditor, target: LexicalNode) => import("lexical").DOMExportOutput]}
@@ -12,15 +12,8 @@ export default [
 		return {
 			...output,
 			after: (generatedElement) => {
-				const parentIsRoot = editor.read(() => {
-					const n = getNodeByKey(node.getKey());
-					const parent = n?.getParent();
-					if (!parent) {
-						return false;
-					}
-
-					return isRootNode(parent);
-				});
+				// Called during the HTML export, which already reads the editor state.
+				const parentIsRoot = isRootNode(node.getParent());
 
 				const table = output.after ? output.after(generatedElement) : generatedElement;
 

@@ -14,15 +14,15 @@
 		$isTableCellNode as isTableCellNode,
 		TableCellHeaderStates,
 	} from '@lexical/table';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
 	import Button from '$lib/components/Button.svelte';
 	import EditorButton from '../../EditorButton.svelte';
 
 	/**
 	 * @typedef {Object} Props
-	 * @property {import('$lib/lexical/custom').ATableNode} selectedTable
-	 * @property {import('$lib/lexical/custom').ATableCellNode} selectedCell
+	 * @property {import('@lexical/table').TableNode} selectedTable
+	 * @property {import('@lexical/table').TableCellNode} selectedCell
 	 */
 
 	/** @type {Props} */
@@ -55,8 +55,9 @@
 
 			const tableColumnIndex = getTableColumnIndexFromTableCellNode(selectedCell);
 
-			/** @type {import('@lexical/table').TableRowNode[]} */
-			const tableRows = tableNode.getChildren();
+			const tableRows = /** @type {import('@lexical/table').TableRowNode[]} */ (
+				tableNode.getChildren()
+			);
 			const maxRowsLength = Math.max(...tableRows.map((row) => row.getChildren().length));
 
 			if (tableColumnIndex >= maxRowsLength || tableColumnIndex < 0) {
@@ -109,6 +110,8 @@
 
 	$effect(() => {
 		updateToolbar();
+		// This is to re-run updateToolbar when selectedCell is changed.
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		() => [selectedCell];
 	});
 </script>

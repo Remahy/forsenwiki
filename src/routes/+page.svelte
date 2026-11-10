@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import {
 		Dice4Icon,
-		RotateCcwClock,
+		HistoryIcon,
 		FolderSearchIcon,
 		SquarePenIcon,
 		ImageIcon,
@@ -206,7 +206,7 @@
 					<h2 class="text-2xl">Navigation</h2>
 				</div>
 				<LinkButton href="/recentchanges" class="flex gap-2 whitespace-nowrap">
-					<RotateCcwClock /> <span>Recent changes</span>
+					<HistoryIcon /> <span>Recent changes</span>
 				</LinkButton>
 				<LinkButton href="/create" class="flex gap-2 whitespace-nowrap" reload>
 					<SquarePenIcon /> <span>New article</span>

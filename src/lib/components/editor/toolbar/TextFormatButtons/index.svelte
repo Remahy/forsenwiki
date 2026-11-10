@@ -7,9 +7,10 @@
 		$getSelection as getSelection,
 		mergeRegister,
 	} from 'lexical';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
-	import { ctrlKey } from '$lib/environment/environment';
+	import { ctrlKey, shiftKey } from '$lib/environment/environment';
+	import { keepEditorFocus } from '$lib/components/editor/utils/keepEditorFocus';
 	import EditorButton from '../EditorButton.svelte';
 	import EditLinkButton from './EditLinkButton.svelte';
 
@@ -62,25 +63,37 @@
 
 <EditLinkButton />
 
-<EditorButton title="Bold ({ctrlKey} B)" on:click={bold} isActive={isBold}>
+<EditorButton
+	title="Bold ({ctrlKey}B)"
+	on:click={bold}
+	onmousedown={keepEditorFocus}
+	isActive={isBold}
+>
 	<BoldIcon size="16" />
 </EditorButton>
 
-<EditorButton title="Italic ({ctrlKey} I)" on:click={italic} isActive={isItalic}>
+<EditorButton
+	title="Italic ({ctrlKey}I)"
+	on:click={italic}
+	onmousedown={keepEditorFocus}
+	isActive={isItalic}
+>
 	<ItalicIcon size="16" />
 </EditorButton>
 
 <EditorButton
-	title="Superscript ({ctrlKey} Shift + Equals)"
+	title="Superscript ({ctrlKey}{shiftKey}=)"
 	on:click={superscript}
+	onmousedown={keepEditorFocus}
 	isActive={isSuperscript}
 >
 	<SuperscriptIcon size="16" />
 </EditorButton>
 
 <EditorButton
-	title="Subscript ({ctrlKey} Shift + Minus)"
+	title="Subscript ({ctrlKey}{shiftKey}-)"
 	on:click={subscript}
+	onmousedown={keepEditorFocus}
 	isActive={isSubscript}
 >
 	<SubscriptIcon size="16" />

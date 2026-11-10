@@ -6,7 +6,7 @@
 		$createNodeSelection as createNodeSelection,
 		$setSelection as setSelection,
 	} from 'lexical';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 	import {
 		$insertTableRowAtSelection as insertTableRowAtSelection,
 		$getTableRowIndexFromTableCellNode as getTableRowIndexFromTableCellNode,
@@ -20,7 +20,7 @@
 
 	/**
 	 * @typedef Props
-	 * @property {import('$lib/lexical/custom').ATableNode} selectedTable
+	 * @property {import('@lexical/table').TableNode} selectedTable
 	 * @property {import('@lexical/table').TableRowNode} selectedNode
 	 */
 
@@ -132,6 +132,8 @@
 
 	$effect(() => {
 		updateToolbar();
+		// This is to re-run updateToolbar when selectedNode is changed.
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		() => [selectedNode];
 	});
 </script>

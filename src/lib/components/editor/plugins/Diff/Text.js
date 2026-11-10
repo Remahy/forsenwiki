@@ -51,17 +51,12 @@ export class DiffTextNode extends TextNode {
 	 */
 	exportDOM(editor) {
 		const dom = super.exportDOM(editor);
+		const text = typeof this.___change === 'object' ? this.___change.text : undefined;
 
-		if (
-			typeof this.___change === 'object' &&
-			dom.element &&
-			typeof this.___change.text?.diff === 'object'
-		) {
+		if (dom.element && typeof text === 'object' && typeof text.diff === 'object') {
 			dom.element.textContent = '';
 
-			const {
-				text: { diff },
-			} = this.___change;
+			const { diff } = text;
 
 			for (let index = 0; index < diff.length; index++) {
 				const { value, added, removed } = diff[index];
@@ -94,10 +89,6 @@ export class DiffTextNode extends TextNode {
 		}
 
 		return dom;
-	}
-
-	static importDOM() {
-		return TextNode.importDOM();
 	}
 
 	exportJSON() {

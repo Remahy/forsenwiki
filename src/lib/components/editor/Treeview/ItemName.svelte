@@ -1,5 +1,11 @@
 <script>
-	import { $isTextNode as isTextNode } from 'lexical';
+	import {
+		$isTextNode as isTextNode,
+		IS_BOLD,
+		IS_ITALIC,
+		IS_SUBSCRIPT,
+		IS_SUPERSCRIPT,
+	} from 'lexical';
 	import { getTypeLabelForNode } from './utils';
 
 	/**
@@ -10,14 +16,17 @@
 	const node = $derived(item.getItemData());
 	const label = $derived(item.getItemName());
 
-	const typeLabel = $derived(editor.read(() => getTypeLabelForNode(node)));
-
-	const isBold = $derived(isTextNode(node) && editor.read(() => node.hasFormat('bold')));
-	const isItalic = $derived(isTextNode(node) && editor.read(() => node.hasFormat('italic')));
-	const isSuperscript = $derived(
-		isTextNode(node) && editor.read(() => node.hasFormat('superscript'))
+	const { typeLabel, format } = $derived(
+		editor.read(() => ({
+			typeLabel: getTypeLabelForNode(node),
+			format: isTextNode(node) ? node.getFormat() : 0,
+		}))
 	);
-	const isSubscript = $derived(isTextNode(node) && editor.read(() => node.hasFormat('subscript')));
+
+	const isBold = $derived((format & IS_BOLD) !== 0);
+	const isItalic = $derived((format & IS_ITALIC) !== 0);
+	const isSuperscript = $derived((format & IS_SUPERSCRIPT) !== 0);
+	const isSubscript = $derived((format & IS_SUBSCRIPT) !== 0);
 </script>
 
 {#if isTextNode(node)}

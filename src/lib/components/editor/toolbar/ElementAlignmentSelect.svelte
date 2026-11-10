@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { COMMAND_PRIORITY_CRITICAL, FORMAT_ELEMENT_COMMAND, mergeRegister } from 'lexical';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
 	import Select from '$lib/components/Select.svelte';
 	import { ELEMENT_CONSTANTS } from '$lib/constants/element';

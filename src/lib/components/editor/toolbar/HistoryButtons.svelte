@@ -9,9 +9,11 @@
 		COMMAND_PRIORITY_LOW,
 		mergeRegister,
 	} from 'lexical';
-	import { getEditor } from 'svelte-lexical';
+	import { getEditor } from '$lib/components/editor/context';
 
-	import { ctrlKey } from '$lib/environment/environment';
+	import { ctrlKey, shiftKey } from '$lib/environment/environment';
+	import { IS_APPLE } from '$lib/environment/utils';
+	import { keepEditorFocus } from '$lib/components/editor/utils/keepEditorFocus';
 	import EditorButton from './EditorButton.svelte';
 
 	let canUndo = $state(false);
@@ -49,10 +51,21 @@
 	});
 </script>
 
-<EditorButton title="Undo ({ctrlKey}Z)" on:click={undo} disabled={!canUndo}>
+<EditorButton
+	title="Undo ({ctrlKey}Z)"
+	on:click={undo}
+	onmousedown={keepEditorFocus}
+	disabled={!canUndo}
+>
 	<Undo2Icon size="16" />
 </EditorButton>
 
-<EditorButton title="Undo ({ctrlKey}Y)" on:click={redo} disabled={!canRedo}>
+<!-- Lexical only binds Ctrl+Y outside Apple devices, Shift+Z works everywhere. -->
+<EditorButton
+	title="Redo ({ctrlKey}{IS_APPLE ? `${shiftKey}Z` : 'Y'})"
+	on:click={redo}
+	onmousedown={keepEditorFocus}
+	disabled={!canRedo}
+>
 	<Redo2Icon size="16" />
 </EditorButton>

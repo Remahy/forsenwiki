@@ -7,13 +7,6 @@ export class AHeadingNode extends HeadingNode {
 	}
 
 	/**
-	 * @param {HeadingNode} node
-	 */
-	static clone(node) {
-		return HeadingNode.clone(node);
-	}
-
-	/**
 	 * @param {import("@lexical/rich-text").SerializedHeadingNode} serializedNode
 	 */
 	static importJSON(serializedNode) {
