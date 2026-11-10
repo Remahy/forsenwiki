@@ -23,7 +23,7 @@ import {
 	GalleryNode,
 } from '$lib/lexical/custom';
 import isUrl from 'is-url';
-import { configExtension, defineExtension } from '@lexical/extension';
+import { BlockIdExtension, configExtension, defineExtension } from '@lexical/extension';
 import { LinkExtension } from '@lexical/link';
 import { ListExtension } from '@lexical/list';
 import { RichTextExtension } from '@lexical/rich-text';
@@ -183,6 +183,7 @@ export const articleExtension = (theme, editable, editorState, onError = onError
 				hasNestedTables: true,
 			}),
 			GalleryExtension,
+			BlockIdExtension,
 		],
 		$initialEditorState,
 		...config,
