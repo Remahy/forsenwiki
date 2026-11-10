@@ -51,6 +51,15 @@ const addTwitchThumbnails = async (html) => {
 };
 
 /**
+ * @param {string} html
+ */
+const topLevelBlocks = (html) =>
+	[
+		...new DOMParser().parseFromString(`<html><body>${html}</body></html>`, 'text/html').body
+			.children,
+	].map((block) => block.outerHTML);
+
+/**
  * @param {{ config: string, update?: string, content?: string, format?: import('$lib/y/rows').YPostUpdateFormat }} data
  */
 export const toHTMLWorker = async ({ config, content, update, format }) => {
@@ -111,6 +120,10 @@ export const toHTMLWorker = async ({ config, content, update, format }) => {
 	const { html, text, image } = rendered;
 
 	let replacedHTMLString = await addTwitchThumbnails(html);
+
+	if (config === 'diff') {
+		return { html: replacedHTMLString, text, image, blocks: topLevelBlocks(replacedHTMLString) };
+	}
 
 	return { html: replacedHTMLString, text, image };
 };

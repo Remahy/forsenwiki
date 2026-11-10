@@ -1,13 +1,15 @@
 import { error, json } from '@sveltejs/kit';
 import { uint8ArrayToBase64 } from 'uint8array-extras';
 
-import { createDiffUpdate } from '$lib/y/diff';
+import { yPostUpdatesV2ToBase64 } from '$lib/y/utils';
+
+import { createDiffUpdates } from '$lib/y/diff';
 import toHTML from '$lib/worker/toHTML';
 import { readYPostUpdatesWithIdByTitle } from '$lib/db/post/read';
 import { readAuthorForYPostUpdate, readUserNamesByIds } from '$lib/db/metadata/read';
 import { replacer } from '$lib/utils/json';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-import { canDiff, currentRows, NOT_COMPARABLE_MESSAGE } from '$lib/y/rows';
+import { canDiff, currentRows, LEXICAL_Y, NOT_COMPARABLE_MESSAGE } from '$lib/y/rows';
 
 /**
  * @param {string} title
@@ -83,18 +85,34 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 	const olderIndex = Math.min(...indexes);
 	const newerIndex = Math.max(...indexes);
 
-	const diffUpdate = createDiffUpdate(rows, olderIndex, newerIndex);
+	const diff = createDiffUpdates(rows, olderIndex, newerIndex);
 
 	const authorIds = rows
 		.slice(olderIndex + 1, newerIndex + 1)
 		.map(({ metadata }) => metadata.userId);
 
-	const [toAuthor, fromAuthor, authors, html] = await Promise.all([
+	const [toAuthor, fromAuthor, authors, newer, older, article] = await Promise.all([
 		readAuthorForYPostUpdate(toPostUpdateId),
 		readAuthorForYPostUpdate(fromPostUpdateId),
 		readUserNamesByIds(authorIds),
-		toHTML({ config: 'diff', update: uint8ArrayToBase64(diffUpdate) }),
+		toHTML({ config: 'diff', update: uint8ArrayToBase64(diff.newer) }),
+		toHTML({ config: 'diff', update: uint8ArrayToBase64(diff.older) }),
+		toHTML({
+			config: 'article',
+			update: yPostUpdatesV2ToBase64(rows.slice(0, newerIndex + 1)),
+			format: LEXICAL_Y,
+		}),
 	]);
+
+	const newerBlocks = newer.blocks ?? [];
+	// A reverted block type can regroup blocks, the sides then no longer pair up by index.
+	const olderBlocks = older.blocks?.length === newerBlocks.length ? older.blocks : newerBlocks;
+
+	const changes = newerBlocks
+		.map((block, index) => ({ older: olderBlocks[index], newer: block }))
+		.filter(
+			(change) => change.newer.includes(' data-diff="') || change.older.includes(' data-diff="')
+		);
 
 	return {
 		toPostUpdateId,
@@ -105,7 +123,10 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		fromAuthor,
 		/** Who made the changes shown, by the user id in the HTML's `data-diff-by`. */
 		authors,
-		html,
+		/** The blocks that changed, as they were and as they are. */
+		changes,
+		/** The newer of the two versions, in full. */
+		html: article,
 		post: {
 			title: res.title,
 			rawTitle: res.rawTitle,

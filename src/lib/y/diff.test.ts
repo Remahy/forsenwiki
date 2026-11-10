@@ -10,16 +10,16 @@ import {
 	type LexicalNode,
 } from 'lexical';
 import { $generateHtmlFromNodes } from '@lexical/html';
-import { $createHeadingNode } from '@lexical/rich-text';
+import { $createHeadingNode, $isHeadingNode } from '@lexical/rich-text';
 import { $createListItemNode, $createListNode } from '@lexical/list';
 import { uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { articleExtension } from '$lib/components/editor/config/article';
 import { $getDiffMark, diffExtension } from '$lib/components/editor/config/diff';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
-import { $createImageNode } from '$lib/lexical/custom';
+import { $createALinkNode, $createImageNode } from '$lib/lexical/custom';
 import { getYAndEditor, readState, seedState } from './headless';
-import { createDiffUpdate } from './diff';
+import { createDiffUpdates } from './diff';
 
 const article = () => articleExtension(null, EDITOR_IS_READONLY, null);
 
@@ -50,32 +50,38 @@ const edit = async (rows: Row[], userId: string, $edit: () => void) => {
 
 const seed = ($build: () => void) => [row(seedState(article(), $build), 'alice', 1000)];
 
-const outline = (rows: Row[], from: number, to: number) =>
-	readState(diffExtension(null, EDITOR_IS_READONLY, null), createDiffUpdate(rows, from, to), () => {
-		const walk = (node: LexicalNode, depth: number): string[] => {
-			const mark = $getDiffMark(node);
-			const label = [
-				node.getType(),
-				$isTextNode(node) ? JSON.stringify(node.getTextContent()) : null,
-				mark ? `${mark.type}:${mark.by}` : null,
-				mark?.fields ? JSON.stringify(mark.fields) : null,
-			]
-				.filter(Boolean)
-				.join(' ');
+const outline = (rows: Row[], from: number, to: number, side: 'newer' | 'older' = 'newer') =>
+	readState(
+		diffExtension(null, EDITOR_IS_READONLY, null),
+		createDiffUpdates(rows, from, to)[side],
+		() => {
+			const walk = (node: LexicalNode, depth: number): string[] => {
+				const mark = $getDiffMark(node);
+				const label = [
+					node.getType(),
+					$isTextNode(node) ? JSON.stringify(node.getTextContent()) : null,
+					$isTextNode(node) && node.getFormat() ? `format=${node.getFormat()}` : null,
+					$isHeadingNode(node) ? node.getTag() : null,
+					mark ? `${mark.type}:${mark.by}` : null,
+					mark?.fields ? JSON.stringify(mark.fields) : null,
+				]
+					.filter(Boolean)
+					.join(' ');
 
-			return [
-				'  '.repeat(depth) + label,
-				...($isElementNode(node) ? node.getChildren().flatMap((c) => walk(c, depth + 1)) : []),
-			];
-		};
+				return [
+					'  '.repeat(depth) + label,
+					...($isElementNode(node) ? node.getChildren().flatMap((c) => walk(c, depth + 1)) : []),
+				];
+			};
 
-		return {
-			tree: $getRoot()
-				.getChildren()
-				.flatMap((c) => walk(c, 0)),
-			html: $generateHtmlFromNodes($getEditor(), null),
-		};
-	});
+			return {
+				tree: $getRoot()
+					.getChildren()
+					.flatMap((c) => walk(c, 0)),
+				html: $generateHtmlFromNodes($getEditor(), null),
+			};
+		}
+	);
 
 const heading = () => $createHeadingNode('h2').append($createTextNode('Title'));
 const paragraph = (text: string) => $createParagraphNode().append($createTextNode(text));
@@ -92,12 +98,15 @@ test('inserted, deleted and reformatted text is marked with its author', async (
 
 	expect(outline(rows, 0, 1).tree).toEqual([
 		'paragraph change:bob',
-		'  text "Hell" change:bob {"bold":{"__new":true}}',
+		'  text "Hell" format=1 change:bob {"bold":{"__new":true}}',
 		'  text "o "',
 		'  text "World" delete:bob',
 		'  text "attributions" insert:bob',
 		'  text "!"',
 	]);
+	expect(outline(rows, 0, 1, 'older').tree[1]).toBe(
+		'  text "Hell" change:bob {"bold":{"__new":true}}'
+	);
 });
 
 test('a format that replaces another names both', async () => {
@@ -115,8 +124,44 @@ test('a format that replaces another names both', async () => {
 
 	expect(outline(rows, 0, 1).tree).toEqual([
 		'paragraph change:bob',
-		'  text "bold" change:bob {"bold":{"__old":true},"italic":{"__new":true}}',
+		'  text "bold" format=2 change:bob {"bold":{"__old":true},"italic":{"__new":true}}',
 		'  text " plain"',
+	]);
+	expect(outline(rows, 0, 1, 'older').tree).toEqual([
+		'paragraph change:bob',
+		'  text "bold" format=1 change:bob {"bold":{"__old":true},"italic":{"__new":true}}',
+		'  text " plain"',
+	]);
+});
+
+test('the older side shows links and formats as they were', async () => {
+	let rows = seed(() => $getRoot().append(paragraph('Plain linked')));
+
+	rows = await edit(rows, 'bob', () => {
+		const [, linked] = children()[0].getFirstChild().splitText(6);
+		const link = $createALinkNode('https://forsen.wiki', {}, false, undefined);
+		linked.insertBefore(link);
+		link.append(linked);
+	});
+
+	expect(outline(rows, 0, 1).tree.map((line) => line.trim().split(' ')[0])).toEqual([
+		'paragraph',
+		'text',
+		'a-link',
+		'text',
+	]);
+	expect(outline(rows, 0, 1, 'older').tree.map((line) => line.trim().split(' ')[0])).toEqual([
+		'paragraph',
+		'text',
+		'text',
+	]);
+
+	rows = await edit(rows, 'carol', () => children()[0].getChildren()[1].remove());
+	rows = await edit(rows, 'dave', () => children()[0].getFirstChild().toggleFormat('bold'));
+
+	expect(outline(rows, 2, 3, 'older').tree).toEqual([
+		'paragraph change:dave',
+		'  text "Plain " change:dave {"bold":{"__new":true}}',
 	]);
 });
 
@@ -132,8 +177,11 @@ test('removed and added blocks are shown whole, changed fields with their values
 		kept.insertBefore(paragraph('Added'));
 	});
 
+	expect(outline(rows, 0, 1, 'older').tree[0]).toBe(
+		'heading h2 change:bob {"tag":{"__old":"h2","__new":"h3"}}'
+	);
 	expect(outline(rows, 0, 1).tree).toEqual([
-		'heading change:bob {"tag":{"__old":"h2","__new":"h3"}}',
+		'heading h3 change:bob {"tag":{"__old":"h2","__new":"h3"}}',
 		'  text "Title"',
 		'paragraph insert:bob',
 		'  text "Added" insert:bob',
@@ -284,6 +332,7 @@ test('marks are exported as colours, data attributes and hovers', async () => {
 		['SPAN', 'insert', 'bob', '2000'],
 	]);
 
+	expect(container.querySelector('[id]')).toBeNull();
 	expect(container.querySelector('h3 > span[title]')?.getAttribute('title')).toBe(
 		'~ "tag" changed from "h2" to "h3".'
 	);

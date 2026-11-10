@@ -6,7 +6,7 @@ import { createKeepAliveWorker } from '../keepAliveWorker';
 import workerPath from './worker?modulePath';
 
 /**
- * @typedef {{ html: string, text: string, image?: string }} ToHTMLResult
+ * @typedef {{ html: string, text: string, image?: string, blocks?: string[] }} ToHTMLResult
  * @typedef {{ config: 'article' | 'diff', update: string, format?: import('$lib/y/rows').YPostUpdateFormat } | { config: 'article' | 'diff', content: string }} ToHTMLData
  */
 

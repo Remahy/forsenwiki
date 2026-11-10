@@ -1,0 +1,20 @@
+@reference "../../../app.css";
+
+.diff-old {
+	[data-diff='insert'],
+	[data-diff-info],
+	.gallery:has(.embla__viewport[data-diff='insert']) {
+		@apply hidden;
+	}
+
+	[data-diff='change'] {
+		@apply bg-transparent! outline-none!;
+	}
+}
+
+.diff-new {
+	[data-diff='delete'],
+	.gallery:has(.embla__viewport[data-diff='delete']) {
+		@apply hidden;
+	}
+}

@@ -124,6 +124,7 @@ const addInformationHover = (element, fields) => {
 		'text-base',
 		'border'
 	);
+	hover.dataset.diffInfo = '';
 	hover.textContent = '?';
 	hover.title = describeFields(fields);
 
@@ -179,7 +180,14 @@ const withDiff = (exportDOM) => (editor, node) => {
 	const output = exportDOM(editor, node);
 	const mark = $getDiffMark(node);
 
-	if (!mark || !isHTMLElement(output.element)) {
+	if (!isHTMLElement(output.element)) {
+		return output;
+	}
+
+	// The diff shows a block on both sides, and above the article whose headings own the ids.
+	output.element.removeAttribute('id');
+
+	if (!mark) {
 		return output;
 	}
 

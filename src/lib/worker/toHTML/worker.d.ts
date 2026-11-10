@@ -3,4 +3,4 @@ export function toHTMLWorker(data: {
 	content?: string;
 	update?: string;
 	format?: 'YJS13' | 'LEXICAL_Y';
-}): Promise<{ html: string; text: string; image?: string }>;
+}): Promise<{ html: string; text: string; image?: string; blocks?: string[] }>;

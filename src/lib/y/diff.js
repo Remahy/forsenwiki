@@ -9,6 +9,7 @@ import { convertUpdateFormatV2ToV1, mergePostUpdatesV2, postUpdatesToUint8Arr } 
  * @typedef {import('./diffState').DiffMark} DiffMark
  * @typedef {import('./diffState').DiffFields} DiffFields
  * @typedef {InstanceType<typeof Y.Item>} YItem
+ * @typedef {Record<string, unknown>} Reverts
  * @typedef {InstanceType<typeof Y.Node<any>>} YNode
  * @typedef {Array<InstanceType<typeof Y.ContentAttribute<any>>> | null | undefined} Attrs
  */
@@ -80,13 +81,15 @@ const fieldValue = (key, value) => (key === 't' && value === undefined ? 'paragr
  * @param {string} key
  * @param {unknown} before
  * @param {unknown} after
+ * @param {Reverts} reverts Stored names and the values they had before.
  */
-const addField = (fields, key, before, after) => {
+const addField = (fields, key, before, after, reverts) => {
 	const __old = fieldValue(key, before);
 	const __new = fieldValue(key, after);
 
 	if (JSON.stringify(__old) !== JSON.stringify(__new)) {
 		fields[fieldName(key)] = { __old, __new };
+		reverts[key] = before;
 		return true;
 	}
 
@@ -272,6 +275,8 @@ const forEachField = (node, callback) => {
 const changedFields = (node, inserted, deleted) => {
 	/** @type {DiffFields} */
 	const fields = {};
+	/** @type {Reverts} */
+	const reverts = {};
 	/** @type {YItem | null} */
 	let changedBy = null;
 
@@ -295,14 +300,15 @@ const changedFields = (node, inserted, deleted) => {
 				fields,
 				key,
 				gone ? undefined : valueOf(/** @type {YItem} */ (before)),
-				item.deleted ? undefined : valueOf(item)
+				item.deleted ? undefined : valueOf(item),
+				reverts
 			)
 		) {
 			changedBy = item;
 		}
 	});
 
-	return { fields, changedBy: /** @type {YItem | null} */ (changedBy) };
+	return { fields, reverts, changedBy: /** @type {YItem | null} */ (changedBy) };
 };
 
 /**
@@ -313,6 +319,8 @@ const changedFields = (node, inserted, deleted) => {
 const replacedFields = (node, replaced) => {
 	/** @type {DiffFields} */
 	const fields = {};
+	/** @type {Reverts} */
+	const reverts = {};
 	/** @type {Map<string, { __old?: unknown, __new?: unknown }>} */
 	const values = new Map();
 
@@ -327,10 +335,10 @@ const replacedFields = (node, replaced) => {
 	});
 
 	for (const [key, { __old, __new }] of values) {
-		addField(fields, key, __old, __new);
+		addField(fields, key, __old, __new, reverts);
 	}
 
-	return fields;
+	return { fields, reverts };
 };
 
 /**
@@ -435,11 +443,13 @@ const findFormatChanges = (root, attribution, inserted, deleted) => {
 
 			/** @type {DiffFields} */
 			const fields = {};
+			/** @type {Reverts} */
+			const reverts = {};
 			/** @type {Attrs} */
 			let attrs = null;
 
 			for (const [key, { before, after, attrs: changedBy }] of names) {
-				if (addField(fields, key, shownValue(before), shownValue(after))) {
+				if (addField(fields, key, shownValue(before), shownValue(after), reverts)) {
 					attrs = changedBy ?? attrs;
 				}
 			}
@@ -447,6 +457,7 @@ const findFormatChanges = (root, attribution, inserted, deleted) => {
 			if (Object.keys(fields).length) {
 				changes.add(item.id.client, item.id.clock, item.length, [
 					Y.createContentAttribute('mark', createMark('change', attrs, fields)),
+					Y.createContentAttribute('reverts', reverts),
 				]);
 			}
 		}
@@ -475,13 +486,14 @@ const findFormatChanges = (root, attribution, inserted, deleted) => {
 /**
  * The article as it was after `rows[toIndex]`, with what changed since `rows[fromIndex]` shown
  * and marked: deleted content is restored, and every inserted, deleted or changed node carries
- * a `diff` state telling which and by whom.
+ * a `diff` state telling which and by whom. `older` is the same document with the changed
+ * fields and text formats as they were at `rows[fromIndex]`.
  * @param {DiffRow[]} rows The article's update chain, in the order it was stored.
  * @param {number} fromIndex
  * @param {number} toIndex
- * @returns {Uint8Array} V2 update.
+ * @returns {{ newer: Uint8Array, older: Uint8Array }} V2 updates.
  */
-export function createDiffUpdate(rows, fromIndex, toIndex) {
+export function createDiffUpdates(rows, fromIndex, toIndex) {
 	const chain = rows.slice(0, toIndex + 1);
 	const attribution = Y.mergeContentMaps(attributeRows(chain).slice(fromIndex + 1));
 
@@ -521,26 +533,54 @@ export function createDiffUpdate(rows, fromIndex, toIndex) {
 			}
 		}
 
+		/** @type {Array<() => void>} */
+		const reverts = [];
+
+		/**
+		 * @param {YNode} node
+		 * @param {Reverts} values
+		 */
+		const revertNode = (node, values) =>
+			reverts.push(() => {
+				for (const [key, value] of Object.entries(values)) {
+					if (value === undefined) {
+						node.deleteAttr(key);
+					} else {
+						node.setAttr(key, value);
+					}
+				}
+			});
+
 		/**
 		 * @param {YItem} item
-		 * @returns {Array<{ len: number, mark: string | null }>}
+		 * @returns {Array<{ len: number, mark: string | null, reverts?: Reverts }>}
 		 */
 		const marksOf = (item) => {
 			const { client, clock } = item.id;
 
 			return attribution.inserts.slice(client, clock, item.length).flatMap((range) => {
 				if (range.attrs) {
-					return [{ len: range.len, mark: createMark('insert', range.attrs) }];
+					return [{ len: range.len, mark: createMark('insert', range.attrs), reverts: undefined }];
 				}
 
 				return restored.slice(client, range.clock, range.len).flatMap((restoredRange) => {
 					if (restoredRange.attrs) {
-						return [{ len: restoredRange.len, mark: createMark('delete', restoredRange.attrs) }];
+						return [
+							{
+								len: restoredRange.len,
+								mark: createMark('delete', restoredRange.attrs),
+								reverts: undefined,
+							},
+						];
 					}
 
 					return formatChanges
 						.slice(client, restoredRange.clock, restoredRange.len)
-						.map(({ len, attrs }) => ({ len, mark: attrs ? attrs[0].val : null }));
+						.map(({ len, attrs }) => ({
+							len,
+							mark: attrs ? attrs[0].val : null,
+							reverts: attrs?.[1].val,
+						}));
 				});
 			});
 		};
@@ -558,9 +598,11 @@ export function createDiffUpdate(rows, fromIndex, toIndex) {
 			const replaced = replacedMarkers.get(node);
 
 			if (replaced) {
-				const fields = replacedFields(node, replaced);
+				const { fields, reverts: values } = replacedFields(node, replaced);
 
 				if (Object.keys(fields).length) {
+					revertNode(node, values);
+
 					const item = /** @type {YItem} */ (node._item);
 
 					node.setAttr(
@@ -572,9 +614,11 @@ export function createDiffUpdate(rows, fromIndex, toIndex) {
 				return;
 			}
 
-			const { fields, changedBy } = changedFields(node, inserted, deleted);
+			const { fields, reverts: values, changedBy } = changedFields(node, inserted, deleted);
 
 			if (changedBy !== null) {
+				revertNode(node, values);
+
 				const { id, deleted: removed } = /** @type {YItem} */ (changedBy);
 				const attrs = (removed ? attribution.deletes : attribution.inserts).sliceId(id, 1)[0].attrs;
 
@@ -586,7 +630,7 @@ export function createDiffUpdate(rows, fromIndex, toIndex) {
 		 * @param {YNode} container
 		 */
 		const markContainer = (container) => {
-			/** @type {Array<{ index: number, len: number, mark: string }>} */
+			/** @type {Array<{ index: number, len: number, mark: string, reverts?: Reverts }>} */
 			const segments = [];
 			/** @type {Array<[YNode, string | null]>} */
 			const nodes = [];
@@ -599,7 +643,7 @@ export function createDiffUpdate(rows, fromIndex, toIndex) {
 
 				const type = typeOf(item);
 
-				for (const { len, mark } of marksOf(item)) {
+				for (const { len, mark, reverts: values } of marksOf(item)) {
 					const last = segments[segments.length - 1];
 
 					if (type) {
@@ -607,7 +651,7 @@ export function createDiffUpdate(rows, fromIndex, toIndex) {
 					} else if (mark !== null && last?.mark === mark && last.index + last.len === index) {
 						last.len += len;
 					} else if (mark !== null) {
-						segments.push({ index, len, mark });
+						segments.push({ index, len, mark, reverts: values });
 					}
 
 					index += len;
@@ -622,8 +666,16 @@ export function createDiffUpdate(rows, fromIndex, toIndex) {
 				}
 			});
 
-			for (const { index, len, mark } of segments) {
+			for (const { index, len, mark, reverts: values } of segments) {
 				container.format(index, len, { [MARK]: mark });
+
+				if (values) {
+					const formats = Object.fromEntries(
+						Object.entries(values).map(([key, value]) => [key, value ?? null])
+					);
+
+					reverts.push(() => container.format(index, len, formats));
+				}
 			}
 
 			for (const [node, mark] of nodes) {
@@ -634,7 +686,11 @@ export function createDiffUpdate(rows, fromIndex, toIndex) {
 
 		doc.transact(() => markContainer(doc.get(DEFAULT_ROOT_NAME)));
 
-		return Y.encodeStateAsUpdateV2(doc);
+		const newer = Y.encodeStateAsUpdateV2(doc);
+
+		doc.transact(() => reverts.forEach((revert) => revert()));
+
+		return { newer, older: Y.encodeStateAsUpdateV2(doc) };
 	} finally {
 		doc.destroy();
 	}
