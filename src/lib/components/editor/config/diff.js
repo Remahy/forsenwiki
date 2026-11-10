@@ -184,7 +184,6 @@ const withDiff = (exportDOM) => (editor, node) => {
 		return output;
 	}
 
-	// The diff shows a block on both sides, and above the article whose headings own the ids.
 	output.element.removeAttribute('id');
 
 	if (!mark) {

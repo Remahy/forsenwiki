@@ -86,10 +86,13 @@
 	<meta property="og:url" content="{$page.url.origin}/w/{title}" />
 </svelte:head>
 
-{#snippet versionHeading(/** @type {typeof older | newer} */ version)}
+{#snippet versionHeading(
+	/** @type {typeof older | newer} */ version,
+	/** @type {string} */ title = ''
+)}
 	<div class="box-heading-wrapper">
 		<p class="text-xl font-bold">
-			Version as of {version.date.toLocaleString()}
+			{title}{version.date.toLocaleString()}
 		</p>
 
 		<span class="text-sm normal-case">
@@ -179,7 +182,7 @@
 		</section>
 
 		<section class="flex flex-col gap-4">
-			{@render versionHeading(newer)}
+			{@render versionHeading(newer, 'Version as of ')}
 
 			<div class="flex grow flex-col gap-4 lg:flex-row">
 				<Box class="-mx-4 flex grow flex-col overflow-hidden p-4 sm:mx-0 lg:mb-0">
