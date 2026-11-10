@@ -35,7 +35,7 @@ COPY --from=build /app/src/generated ./src/generated
 COPY --from=build /app/src/lib/version.txt ./src/lib/version.txt
 COPY --from=build /app/src/lib/constants/constants.js ./src/lib/constants/constants.js
 
-# Used by scripts/convertPostsToLexicalY.js
+# Used by start.sh, not by the backend.
 COPY --from=build /app/scripts ./scripts
 COPY --from=build /app/src/lib/worker/convertLexicalY ./src/lib/worker/convertLexicalY
 

@@ -102,6 +102,7 @@ async function buildConvertLexicalYWorker() {
 		plugins: [sveltePlugin(), injectPlugin],
 	});
 
+	// Ensure dist directory exists
 	mkdirSync(`src/lib/worker/${name}`, { recursive: true });
 	writeFileSync(`src/lib/worker/${name}/worker.js`, result.outputFiles[0].contents);
 }

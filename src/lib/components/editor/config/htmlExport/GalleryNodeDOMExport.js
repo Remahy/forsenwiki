@@ -81,6 +81,7 @@ export default [
 
 					const isYouTube = clonedChild.dataset.lexicalYoutube;
 					const isTwitch = clonedChild.dataset.lexicalTwitch;
+
 					// Twitch ones are replaced by toHTML due to asynchronous call to worker.
 
 					if (isYouTube || isTwitch) {

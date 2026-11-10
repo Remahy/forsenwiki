@@ -32,7 +32,7 @@ export const adjustImages = (editor) => {
 						);
 					}
 
-					// Unset any image that does not start with the cache service.
+					// Unset any image is a direct link.
 					if (src?.startsWith('https://') || src?.startsWith('http://')) {
 						return reject(
 							`Image index [${index + 1}]: One of your images is inserted as a link. Not allowed.`

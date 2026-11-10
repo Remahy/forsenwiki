@@ -1,7 +1,4 @@
-// One-off: seeds a `@lexical/y` (Yjs 14) chain for every post that only has Yjs 13 rows.
-// Idempotent. Run `npm run build:workers` first; `start.sh` runs it on every deploy.
-//
-//   npm run convert:lexical-y -- [--dry-run] [--title <title>]
+// Used to convert unconverted posts from YJS13 to LEXICAL_Y.
 
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';

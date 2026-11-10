@@ -1,4 +1,5 @@
-// Drafts saved by the Yjs 13 editor. Remove together with the client's `yjs` and `@lexical/yjs` imports.
+// Drafts saved by the Yjs 13 editor.
+// TODO: Remove together with the client's `yjs` and `@lexical/yjs` imports.
 import { encodeYDocToUpdateV2, hasSharedContent } from './utils';
 
 const LEGACY_ROOTS = ['root', 'root-v2'];

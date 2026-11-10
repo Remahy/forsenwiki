@@ -44,7 +44,6 @@ const addTwitchThumbnails = async (html) => {
 		const image = twitchImages[index];
 		const thumbnailURL = await twitchThumbnailURL({ url: image.src });
 
-		// A missing thumbnail becomes `src="null"`, same as before.
 		image.src = /** @type {string} */ (thumbnailURL);
 	}
 

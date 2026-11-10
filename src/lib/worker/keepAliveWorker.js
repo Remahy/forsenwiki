@@ -75,7 +75,7 @@ export function createKeepAliveWorker(
 		worker.on('error', fail);
 		worker.on('exit', (code) => fail(new Error(`${name} exited (code ${code}) without a result`)));
 
-		// Don't keep the process alive just for an idle worker. After `on('message')`, which refs it again.
+		// Don't keep the process alive just for an idle worker.
 		worker.unref();
 
 		return self;

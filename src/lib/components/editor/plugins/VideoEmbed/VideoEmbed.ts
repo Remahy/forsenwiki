@@ -657,6 +657,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 
 	static importDOM(): DOMConversionMap | null {
 		return {
+			// YouTube, Twitch
 			iframe: (domNode: HTMLElement) => {
 				if (
 					!domNode.hasAttribute('data-lexical-youtube') &&
@@ -667,7 +668,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 
 				return { conversion: $convertVideoElement, priority: 1 };
 			},
-			// Uploaded videos are exported as <video>, see generateCDNSrc.
+			// Internal
 			video: (domNode: HTMLElement) => {
 				if (!domNode.hasAttribute('data-lexical-usercontent')) {
 					return null;
