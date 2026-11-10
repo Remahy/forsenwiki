@@ -14,7 +14,6 @@ const slugify = (node) =>
 		.replace(/ /g, '-');
 
 /**
- * The first heading with a given slug keeps the bare slug, so existing links still work.
  * @param {HeadingNode} node
  */
 const $getHeadingAnchor = (node) => {
