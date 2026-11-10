@@ -67,7 +67,25 @@ async function buildToHTMLWorker() {
 	writeFileSync(`src/lib/worker/${name}/worker.js`, result.outputFiles[0].contents);
 }
 
-// Run by scripts/convertPostsToLexicalY.js with plain Node, not through Vite.
+async function buildYoutubeClipURLWorker() {
+	const name = 'youtubeClipURL';
+
+	const result = await esbuild.build({
+		entryPoints: [`worker/${name}.js`],
+		bundle: true,
+		platform: 'node',
+		external: ['jsdom'],
+		format: 'esm',
+		outfile: `./src/lib/worker/${name}.js`,
+		write: false,
+	});
+
+	// Ensure dist directory exists
+	mkdirSync(`src/lib/worker/${name}`, { recursive: true });
+	writeFileSync(`src/lib/worker/${name}/worker.js`, result.outputFiles[0].contents);
+}
+
+
 async function buildConvertLexicalYWorker() {
 	const name = 'convertLexicalY';
 
@@ -84,24 +102,6 @@ async function buildConvertLexicalYWorker() {
 		plugins: [sveltePlugin(), injectPlugin],
 	});
 
-	mkdirSync(`src/lib/worker/${name}`, { recursive: true });
-	writeFileSync(`src/lib/worker/${name}/worker.js`, result.outputFiles[0].contents);
-}
-
-async function buildYoutubeClipURLWorker() {
-	const name = 'youtubeClipURL';
-
-	const result = await esbuild.build({
-		entryPoints: [`worker/${name}.js`],
-		bundle: true,
-		platform: 'node',
-		external: ['jsdom'],
-		format: 'esm',
-		outfile: `./src/lib/worker/${name}.js`,
-		write: false,
-	});
-
-	// Ensure dist directory exists
 	mkdirSync(`src/lib/worker/${name}`, { recursive: true });
 	writeFileSync(`src/lib/worker/${name}/worker.js`, result.outputFiles[0].contents);
 }
