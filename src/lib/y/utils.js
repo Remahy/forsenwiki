@@ -110,3 +110,18 @@ export function hasSharedContent(doc, name) {
 
 	return false;
 }
+
+const LEGACY_ROOTS = ['root', 'root-v2'];
+
+/**
+ * Whether the Yjs 13 editor (`@lexical/yjs`) wrote anything, deleted or not.
+ * @param {YDoc} doc
+ */
+export function hasLegacyData(doc) {
+	return LEGACY_ROOTS.some((name) => {
+		/** @type {any} */
+		const type = doc.share.get(name);
+
+		return type !== undefined && (type._map.size > 0 || type._start !== null);
+	});
+}

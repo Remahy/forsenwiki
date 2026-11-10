@@ -8,7 +8,6 @@
 		getExtensionDependencyFromEditor,
 	} from '@lexical/extension';
 	import { createYCollabConfig, isYWarning, YCollabExtension } from '@lexical/y';
-	import { $getRoot as getRoot, $parseSerializedNode as parseSerializedNode } from 'lexical';
 
 	import { openArticleDoc } from '$lib/y/openArticleDoc';
 	import { fromSignal } from '$lib/utils/fromSignal.svelte';
@@ -31,11 +30,12 @@
 	 * @typedef {Object} Props
 	 * @property {any} id
 	 * @property {any} update
+	 * @property {string | null} [title]
 	 * @property {any} [initialUpdate]
 	 */
 
 	/** @type {Props} */
-	let { id, update, initialUpdate = null } = $props();
+	let { id, update, title = null, initialUpdate = null } = $props();
 
 	/** @type {string | null} */
 	let collabWarning = $state(null);
@@ -50,7 +50,7 @@
 	};
 
 	// svelte-ignore state_referenced_locally
-	const article = openArticleDoc({ id, update, initialUpdate });
+	const article = openArticleDoc({ id, title, update, initialUpdate });
 
 	// svelte-ignore state_referenced_locally
 	const editor = buildEditorFromExtensions(
@@ -72,24 +72,13 @@
 
 	yDocStore.set(article.doc);
 
-	article.ready.then(({ legacyJSON }) => {
+	let legacyDraftFailed = $state(false);
+
+	article.ready.then((ready) => {
 		persistenceStore.set(article.getPersistence());
 		binding.initialize();
 
-		if (legacyJSON) {
-			// A draft saved by the previous editor replaces the article's content as a local edit.
-			editor.update(
-				() => {
-					const root = getRoot();
-					root.clear();
-
-					for (const child of legacyJSON.root.children) {
-						root.append(parseSerializedNode(child));
-					}
-				},
-				{ discrete: true }
-			);
-		}
+		legacyDraftFailed = ready.legacyDraftFailed;
 	});
 
 	onDestroy(() => {
@@ -142,6 +131,13 @@
 			<div class="editor-border bg-red-300! p-2 font-bold dark:text-black">
 				This article can't be edited with this version of the editor ({collabWarning}). Reload the
 				page, or reset the draft cache below.
+			</div>
+		{/if}
+
+		{#if legacyDraftFailed}
+			<div class="editor-border bg-yellow-300! p-2 dark:text-black" role="alert">
+				<strong>Your draft from the previous version of the editor could not be loaded.</strong>
+				It is kept. Reload the page to try again.
 			</div>
 		{/if}
 

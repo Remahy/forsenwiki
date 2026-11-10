@@ -1,20 +1,33 @@
 // Drafts saved by the Yjs 13 editor.
-// TODO: Remove together with the client's `yjs` and `@lexical/yjs` imports.
-import { encodeYDocToUpdateV2, hasSharedContent } from './utils';
+// TODO: Remove once no such drafts are around anymore.
+import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
-const LEGACY_ROOTS = ['root', 'root-v2'];
+export const LEGACY_DRAFT_KEY = 'legacyDraft';
 
-/**
- * @param {YDoc} doc
- */
-export const hasLegacyContent = (doc) => LEGACY_ROOTS.some((name) => hasSharedContent(doc, name));
+const TIMEOUT = 60_000;
 
 /**
- * @param {YDoc} doc
- * @returns {Promise<import('lexical').SerializedEditorState>}
+ * What a draft changed in its article, from the server: only it has the article's Yjs 13 history.
+ * @param {string | null} title Null for an article that is not created yet.
+ * @param {Uint8Array} legacyUpdate
+ * @returns {Promise<Uint8Array | null>} A V2 update for the article's document, if anything changed.
  */
-export const legacyDraftToJSON = async (doc) => {
-	const { legacyUpdateToJSON } = await import('$lib/yjs/legacyUpdateToJSON');
+export const migrateLegacyDraft = async (title, legacyUpdate) => {
+	/** @type {import('../../routes/api/post/legacy-draft/+server').LegacyDraftBody} */
+	const body = { title, content: uint8ArrayToBase64(legacyUpdate) };
 
-	return legacyUpdateToJSON(encodeYDocToUpdateV2(doc));
+	const response = await fetch('/api/post/legacy-draft', {
+		method: 'POST',
+		body: JSON.stringify(body),
+		headers: { 'content-type': 'application/json' },
+		signal: AbortSignal.timeout(TIMEOUT),
+	});
+
+	if (!response.ok) {
+		throw new Error(`The draft could not be migrated (${response.status}).`);
+	}
+
+	const { update } = await response.json();
+
+	return update ? base64ToUint8Array(update) : null;
 };

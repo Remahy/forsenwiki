@@ -2,7 +2,8 @@ import { json, error, isHttpError } from '@sveltejs/kit';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { ForbiddenError } from '$lib/errors/Forbidden';
-import { getYAndEditor } from '$lib/y/headless';
+import { getYAndEditor, isLegacyUpdate } from '$lib/y/headless';
+import { convertLegacyUpdate } from '$lib/yjs/migrateLegacy';
 import { InvalidPost } from '$lib/errors/InvalidPost';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
@@ -84,9 +85,11 @@ export async function POST({ request, locals }) {
 			return error(400, 'Post with that title already exists.');
 		}
 
+		const update = base64ToUint8Array(content);
+
 		article = getYAndEditor(
 			articleExtension(null, EDITOR_IS_READONLY, null),
-			base64ToUint8Array(content)
+			isLegacyUpdate(update) ? convertLegacyUpdate(update) : update
 		);
 
 		await serverRunValidations(article.editor);

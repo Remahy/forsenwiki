@@ -281,7 +281,7 @@
 	{/if}
 
 	{#if browser}
-		<Editor {update} {id} />
+		<Editor {update} {id} {title} />
 	{/if}
 
 	{#if error}

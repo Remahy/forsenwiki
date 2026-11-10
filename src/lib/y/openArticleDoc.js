@@ -1,39 +1,81 @@
+import * as Y from '@y/y';
 import { createYDoc, DEFAULT_ROOT_NAME } from '@lexical/y';
+import * as idb from 'lib0/indexeddb';
 import { base64ToUint8Array } from 'uint8array-extras';
 
 import { IndexeddbPersistence } from './IndexeddbPersistence';
-import { hasLegacyContent, legacyDraftToJSON } from './legacyDraft';
-import { applyRemoteUpdateV2, hasSharedContent } from './utils';
+import { LEGACY_DRAFT_KEY, migrateLegacyDraft } from './legacyDraft';
+import {
+	applyRemoteUpdateV2,
+	convertUpdateFormatV2ToV1,
+	encodeYDocToUpdateV2,
+	hasLegacyData,
+	hasSharedContent,
+} from './utils';
 
 /**
- * Reads a draft saved by the Yjs 13 editor out of IndexedDB and deletes it.
- * @param {string} id
- * @returns {Promise<import('lexical').SerializedEditorState | null>}
+ * @param {IndexeddbPersistence} persistence
  */
-const takeLegacyDraft = async (id) => {
+const stores = (persistence) =>
+	idb.transact(/** @type {IDBDatabase} */ (persistence.db), ['updates', 'custom']);
+
+/**
+ * Takes a draft saved by the Yjs 13 editor out of the updates the document loads, and keeps it
+ * aside until its changes are migrated.
+ * @param {string} id
+ */
+const stashLegacyDraft = async (id) => {
 	const doc = createYDoc();
 	const persistence = new IndexeddbPersistence(id, doc);
 
 	await persistence.whenSynced;
 
-	if (!hasLegacyContent(doc)) {
-		await persistence.destroy();
-		doc.destroy();
+	if (hasLegacyData(doc)) {
+		const [updates, custom] = stores(persistence);
 
-		return null;
+		await Promise.all([
+			idb.rtop(updates.clear()),
+			idb.put(custom, /** @type {any} */ (encodeYDocToUpdateV2(doc)), LEGACY_DRAFT_KEY),
+		]);
 	}
 
-	const json = await legacyDraftToJSON(doc);
-
-	await persistence.clearData();
+	await persistence.destroy();
 	doc.destroy();
-
-	return json;
 };
 
 /**
- * @typedef {{ id: string, update: string | null, initialUpdate?: string | null }} OpenArticleDocOptions
- * @typedef {{ legacyJSON: import('lexical').SerializedEditorState | null }} ArticleDocReady
+ * Merges what a stashed draft changed into the document, as part of the local draft.
+ * @param {IndexeddbPersistence} persistence
+ * @param {YDoc} doc
+ * @param {string | null} title
+ */
+const applyLegacyDraft = async (persistence, doc, title) => {
+	/** @type {Uint8Array | undefined} */
+	const legacyUpdate = await persistence.get(LEGACY_DRAFT_KEY);
+
+	if (!legacyUpdate) {
+		return;
+	}
+
+	const migrated = await migrateLegacyDraft(title, legacyUpdate);
+	const update = migrated ? convertUpdateFormatV2ToV1(migrated) : null;
+
+	// Stored and unstashed together, so a draft is never merged twice.
+	const [updates, custom] = stores(persistence);
+
+	await Promise.all([
+		update ? idb.addAutoKey(updates, /** @type {any} */ (update)) : null,
+		idb.del(custom, LEGACY_DRAFT_KEY),
+	]);
+
+	if (update) {
+		Y.applyUpdate(doc, update, persistence);
+	}
+};
+
+/**
+ * @typedef {{ id: string, title?: string | null, update: string | null, initialUpdate?: string | null }} OpenArticleDocOptions
+ * @typedef {{ legacyDraftFailed: boolean }} ArticleDocReady
  */
 
 /**
@@ -41,7 +83,7 @@ const takeLegacyDraft = async (id) => {
  * from the server merged into it (or the server's seed for a new article).
  * @param {OpenArticleDocOptions} options
  */
-export function openArticleDoc({ id, update, initialUpdate = null }) {
+export function openArticleDoc({ id, title = null, update, initialUpdate = null }) {
 	const doc = createYDoc();
 
 	/** @type {IndexeddbPersistence | null} */
@@ -49,7 +91,7 @@ export function openArticleDoc({ id, update, initialUpdate = null }) {
 
 	/** @type {Promise<ArticleDocReady>} */
 	const ready = (async () => {
-		const legacyJSON = await takeLegacyDraft(id);
+		await stashLegacyDraft(id);
 
 		persistence = new IndexeddbPersistence(id, doc);
 		await persistence.whenSynced;
@@ -60,7 +102,15 @@ export function openArticleDoc({ id, update, initialUpdate = null }) {
 			applyRemoteUpdateV2(doc, base64ToUint8Array(initialUpdate));
 		}
 
-		return { legacyJSON };
+		try {
+			await applyLegacyDraft(persistence, doc, title);
+		} catch (err) {
+			console.error(err);
+
+			return { legacyDraftFailed: true };
+		}
+
+		return { legacyDraftFailed: false };
 	})();
 
 	return {

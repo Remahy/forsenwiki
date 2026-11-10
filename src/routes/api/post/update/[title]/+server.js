@@ -9,7 +9,7 @@ import {
 	postUpdatesToUint8Arr,
 } from '$lib/y/utils';
 import { ForbiddenError } from '$lib/errors/Forbidden';
-import { getYAndEditor, readState } from '$lib/y/headless';
+import { getYAndEditor, isLegacyUpdate, readState } from '$lib/y/headless';
 import { InvalidPost } from '$lib/errors/InvalidPost';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/post/read';
@@ -29,6 +29,7 @@ import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
 import { validateUploads, pruneFailedUploads } from '$lib/s3/validateUploads.server';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
+import { _migrateLegacyDraft } from '../../legacy-draft/+server';
 import { _emit } from '../../../adonis/frontpage/+server';
 
 /**
@@ -131,7 +132,16 @@ export async function POST({ request, locals, params }) {
 	const stateVector = getStateVectorFromUpdateV2(currentUpdate);
 
 	// Incoming update
-	const [incomingUpdate] = postUpdatesToUint8Arr([{ content }]);
+	let [incomingUpdate] = postUpdatesToUint8Arr([{ content }]);
+
+	if (isLegacyUpdate(incomingUpdate)) {
+		// A tab that still runs the Yjs 13 editor: its changes are brought over.
+		const migrated = await _migrateLegacyDraft(title, incomingUpdate);
+
+		incomingUpdate = migrated
+			? mergePostUpdatesV2([currentUpdate, /** @type {Uint8Array<ArrayBuffer>} */ (migrated)])
+			: currentUpdate;
+	}
 
 	// Diff the updates
 	const initialDiff = diffUpdateUsingStateVectorV2(incomingUpdate, stateVector);

@@ -10,9 +10,24 @@ import {
 	convertUpdateFormatV1ToV2,
 	convertUpdateFormatV2ToV1,
 	encodeYDocToUpdateV2,
+	hasLegacyData,
 } from './utils';
 
 const settle = () => new Promise((resolve) => setTimeout(resolve));
+
+/**
+ * Whether an update comes from the Yjs 13 editor, e.g. a tab opened before the migration.
+ * @param {Uint8Array} updateV2
+ */
+export function isLegacyUpdate(updateV2) {
+	const doc = createYDoc(convertUpdateFormatV2ToV1(updateV2));
+
+	try {
+		return hasLegacyData(doc);
+	} finally {
+		doc.destroy();
+	}
+}
 
 /**
  * A headless editor bound to a Yjs 14 document, so the backend can validate and adjust an
