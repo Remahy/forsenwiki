@@ -20,8 +20,48 @@
 		TreeviewExtension
 	).output;
 	const treeItems = fromSignal(items);
-	// Same item instances across updates would leave rows stale, so give Svelte a new identity per update.
-	const rows = $derived(treeItems.current.map((item) => Object.create(item)));
+
+	// idk if we need to snapshot more stuff in the future
+	/** @param {ItemInstance} item */
+	const snapshot = (item) => [
+		item,
+		item.getItemData(),
+		item.getItemName(),
+		item.getItemMeta().level,
+		item.isFolder(),
+		item.isExpanded(),
+		item.isSelected(),
+		item.isFocused(),
+		item.isDraggable(),
+	];
+
+	/** @type {Record<string, { snapshot: unknown[], row: ItemInstance }>} */
+	let cache = {};
+
+	// A row keeps its identity until something it renders from changes, so Svelte only re-renders those rows.
+	const rows = $derived.by(() => {
+		/** @type {typeof cache} */
+		const next = {};
+
+		const result = treeItems.current.map((item) => {
+			const id = item.getId();
+			const current = snapshot(item);
+			const previous = cache[id];
+			const row =
+				previous && previous.snapshot.every((value, index) => value === current[index])
+					? previous.row
+					: Object.create(item);
+
+			next[id] = { snapshot: current, row };
+
+			return row;
+		});
+
+		cache = next;
+
+		return result;
+	});
+
 	const { onDragOver, onDrop, ...restContainerProps } = tree.getContainerProps('Treeview');
 
 	/** @type {HTMLDivElement | null} */
