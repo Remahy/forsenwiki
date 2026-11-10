@@ -19,8 +19,45 @@
 		toAuthor,
 		fromDate,
 		fromAuthor,
+		authors,
 		html,
 	} = $derived(data);
+
+	const streamerMode = $derived($page.data.session?.user?.userSettings?.streamerMode);
+
+	const CHANGE_LABELS = { insert: 'Added', delete: 'Deleted', change: 'Modified' };
+
+	/** @type {HTMLElement | undefined} */
+	let articleElement = $state();
+
+	$effect(() => {
+		if (!articleElement || !html?.html) {
+			return;
+		}
+
+		/** @type {NodeListOf<HTMLElement>} */
+		const changes = articleElement.querySelectorAll('[data-diff]');
+
+		for (const element of changes) {
+			const { diff, diffBy, diffAt, diffDescribed } = element.dataset;
+
+			if (diffDescribed) {
+				continue;
+			}
+
+			const author = streamerMode || !diffBy ? null : authors[diffBy];
+			const description = [
+				CHANGE_LABELS[/** @type {keyof typeof CHANGE_LABELS} */ (diff)],
+				author ? `by ${author}` : null,
+				diffAt ? `on ${new Date(Number(diffAt)).toLocaleString()}` : null,
+			]
+				.filter(Boolean)
+				.join(' ');
+
+			element.title = element.title ? `${description}\r\n${element.title}` : description;
+			element.dataset.diffDescribed = 'true';
+		}
+	});
 
 	const tD = $derived(toDate.toLocaleString());
 	const fD = $derived(fromDate.toLocaleString());
@@ -107,14 +144,17 @@
 			<p>
 				When available, hover over the question mark <span
 					class="mx-1 rounded-full bg-blue-500/50 px-2 py-1 font-bold outline outline-white">?</span
-				> to read what fields were modified.
+				> to read what fields were modified, and over a change to read who made it.
 			</p>
 		</div>
 
 		<div class="flex grow flex-col gap-4 lg:flex-row">
 			<Box class="-mx-4 flex grow flex-col overflow-hidden p-4 sm:mx-0 lg:mb-0">
 				{#if html?.html}
-					<main class="article-root prose dark:prose-invert max-w-[unset] grow">
+					<main
+						class="article-root prose dark:prose-invert max-w-[unset] grow"
+						bind:this={articleElement}
+					>
 						<div class="forsen-wiki-theme-border mb-2 border-b-2 pb-2">
 							<strong class="text-4xl">{rawTitle}</strong>
 						</div>

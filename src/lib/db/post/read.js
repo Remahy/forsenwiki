@@ -83,6 +83,7 @@ export async function readYPostUpdatesWithIdByTitle(title) {
 					format: true,
 					metadata: {
 						select: {
+							userId: true,
 							byteLength: true,
 							newTitle: true,
 							oldTitle: true,

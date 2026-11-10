@@ -139,7 +139,7 @@ export const articleNodes = [
 ];
 
 /**
- * @typedef {{ onWarn?: import('lexical').CreateEditorArgs['onWarn'] }} ArticleOptions
+ * @typedef {{ onWarn?: import('lexical').CreateEditorArgs['onWarn'], htmlExport?: Map<any, any> }} ArticleOptions
  */
 
 /**
@@ -160,7 +160,7 @@ const articleConfig = (theme, editable, editorState, onError = onErrorDefault, o
 	onWarn: options.onWarn ?? logYWarning,
 	editorState,
 	html: {
-		export: htmlExport,
+		export: options.htmlExport ?? htmlExport,
 	},
 });
 
