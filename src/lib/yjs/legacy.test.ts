@@ -4,6 +4,7 @@ import { $createLinkNode } from '@lexical/link';
 import { $createTableNodeWithDimensions } from '@lexical/table';
 
 import { isLegacyUpdate, readState, seedFromJSON } from '$lib/y/headless';
+import { conversionDifferences, convertLegacyArticle } from './convertLegacy';
 import { legacyUpdateToJSON } from './legacyUpdateToJSON';
 import { convertLegacyUpdate, migrateLegacyChanges } from './migrateLegacy';
 import { $paragraph, config, edited, legacyEdit, read } from './legacy.fixtures';
@@ -136,4 +137,43 @@ test('a Yjs 13 draft of a new article replaces the content the article starts wi
 	const update = await migrateLegacyChanges({ legacyArticle: null, legacyUpdate: draft, base });
 
 	expect(read(base, update as Uint8Array)).toEqual(['my new article']);
+});
+
+test('a converted article reads as the Yjs 13 article it was converted from', () => {
+	const { update, differences } = convertLegacyArticle(legacyArticle());
+
+	expect(differences).toEqual([]);
+	expect(update).toEqual(convertLegacyUpdate(legacyArticle()));
+});
+
+test('what a conversion loses or changes is reported', () => {
+	const before = legacyUpdateToJSON(legacyArticle());
+
+	const retyped = structuredClone(before) as any;
+	retyped.root.children[0].children[0].text = 'look at ';
+	retyped.root.children[0].children[1].url = 'https://example.org';
+
+	const shortened = structuredClone(before) as any;
+	shortened.root.children.pop();
+
+	expect(conversionDifferences(before as any, retyped)).toEqual([
+		'/root[0]/paragraph[0]/text.text: "see " -> "look at "',
+		'/root[0]/paragraph[1]/a-link.url: "https://example.com" -> "https://example.org"',
+	]);
+	expect(conversionDifferences(before as any, shortened)).toEqual(['/root: 2 -> 1 children']);
+});
+
+test('values the two editors only store differently are not differences', () => {
+	const before = legacyUpdateToJSON(legacyArticle()) as any;
+	before.root.direction = 'ltr';
+	before.root.children[0].children[1].internalId = null;
+	before.root.children[1].colWidths = ['50', ''];
+
+	const after = structuredClone(before);
+	after.root.direction = null;
+	after.root.children[0].$ = { blockId: 'new' };
+	after.root.children[0].children[1].internalId = '';
+	after.root.children[1].colWidths = [50, 0];
+
+	expect(conversionDifferences(before, after)).toEqual([]);
 });

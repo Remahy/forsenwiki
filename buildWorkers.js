@@ -85,7 +85,6 @@ async function buildYoutubeClipURLWorker() {
 	writeFileSync(`src/lib/worker/${name}/worker.js`, result.outputFiles[0].contents);
 }
 
-
 async function buildConvertLexicalYWorker() {
 	const name = 'convertLexicalY';
 

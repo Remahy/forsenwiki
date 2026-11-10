@@ -1,4 +1,8 @@
 // Used to convert unconverted posts from YJS13 to LEXICAL_Y.
+//
+// --dry-run       Convert and compare, write nothing. Exits with 1 if a post can't be converted.
+// --all           Also compare the posts that are already converted. They are never written again.
+// --title <title> Only this post.
 
 import dotenv from 'dotenv';
 import dotenvExpand from 'dotenv-expand';
@@ -15,86 +19,111 @@ const { convertLegacyUpdate } = await import('../src/lib/worker/convertLexicalY/
 
 const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run');
+const all = args.includes('--all');
 const onlyTitle = args.includes('--title') ? args[args.indexOf('--title') + 1] : null;
+
+const SHOWN_DIFFERENCES = 5;
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
-const normalize = (/** @type {string} */ text) => text.replace(/\s+/g, ' ').trim();
+const notConverted = { postUpdates: { none: { format: /** @type {const} */ ('LEXICAL_Y') } } };
 
 async function main() {
 	const posts = await prisma.yPost.findMany({
-		where: onlyTitle ? { title: onlyTitle } : undefined,
-		select: {
-			id: true,
-			title: true,
-			postUpdates: {
-				select: { content: true, format: true },
-				orderBy: { createdTimestamp: 'asc' },
-			},
-		},
+		where: { ...(onlyTitle ? { title: onlyTitle } : {}), ...(all ? {} : notConverted) },
+		select: { id: true, title: true },
+		orderBy: { createdTimestamp: 'asc' },
 	});
 
-	const stats = { converted: 0, skipped: 0, empty: 0, mismatched: 0, legacyBytes: 0, seedBytes: 0 };
+	const stats = { converted: 0, checked: 0, empty: 0, legacyBytes: 0, seedBytes: 0 };
+	/** @type {string[]} */
+	const mismatched = [];
+	/** @type {string[]} */
+	const failed = [];
 
 	for (const post of posts) {
-		if (post.postUpdates.some(({ format }) => format === 'LEXICAL_Y')) {
-			stats.skipped++;
-			continue;
-		}
-
-		const legacyRows = post.postUpdates.filter(({ content }) => content);
-
-		if (!legacyRows.length) {
-			stats.empty++;
-			continue;
-		}
-
-		const merged = mergeUpdatesV2(legacyRows.map(({ content }) => base64ToUint8Array(content)));
-		const { content, byteLength, text, legacyText } = convertLegacyUpdate({
-			update: uint8ArrayToBase64(merged),
-		});
-
-		const same = normalize(text) === normalize(legacyText);
-		if (!same) {
-			stats.mismatched++;
-		}
-
-		stats.legacyBytes += merged.byteLength;
-		stats.seedBytes += byteLength;
-
-		console.log(
-			`${same ? 'ok      ' : 'MISMATCH'} ${post.title}: ${merged.byteLength} -> ${byteLength} bytes`
-		);
-
-		if (dryRun) {
-			continue;
-		}
-
-		await prisma.$transaction(async (tx) => {
-			await tx.yPostUpdateMetadata.create({
-				data: {
-					user: { connect: { id: SYSTEM } },
-					byteLength,
-					postUpdate: {
-						create: { content, format: 'LEXICAL_Y', post: { connect: { id: post.id } } },
-					},
-				},
+		try {
+			const rows = await prisma.yPostUpdate.findMany({
+				where: { postId: post.id },
+				select: { content: true, format: true },
+				orderBy: { createdTimestamp: 'asc' },
 			});
 
-			await tx.yPost.update({ where: { id: post.id }, data: { totalByteLength: byteLength } });
-		});
+			const legacyRows = rows.filter(({ content, format }) => format === 'YJS13' && content);
 
-		stats.converted++;
+			if (!legacyRows.length) {
+				stats.empty++;
+				continue;
+			}
+
+			const merged = mergeUpdatesV2(legacyRows.map(({ content }) => base64ToUint8Array(content)));
+			const { content, byteLength, differences } = convertLegacyUpdate({
+				update: uint8ArrayToBase64(merged),
+			});
+
+			if (differences.length) {
+				mismatched.push(post.title);
+				console.error(
+					`MISMATCH ${post.title}: ${differences.length} differences, not converted`,
+					differences.slice(0, SHOWN_DIFFERENCES)
+				);
+				continue;
+			}
+
+			stats.legacyBytes += merged.byteLength;
+			stats.seedBytes += byteLength;
+
+			console.log(`ok       ${post.title}: ${merged.byteLength} -> ${byteLength} bytes`);
+
+			if (dryRun || rows.some(({ format }) => format === 'LEXICAL_Y')) {
+				stats.checked++;
+				continue;
+			}
+
+			const written = await prisma.$transaction(async (tx) => {
+				// Another instance may have converted the post since it was listed.
+				if (await tx.yPostUpdate.count({ where: { postId: post.id, format: 'LEXICAL_Y' } })) {
+					return false;
+				}
+
+				await tx.yPostUpdateMetadata.create({
+					data: {
+						user: { connect: { id: SYSTEM } },
+						byteLength,
+						postUpdate: {
+							create: { content, format: 'LEXICAL_Y', post: { connect: { id: post.id } } },
+						},
+					},
+				});
+
+				await tx.yPost.update({ where: { id: post.id }, data: { totalByteLength: byteLength } });
+
+				return true;
+			});
+
+			stats[written ? 'converted' : 'checked']++;
+		} catch (err) {
+			failed.push(post.title);
+			console.error(`FAILED   ${post.title}: not converted`, err);
+		}
 	}
 
 	console.log(dryRun ? 'dry run' : 'done', stats);
+
+	if (mismatched.length || failed.length) {
+		// These posts stay readable, and can't be edited until they are converted.
+		console.error('NOT CONVERTED', { mismatched, failed });
+	}
+
+	return mismatched.length + failed.length;
 }
 
 try {
-	await main();
+	const notConvertedCount = await main();
 	await prisma.$disconnect();
-	process.exit(0);
+	// The site starts without the posts that could not be converted. A dry run is a check.
+	process.exit(dryRun && notConvertedCount ? 1 : 0);
 } catch (err) {
 	console.error(err);
 	await prisma.$disconnect();
