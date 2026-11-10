@@ -18,7 +18,6 @@
 	import { editorExtension } from './config/editor';
 	import { ImageExtension } from './plugins/Image/ImageExtension';
 	import ImageFixerModalButton from './ImageFixer/index.svelte';
-	import TreeviewPlugin from './Treeview/TreeviewPlugin.svelte';
 	import { editorGlobals } from './editorGlobals.svelte';
 
 	/**
@@ -79,8 +78,6 @@
 </script>
 
 <div class="relative flex min-h-96 gap-4">
-	<TreeviewPlugin />
-
 	<div class="min-w-0 flex-1">
 		<div class="editor-border sticky top-0 z-40 hidden w-full xl:block">
 			<div class="flex flex-wrap items-center gap-2 px-2">

@@ -7,6 +7,7 @@ import { EditorShortcutsExtension } from '../plugins/EditorShortcutsExtension';
 import { GalleryEmblaExtension } from '../plugins/Gallery/GalleryEmblaExtension';
 import { ImageExtension } from '../plugins/Image/ImageExtension';
 import { VideoEmbedExtension } from '../plugins/VideoEmbed/VideoEmbedExtension';
+import { TreeviewExtension } from '../Treeview/TreeviewExtension';
 
 export const editorExtension = defineExtension({
 	name: 'article/editor',
@@ -18,5 +19,6 @@ export const editorExtension = defineExtension({
 		GalleryEmblaExtension,
 		ImageExtension,
 		VideoEmbedExtension,
+		TreeviewExtension,
 	],
 });

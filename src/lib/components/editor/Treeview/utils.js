@@ -1,9 +1,4 @@
-import {
-	$createNodeSelection as createNodeSelection,
-	$setSelection as setSelection,
-	$isParagraphNode as isParagraphNode,
-	$isTextNode as isTextNode,
-} from 'lexical';
+import { $isParagraphNode as isParagraphNode, $isTextNode as isTextNode } from 'lexical';
 import { $getNearestNodeOfType as getNearestNodeOfType } from '@lexical/utils';
 import { $isListItemNode as isListItemNode, $isListNode as isListNode } from '@lexical/list';
 import { $isQuoteNode as isQuoteNode, $isHeadingNode as isHeadingNode } from '@lexical/rich-text';
@@ -15,7 +10,6 @@ import {
 	$isVideoEmbedNode as isVideoEmbedNode,
 } from '$lib/lexical/custom';
 import { DOMAIN } from '$lib/environment/environment';
-import { focusEditor } from '../utils/focusEditor';
 import { getURLAndTitle } from '../plugins/VideoEmbed/VideoEmbed';
 
 /**
@@ -194,58 +188,6 @@ export const hasTreeStructureChanged = (prevEditorState, editorState) => {
 	}
 
 	return false;
-};
-
-/**
- * @param {typeof import('./treeviewState.svelte').treeviewState} state
- */
-export const updateItems = (state) => {
-	if (!state.tree) {
-		return;
-	}
-
-	state.items = state.tree.getItems();
-};
-
-/**
- * @param {typeof import('./treeviewState.svelte').treeviewState} state
- * @param {LexicalEditor} editor
- * @param {ItemInstance} item
- */
-export const handleOnClickTreeNode = (state, editor, item) => {
-	state.isTreeNodeSelection = true;
-
-	const node = item.getItemData();
-
-	state.tree?.setSelectedItems([item.getId()]);
-
-	updateItems(state);
-
-	focusEditor(editor);
-
-	editor.update(
-		() => {
-			if (isParagraphNode(node) || isTextNode(node)) {
-				node.selectEnd();
-			} else {
-				const selection = createNodeSelection();
-				selection.add(node.getKey());
-				setSelection(selection);
-			}
-
-			const element = editor.getElementByKey(node.getKey());
-			element?.scrollIntoView({
-				behavior: 'instant',
-				block: 'center',
-				inline: 'center',
-			});
-
-			state.selected = node;
-		},
-		{ discrete: true }
-	);
-
-	state.isTreeNodeSelection = false;
 };
 
 /**
