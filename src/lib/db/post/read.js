@@ -129,6 +129,7 @@ export async function readYPostUpdatesIdsByTitle(title) {
 				select: {
 					id: true,
 					createdTimestamp: true,
+					format: true,
 					metadata: {
 						select: {
 							user: {

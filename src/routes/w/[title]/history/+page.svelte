@@ -1,5 +1,5 @@
 <script>
-	import { SquarePenIcon, FileIcon } from '@lucide/svelte';
+	import { SquarePenIcon, FileIcon, CircleAlertIcon } from '@lucide/svelte';
 	import { page } from '$app/stores';
 
 	import Box from '$lib/components/Box.svelte';
@@ -8,6 +8,7 @@
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+	import { canDiff, NOT_COMPARABLE_MESSAGE } from '$lib/y/rows';
 
 	let { data } = $props();
 
@@ -17,7 +18,9 @@
 	let from = $state(0);
 
 	let link = $derived(
-		postUpdates.length > 1 ? `history/${postUpdates[to].id}-${postUpdates[from].id}` : null
+		canDiff(postUpdates[to], postUpdates[from])
+			? `history/${postUpdates[to].id}-${postUpdates[from].id}`
+			: null
 	);
 </script>
 
@@ -76,16 +79,24 @@
 							: ''}"
 					>
 						<div class="flex items-center">
-							{#if from < index}
-								<input type="radio" value={index} bind:group={to} />
-							{:else}
+							{#if !canDiff(postUpdate)}
+								<span title={NOT_COMPARABLE_MESSAGE}>
+									<CircleAlertIcon size={16} />
+									<span class="hidden">{NOT_COMPARABLE_MESSAGE}</span>
+								</span>
 								<input type="radio" disabled class="invisible" />
-							{/if}
+							{:else}
+								{#if from < index}
+									<input type="radio" value={index} bind:group={to} />
+								{:else}
+									<input type="radio" disabled class="invisible" />
+								{/if}
 
-							{#if to > index}
-								<input type="radio" value={index} bind:group={from} />
-							{:else}
-								<input type="radio" disabled class="invisible" />
+								{#if to > index}
+									<input type="radio" value={index} bind:group={from} />
+								{:else}
+									<input type="radio" disabled class="invisible" />
+								{/if}
 							{/if}
 
 							<span>

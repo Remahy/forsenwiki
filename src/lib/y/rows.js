@@ -26,3 +26,11 @@ export const rowsForHistory = (rows, index) => {
 
 	return { format, rows: rows.slice(0, index + 1).filter((row) => row.format === format) };
 };
+
+export const NOT_COMPARABLE_MESSAGE = 'This version is too old to be compared.';
+
+/**
+ * Only versions written by the `@lexical/y` editor can be compared.
+ * @param {...(FormattedRow | undefined)} rows
+ */
+export const canDiff = (...rows) => rows.every((row) => row?.format === LEXICAL_Y);

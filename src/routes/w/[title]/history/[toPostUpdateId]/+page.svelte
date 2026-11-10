@@ -19,6 +19,7 @@
 		createdTimestamp,
 		author,
 		current,
+		comparable,
 		byteLength,
 		toPostUpdateId,
 		recentPostUpdateId,
@@ -61,7 +62,7 @@
 						<span class="hidden lg:inline">View live article</span>
 					</LinkButton>
 
-					{#if !current}
+					{#if !current && comparable}
 						<LinkButton
 							href="/w/{title}/history/{toPostUpdateId}-{recentPostUpdateId}"
 							class="flex items-center gap-2 text-sm"

@@ -15,6 +15,7 @@ import { readYPostUpdatesWithIdByTitle } from '$lib/db/post/read';
 import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
 import { replacer } from '$lib/utils/json';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
+import { canDiff, NOT_COMPARABLE_MESSAGE } from '$lib/y/rows';
 
 /**
  * @param {string} title
@@ -34,11 +35,13 @@ export async function _getYPostUpdateIds(title, toPostUpdateId, _fromPostUpdateI
 		throw 404;
 	}
 
+	const toPostUpdate = res.postUpdates[toPostUpdateIdIndex];
+
 	let fromPostUpdateId = _fromPostUpdateId;
 	if (!_fromPostUpdateId) {
-		const index = toPostUpdateIdIndex - 1;
+		const previous = res.postUpdates[toPostUpdateIdIndex - 1];
 
-		fromPostUpdateId = index > -1 ? res.postUpdates[index].id : null;
+		fromPostUpdateId = canDiff(toPostUpdate, previous) ? previous.id : null;
 	}
 
 	if (!fromPostUpdateId) {
@@ -50,6 +53,13 @@ export async function _getYPostUpdateIds(title, toPostUpdateId, _fromPostUpdateI
 	}
 
 	const fromPostUpdateIdIndex = res.postUpdates.findIndex(({ id }) => id === fromPostUpdateId);
+
+	if (
+		fromPostUpdateIdIndex !== -1 &&
+		!canDiff(toPostUpdate, res.postUpdates[fromPostUpdateIdIndex])
+	) {
+		error(400, NOT_COMPARABLE_MESSAGE);
+	}
 
 	return { res, toPostUpdateId, toPostUpdateIdIndex, fromPostUpdateId, fromPostUpdateIdIndex };
 }

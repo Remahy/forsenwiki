@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit';
 import { readYPostUpdatesWithIdByTitle } from '$lib/db/post/read';
 import { yPostUpdatesV2ToBase64 } from '$lib/y/utils';
-import { rowsForHistory } from '$lib/y/rows';
+import { canDiff, rowsForHistory } from '$lib/y/rows';
 import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
 import { replacer } from '$lib/utils/json';
 import { updateToHTML } from '$lib/lexical/updateToHTML';
@@ -50,6 +50,7 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 		author: author.status === 'fulfilled' ? author.value : null,
 		html: html.status === 'fulfilled' ? html.value : null,
 		current,
+		comparable: canDiff(res.postUpdates[toPostUpdateIdIndex], res.postUpdates.at(-1)),
 		byteLength,
 		newTitle,
 		oldTitle,
