@@ -67,6 +67,27 @@ async function buildToHTMLWorker() {
 	writeFileSync(`src/lib/worker/${name}/worker.js`, result.outputFiles[0].contents);
 }
 
+// Run by scripts/convertPostsToLexicalY.js with plain Node, not through Vite.
+async function buildConvertLexicalYWorker() {
+	const name = 'convertLexicalY';
+
+	const result = await esbuild.build({
+		entryPoints: [`worker/${name}.js`],
+		conditions: ['svelte'],
+		bundle: true,
+		platform: 'node',
+		external: ['jsdom'],
+		format: 'esm',
+		define: { 'import.meta.env': 'process.env' },
+		outfile: `./src/lib/worker/${name}.js`,
+		write: false,
+		plugins: [sveltePlugin(), injectPlugin],
+	});
+
+	mkdirSync(`src/lib/worker/${name}`, { recursive: true });
+	writeFileSync(`src/lib/worker/${name}/worker.js`, result.outputFiles[0].contents);
+}
+
 async function buildYoutubeClipURLWorker() {
 	const name = 'youtubeClipURL';
 
@@ -88,3 +109,4 @@ async function buildYoutubeClipURLWorker() {
 buildInitialUpdateWorker().catch(() => process.exit(1));
 buildToHTMLWorker().catch(() => process.exit(1));
 buildYoutubeClipURLWorker().catch(() => process.exit(1));
+buildConvertLexicalYWorker().catch(() => process.exit(1));

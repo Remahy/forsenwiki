@@ -1,4 +1,4 @@
-import { encodeYDocToUpdateV2ToBase64 } from '$lib/yjs/utils';
+import { encodeYDocToUpdateV2ToBase64 } from '$lib/y/utils';
 
 /**
  * @typedef {import('$lib/constants/constants').Y_POST_TYPES_VALUES} Y_POST_TYPES_VALUES

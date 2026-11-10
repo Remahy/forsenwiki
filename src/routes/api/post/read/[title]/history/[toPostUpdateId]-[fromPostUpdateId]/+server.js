@@ -3,8 +3,8 @@ import { error, json } from '@sveltejs/kit';
 import { buildEditorFromExtensions } from '@lexical/extension';
 import { HeadlessExtension } from '@lexical/headless';
 
-import { mergePostUpdatesV2, postUpdatesToUint8Arr } from '$lib/yjs/utils';
-import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
+import { mergePostUpdatesV2, postUpdatesToUint8Arr } from '$lib/y/utils';
+import { getYAndEditor } from '$lib/y/headless';
 import { getDiffJSON } from '$lib/diff/index.server';
 import { articleExtension } from '$lib/components/editor/config/article';
 import { diffExtension } from '$lib/components/editor/config/diff';
@@ -83,12 +83,12 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 	const updatesTo = mergePostUpdatesV2(toPostUpdates);
 	const updatesFrom = mergePostUpdatesV2(fromPostUpdates);
 
-	const { editor: tEditor } = getYjsAndEditor(
+	const { editor: tEditor } = getYAndEditor(
 		articleExtension(null, EDITOR_IS_READONLY, null),
 		updatesTo
 	);
 	const toUpdate = tEditor.toJSON();
-	const { editor: fEditor } = getYjsAndEditor(
+	const { editor: fEditor } = getYAndEditor(
 		articleExtension(null, EDITOR_IS_READONLY, null),
 		updatesFrom
 	);

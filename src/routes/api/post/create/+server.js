@@ -2,13 +2,12 @@ import { json, error, isHttpError } from '@sveltejs/kit';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { ForbiddenError } from '$lib/errors/Forbidden';
-import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
+import { getYAndEditor } from '$lib/y/headless';
 import { InvalidPost } from '$lib/errors/InvalidPost';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { createPost } from '$lib/db/post/create';
 import { readYPostByTitle } from '$lib/db/post/read';
-import { encodeYDocToUpdateV2 } from '$lib/yjs/utils';
 import { upsertHTML } from '$lib/db/post/html';
 import { articleExtension } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
@@ -59,9 +58,9 @@ export async function POST({ request, locals }) {
 	// @ts-ignore
 	const isBio = type === Y_POST_TYPES.BIO;
 
-	let editor;
+	/** @type {ReturnType<typeof getYAndEditor>} */
+	let article;
 	let title;
-	let doc;
 	try {
 		title = isBio
 			? {
@@ -85,16 +84,17 @@ export async function POST({ request, locals }) {
 			return error(400, 'Post with that title already exists.');
 		}
 
-		const data = getYjsAndEditor(
+		article = getYAndEditor(
 			articleExtension(null, EDITOR_IS_READONLY, null),
 			base64ToUint8Array(content)
 		);
-		editor = data.editor;
-		doc = data.doc;
 
-		await serverRunValidations(editor);
+		await serverRunValidations(article.editor);
 
-		const imageHashes = getUniqueImageHashes(editor).map((hash, index) => ({ index, hash }));
+		const imageHashes = getUniqueImageHashes(article.editor).map((hash, index) => ({
+			index,
+			hash,
+		}));
 		const failedUploads = await validateUploads(imageHashes);
 		// Remove failed uploads from database.
 		await pruneFailedUploads(
@@ -118,8 +118,10 @@ export async function POST({ request, locals }) {
 		return error(400);
 	}
 
+	const { editor } = article;
+
 	// By this point, we have probably modified the editor. Let's recreate the content.
-	const backendUpdate = encodeYDocToUpdateV2(doc);
+	const backendUpdate = await article.encodeV2();
 
 	const { byteLength } = backendUpdate;
 
@@ -138,6 +140,8 @@ export async function POST({ request, locals }) {
 	};
 
 	const createdPost = await createPost(body, metadata);
+
+	article.dispose();
 
 	const { html, text, image } = await toHTML({ config: 'article', update: backendContent });
 

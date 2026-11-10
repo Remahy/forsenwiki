@@ -6,8 +6,7 @@ import { $generateHtmlFromNodes } from '@lexical/html';
 
 import { articleExtension } from '../../config/article';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
-import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { createNewYDoc, encodeYDocToUpdateV2 } from '$lib/yjs/utils';
+import { getYAndEditor } from '$lib/y/headless';
 import { $createFallbackNode, $isFallbackNode, type FallbackNode } from './Fallback';
 import {
 	$createDeprecatedVideoEmbedNode,
@@ -27,11 +26,11 @@ const config = () => articleExtension(null, EDITOR_IS_READONLY, null);
 const $firstChild = () => $getRoot().getFirstChildOrThrow() as FallbackNode;
 
 /** Same as the toHTML worker, which reads the article from its Yjs update. */
-const htmlFromYjs = (build: () => void) => {
-	const { editor, doc } = getYjsAndEditor(config(), encodeYDocToUpdateV2(createNewYDoc()));
-	editor.update(build, { discrete: true });
+const htmlFromYjs = async (build: () => void) => {
+	const article = getYAndEditor(config());
+	article.editor.update(build, { discrete: true });
 
-	const reloaded = getYjsAndEditor(config(), encodeYDocToUpdateV2(doc)).editor;
+	const reloaded = getYAndEditor(config(), await article.encodeV2()).editor;
 
 	return reloaded.read(() => $generateHtmlFromNodes(reloaded, null));
 };
@@ -50,15 +49,15 @@ describe('FallbackNode', () => {
 		});
 	});
 
-	test('legacy node exports to HTML from Yjs', () => {
-		const html = htmlFromYjs(() => $getRoot().append($parseSerializedNode(legacyYouTube)));
+	test('legacy node exports to HTML from Yjs', async () => {
+		const html = await htmlFromYjs(() => $getRoot().append($parseSerializedNode(legacyYouTube)));
 
 		expect(html).toContain('Invalid node of type: "youtube"');
 	});
 
-	test('node without data exports to HTML from Yjs', () => {
+	test('node without data exports to HTML from Yjs', async () => {
 		// Documents saved before this fix stored the legacy node with empty data.
-		const html = htmlFromYjs(() => $getRoot().append($createDeprecatedVideoEmbedNode('')));
+		const html = await htmlFromYjs(() => $getRoot().append($createDeprecatedVideoEmbedNode('')));
 
 		expect(html).toContain('Invalid node of type: "youtube"');
 	});

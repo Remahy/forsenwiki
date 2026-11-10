@@ -32,6 +32,7 @@ export async function readYPostUpdatesByTitle(title) {
 			postUpdates: {
 				select: {
 					content: true,
+					format: true,
 					metadata: {
 						select: {
 							userId: true,
@@ -79,6 +80,7 @@ export async function readYPostUpdatesWithIdByTitle(title) {
 					id: true,
 					createdTimestamp: true,
 					content: true,
+					format: true,
 					metadata: {
 						select: {
 							byteLength: true,

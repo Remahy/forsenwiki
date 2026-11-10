@@ -1,6 +1,7 @@
 import { json, error } from '@sveltejs/kit';
 import { readYPostsByIds, readYPostByTitle, readYPostUpdatesByTitle } from '$lib/db/post/read';
-import { yPostUpdatesV2ToBase64 } from '$lib/yjs/utils';
+import { yPostUpdatesV2ToBase64 } from '$lib/y/utils';
+import { currentRows } from '$lib/y/rows';
 import { upsertHTML } from '$lib/db/post/html';
 import { updateToHTML } from '$lib/lexical/updateToHTML';
 import { replacer } from '$lib/utils/json';
@@ -17,10 +18,17 @@ export const _getYPostByTitle = async (title) => {
 		throw 404;
 	}
 
-	const base64String = yPostUpdatesV2ToBase64(post.postUpdates);
-
 	// Important: We're destructuring away postUpdates to make sure we don't return it.
 	const { postUpdates, ..._post } = post;
+
+	const rows = currentRows(postUpdates);
+
+	if (postUpdates.some(({ content }) => content) && !rows.length) {
+		// Not converted to @lexical/y yet, see scripts/convertPostsToLexicalY.js.
+		throw 503;
+	}
+
+	const base64String = yPostUpdatesV2ToBase64(rows);
 
 	const originalAuthorId = postUpdates[0].metadata.userId;
 

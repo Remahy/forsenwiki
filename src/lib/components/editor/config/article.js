@@ -33,6 +33,7 @@ import HeadingNodeDOMExport from './htmlExport/HeadingNodeDOMExport';
 import TableCellNodeDOMExport from './htmlExport/TableCellNodeDOMExport';
 import TableNodeDOMExport from './htmlExport/TableNodeDOMExport';
 import GalleryNodeDOMExport from './htmlExport/GalleryNodeDOMExport';
+import { logYWarning } from '$lib/y/config';
 
 const floatResponsive = 'max-lg:float-none! max-lg:w-full! max-lg:me-0! max-lg:ms-0!';
 const floatBoxShadow = '0px 0px 0px 1px #696969';
@@ -138,19 +139,25 @@ export const articleNodes = [
 ];
 
 /**
+ * @typedef {{ onWarn?: import('lexical').CreateEditorArgs['onWarn'] }} ArticleOptions
+ */
+
+/**
  * @param {any} theme
  * @param {boolean} editable
  * @param {any} editorState
  * @param {typeof onErrorDefault} onError
+ * @param {ArticleOptions} [options]
  * @returns {import('lexical').CreateEditorArgs}
  */
-const articleConfig = (theme, editable, editorState, onError = onErrorDefault) => ({
+const articleConfig = (theme, editable, editorState, onError = onErrorDefault, options = {}) => ({
 	theme: theme || articleTheme,
 	namespace: 'editor',
 	editable,
 	nodes: articleNodes,
 	/** @param {Error} error */
 	onError,
+	onWarn: options.onWarn ?? logYWarning,
 	editorState,
 	html: {
 		export: htmlExport,
@@ -161,14 +168,22 @@ const articleConfig = (theme, editable, editorState, onError = onErrorDefault) =
  * @param {any} theme
  * @param {boolean} editable
  * @param {any} editorState
- * @param {typeof onErrorDefault} onError
+ * @param {typeof onErrorDefault} [onError]
+ * @param {ArticleOptions} [options]
  */
-export const articleExtension = (theme, editable, editorState, onError = onErrorDefault) => {
+export const articleExtension = (
+	theme,
+	editable,
+	editorState,
+	onError = onErrorDefault,
+	options
+) => {
 	const { editorState: $initialEditorState, ...config } = articleConfig(
 		theme,
 		editable,
 		editorState,
-		onError
+		onError,
+		options
 	);
 	return defineExtension({
 		name: 'article',

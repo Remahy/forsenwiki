@@ -26,6 +26,7 @@
 	import UploadingContentModal from '$lib/components/UploadingContentModal.svelte';
 	import { resetUploadingContentModalGlobals } from '$lib/components/uploadingContentModalGlobals.svelte';
 	import { runValidations } from '$lib/components/editor/validations';
+	import { editorGlobals } from '$lib/components/editor/editorGlobals.svelte';
 
 	const id = 'new';
 
@@ -43,7 +44,7 @@
 	const c = getContext('COMPOSER');
 	let composer = $derived($c);
 	let editor = $derived(composer?.getEditor?.());
-	let canEdit = $derived(editor?.isEditable());
+	let canEdit = $derived(!!editor && editorGlobals.isEditable);
 
 	let titleError = $derived.by(() => {
 		const rawTitle = title.value;

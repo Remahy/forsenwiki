@@ -2,10 +2,17 @@
 	import './Article.css';
 
 	import { getAllContexts, getContext, onDestroy, onMount } from 'svelte';
-	import { buildEditorFromExtensions, configExtension } from '@lexical/extension';
+	import {
+		buildEditorFromExtensions,
+		configExtension,
+		getExtensionDependencyFromEditor,
+	} from '@lexical/extension';
+	import { createYCollabConfig, isYWarning, YCollabExtension } from '@lexical/y';
+	import { $getRoot as getRoot, $parseSerializedNode as parseSerializedNode } from 'lexical';
 
-	import { instantiateProvider } from '$lib/yjs/providerFactory';
-	import { CollaborationExtension } from '$lib/yjs/CollaborationExtension';
+	import { openArticleDoc } from '$lib/y/openArticleDoc';
+	import { fromSignal } from '$lib/utils/fromSignal.svelte';
+	import { logYWarning, yCollabInput } from '$lib/y/config';
 	import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
 	import { setEditor } from './context';
 	import { SvelteDecoratorsExtension } from './core/registerSvelteDecorators.svelte';
@@ -30,22 +37,65 @@
 	/** @type {Props} */
 	let { id, update, initialUpdate = null } = $props();
 
-	/** @type {Map<string, YDoc>} */
-	const docMap = new Map();
+	/** @type {string | null} */
+	let collabWarning = $state(null);
+
+	/** @param {Error} warning */
+	const onWarn = (warning) => {
+		logYWarning(warning);
+
+		if (isYWarning(warning) && /** @type {any} */ (warning.data)?.reason !== undefined) {
+			collabWarning = `${warning.code} (${/** @type {any} */ (warning.data).reason})`;
+		}
+	};
+
 	// svelte-ignore state_referenced_locally
-	const provider = instantiateProvider(update, initialUpdate)(id, docMap);
+	const article = openArticleDoc({ id, update, initialUpdate });
 
 	// svelte-ignore state_referenced_locally
 	const editor = buildEditorFromExtensions(
-		articleExtension(editableTheme, EDITOR_IS_EDITABLE, null),
+		articleExtension(editableTheme, EDITOR_IS_EDITABLE, null, undefined, { onWarn }),
 		editorExtension,
 		configExtension(ImageExtension, { articleId: id }),
 		configExtension(SvelteDecoratorsExtension, { context: getAllContexts() }),
-		configExtension(CollaborationExtension, { id, provider, docMap })
+		createYCollabConfig(yCollabInput(article.doc))
 	);
 	setEditor(editor);
 
-	onDestroy(() => editor.dispose());
+	const { binding, status } = getExtensionDependencyFromEditor(editor, YCollabExtension).output;
+	const collabStatus = fromSignal(status);
+
+	// For future reference: These contexts makes it so only one editor can be active at a time.
+	const yDocStore = getContext('YDOC');
+	// This is for clearing persistence on create & update submit.
+	const persistenceStore = getContext('YDOCPERSISTENCE');
+
+	yDocStore.set(article.doc);
+
+	article.ready.then(({ legacyJSON }) => {
+		persistenceStore.set(article.getPersistence());
+		binding.initialize();
+
+		if (legacyJSON) {
+			// A draft saved by the previous editor replaces the article's content as a local edit.
+			editor.update(
+				() => {
+					const root = getRoot();
+					root.clear();
+
+					for (const child of legacyJSON.root.children) {
+						root.append(parseSerializedNode(child));
+					}
+				},
+				{ discrete: true }
+			);
+		}
+	});
+
+	onDestroy(() => {
+		editor.dispose();
+		article.destroy();
+	});
 
 	/** @type {HTMLDivElement} */
 	let rootElement;
@@ -54,12 +104,15 @@
 
 	onMount(() => {
 		editor.setRootElement(rootElement);
+		editorGlobals.isEditable = editor.isEditable();
 		const unregisterEditableListener = editor.registerEditableListener((editable) => {
 			isEditable = editable;
+			editorGlobals.isEditable = editable;
 		});
 
 		return () => {
 			unregisterEditableListener();
+			editorGlobals.isEditable = false;
 			editor.setRootElement(null);
 		};
 	});
@@ -84,6 +137,13 @@
 				<Toolbar />
 			</div>
 		</div>
+
+		{#if collabStatus.current === 'readonly' && collabWarning}
+			<div class="editor-border bg-red-300! p-2 font-bold dark:text-black">
+				This article can't be edited with this version of the editor ({collabWarning}). Reload the
+				page, or reset the draft cache below.
+			</div>
+		{/if}
 
 		<div class="overflow-hidden">
 			<article class="editor-border box flex min-h-96 grow flex-col">

@@ -122,10 +122,16 @@ model YPostRelation {
   @@id([fromPostId, toPostId])
 }
 
+enum YPostUpdateFormat {
+  YJS13 /// Written by the Yjs 13 editor (`@lexical/yjs`). Only read for history.
+  LEXICAL_Y /// Written by the Yjs 14 editor (`@lexical/y`). The first such row seeds the chain.
+}
+
 model YPostUpdate {
   id String @id @default(cuid())
 
-  content String @db.Text
+  content String            @db.Text
+  format  YPostUpdateFormat @default(YJS13)
 
   post   YPost  @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String

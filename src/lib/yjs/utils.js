@@ -3,7 +3,7 @@ import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 import { Y } from './index.mjs';
 
 /**
- * @param {YDoc} yDoc
+ * @param {LegacyYDoc} yDoc
  */
 export function encodeYDocToUpdateV2(yDoc) {
 	const yjsUpdateState = Y.encodeStateAsUpdateV2(yDoc);
@@ -12,7 +12,7 @@ export function encodeYDocToUpdateV2(yDoc) {
 }
 
 /**
- * @param {YDoc} yDoc
+ * @param {LegacyYDoc} yDoc
  */
 export function encodeYDocToUpdate(yDoc) {
 	const yjsUpdateState = Y.encodeStateAsUpdate(yDoc);
@@ -21,7 +21,7 @@ export function encodeYDocToUpdate(yDoc) {
 }
 
 /**
- * @param {YDoc} yDoc
+ * @param {LegacyYDoc} yDoc
  */
 export function encodeYDocToUpdateV2ToBase64(yDoc) {
 	const yjsUpdateState = encodeYDocToUpdateV2(yDoc);
@@ -60,7 +60,7 @@ export function diffUpdateUsingStateVectorV2(newUpdate, existingStateVector) {
 }
 
 /**
- * @param {YDoc} doc
+ * @param {LegacyYDoc} doc
  * @param {Uint8Array} diff
  * @param {any} [transactionOrigin]
  */

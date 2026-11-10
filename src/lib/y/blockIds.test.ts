@@ -1,4 +1,4 @@
-import { expect, test, vi } from 'vitest';
+import { expect, test } from 'vitest';
 import {
 	$createParagraphNode,
 	$createTextNode,
@@ -14,50 +14,30 @@ import {
 	BlockIdExtension,
 	buildEditorFromExtensions,
 	configExtension,
+	getExtensionDependencyFromEditor,
 } from '@lexical/extension';
 import { HeadlessExtension } from '@lexical/headless';
 import { $createListItemNode, $createListNode } from '@lexical/list';
 import { $createTableNodeWithDimensions } from '@lexical/table';
-import type { Provider } from '@lexical/yjs';
+import { createYCollabConfig, createYDoc, YCollabExtension } from '@lexical/y';
 
 import { $createFloatBlockNode } from '$lib/components/editor/plugins/FloatBlock/FloatBlock';
 import { $createGalleryNode } from '$lib/components/editor/plugins/Gallery/Gallery';
 import { $createImageNode } from '$lib/components/editor/plugins/Image/Image';
 import { articleExtension } from '$lib/components/editor/config/article';
 import { EDITOR_IS_EDITABLE, EDITOR_IS_READONLY } from '$lib/constants/constants';
-import { getYjsAndEditor } from './getYjsAndEditor';
-import { registerCollaboration } from './registerCollaboration';
-import { applyDiffToYDoc, createNewYDoc, encodeYDocToUpdate, encodeYDocToUpdateV2 } from './utils';
-
-const noop = () => {};
-
-const createProvider = () =>
-	({
-		awareness: {
-			getLocalState: () => null,
-			getStates: () => new Map(),
-			off: noop,
-			on: noop,
-			setLocalState: noop,
-			setLocalStateField: noop,
-		},
-		connect: vi.fn(),
-		disconnect: vi.fn(),
-		off: noop,
-		on: noop,
-	}) satisfies Provider;
+import { yCollabInput } from './config';
+import { getYAndEditor } from './headless';
+import { applyRemoteUpdateV2, encodeYDocToUpdateV2 } from './utils';
 
 const setup = (...extensions: Parameters<typeof buildEditorFromExtensions>) => {
+	const doc = createYDoc();
 	const editor = buildEditorFromExtensions(
 		articleExtension(null, EDITOR_IS_EDITABLE, null),
-		...extensions
+		...extensions,
+		createYCollabConfig(yCollabInput(doc))
 	);
-	const doc = createNewYDoc();
-	registerCollaboration(editor, {
-		id: 'test',
-		provider: createProvider(),
-		docMap: new Map([['test', doc]]),
-	});
+	getExtensionDependencyFromEditor(editor, YCollabExtension).output.binding.initialize();
 	return { editor, doc };
 };
 
@@ -102,8 +82,7 @@ const blockIds = (editor: LexicalEditor) =>
 	});
 
 const readBackend = (doc: YDoc) =>
-	getYjsAndEditor(articleExtension(null, EDITOR_IS_READONLY, null), encodeYDocToUpdateV2(doc))
-		.editor;
+	getYAndEditor(articleExtension(null, EDITOR_IS_READONLY, null), encodeYDocToUpdateV2(doc)).editor;
 
 test('gives top-level blocks and nested text blocks ids', () => {
 	const editor = buildEditorFromExtensions(
@@ -144,9 +123,10 @@ test('ids round-trip through JSON and are looked up by id', () => {
 	expect(reloaded.read(() => $getBlockById(ids['0:paragraph'])?.getTextContent())).toBe('first');
 });
 
-test('ids sync through Yjs to the backend', () => {
+test('ids sync through Yjs to the backend', async () => {
 	const { editor, doc } = setup();
 	build(editor);
+	await settle();
 
 	expect(blockIds(readBackend(doc))).toEqual(blockIds(editor));
 });
@@ -172,28 +152,30 @@ test('a split block gets a new id', () => {
 	expect(ids['1:paragraph']).not.toBe(before);
 });
 
-test('articles without ids get the same positional ids on every reader', async () => {
+test('articles without ids get the same ids on every reader', async () => {
 	const source = setupWithoutIds();
 	build(source.editor);
+	await settle();
 	expect(blockIds(source.editor)).toEqual({});
 
 	const client = setup();
-	applyDiffToYDoc(client.doc, encodeYDocToUpdate(source.doc), { isUpdateRemote: true });
+	applyRemoteUpdateV2(client.doc, encodeYDocToUpdateV2(source.doc));
 	await settle();
 
 	const ids = blockIds(client.editor);
 	expect(Object.keys(ids)).toHaveLength(9);
+	// Every reader derives the same ids from the document.
 	expect(blockIds(readBackend(source.doc))).toEqual(ids);
-	// The client stored the ids it shows.
 	expect(blockIds(readBackend(client.doc))).toEqual(ids);
 });
 
 test('undo after loading an article without ids keeps the ids', async () => {
 	const source = setupWithoutIds();
 	build(source.editor);
+	await settle();
 
 	const client = setup();
-	applyDiffToYDoc(client.doc, encodeYDocToUpdate(source.doc), { isUpdateRemote: true });
+	applyRemoteUpdateV2(client.doc, encodeYDocToUpdateV2(source.doc));
 	await settle();
 	const ids = blockIds(client.editor);
 

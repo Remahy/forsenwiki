@@ -35,6 +35,10 @@ COPY --from=build /app/src/generated ./src/generated
 COPY --from=build /app/src/lib/version.txt ./src/lib/version.txt
 COPY --from=build /app/src/lib/constants/constants.js ./src/lib/constants/constants.js
 
+# Used by scripts/convertPostsToLexicalY.js
+COPY --from=build /app/scripts ./scripts
+COPY --from=build /app/src/lib/worker/convertLexicalY ./src/lib/worker/convertLexicalY
+
 COPY --from=build /app/build ./build
 COPY --from=build /app/.env ./.env
 COPY --from=build /app/package*.json .

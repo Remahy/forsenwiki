@@ -1,4 +1,5 @@
 import prisma from '$lib/prisma.server';
+import { LEXICAL_Y } from '$lib/y/rows';
 
 /**
  * @typedef {{ title: { raw: string, sanitized: string }, data: { content: string }, ids: string[], disclaimerTags?: string[] }} CreatePostData
@@ -56,6 +57,7 @@ export const createPost = async ({ title, data, ids, disclaimerTags }, metadata)
 		const postUpdate = await tx.yPostUpdate.create({
 			data: {
 				...data,
+				format: LEXICAL_Y,
 				post: {
 					connect: {
 						id: post.id,

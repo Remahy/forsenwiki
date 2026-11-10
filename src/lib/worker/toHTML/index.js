@@ -7,7 +7,7 @@ import workerPath from './worker?modulePath';
 
 /**
  * @typedef {{ html: string, text: string, image?: string }} ToHTMLResult
- * @typedef {{ config: 'article' | 'diff', update: string } | { config: 'article' | 'diff', content: string }} ToHTMLData
+ * @typedef {{ config: 'article' | 'diff', update: string, format?: import('$lib/y/rows').YPostUpdateFormat } | { config: 'article' | 'diff', content: string }} ToHTMLData
  */
 
 /** @type {(data: ToHTMLData) => Promise<ToHTMLResult>} */

@@ -2,13 +2,15 @@ import '../registerDOM.js';
 
 import { handleJobs } from '../handleJobs.js';
 
-import { $getRoot, $nodesOfType } from 'lexical';
+import { $getEditor, $getRoot, $nodesOfType } from 'lexical';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { buildEditorFromExtensions } from '@lexical/extension';
 import { HeadlessExtension } from '@lexical/headless';
 import { base64ToUint8Array } from 'uint8array-extras';
 
-import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
+import { readState } from '$lib/y/headless';
+import { YJS13 } from '$lib/y/rows';
+import { legacyUpdateToJSON } from '$lib/yjs/legacyUpdateToJSON';
 import { articleExtension } from '$lib/components/editor/config/article';
 import { diffExtension } from '$lib/components/editor/config/diff';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
@@ -50,9 +52,9 @@ const addTwitchThumbnails = async (html) => {
 };
 
 /**
- * @param {{ config: string, update?: string, content?: string }} data
+ * @param {{ config: string, update?: string, content?: string, format?: import('$lib/y/rows').YPostUpdateFormat }} data
  */
-export const toHTMLWorker = async ({ config, content, update }) => {
+export const toHTMLWorker = async ({ config, content, update, format }) => {
 	if (!config) {
 		throw new Error('No config string provided.');
 	}
@@ -71,22 +73,8 @@ export const toHTMLWorker = async ({ config, content, update }) => {
 			break;
 	}
 
-	/**
-	 * @type {import('lexical').LexicalEditor}
-	 */
-	let editor;
-	if (update) {
-		const eY = getYjsAndEditor(cfg(null, EDITOR_IS_READONLY, null), base64ToUint8Array(update));
-		editor = eY.editor;
-	} else {
-		editor = buildEditorFromExtensions(HeadlessExtension, cfg(null, EDITOR_IS_READONLY, null));
-
-		editor.setEditorState(editor.parseEditorState(/** @type {string} */ (content)));
-
-		migrations(editor);
-	}
-
-	const { html, text, image } = editor.read(() => {
+	const $render = () => {
+		const editor = $getEditor();
 		const text = $$getTextInEditor().replace(/\n/g, ' ');
 		const image = $$getFirstImage();
 		const htmlString = $generateHtmlFromNodes(editor, null);
@@ -97,7 +85,31 @@ export const toHTMLWorker = async ({ config, content, update }) => {
 		const response = { html: htmlString, text, image };
 
 		return response;
-	});
+	};
+
+	/** @type {ReturnType<typeof $render>} */
+	let rendered;
+	if (update && format !== YJS13) {
+		rendered = readState(cfg(null, EDITOR_IS_READONLY, null), base64ToUint8Array(update), $render);
+	} else {
+		const editor = buildEditorFromExtensions(
+			HeadlessExtension,
+			cfg(null, EDITOR_IS_READONLY, null)
+		);
+
+		const json = update
+			? legacyUpdateToJSON(base64ToUint8Array(update))
+			: JSON.parse(/** @type {string} */ (content));
+
+		editor.setEditorState(editor.parseEditorState(json));
+
+		migrations(editor);
+
+		rendered = editor.read($render);
+		editor.dispose();
+	}
+
+	const { html, text, image } = rendered;
 
 	let replacedHTMLString = await addTwitchThumbnails(html);
 

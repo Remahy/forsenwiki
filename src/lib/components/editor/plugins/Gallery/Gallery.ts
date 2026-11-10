@@ -11,7 +11,7 @@ export type SerializedGalleryNode = GalleryNodePayload & SerializedElementNode;
 
 export class GalleryNode extends ElementNode {
 	$config() {
-		return this.config('gallery', { extends: ElementNode });
+		return this.config('gallery', { extends: ElementNode, children: 'block' });
 	}
 
 	createDOM() {

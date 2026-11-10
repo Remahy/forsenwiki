@@ -67,7 +67,7 @@ export class FloatBlockNode extends ElementNode {
 	}
 
 	$config() {
-		return this.config('float-block', { extends: ElementNode });
+		return this.config('float-block', { extends: ElementNode, children: 'block' });
 	}
 
 	/** @param {this} prevNode */

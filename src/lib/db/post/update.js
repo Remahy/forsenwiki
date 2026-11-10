@@ -1,5 +1,6 @@
 import prisma from '$lib/prisma.server';
 import { AVAILABLE_DISCLAIMER_TAGS } from '$lib/constants/constants';
+import { LEXICAL_Y } from '$lib/y/rows';
 import { postYRelationDeleteByFromPostId } from './delete';
 
 /**
@@ -48,7 +49,7 @@ const updateYPost = async (tx, { post, outRelations, disclaimerTags, metadata })
 /**
  * Create YPostUpdateMetadata, & YPostUpdate
  * @param {Prisma.PrismaClient | Prisma.Prisma.TransactionClient} tx
- * @param {Pick<Prisma.YPostUpdate, 'content' | 'postId'>} data
+ * @param {Pick<Prisma.YPostUpdate, 'content' | 'format' | 'postId'>} data
  * @param {{ user: { id: string }, byteLength: number, newTitle?: string, oldTitle?: string }} metadata
  */
 const createYPostUpdate = async (tx, data, metadata) => {
@@ -95,10 +96,11 @@ export const updatePost = async (data, metadata) => {
 		});
 
 		/**
-		 * @type {Pick<Prisma.YPostUpdate, 'content' | 'postId'>}
+		 * @type {Pick<Prisma.YPostUpdate, 'content' | 'format' | 'postId'>}
 		 */
 		const dataToInsert = {
 			content,
+			format: LEXICAL_Y,
 			postId: post.id,
 		};
 

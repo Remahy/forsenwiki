@@ -19,3 +19,4 @@ vite.config.ts.timestamp-*
 forsen-wiki-logs
 /src/generated
 /src/lib/version.txt
+/src/lib/worker/convertLexicalY/worker.js
