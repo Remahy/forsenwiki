@@ -207,3 +207,29 @@ test("a patch merges with someone else's edits of the same article", async () =>
 		'others appended',
 	]);
 });
+
+test("changed text merges with someone else's typing in another word of the same text", async () => {
+	const { base, update } = await patch(
+		() => $getRoot().append($paragraph('forsen bajs ZULUL')),
+		() => $getRoot().append($paragraph('forsen snus ZULUL'))
+	);
+
+	const merged = await mergedWith(base, update, () => {
+		$firstTextOf($block(0)).spliceText(6, 0, 'E');
+	});
+
+	expect(merged).toEqual(['forsenE snus ZULUL']);
+});
+
+test("changed text merges with someone else's typing in the same word", async () => {
+	const { base, update } = await patch(
+		() => $getRoot().append($paragraph('forsen bajs ZULUL')),
+		() => $getRoot().append($paragraph('forsen baaajs ZULUL'))
+	);
+
+	const merged = await mergedWith(base, update, () => {
+		$firstTextOf($block(0)).spliceText(10, 0, 'E');
+	});
+
+	expect(merged).toEqual(['forsen baaajEs ZULUL']);
+});
