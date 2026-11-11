@@ -6,7 +6,6 @@ import { base64ToUint8Array } from 'uint8array-extras';
 import { IndexeddbPersistence } from './IndexeddbPersistence';
 import { LEGACY_DRAFT_KEY, migrateLegacyDraft } from './legacyDraft';
 import {
-	applyRemoteUpdateV2,
 	convertUpdateFormatV2ToV1,
 	encodeYDocToUpdateV2,
 	hasLegacyData,
@@ -14,68 +13,103 @@ import {
 } from './utils';
 
 /**
- * @param {IndexeddbPersistence} persistence
+ * Bytes are loaded with `createYDoc` and never applied to a document: only it integrates all a
+ * stored state holds (yjs/yjs#824).
+ * @param {Uint8Array[]} updates V1 updates.
  */
-const stores = (persistence) =>
-	idb.transact(/** @type {IDBDatabase} */ (persistence.db), ['updates', 'custom']);
+const load = (updates) =>
+	createYDoc(updates.length ? Y.mergeUpdates(/** @type {any} */ (updates)) : null);
 
 /**
- * Takes a draft saved by the Yjs 13 editor out of the updates the document loads, and keeps it
- * aside until its changes are migrated.
+ * @param {string} base64 A V2 update.
+ */
+const fromServer = (base64) => convertUpdateFormatV2ToV1(base64ToUint8Array(base64));
+
+/**
  * @param {string} id
  */
-const stashLegacyDraft = async (id) => {
-	const doc = createYDoc();
-	const persistence = new IndexeddbPersistence(id, doc);
+const openDraft = (id) =>
+	idb.openDB(id, (db) => idb.createStores(db, [['updates', { autoIncrement: true }], ['custom']]));
 
-	await persistence.whenSynced;
+/**
+ * The updates of the local draft. A draft saved by the Yjs 13 editor is taken out of them, and
+ * kept aside until its changes are migrated.
+ * @param {IDBDatabase} db
+ * @returns {Promise<Uint8Array[]>}
+ */
+const readDraft = async (db) => {
+	const [stored] = idb.transact(db, ['updates'], 'readonly');
+	const draft = /** @type {Uint8Array[]} */ (await idb.getAll(stored));
 
-	if (hasLegacyData(doc)) {
-		const [updates, custom] = stores(persistence);
+	if (!draft.length) {
+		return [];
+	}
+
+	const doc = load(draft);
+
+	try {
+		if (!hasLegacyData(doc)) {
+			return draft;
+		}
+
+		const [updates, custom] = idb.transact(db, ['updates', 'custom']);
 
 		await Promise.all([
 			idb.rtop(updates.clear()),
 			idb.put(custom, /** @type {any} */ (encodeYDocToUpdateV2(doc)), LEGACY_DRAFT_KEY),
 		]);
-	}
 
-	await persistence.destroy();
-	doc.destroy();
+		return [];
+	} finally {
+		doc.destroy();
+	}
 };
 
 /**
- * Merges what a stashed draft changed into the document, as part of the local draft.
- * @param {IndexeddbPersistence} persistence
- * @param {YDoc} doc
+ * What a draft that was kept aside changed in its article, now part of the local draft.
+ * @param {IDBDatabase} db
  * @param {string | null} title
+ * @returns {Promise<Uint8Array | null>} A V1 update.
  */
-const applyLegacyDraft = async (persistence, doc, title) => {
-	/** @type {Uint8Array | undefined} */
-	const legacyUpdate = await persistence.get(LEGACY_DRAFT_KEY);
+const migrateStashedDraft = async (db, title) => {
+	const [stash] = idb.transact(db, ['custom'], 'readonly');
+	/** @type {any} */
+	const legacyUpdate = await idb.get(stash, LEGACY_DRAFT_KEY);
 
 	if (!legacyUpdate) {
-		return;
+		return null;
 	}
 
 	const migrated = await migrateLegacyDraft(title, legacyUpdate);
 	const update = migrated ? convertUpdateFormatV2ToV1(migrated) : null;
 
 	// Stored and unstashed together, so a draft is never merged twice.
-	const [updates, custom] = stores(persistence);
+	const [updates, custom] = idb.transact(db, ['updates', 'custom']);
 
 	await Promise.all([
 		update ? idb.addAutoKey(updates, /** @type {any} */ (update)) : null,
 		idb.del(custom, LEGACY_DRAFT_KEY),
 	]);
 
-	if (update) {
-		Y.applyUpdate(doc, update, persistence);
+	return update;
+};
+
+/**
+ * @param {Uint8Array[]} draft
+ */
+const hasContent = (draft) => {
+	const doc = load(draft);
+
+	try {
+		return hasSharedContent(doc, DEFAULT_ROOT_NAME);
+	} finally {
+		doc.destroy();
 	}
 };
 
 /**
  * @typedef {{ id: string, title?: string | null, update: string | null, initialUpdate?: string | null }} OpenArticleDocOptions
- * @typedef {{ legacyDraftFailed: boolean }} ArticleDocReady
+ * @typedef {Awaited<ReturnType<typeof openArticleDoc>>} ArticleDoc
  */
 
 /**
@@ -83,42 +117,47 @@ const applyLegacyDraft = async (persistence, doc, title) => {
  * from the server merged into it (or the server's seed for a new article).
  * @param {OpenArticleDocOptions} options
  */
-export function openArticleDoc({ id, title = null, update, initialUpdate = null }) {
-	const doc = createYDoc();
+export async function openArticleDoc({ id, title = null, update, initialUpdate = null }) {
+	const db = await openDraft(id);
 
-	/** @type {IndexeddbPersistence | null} */
-	let persistence = null;
+	/** @type {Uint8Array[]} */
+	let updates;
+	let legacyDraftFailed = false;
 
-	/** @type {Promise<ArticleDocReady>} */
-	const ready = (async () => {
-		await stashLegacyDraft(id);
-
-		persistence = new IndexeddbPersistence(id, doc);
-		await persistence.whenSynced;
-
-		if (update) {
-			applyRemoteUpdateV2(doc, base64ToUint8Array(update));
-		} else if (initialUpdate && !hasSharedContent(doc, DEFAULT_ROOT_NAME)) {
-			applyRemoteUpdateV2(doc, base64ToUint8Array(initialUpdate));
-		}
+	try {
+		updates = await readDraft(db);
 
 		try {
-			await applyLegacyDraft(persistence, doc, title);
+			const migrated = await migrateStashedDraft(db, title);
+
+			if (migrated) {
+				updates.push(migrated);
+			}
 		} catch (err) {
 			console.error(err);
-
-			return { legacyDraftFailed: true };
+			legacyDraftFailed = true;
 		}
+	} finally {
+		db.close();
+	}
 
-		return { legacyDraftFailed: false };
-	})();
+	if (update) {
+		updates.push(fromServer(update));
+	} else if (initialUpdate && !hasContent(updates)) {
+		updates.push(fromServer(initialUpdate));
+	}
+
+	const doc = load(updates);
+	const persistence = new IndexeddbPersistence(id, doc);
+
+	await persistence.whenSynced;
 
 	return {
 		doc,
-		ready,
-		getPersistence: () => persistence,
+		persistence,
+		legacyDraftFailed,
 		destroy: async () => {
-			await persistence?.destroy();
+			await persistence.destroy();
 			doc.destroy();
 		},
 	};
