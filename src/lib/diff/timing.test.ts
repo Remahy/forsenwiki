@@ -194,21 +194,35 @@ test('comparing an article ten times as big of which every text changed', async 
 	expect(result.rows).toHaveLength(BLOCKS * 10);
 });
 
-test('a comparison that is cut short leaves the unchanged blocks out', async () => {
+const fourthChanged = (state: SerializedState, changed: SerializedState): SerializedState => ({
+	root: {
+		...state.root,
+		children: state.root.children.map((block, index) =>
+			index % 4 === 0 ? changed.root.children[index] : block
+		),
+	},
+});
+
+const withoutIds = (state: SerializedState): SerializedState => ({
+	root: { ...state.root, children: state.root.children.map(({ $: _state, ...block }) => block) },
+});
+
+test('comparing an article ten times as big of which every fourth block changed', async () => {
 	const big = tenfold(older);
-	const edited = tenfold(newer);
-	const partly = {
-		root: {
-			...big.root,
-			children: big.root.children.map((block, index) =>
-				index % 4 === 0 ? edited.root.children[index] : block
-			),
-		},
-	};
+	const { result, ms } = await timed(() => diffSplit(big, fourthChanged(big, tenfold(newer))));
+
+	report(`10,000 blocks, every fourth changed (cut short: ${result.partial})`, ms, COMPARE_BUDGET);
+	expect(result.partial).toBe(false);
+	expect(result.rows).toHaveLength((BLOCKS * 10) / 4);
+});
+
+test('a comparison that is cut short leaves the unchanged blocks out', async () => {
+	const big = withoutIds(tenfold(older));
+	const partly = fourthChanged(big, withoutIds(tenfold(newer)));
 
 	const { result, ms } = await timed(() => diffSplit(big, partly));
 
-	report(`10,000 blocks, every fourth changed (cut short: ${result.partial})`, ms);
+	report(`10,000 blocks without ids, every fourth changed (cut short: ${result.partial})`, ms);
 	expect(result.partial).toBe(true);
 	expect(result.rows).toHaveLength((BLOCKS * 10) / 4);
 });

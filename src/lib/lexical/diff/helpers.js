@@ -302,12 +302,148 @@ const pairUp = (removed, added) => {
 };
 
 /**
+ * The blocks that are in both versions under the same id and in the same order.
+ * @param {Item[]} older
+ * @param {Item[]} newer
+ * @returns {Array<[older: number, newer: number]>}
+ */
+const anchorsOf = (older, newer) => {
+	/**
+	 * @param {Item[]} items
+	 * @returns {Map<string, number>}
+	 */
+	const positions = (items) => {
+		/** @type {Map<string, number>} */
+		const found = new Map();
+		/** @type {Set<string>} */
+		const repeated = new Set();
+
+		items.forEach((item, index) => {
+			const id = item.text === undefined ? blockIdOf(item.node) : undefined;
+
+			if (id === undefined) {
+				return;
+			}
+
+			if (found.has(id)) {
+				repeated.add(id);
+			}
+
+			found.set(id, index);
+		});
+
+		for (const id of repeated) {
+			found.delete(id);
+		}
+
+		return found;
+	};
+
+	const inOlder = positions(older);
+
+	if (!inOlder.size) {
+		return [];
+	}
+
+	const inNewer = positions(newer);
+
+	/** @type {Array<[older: number, newer: number]>} */
+	const shared = [];
+
+	for (const [id, index] of inOlder) {
+		const partner = inNewer.get(id);
+
+		if (partner !== undefined) {
+			shared.push([index, partner]);
+		}
+	}
+
+	// Longest increasing run of the newer positions: `ends[n]` is the last pair of the best run of n + 1.
+	/** @type {number[]} */
+	const ends = [];
+	/** @type {number[]} */
+	const previous = [];
+
+	shared.forEach(([, partner], index) => {
+		let low = 0;
+		let high = ends.length;
+
+		while (low < high) {
+			const middle = (low + high) >> 1;
+
+			if (shared[ends[middle]][1] < partner) {
+				low = middle + 1;
+			} else {
+				high = middle;
+			}
+		}
+
+		previous[index] = low ? ends[low - 1] : -1;
+		ends[low] = index;
+	});
+
+	/** @type {Array<[older: number, newer: number]>} */
+	const anchors = [];
+
+	for (let index = ends.at(-1) ?? -1; index !== -1; index = previous[index]) {
+		anchors.push(shared[index]);
+	}
+
+	return anchors.reverse();
+};
+
+/**
+ * Match blocks with the same id. What is between them is compared by content.
  * @param {Item[]} older
  * @param {Item[]} newer
  * @param {Context} context
  * @returns {{ steps: Step[], changed: boolean }}
  */
 const diffItems = (older, newer, context) => {
+	const anchors = anchorsOf(older, newer);
+
+	if (!anchors.length) {
+		return diffRun(older, newer, context);
+	}
+
+	/** @type {Step[]} */
+	const steps = [];
+	let changed = false;
+	let from = 0;
+	let to = 0;
+
+	for (const [was, is] of [...anchors, [older.length, newer.length]]) {
+		if (was > from || is > to) {
+			const between = diffRun(older.slice(from, was), newer.slice(to, is), context);
+
+			changed ||= between.changed;
+
+			for (const step of between.steps) {
+				steps.push(step);
+			}
+		}
+
+		if (was < older.length) {
+			const pair = comparePair(older[was], newer[is], context);
+
+			changed ||= pair.changed;
+			steps.push(pair);
+		}
+
+		from = was + 1;
+		to = is + 1;
+	}
+
+	return { steps, changed };
+};
+
+/**
+ * @param {Item[]} older
+ * @param {Item[]} newer
+ * @param {Context} context
+ * @returns {{ steps: Step[], changed: boolean }}
+ */
+const diffRun = (older, newer, context) => {
 	const parts = diffArrays(
 		older.map(({ key }) => key),
 		newer.map(({ key }) => key),
