@@ -28,11 +28,28 @@ export const _getYPostByTitle = async (title) => {
 		throw 503;
 	}
 
-	const base64String = yPostUpdatesV2ToBase64(rows);
-
 	const originalAuthorId = postUpdates[0].metadata.userId;
 
+	if (!rows.length) {
+		// System posts have no content.
+		return { ..._post, update: null, originalAuthorId };
+	}
+
+	const base64String = yPostUpdatesV2ToBase64(rows);
+
 	return { ..._post, update: base64String, originalAuthorId };
+};
+
+/**
+ * @param {string} title
+ */
+export const _getYPostUpdate = async (title) => {
+	const { update, ...yPost } = await _getYPostByTitle(title);
+
+	return {
+		post: yPost,
+		update,
+	};
 };
 
 /**
@@ -70,18 +87,6 @@ export const _getYPostHTML = async (title, shouldCacheBust) => {
 	Promise.resolve(upsertHTML(post.id, { content: html, text, image }));
 
 	return { post, html, text, image };
-};
-
-/**
- * @param {string} title
- */
-export const _getYPostUpdate = async (title) => {
-	const { update: update, ...yPost } = await _getYPostByTitle(title);
-
-	return {
-		post: yPost,
-		update,
-	};
 };
 
 /**

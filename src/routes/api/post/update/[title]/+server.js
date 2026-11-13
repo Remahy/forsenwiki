@@ -113,7 +113,7 @@ export async function POST({ request, locals, params }) {
 		throw err;
 	}
 
-	if (isSystem(post)) {
+	if (isSystem(post) || !post.update) {
 		return ForbiddenError('This is a system post that cannot be edited.');
 	}
 
