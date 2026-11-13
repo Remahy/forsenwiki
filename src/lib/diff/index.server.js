@@ -12,8 +12,10 @@ import { attributeBlocks } from './attribution';
 
 export const DIFF_BUDGET = 5000;
 const COMPARE_BUDGET = 1500;
-const RENDER_RESERVE = 500;
+const RENDER_RESERVE = 1000;
 const ATTRIBUTION_BUDGET = DIFF_BUDGET - COMPARE_BUDGET - RENDER_RESERVE;
+
+const LARGE_ARTICLE_BLOCKS = 5000;
 
 const CACHE_BYTES = 64 * 1024 * 1024;
 
@@ -98,8 +100,9 @@ export const getVersion = async (rows, index, { html = false } = {}) => {
  * @param {number} olderIndex
  * @param {number} newerIndex
  * @param {number} deadline
+ * @param {boolean} large Reading every version in between is not worth its time.
  */
-const attribute = async (rows, olderIndex, newerIndex, deadline) => {
+const attribute = async (rows, olderIndex, newerIndex, deadline, large) => {
 	const author = (/** @type {number} */ index) => ({
 		by: rows[index].metadata.userId,
 		at: rows[index].createdTimestamp.getTime(),
@@ -107,6 +110,10 @@ const attribute = async (rows, olderIndex, newerIndex, deadline) => {
 
 	if (newerIndex - olderIndex === 1) {
 		return { author: author(newerIndex) };
+	}
+
+	if (large) {
+		return {};
 	}
 
 	const versions = [];
@@ -132,24 +139,35 @@ const attribute = async (rows, olderIndex, newerIndex, deadline) => {
  */
 export const diffVersions = async (rows, olderIndex, newerIndex, { article = null } = {}) => {
 	const started = performance.now();
+	const renderDeadline = Date.now() + DIFF_BUDGET - RENDER_RESERVE;
 
 	const [older, newer] = await Promise.all([
 		getVersion(rows, olderIndex),
 		getVersion(rows, newerIndex, { html: !article }),
 	]);
 
-	const attribution = await attribute(rows, olderIndex, newerIndex, started + ATTRIBUTION_BUDGET);
+	const large = Math.max(older.blocks.length, newer.blocks.length) >= LARGE_ARTICLE_BLOCKS;
+	const attribution = await attribute(
+		rows,
+		olderIndex,
+		newerIndex,
+		started + ATTRIBUTION_BUDGET,
+		large
+	);
 
-	const { changes, partial } = await renderDiff({
+	const { changes, partial, omitted } = await renderDiff({
 		older: older.json,
 		newer: newer.json,
 		timeout: COMPARE_BUDGET,
+		deadline: renderDeadline,
 		...attribution,
 	});
 
 	return {
 		changes,
 		partial,
+		omitted,
+		large,
 		attributed: Object.keys(attribution).length > 0,
 		article: /** @type {ToHTMLResult} */ (article ?? newer.article),
 	};

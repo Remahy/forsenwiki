@@ -225,5 +225,48 @@ test(
 		expect(first.result.changes).toHaveLength(2);
 		expect(again.result.changes).toEqual(first.result.changes);
 		expect(stored.result.changes).toEqual(first.result.changes);
+		expect(first.result.attributed).toBe(true);
+
+		const later = await edit(huge, 'carol', () => {
+			const blocks = $getRoot().getChildren() as any[];
+			blocks[2].getFirstChild().setTextContent('Another edited paragraph.');
+		});
+		const range = await diffVersions(later, 0, 2);
+
+		expect(range.large).toBe(true);
+		expect(range.attributed).toBe(false);
+		expect(range.changes).toHaveLength(3);
+	}
+);
+
+test(
+	'a comparison with more changed blocks than can be rendered in time leaves the rest out',
+	{ timeout: 120_000 },
+	async () => {
+		let huge = [
+			row(
+				seedState(article(), () => $bigArticle(BLOCKS * 10)),
+				'alice',
+				1000
+			),
+		];
+
+		huge = await edit(huge, 'bob', () => {
+			for (const text of $getRoot().getAllTextNodes()) {
+				text.setTextContent(`${text.getTextContent()} reworded`);
+			}
+		});
+
+		const first = await timed(() => diffVersions(huge, 0, 1));
+		const again = await timed(() => diffVersions(huge, 0, 1));
+
+		report('10,000 blocks, every text changed, comparison loaded the first time', first.ms);
+		report('10,000 blocks, every text changed, comparison loaded again', again.ms, DIFF_BUDGET);
+
+		for (const { result } of [first, again]) {
+			expect(result.omitted).toBeGreaterThan(0);
+			expect(result.changes.length + result.omitted).toBe(BLOCKS * 10);
+			expect(result.changes[0].start).toEqual({ older: 1, newer: 1 });
+		}
 	}
 );

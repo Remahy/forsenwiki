@@ -24,6 +24,8 @@
 		authors,
 		changes,
 		partial,
+		omitted,
+		large,
 		attributed,
 		html,
 	} = $derived(data);
@@ -162,18 +164,29 @@
 				</p>
 			</div>
 
-			{#if partial}
-				<p class="text-sm" role="note">
-					These versions differ too much to compare in detail in time: some blocks are shown whole,
-					as removed and added.
-				</p>
-			{/if}
+			<Box class="flex flex-col gap-4 bg-yellow-300/75! p-4 text-black">
+				{#if partial}
+					<p class="text-sm" role="note">
+						These versions differ too much to compare in detail in time.
+					</p>
+				{/if}
 
-			{#if !attributed}
-				<p class="text-sm" role="note">
-					Who made each change could not be worked out in time. Reload the page to try again.
-				</p>
-			{/if}
+				{#if omitted}
+					<p class="text-sm" role="note">
+						{omitted.toLocaleString()} changed blocks are left out after the last one below.
+					</p>
+				{/if}
+
+				{#if !attributed && large}
+					<p class="text-sm" role="note">
+						This article is too large to work out who made each change across several versions.
+					</p>
+				{:else if !attributed}
+					<p class="text-sm" role="note">
+						Who made each change could not be worked out in time. Reload the page to try again.
+					</p>
+				{/if}
+			</Box>
 
 			<div class="grid grid-cols-2 gap-x-4">
 				{@render versionHeading(older)}

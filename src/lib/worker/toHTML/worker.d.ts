@@ -17,10 +17,12 @@ export function renderDiff(data: {
 	older: string;
 	newer: string;
 	timeout?: number;
+	deadline: number;
 	author?: Author;
 	blocks?: Record<string, Author>;
 	removed?: Record<string, Author>;
 }): Promise<{
 	changes: Array<{ older: string; newer: string; start?: { older: number; newer: number } }>;
 	partial: boolean;
+	omitted: number;
 }>;
