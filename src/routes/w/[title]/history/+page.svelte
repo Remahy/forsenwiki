@@ -108,23 +108,31 @@
 									{new Date(postUpdate.createdTimestamp).toLocaleString()}
 								</Link>
 
-								<span>by <StreamerModeShow>{postUpdate.metadata.user.name}</StreamerModeShow></span>
+								<span class="text-xs"
+									>by <StreamerModeShow>
+										<Link
+											href="/user/{postUpdate.metadata.user.id}"
+											target="_blank"
+											class="decoration-1!">{postUpdate.metadata.user.name}</Link
+										>
+									</StreamerModeShow>
+								</span>
 
 								{#if postUpdate.metadata.byteLength}
-									<span class="opacity-50">({postUpdate.metadata.byteLength})</span>
+									<span class="text-xs opacity-50">({postUpdate.metadata.byteLength})</span>
 								{/if}
 
 								{#if postUpdate.metadata.newTitle}
-									<small
-										>(<span class="font-bold">Title change:</span>
+									<span class="text-xs">
+										(<span class="font-bold">Title change:</span>
 										"{postUpdate.metadata.newTitle}"{#if postUpdate.metadata.oldTitle}
 											&nbsp;<i>was "{postUpdate.metadata.oldTitle}"</i>
-										{/if})</small
-									>
+										{/if})
+									</span>
 								{/if}
 
 								{#if index === 0}
-									(current)
+									<span class="text-xs">(current)</span>
 								{/if}
 							</span>
 						</div>

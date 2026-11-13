@@ -136,6 +136,7 @@ export async function readYPostUpdatesIdsByTitle(title) {
 							user: {
 								select: {
 									name: true,
+									id: true,
 								},
 							},
 							byteLength: true,
