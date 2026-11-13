@@ -1,15 +1,11 @@
 import { error, json } from '@sveltejs/kit';
-import { uint8ArrayToBase64 } from 'uint8array-extras';
 
-import { yPostUpdatesV2ToBase64 } from '$lib/y/utils';
-
-import { createDiffUpdates } from '$lib/y/diff';
-import toHTML from '$lib/worker/toHTML';
-import { readYPostUpdatesWithIdByTitle } from '$lib/db/post/read';
+import { diffVersions } from '$lib/diff/index.server';
+import { readHTMLForYPost, readYPostUpdatesWithIdByTitle } from '$lib/db/post/read';
 import { readAuthorForYPostUpdate, readUserNamesByIds } from '$lib/db/metadata/read';
 import { replacer } from '$lib/utils/json';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
-import { canDiff, currentRows, LEXICAL_Y, NOT_COMPARABLE_MESSAGE } from '$lib/y/rows';
+import { canDiff, currentRows, NOT_COMPARABLE_MESSAGE } from '$lib/y/rows';
 
 /**
  * @param {string} title
@@ -85,34 +81,24 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 	const olderIndex = Math.min(...indexes);
 	const newerIndex = Math.max(...indexes);
 
-	const diff = createDiffUpdates(rows, olderIndex, newerIndex);
-
 	const authorIds = rows
 		.slice(olderIndex + 1, newerIndex + 1)
 		.map(({ metadata }) => metadata.userId);
 
-	const [toAuthor, fromAuthor, authors, newer, older, article] = await Promise.all([
+	const isLive = rows[newerIndex].id === res.postUpdates.at(-1)?.id;
+	const stored = isLive ? await readHTMLForYPost(res.id) : null;
+	const article = stored && {
+		html: stored.content,
+		text: stored.text ?? '',
+		image: stored.image ?? undefined,
+	};
+
+	const [toAuthor, fromAuthor, authors, diff] = await Promise.all([
 		readAuthorForYPostUpdate(toPostUpdateId),
 		readAuthorForYPostUpdate(fromPostUpdateId),
 		readUserNamesByIds(authorIds),
-		toHTML({ config: 'diff', update: uint8ArrayToBase64(diff.newer) }),
-		toHTML({ config: 'diff', update: uint8ArrayToBase64(diff.older) }),
-		toHTML({
-			config: 'article',
-			update: yPostUpdatesV2ToBase64(rows.slice(0, newerIndex + 1)),
-			format: LEXICAL_Y,
-		}),
+		diffVersions(rows, olderIndex, newerIndex, { article }),
 	]);
-
-	const newerBlocks = newer.blocks ?? [];
-	// A reverted block type can regroup blocks, the sides then no longer pair up by index.
-	const olderBlocks = older.blocks?.length === newerBlocks.length ? older.blocks : newerBlocks;
-
-	const changes = newerBlocks
-		.map((block, index) => ({ older: olderBlocks[index], newer: block }))
-		.filter(
-			(change) => change.newer.includes(' data-diff="') || change.older.includes(' data-diff="')
-		);
 
 	return {
 		toPostUpdateId,
@@ -121,12 +107,11 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		fromPostUpdateId,
 		fromDate,
 		fromAuthor,
-		/** Who made the changes shown, by the user id in the HTML's `data-diff-by`. */
 		authors,
-		/** The blocks that changed, as they were and as they are. */
-		changes,
-		/** The newer of the two versions, in full. */
-		html: article,
+		changes: diff.changes,
+		partial: diff.partial,
+		attributed: diff.attributed,
+		html: diff.article,
 		post: {
 			title: res.title,
 			rawTitle: res.rawTitle,

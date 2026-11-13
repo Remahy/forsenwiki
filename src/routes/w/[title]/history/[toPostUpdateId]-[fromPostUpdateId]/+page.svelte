@@ -23,6 +23,8 @@
 		fromAuthor,
 		authors,
 		changes,
+		partial,
+		attributed,
 		html,
 	} = $derived(data);
 
@@ -159,6 +161,19 @@
 					> to read what fields were modified, and over a change to read who made it.
 				</p>
 			</div>
+
+			{#if partial}
+				<p class="text-sm" role="note">
+					These versions differ too much to compare in detail in time: some blocks are shown whole,
+					as removed and added.
+				</p>
+			{/if}
+
+			{#if !attributed}
+				<p class="text-sm" role="note">
+					Who made each change could not be worked out in time. Reload the page to try again.
+				</p>
+			{/if}
 
 			<div class="grid grid-cols-2 gap-x-4">
 				{@render versionHeading(older)}

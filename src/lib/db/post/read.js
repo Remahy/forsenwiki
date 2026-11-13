@@ -324,3 +324,11 @@ export async function readMostLinkedArticles(take = 8) {
 
 	return result;
 }
+
+/** @param {string} postId */
+export async function readHTMLForYPost(postId) {
+	return prisma.html.findUnique({
+		where: { postId },
+		select: { content: true, text: true, image: true },
+	});
+}

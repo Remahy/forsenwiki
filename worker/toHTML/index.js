@@ -6,6 +6,7 @@ import { $getEditor, $getRoot, $nodesOfType } from 'lexical';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { buildEditorFromExtensions } from '@lexical/extension';
 import { HeadlessExtension } from '@lexical/headless';
+import { createHash } from 'node:crypto';
 import { base64ToUint8Array } from 'uint8array-extras';
 
 import { readState } from '$lib/y/headless';
@@ -16,6 +17,7 @@ import { diffExtension } from '$lib/components/editor/config/diff';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { ImageNode } from '$lib/lexical/custom';
 import { migrations } from '$lib/components/editor/migrations';
+import { blockIdOf, diffEditorStates } from '$lib/lexical/diffEditorState';
 import { twitchThumbnailURL } from './twitchThumbnailURL';
 
 const $$getTextInEditor = () => {
@@ -33,6 +35,10 @@ const $$getFirstImage = () => {
  * @param {string} html
  */
 const addTwitchThumbnails = async (html) => {
+	if (!html.includes('data-replace-me')) {
+		return html;
+	}
+
 	const replacedHTML = new DOMParser().parseFromString(
 		`<html><body>${html}</body></html>`,
 		'text/html'
@@ -59,10 +65,129 @@ const topLevelBlocks = (html) =>
 			.children,
 	].map((block) => block.outerHTML);
 
+const $$render = () => {
+	const editor = $getEditor();
+	const text = $$getTextInEditor().replace(/\n/g, ' ');
+	const image = $$getFirstImage();
+	const html = $generateHtmlFromNodes(editor, null);
+
+	return { html, text, image };
+};
+
 /**
- * @param {{ config: string, update?: string, content?: string, format?: import('$lib/y/rows').YPostUpdateFormat }} data
+ * @typedef {import('$lib/lexical/patchEditorState').SerializedNode} SerializedNode
+ * @typedef {import('$lib/lexical/patchEditorState').SerializedState} SerializedState
+ * @typedef {import('$lib/lexical/diffEditorState').Author} Author
  */
-export const toHTMLWorker = async ({ config, content, update, format }) => {
+
+/**
+ * @param {{ update: string, html?: boolean }} data
+ */
+export const readVersion = async ({ update, html = false }) => {
+	const read = readState(
+		articleExtension(null, EDITOR_IS_READONLY, null),
+		base64ToUint8Array(update),
+		() => ({
+			state: /** @type {SerializedState} */ (
+				/** @type {unknown} */ ($getEditor().getEditorState().toJSON())
+			),
+			rendered: html ? $$render() : null,
+		})
+	);
+
+	return {
+		json: JSON.stringify(read.state),
+		/** @type {Array<[id: string | null, hash: string]>} */
+		blocks: read.state.root.children.map((block) => [
+			blockIdOf(block) ?? null,
+			createHash('sha1').update(JSON.stringify(block)).digest('base64'),
+		]),
+		article: read.rendered && {
+			...read.rendered,
+			html: await addTwitchThumbnails(read.rendered.html),
+		},
+	};
+};
+
+/**
+ * @param {Array<SerializedNode | null>} blocks
+ * @returns {Promise<string[] | null>} Null when the HTML can't be split per block.
+ */
+const renderDiffBlocks = async (blocks) => {
+	const shown = blocks.filter((block) => block !== null);
+
+	if (!shown.length) {
+		return blocks.map(() => '');
+	}
+
+	const editor = buildEditorFromExtensions(
+		HeadlessExtension,
+		diffExtension(null, EDITOR_IS_READONLY, null)
+	);
+
+	editor.setEditorState(
+		editor.parseEditorState(
+			/** @type {any} */ ({
+				root: { type: 'root', version: 1, format: '', indent: 0, direction: null, children: shown },
+			})
+		)
+	);
+
+	const html = editor.read(() => $generateHtmlFromNodes(editor, null));
+
+	editor.dispose();
+
+	const rendered = topLevelBlocks(await addTwitchThumbnails(html));
+
+	if (rendered.length !== shown.length) {
+		return null;
+	}
+
+	return blocks.map((block) => (block === null ? '' : /** @type {string} */ (rendered.shift())));
+};
+
+/**
+ * @param {{ older: string, newer: string, timeout?: number, author?: Author, blocks?: Record<string, Author>, removed?: Record<string, Author> }} data
+ */
+export const renderDiff = async ({ older, newer, timeout, author, blocks = {}, removed = {} }) => {
+	const { rows, partial } = diffEditorStates(JSON.parse(older), JSON.parse(newer), {
+		timeout,
+		attribute: (ids) =>
+			author ??
+			(ids.newer !== undefined ? blocks[ids.newer] : undefined) ??
+			(ids.older !== undefined ? (removed[ids.older] ?? blocks[ids.older]) : undefined),
+	});
+
+	const [olderBlocks, newerBlocks] = await Promise.all([
+		renderDiffBlocks(rows.map((row) => row.older)),
+		renderDiffBlocks(rows.map((row) => row.newer)),
+	]);
+
+	if (!olderBlocks || !newerBlocks) {
+		throw new Error('The compared blocks do not render as one element each.');
+	}
+
+	return {
+		changes: rows.map((_row, index) => ({ older: olderBlocks[index], newer: newerBlocks[index] })),
+		partial,
+	};
+};
+
+/**
+ * @param {{ job: 'version', update: string, html?: boolean } | { job: 'diff', older: string, newer: string } | { job?: undefined, config: string, update?: string, content?: string, format?: import('$lib/y/rows').YPostUpdateFormat }} data
+ * @returns {Promise<any>}
+ */
+export const toHTMLWorker = async (data) => {
+	if (data.job === 'version') {
+		return readVersion(data);
+	}
+
+	if (data.job === 'diff') {
+		return renderDiff(data);
+	}
+
+	const { config, content, update, format } = data;
+
 	if (!config) {
 		throw new Error('No config string provided.');
 	}
@@ -71,29 +196,9 @@ export const toHTMLWorker = async ({ config, content, update, format }) => {
 		throw new Error('No content and/or update provided.');
 	}
 
-	let cfg;
-	switch (config) {
-		case 'diff':
-			cfg = diffExtension;
-			break;
-		default:
-			cfg = articleExtension;
-			break;
-	}
+	const cfg = articleExtension;
 
-	const $render = () => {
-		const editor = $getEditor();
-		const text = $$getTextInEditor().replace(/\n/g, ' ');
-		const image = $$getFirstImage();
-		const htmlString = $generateHtmlFromNodes(editor, null);
-
-		/**
-		 * @type {{ html: string, text: string, image?: string }}
-		 */
-		const response = { html: htmlString, text, image };
-
-		return response;
-	};
+	const $render = $$render;
 
 	/** @type {ReturnType<typeof $render>} */
 	let rendered;
@@ -120,10 +225,6 @@ export const toHTMLWorker = async ({ config, content, update, format }) => {
 	const { html, text, image } = rendered;
 
 	let replacedHTMLString = await addTwitchThumbnails(html);
-
-	if (config === 'diff') {
-		return { html: replacedHTMLString, text, image, blocks: topLevelBlocks(replacedHTMLString) };
-	}
 
 	return { html: replacedHTMLString, text, image };
 };

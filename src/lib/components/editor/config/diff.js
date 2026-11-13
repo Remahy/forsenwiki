@@ -41,22 +41,13 @@ export const $getDiffMark = (node) => {
 		return { type: child.type, by: child.by, at: child.at };
 	}
 
-	if (own?.type === 'change') {
+	if (own) {
 		return own;
 	}
 
 	const changed = children.find((mark) => mark !== null);
 
-	if (own && !changed) {
-		// The content stayed while the line's end was added or removed: a split or a merge.
-		const lineBreak = own.type === 'insert' ? { __new: true } : { __old: true };
-
-		return { type: 'change', by: own.by, at: own.at, fields: { 'line break': lineBreak } };
-	}
-
-	const first = changed ?? own;
-
-	return first ? { type: 'change', by: first.by, at: first.at } : null;
+	return changed ? { type: 'change', by: changed.by, at: changed.at } : null;
 };
 
 /**

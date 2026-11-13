@@ -58,6 +58,7 @@
 		"@zoom-image/core": "0.42.0",
 		"cookie": "1.1.1",
 		"date-fns": "4.4.0",
+		"diff": "9.0.0",
 		"dotenv": "17.4.2",
 		"dotenv-expand": "13.0.0",
 		"embla-carousel": "8.6.0",
