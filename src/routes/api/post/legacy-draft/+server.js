@@ -17,10 +17,11 @@ import { mergePostUpdatesV2, postUpdatesToUint8Arr } from '$lib/yjs/utils';
  */
 export async function _migrateLegacyDraft(title, legacyUpdate) {
 	if (!title) {
+		const initUpdate = await initialUpdate();
 		return migrateLegacyChanges({
 			legacyArticle: null,
 			legacyUpdate,
-			base: base64ToUint8Array(await initialUpdate()),
+			base: base64ToUint8Array(initUpdate),
 		});
 	}
 

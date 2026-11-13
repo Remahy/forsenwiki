@@ -137,7 +137,8 @@ const renderDiffBlocks = async (blocks) => {
 
 	editor.dispose();
 
-	const rendered = topLevelBlocks(await addTwitchThumbnails(html));
+	const twitchThumbnailsHTML = await addTwitchThumbnails(html);
+	const rendered = topLevelBlocks(twitchThumbnailsHTML);
 
 	if (rendered.length !== shown.length) {
 		return null;

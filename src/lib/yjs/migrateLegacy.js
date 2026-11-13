@@ -61,7 +61,8 @@ export async function migrateLegacyChanges({ legacyArticle, legacyUpdate, base }
 			editor.update(() => $replaceEditorState(after), { discrete: true });
 		}
 
-		return diffUpdateUsingStateVectorV2(await article.encodeV2(), getStateVectorFromUpdateV2(base));
+		const v2Update = await article.encodeV2();
+		return diffUpdateUsingStateVectorV2(v2Update, getStateVectorFromUpdateV2(base));
 	} finally {
 		article.dispose();
 	}

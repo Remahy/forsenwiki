@@ -83,7 +83,11 @@ async function main() {
 
 			const written = await prisma.$transaction(async (tx) => {
 				// Another instance may have converted the post since it was listed.
-				if (await tx.yPostUpdate.count({ where: { postId: post.id, format: 'LEXICAL_Y' } })) {
+				const lexicalYCount = await tx.yPostUpdate.count({
+					where: { postId: post.id, format: 'LEXICAL_Y' },
+				});
+
+				if (lexicalYCount) {
 					return false;
 				}
 
