@@ -32,7 +32,6 @@ const converted = (updateV2) => readState(config(), convertLegacyUpdate(updateV2
  */
 
 /**
- * Written as a patch of `base`, so it merges with the edits made since the conversion.
  * @param {LegacyChanges} changes
  * @returns {Promise<Uint8Array | null>} V2 update, null when nothing changed.
  */

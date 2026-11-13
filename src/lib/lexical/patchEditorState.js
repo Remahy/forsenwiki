@@ -46,7 +46,7 @@ const sorted = (value) => {
 };
 
 /**
- * Block ids are left out: they differ per document.
+ * Block ids are left out because they differ per document.
  * @param {SerializedNode} node
  * @returns {unknown}
  */
@@ -205,8 +205,8 @@ const $patchChildren = (parent, before, after) => {
 };
 
 /**
- * Changes only the nodes that differ, so the binding writes a small update that merges with
- * other edits.
+ * Changes only the nodes that differ, so the binding
+ * writes a small update that merges with other edits.
  * @param {SerializedState} before
  * @param {SerializedState} after
  */
