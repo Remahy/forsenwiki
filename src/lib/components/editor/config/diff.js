@@ -1,6 +1,8 @@
 import {
 	$getState,
 	$isElementNode,
+	$isLineBreakNode,
+	$isTextNode,
 	isHTMLElement,
 	LineBreakNode,
 	ParagraphNode,
@@ -121,6 +123,14 @@ const addInformationHover = (element, fields) => {
 };
 
 /**
+ * @param {LexicalNode} node
+ */
+const $isBlank = (node) =>
+	$isElementNode(node) &&
+	node.getTextContent().trim() === '' &&
+	node.getChildren().every($isTextNode);
+
+/**
  * @param {HTMLElement} element
  * @param {DiffMark} mark
  * @param {LexicalNode} node
@@ -146,8 +156,10 @@ const decorate = (element, mark, node) => {
 
 	applyColor(target, mark.type);
 
-	if (mark.type === 'delete' && !$isElementNode(node)) {
-		target.style.textDecoration = 'line-through';
+	if (mark.type !== 'change' && $isLineBreakNode(node)) {
+		target.dataset.diffBreak = '';
+	} else if (mark.type !== 'change' && $isBlank(node)) {
+		target.dataset.diffBlank = '';
 	}
 
 	if (mark.fields && Object.keys(mark.fields).length) {
