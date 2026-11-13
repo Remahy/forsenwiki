@@ -18,3 +18,8 @@
 		@apply hidden;
 	}
 }
+
+.diff-start {
+	@apply forsen-wiki-theme-border mt-6! mb-1! border-b text-sm font-bold opacity-75 first:mt-0! nth-2:mt-0!;
+}
+

@@ -146,13 +146,13 @@
 					<span class="font-bold">Legend:</span>
 				</p>
 				<p class="p-1 text-red-500 outline">
-					<span><span class="font-bold">Red, left:</span> Deleted &#40;-&#41;</span>
+					<span><span class="font-bold">Red:</span> Deleted &#40;-&#41;</span>
 				</p>
 				<p class="p-1 text-orange-500 outline outline-dashed dark:text-orange-300">
-					<span><span class="font-bold">Orange, right:</span> Modified &#40;~&#41;</span>
+					<span><span class="font-bold">Orange:</span> Modified &#40;~&#41;</span>
 				</p>
 				<p class="p-1 text-green-500 outline">
-					<span><span class="font-bold">Green, right:</span> Added &#40;+&#41;</span>
+					<span><span class="font-bold">Green:</span> Added &#40;+&#41;</span>
 				</p>
 				<p>
 					When available, hover over the question mark <span
@@ -186,6 +186,11 @@
 					bind:this={changesElement}
 				>
 					{#each changes as change, index (index)}
+						{#if change.start}
+							<p class="diff-start">Block {change.start.older}:</p>
+							<p class="diff-start">Block {change.start.newer}:</p>
+						{/if}
+
 						<!-- eslint-disable svelte/no-at-html-tags -->
 						<div class="diff-old min-w-0">{@html change.older}</div>
 						<div class="diff-new min-w-0">{@html change.newer}</div>

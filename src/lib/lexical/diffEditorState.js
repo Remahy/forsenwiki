@@ -14,7 +14,8 @@ import { signature } from './patchEditorState';
  * @typedef {{ id: number, node: SerializedNode }} Wrapper
  * @typedef {{ key: string, wrappers: Wrapper[], node: SerializedNode, text?: string }} Item
  * @typedef {{ item: Item, mark?: DiffMark, node?: SerializedNode }} Entry
- * @typedef {{ older: SerializedNode | null, newer: SerializedNode | null }} DiffRow
+ * @typedef {{ older: number, newer: number }} BlockNumbers One-based top-level block numbers.
+ * @typedef {{ older: SerializedNode | null, newer: SerializedNode | null, start?: BlockNumbers }} DiffRow
  * @typedef {{ deadline: number, partial: boolean, wrappers: number }} Context
  */
 
@@ -590,19 +591,36 @@ export const diffEditorStates = (older, newer, { timeout = DEFAULT_TIMEOUT, attr
 		context
 	);
 
-	const rows = diff.rows
-		.filter(({ older: was, newer: is }) => was?.node || is?.node)
-		.map(({ older: was, newer: is }) => {
-			const author = attribute?.({
-				older: blockIdOf(was?.item.node),
-				newer: blockIdOf(is?.item.node),
-			});
+	/** @type {DiffRow[]} */
+	const rows = [];
+	let olderBlock = 1;
+	let newerBlock = 1;
+	let adjacent = false;
 
-			return {
-				older: was?.node ? finish(was.node, author) : null,
-				newer: is?.node ? finish(is.node, author) : null,
-			};
+	for (const { older: was, newer: is } of diff.rows) {
+		const start = { older: olderBlock, newer: newerBlock };
+
+		olderBlock += was ? 1 : 0;
+		newerBlock += is ? 1 : 0;
+
+		if (!was?.node && !is?.node) {
+			adjacent = false;
+			continue;
+		}
+
+		const author = attribute?.({
+			older: blockIdOf(was?.item.node),
+			newer: blockIdOf(is?.item.node),
 		});
+
+		rows.push({
+			older: was?.node ? finish(was.node, author) : null,
+			newer: is?.node ? finish(is.node, author) : null,
+			...(adjacent ? {} : { start }),
+		});
+
+		adjacent = true;
+	}
 
 	return { rows, partial: context.partial };
 };

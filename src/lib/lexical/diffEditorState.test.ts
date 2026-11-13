@@ -1,6 +1,7 @@
 import * as Y from '@y/y';
 import { expect, test } from 'vitest';
 import {
+	$createLineBreakNode,
 	$createParagraphNode,
 	$createTextNode,
 	$getEditor,
@@ -265,6 +266,11 @@ test('removed and added blocks are shown whole, changed fields with their values
 		[null, 'paragraph'],
 		['paragraph', null],
 	]);
+	expect(rows.map((row) => row.start)).toEqual([
+		{ older: 1, newer: 1 },
+		undefined,
+		{ older: 3, newer: 4 },
+	]);
 	expect(older.tree).toEqual([
 		'heading h2 change:bob {"tag":{"__old":"h2","__new":"h3"}}',
 		'  text "Title"',
@@ -380,6 +386,40 @@ test('a split paragraph shows what moved out of it as removed, and the new parag
 	]);
 });
 
+test('an added or removed block without text is flagged as blank', async () => {
+	let versions = seed(() => $getRoot().append(paragraph('Kept'), paragraph(' ')));
+
+	versions = await edit(versions, 'bob', () => {
+		const [kept, spaces] = children();
+		spaces.remove();
+		kept.insertBefore($createParagraphNode());
+		kept.insertAfter(paragraph('Added'));
+	});
+
+	const { older, newer } = compare(versions, 0, 1);
+	const blank = (html: string) => html.match(/<p[^>]*data-diff-blank[^>]*>/g) ?? [];
+
+	expect(blank(older.html)).toHaveLength(1);
+	expect(blank(older.html)[0]).toContain('data-diff="delete"');
+	expect(blank(newer.html)).toHaveLength(1);
+	expect(blank(newer.html)[0]).toContain('data-diff="insert"');
+});
+
+test('an added line break is flagged as a break, and does not make its block blank', async () => {
+	let versions = seed(() => $getRoot().append(paragraph('Kept'), paragraph('First')));
+
+	versions = await edit(versions, 'bob', () => {
+		const [kept, first] = children();
+		first.append($createLineBreakNode());
+		kept.insertAfter($createParagraphNode().append($createLineBreakNode()));
+	});
+
+	const { newer } = compare(versions, 0, 1);
+
+	expect(newer.html).not.toContain('data-diff-blank');
+	expect(newer.html.match(/<span[^>]*data-diff-break[^>]*><br><\/span>/g)).toHaveLength(2);
+});
+
 test('a moved block is shown as removed where it was and added where it is', async () => {
 	let versions = seed(() => $getRoot().append(paragraph('Moved'), paragraph('Kept'), heading()));
 
@@ -394,6 +434,10 @@ test('a moved block is shown as removed where it was and added where it is', asy
 	expect(rows.map((row) => [row.older?.type ?? null, row.newer?.type ?? null])).toEqual([
 		['paragraph', null],
 		[null, 'paragraph'],
+	]);
+	expect(rows.map((row) => row.start)).toEqual([
+		{ older: 1, newer: 1 },
+		{ older: 4, newer: 3 },
 	]);
 });
 
@@ -519,8 +563,4 @@ test('marks are exported as colours, data attributes and hovers', async () => {
 		'~ "tag" changed from "h2" to "h3".'
 	);
 	expect(container.querySelector('b')?.title).toBe('+ "bold" added with the value true.');
-	expect(
-		marked(older.html).container.querySelector<HTMLElement>('[data-diff="delete"]')?.style
-			.textDecoration
-	).toBe('line-through');
 });

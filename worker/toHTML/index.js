@@ -169,7 +169,11 @@ export const renderDiff = async ({ older, newer, timeout, author, blocks = {}, r
 	}
 
 	return {
-		changes: rows.map((_row, index) => ({ older: olderBlocks[index], newer: newerBlocks[index] })),
+		changes: rows.map((row, index) => ({
+			older: olderBlocks[index],
+			newer: newerBlocks[index],
+			start: row.start,
+		})),
 		partial,
 	};
 };

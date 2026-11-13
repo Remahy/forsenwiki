@@ -20,4 +20,7 @@ export function renderDiff(data: {
 	author?: Author;
 	blocks?: Record<string, Author>;
 	removed?: Record<string, Author>;
-}): Promise<{ changes: Array<{ older: string; newer: string }>; partial: boolean }>;
+}): Promise<{
+	changes: Array<{ older: string; newer: string; start?: { older: number; newer: number } }>;
+	partial: boolean;
+}>;
