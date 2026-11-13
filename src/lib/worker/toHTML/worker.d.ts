@@ -16,13 +16,14 @@ export function readVersion(data: { update: string; html?: boolean }): Promise<{
 export function renderDiff(data: {
 	older: string;
 	newer: string;
+	view: 'split' | 'combined';
 	timeout?: number;
 	deadline: number;
 	author?: Author;
 	blocks?: Record<string, Author>;
 	removed?: Record<string, Author>;
 }): Promise<{
-	changes: Array<{ older: string; newer: string; start?: { older: number; newer: number } }>;
+	changes: Array<{ columns: string[]; start?: { older: number; newer: number } }>;
 	partial: boolean;
 	omitted: number;
 }>;

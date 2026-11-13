@@ -1,5 +1,5 @@
 /**
- * @typedef {import('$lib/lexical/diffEditorState').Author} Author
+ * @typedef {import('$lib/lexical/diff/helpers').Author} Author
  * @typedef {{ blocks: Array<[id: string | null, hash: string]>, by: string, at: number }} AttributableVersion
  */
 

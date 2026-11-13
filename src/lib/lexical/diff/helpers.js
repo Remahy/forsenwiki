@@ -3,11 +3,11 @@ import { diffArrays } from 'diff';
 import { TEXT_TYPE_TO_FORMAT } from 'lexical';
 
 import { DIFF_STATE_KEY } from '$lib/y/diffState';
-import { signature } from './patchEditorState';
+import { signature } from '../patchEditorState';
 
 /**
- * @typedef {import('./patchEditorState').SerializedNode} SerializedNode
- * @typedef {import('./patchEditorState').SerializedState} SerializedState
+ * @typedef {import('../patchEditorState').SerializedNode} SerializedNode
+ * @typedef {import('../patchEditorState').SerializedState} SerializedState
  * @typedef {import('$lib/y/diffState').DiffMark} DiffMark
  * @typedef {import('$lib/y/diffState').DiffFields} DiffFields
  * @typedef {{ by?: string, at?: number }} Author
@@ -15,8 +15,19 @@ import { signature } from './patchEditorState';
  * @typedef {{ key: string, wrappers: Wrapper[], node: SerializedNode, text?: string }} Item
  * @typedef {{ item: Item, mark?: DiffMark, node?: SerializedNode }} Entry
  * @typedef {{ older: number, newer: number }} BlockNumbers One-based top-level block numbers.
- * @typedef {{ older: SerializedNode | null, newer: SerializedNode | null, start?: BlockNumbers }} DiffRow
+ * @typedef {{ columns: SerializedNode[][], start?: BlockNumbers }} DiffRow One column per shown side, each with the row's blocks.
  * @typedef {{ deadline: number, partial: boolean, wrappers: number }} Context
+ * @typedef {{ kind: 'same', older: Item, newer: Item, fields?: DiffFields }} SameStep
+ * @typedef {{ kind: 'delete', older: Item }} DeleteStep
+ * @typedef {{ kind: 'insert', newer: Item }} InsertStep
+ * @typedef {{ kind: 'pair', older: Item, newer: Item, changed: boolean, cut?: boolean, mark?: DiffMark, children?: Step[] | null }} PairStep `cut` when there was no time left to compare the two.
+ * @typedef {SameStep | DeleteStep | InsertStep | PairStep} Step
+ *
+ * @typedef {Object} DiffOptions
+ * @property {number} [timeout] In milliseconds.
+ * @property {(ids: { older?: string, newer?: string }) => Author | undefined} [attribute]
+ *
+ * @typedef {(older: SerializedState, newer: SerializedState, options?: DiffOptions) => { rows: DiffRow[], partial: boolean }} DiffView
  */
 
 export const INLINE_WRAPPERS = new Set(['link', 'a-link']);
@@ -202,41 +213,39 @@ const itemsOf = (children, context, flat, wrappers = [], items = []) => {
  * @param {Item} older
  * @param {Item} newer
  * @param {Context} context
- * @returns {{ older: Entry, newer: Entry, changed: boolean }}
+ * @returns {PairStep}
  */
-const diffPair = (older, newer, context) => {
+const comparePair = (older, newer, context) => {
+	// Also when there is no time left: an unchanged block must not be shown as a change.
+	if (older.key === newer.key) {
+		return { kind: 'pair', older, newer, changed: false };
+	}
+
 	if (performance.now() > context.deadline) {
 		context.partial = true;
 
-		return {
-			older: { item: older, node: markAll(older.node, 'delete') },
-			newer: { item: newer, node: markAll(newer.node, 'insert') },
-			changed: true,
-		};
+		return { kind: 'pair', older, newer, changed: true, cut: true };
 	}
 
 	const fields = changedFields(older.node, newer.node);
 	const children =
 		older.node.children && newer.node.children
-			? diffChildren(older.node.children, newer.node.children, context)
+			? diffItems(
+					itemsOf(older.node.children, context, true),
+					itemsOf(newer.node.children, context, true),
+					context
+				)
 			: null;
 	const hasFields = Object.keys(fields).length > 0;
-
 	const changed = hasFields || !!children?.changed;
 
-	/** @type {DiffMark | undefined} */
-	const mark = changed ? { type: 'change', ...(hasFields ? { fields } : {}) } : undefined;
-
 	return {
-		older: {
-			item: older,
-			node: { ...withMark(older.node, mark), ...(children ? { children: children.older } : {}) },
-		},
-		newer: {
-			item: newer,
-			node: { ...withMark(newer.node, mark), ...(children ? { children: children.newer } : {}) },
-		},
+		kind: 'pair',
+		older,
+		newer,
 		changed,
+		mark: changed ? { type: 'change', ...(hasFields ? { fields } : {}) } : undefined,
+		children: children?.steps ?? null,
 	};
 };
 
@@ -296,7 +305,7 @@ const pairUp = (removed, added) => {
  * @param {Item[]} older
  * @param {Item[]} newer
  * @param {Context} context
- * @returns {{ older: Entry[], newer: Entry[], rows: Array<{ older?: Entry, newer?: Entry }>, changed: boolean }}
+ * @returns {{ steps: Step[], changed: boolean }}
  */
 const diffItems = (older, newer, context) => {
 	const parts = diffArrays(
@@ -309,29 +318,9 @@ const diffItems = (older, newer, context) => {
 		context.partial = true;
 	}
 
-	/** @type {Entry[]} */
-	const olderEntries = [];
-	/** @type {Entry[]} */
-	const newerEntries = [];
-	/** @type {Array<{ older?: Entry, newer?: Entry }>} */
-	const rows = [];
+	/** @type {Step[]} */
+	const steps = [];
 	let changed = false;
-
-	/**
-	 * @param {Entry} [was]
-	 * @param {Entry} [is]
-	 */
-	const push = (was, is) => {
-		if (was) {
-			olderEntries.push(was);
-		}
-
-		if (is) {
-			newerEntries.push(is);
-		}
-
-		rows.push({ older: was, newer: is });
-	};
 
 	/**
 	 * @param {Item} was
@@ -348,21 +337,27 @@ const diffItems = (older, newer, context) => {
 
 		if (Object.keys(fields).length) {
 			changed = true;
-			push(
-				{ item: was, mark: { type: 'change', fields } },
-				{ item: is, mark: { type: 'change', fields } }
-			);
+			steps.push({ kind: 'same', older: was, newer: is, fields });
 		} else {
-			push({ item: was }, { item: is });
+			steps.push({ kind: 'same', older: was, newer: is });
 		}
 	};
 
 	/**
 	 * @param {Item} item
-	 * @param {DiffMark['type']} type
-	 * @returns {Entry}
 	 */
-	const whole = (item, type) => ({ item, mark: { type }, node: markAll(item.node, type) });
+	const pushDelete = (item) => {
+		changed = true;
+		steps.push({ kind: 'delete', older: item });
+	};
+
+	/**
+	 * @param {Item} item
+	 */
+	const pushInsert = (item) => {
+		changed = true;
+		steps.push({ kind: 'insert', newer: item });
+	};
 
 	/**
 	 * @param {Item[]} removed
@@ -397,15 +392,8 @@ const diffItems = (older, newer, context) => {
 			pushSame(was[index], is[index]);
 		}
 
-		for (const item of was.slice(start, was.length - end)) {
-			changed = true;
-			push(whole(item, 'delete'));
-		}
-
-		for (const item of is.slice(start, is.length - end)) {
-			changed = true;
-			push(undefined, whole(item, 'insert'));
-		}
+		was.slice(start, was.length - end).forEach(pushDelete);
+		is.slice(start, is.length - end).forEach(pushInsert);
 
 		for (let index = end; index > 0; index--) {
 			pushSame(was[was.length - index], is[is.length - index]);
@@ -433,8 +421,7 @@ const diffItems = (older, newer, context) => {
 		const insertUntil = (/** @type {number} */ end) => {
 			for (; next < end; next++) {
 				if (!partners.has(added[next])) {
-					changed = true;
-					push(undefined, whole(added[next], 'insert'));
+					pushInsert(added[next]);
 				}
 			}
 		};
@@ -443,21 +430,16 @@ const diffItems = (older, newer, context) => {
 			const partner = pairs.get(item);
 
 			if (!partner) {
-				changed = true;
-				push(whole(item, 'delete'));
+				pushDelete(item);
 				continue;
 			}
 
 			insertUntil(added.indexOf(partner));
 
-			const pair = diffPair(item, partner, context);
+			const pair = comparePair(item, partner, context);
 
-			if (pair.changed) {
-				changed = true;
-				push(pair.older, pair.newer);
-			} else {
-				push({ item }, { item: partner });
-			}
+			changed ||= pair.changed;
+			steps.push(pair);
 		}
 
 		insertUntil(added.length);
@@ -495,15 +477,66 @@ const diffItems = (older, newer, context) => {
 		resolve(removed, added);
 	}
 
-	return { older: olderEntries, newer: newerEntries, rows, changed };
+	return { steps, changed };
 };
+
+/**
+ * @param {SerializedState} older
+ * @param {SerializedState} newer
+ * @param {number} [timeout] In milliseconds.
+ * @returns {{ steps: Step[], partial: boolean }}
+ */
+export const compare = (older, newer, timeout = DEFAULT_TIMEOUT) => {
+	/** @type {Context} */
+	const context = { deadline: performance.now() + timeout, partial: false, wrappers: 0 };
+
+	const { steps } = diffItems(
+		itemsOf(older.root.children, context, false),
+		itemsOf(newer.root.children, context, false),
+		context
+	);
+
+	return { steps, partial: context.partial };
+};
+
+/**
+ * @param {Item} item
+ * @param {DiffFields} [fields]
+ * @returns {Entry}
+ */
+export const sameEntry = (item, fields) => ({
+	item,
+	...(fields ? { mark: { type: 'change', fields } } : {}),
+});
+
+/**
+ * @param {Item} item
+ * @param {'delete' | 'insert'} type
+ * @returns {Entry}
+ */
+export const wholeEntry = (item, type) => ({
+	item,
+	mark: { type },
+	node: markAll(item.node, type),
+});
+
+/**
+ * @param {Item} item Of either side of the pair.
+ * @param {PairStep} step
+ * @param {SerializedNode[] | null | undefined} children
+ * @returns {Entry}
+ */
+export const pairEntry = (item, step, children) =>
+	step.changed
+		? { item, node: { ...withMark(item.node, step.mark), ...(children ? { children } : {}) } }
+		: { item };
 
 /**
  * @param {Entry[]} entries
  * @param {number} [depth]
  * @returns {SerializedNode[]}
  */
-const nodesOf = (entries, depth = 0) => {
+export const nodesOf = (entries, depth = 0) => {
 	/** @type {SerializedNode[]} */
 	const nodes = [];
 
@@ -544,17 +577,6 @@ const nodesOf = (entries, depth = 0) => {
 };
 
 /**
- * @param {SerializedNode[]} older
- * @param {SerializedNode[]} newer
- * @param {Context} context
- */
-const diffChildren = (older, newer, context) => {
-	const diff = diffItems(itemsOf(older, context, true), itemsOf(newer, context, true), context);
-
-	return { older: nodesOf(diff.older), newer: nodesOf(diff.newer), changed: diff.changed };
-};
-
-/**
  * @param {SerializedNode} node
  * @param {Author | undefined} author
  * @returns {SerializedNode}
@@ -570,57 +592,41 @@ const finish = (node, author) => {
 };
 
 /**
- * @typedef {Object} DiffOptions
- * @property {number} [timeout] In milliseconds.
- * @property {(ids: { older?: string, newer?: string }) => Author | undefined} [attribute]
+ * The changed top-level steps, numbered by where they are in either version.
+ * @param {Step[]} steps
+ * @param {DiffOptions['attribute']} attribute
+ * @param {(step: Step) => SerializedNode[][]} columnsOf
+ * @returns {DiffRow[]}
  */
-
-/**
- * @param {SerializedState} older
- * @param {SerializedState} newer
- * @param {DiffOptions} [options]
- * @returns {{ rows: DiffRow[], partial: boolean }}
- */
-export const diffEditorStates = (older, newer, { timeout = DEFAULT_TIMEOUT, attribute } = {}) => {
-	/** @type {Context} */
-	const context = { deadline: performance.now() + timeout, partial: false, wrappers: 0 };
-
-	const diff = diffItems(
-		itemsOf(older.root.children, context, false),
-		itemsOf(newer.root.children, context, false),
-		context
-	);
-
+export const rowsOf = (steps, attribute, columnsOf) => {
 	/** @type {DiffRow[]} */
 	const rows = [];
 	let olderBlock = 1;
 	let newerBlock = 1;
 	let adjacent = false;
 
-	for (const { older: was, newer: is } of diff.rows) {
+	for (const step of steps) {
 		const start = { older: olderBlock, newer: newerBlock };
+		const was = step.kind === 'insert' ? undefined : step.older;
+		const is = step.kind === 'delete' ? undefined : step.newer;
 
 		olderBlock += was ? 1 : 0;
 		newerBlock += is ? 1 : 0;
 
-		if (!was?.node && !is?.node) {
+		if (step.kind === 'same' || (step.kind === 'pair' && !step.changed)) {
 			adjacent = false;
 			continue;
 		}
 
-		const author = attribute?.({
-			older: blockIdOf(was?.item.node),
-			newer: blockIdOf(is?.item.node),
-		});
+		const author = attribute?.({ older: blockIdOf(was?.node), newer: blockIdOf(is?.node) });
 
 		rows.push({
-			older: was?.node ? finish(was.node, author) : null,
-			newer: is?.node ? finish(is.node, author) : null,
+			columns: columnsOf(step).map((column) => column.map((node) => finish(node, author))),
 			...(adjacent ? {} : { start }),
 		});
 
 		adjacent = true;
 	}
 
-	return { rows, partial: context.partial };
+	return rows;
 };

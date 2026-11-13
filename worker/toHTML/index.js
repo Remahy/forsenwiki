@@ -17,7 +17,9 @@ import { diffExtension } from '$lib/components/editor/config/diff';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { ImageNode } from '$lib/lexical/custom';
 import { migrations } from '$lib/components/editor/migrations';
-import { blockIdOf, diffEditorStates } from '$lib/lexical/diffEditorState';
+import { diffCombined } from '$lib/lexical/diff/combined';
+import { blockIdOf } from '$lib/lexical/diff/helpers';
+import { diffSplit } from '$lib/lexical/diff/split';
 import { twitchThumbnailURL } from './twitchThumbnailURL';
 
 const $$getTextInEditor = () => {
@@ -86,7 +88,7 @@ const $$render = () => {
 /**
  * @typedef {import('$lib/lexical/patchEditorState').SerializedNode} SerializedNode
  * @typedef {import('$lib/lexical/patchEditorState').SerializedState} SerializedState
- * @typedef {import('$lib/lexical/diffEditorState').Author} Author
+ * @typedef {import('$lib/lexical/diff/helpers').Author} Author
  */
 
 /**
@@ -118,16 +120,30 @@ export const readVersion = async ({ update, html = false }) => {
 	};
 };
 
+const SEPARATOR = /** @type {SerializedNode} */ (
+	/** @type {unknown} */ ({
+		type: 'paragraph',
+		version: 1,
+		format: '',
+		indent: 0,
+		direction: null,
+		children: [],
+	})
+);
+
 /**
- * @param {Array<SerializedNode | null>} blocks
- * @returns {Promise<string[] | null>} Null when the HTML can't be split per block.
+ * @param {SerializedNode[]} blocks
+ * @returns {Promise<string[]>} The HTML of each block.
  */
 const renderDiffBlocks = async (blocks) => {
-	const shown = blocks.filter((block) => block !== null);
-
-	if (!shown.length) {
-		return blocks.map(() => '');
+	if (!blocks.length) {
+		return [];
 	}
+
+	// Lexical merges lists that follow each other, and these may not be neighbours in the article.
+	const children = blocks.flatMap((block, index) =>
+		block.type === 'list' && blocks[index - 1]?.type === 'list' ? [SEPARATOR, block] : [block]
+	);
 
 	const editor = buildEditorFromExtensions(
 		HeadlessExtension,
@@ -137,7 +153,7 @@ const renderDiffBlocks = async (blocks) => {
 	editor.setEditorState(
 		editor.parseEditorState(
 			/** @type {any} */ ({
-				root: { type: 'root', version: 1, format: '', indent: 0, direction: null, children: shown },
+				root: { type: 'root', version: 1, format: '', indent: 0, direction: null, children },
 			})
 		)
 	);
@@ -149,29 +165,46 @@ const renderDiffBlocks = async (blocks) => {
 	const twitchThumbnailsHTML = await addTwitchThumbnails(html);
 	const rendered = topLevelBlocks(twitchThumbnailsHTML);
 
-	if (rendered.length !== shown.length) {
-		return null;
+	if (rendered.length !== children.length) {
+		throw new Error('The compared blocks do not render as one element each.');
 	}
 
-	return blocks.map((block) => (block === null ? '' : /** @type {string} */ (rendered.shift())));
+	return rendered.filter((_html, index) => children[index] !== SEPARATOR);
 };
+
+/**
+ * @param {import('$lib/lexical/diff/helpers').DiffRow[]} rows
+ * @param {number} column
+ * @returns {Promise<string[]>} The HTML of that column of each row.
+ */
+const renderDiffColumn = async (rows, column) => {
+	const rendered = await renderDiffBlocks(rows.flatMap((row) => row.columns[column]));
+	let next = 0;
+
+	return rows.map((row) => rendered.slice(next, (next += row.columns[column].length)).join(''));
+};
+
+const DIFF_VIEWS = { split: diffSplit, combined: diffCombined };
 
 const RENDER_BATCH = 100;
 
 /**
- * @param {{ older: string, newer: string, timeout?: number, deadline: number, author?: Author, blocks?: Record<string, Author>, removed?: Record<string, Author> }} data
+ * @param {{ older: string, newer: string, view: keyof typeof DIFF_VIEWS, timeout?: number, deadline: number, author?: Author, blocks?: Record<string, Author>, removed?: Record<string, Author> }} data
  * `deadline` is a `Date.now()` time: this runs on another thread, with its own `performance.now()`.
  */
 export const renderDiff = async ({
 	older,
 	newer,
+	view,
 	timeout,
 	deadline,
 	author,
 	blocks = {},
 	removed = {},
 }) => {
-	const { rows, partial } = diffEditorStates(JSON.parse(older), JSON.parse(newer), {
+	const getView = DIFF_VIEWS[view];
+
+	const { rows, partial } = getView(JSON.parse(older), JSON.parse(newer), {
 		timeout,
 		attribute: (ids) =>
 			author ??
@@ -179,25 +212,19 @@ export const renderDiff = async ({
 			(ids.older !== undefined ? (removed[ids.older] ?? blocks[ids.older]) : undefined),
 	});
 
-	/** @type {Array<{ older: string, newer: string, start?: { older: number, newer: number } }>} */
+	/** @type {Array<{ columns: string[], start?: { older: number, newer: number } }>} */
 	const changes = [];
 
 	while (changes.length < rows.length && (!changes.length || Date.now() < deadline)) {
 		const batch = rows.slice(changes.length, changes.length + RENDER_BATCH);
 
-		const [olderBlocks, newerBlocks] = await Promise.all([
-			renderDiffBlocks(batch.map((row) => row.older)),
-			renderDiffBlocks(batch.map((row) => row.newer)),
-		]);
-
-		if (!olderBlocks || !newerBlocks) {
-			throw new Error('The compared blocks do not render as one element each.');
-		}
+		const columns = await Promise.all(
+			batch[0].columns.map((_column, index) => renderDiffColumn(batch, index))
+		);
 
 		changes.push(
 			...batch.map((row, index) => ({
-				older: olderBlocks[index],
-				newer: newerBlocks[index],
+				columns: columns.map((column) => column[index]),
 				start: row.start,
 			}))
 		);
@@ -207,7 +234,7 @@ export const renderDiff = async ({
 };
 
 /**
- * @param {{ job: 'version', update: string, html?: boolean } | { job: 'diff', older: string, newer: string, timeout?: number, deadline: number } | { job?: undefined, config: string, update?: string, content?: string, format?: import('$lib/y/rows').YPostUpdateFormat }} data
+ * @param {{ job: 'version', update: string, html?: boolean } | { job: 'diff', older: string, newer: string, view: 'split' | 'combined', timeout?: number, deadline: number } | { job?: undefined, config: string, update?: string, content?: string, format?: import('$lib/y/rows').YPostUpdateFormat }} data
  * @returns {Promise<any>}
  */
 export const toHTMLWorker = async (data) => {

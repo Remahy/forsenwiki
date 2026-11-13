@@ -111,6 +111,7 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		changes: diff.changes,
 		partial: diff.partial,
 		omitted: diff.omitted,
+		view: diff.view,
 		large: diff.large,
 		attributed: diff.attributed,
 		html: diff.article,

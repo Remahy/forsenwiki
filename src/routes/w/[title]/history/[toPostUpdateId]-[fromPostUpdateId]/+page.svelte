@@ -26,6 +26,7 @@
 		partial,
 		omitted,
 		large,
+		view,
 		attributed,
 		html,
 	} = $derived(data);
@@ -164,29 +165,31 @@
 				</p>
 			</div>
 
-			<Box class="flex flex-col gap-4 bg-yellow-300/75! p-4 text-black">
-				{#if partial}
-					<p class="text-sm" role="note">
-						These versions differ too much to compare in detail in time.
-					</p>
-				{/if}
+			{#if partial || omitted || !attributed}
+				<Box class="flex flex-col gap-4 bg-yellow-300/75! p-4 text-black">
+					{#if partial}
+						<p class="text-sm" role="note">
+							These versions differ too much to compare in detail in time.
+						</p>
+					{/if}
 
-				{#if omitted}
-					<p class="text-sm" role="note">
-						{omitted.toLocaleString()} changed blocks are left out after the last one below.
-					</p>
-				{/if}
+					{#if omitted}
+						<p class="text-sm" role="note">
+							{omitted.toLocaleString()} changed blocks are left out after the last one below.
+						</p>
+					{/if}
 
-				{#if !attributed && large}
-					<p class="text-sm" role="note">
-						This article is too large to work out who made each change across several versions.
-					</p>
-				{:else if !attributed}
-					<p class="text-sm" role="note">
-						Who made each change could not be worked out in time. Reload the page to try again.
-					</p>
-				{/if}
-			</Box>
+					{#if !attributed && large}
+						<p class="text-sm" role="note">
+							This article is too large to work out who made each change across several versions.
+						</p>
+					{:else if !attributed}
+						<p class="text-sm" role="note">
+							Who made each change could not be worked out in time. Reload the page to try again.
+						</p>
+					{/if}
+				</Box>
+			{/if}
 
 			<div class="grid grid-cols-2 gap-x-4">
 				{@render versionHeading(older)}
@@ -195,18 +198,29 @@
 
 			<Box class="-mx-4 overflow-x-auto p-4 sm:mx-0">
 				<div
-					class="article-root prose dark:prose-invert grid max-w-[unset] min-w-2xl grid-cols-2 gap-x-4"
+					class="article-root prose dark:prose-invert grid max-w-[unset] gap-x-4 {view === 'split'
+						? 'min-w-2xl grid-cols-2'
+						: 'grid-cols-1'}"
 					bind:this={changesElement}
 				>
 					{#each changes as change, index (index)}
-						{#if change.start}
+						{#if change.start && view === 'split'}
 							<p class="diff-start">Block {change.start.older}:</p>
 							<p class="diff-start">Block {change.start.newer}:</p>
+						{:else if change.start}
+							<p class="diff-start">
+								Block {change.start.newer}{change.start.older === change.start.newer
+									? ''
+									: ` (was ${change.start.older})`}:
+							</p>
 						{/if}
 
-						<!-- eslint-disable svelte/no-at-html-tags -->
-						<div class="diff-old min-w-0">{@html change.older}</div>
-						<div class="diff-new min-w-0">{@html change.newer}</div>
+						{#each change.columns as column, side (side)}
+							<!-- eslint-disable svelte/no-at-html-tags -->
+							<div class="min-w-0 {view === 'split' ? ['diff-old', 'diff-new'][side] : ''}">
+								{@html column}
+							</div>
+						{/each}
 					{:else}
 						<i class="col-span-2">No visible changes.</i>
 					{/each}

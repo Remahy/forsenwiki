@@ -8,7 +8,8 @@ import { uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { articleExtension } from '$lib/components/editor/config/article';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
-import { blockIdOf, diffEditorStates } from '$lib/lexical/diffEditorState';
+import { blockIdOf } from '$lib/lexical/diff/helpers';
+import { diffSplit } from '$lib/lexical/diff/split';
 import type { SerializedNode, SerializedState } from '$lib/lexical/patchEditorState';
 import { getYAndEditor, readState, seedState } from '$lib/y/headless';
 import { DIFF_BUDGET, diffVersions, type VersionRow } from './index.server';
@@ -154,7 +155,7 @@ test('the article is as big as meant', () => {
 });
 
 test('comparing a big article of which every text changed', async () => {
-	const { result, ms } = await timed(() => diffEditorStates(older, newer));
+	const { result, ms } = await timed(() => diffSplit(older, newer));
 
 	report('1,000 blocks, every text changed', ms, COMPARE_BUDGET);
 	expect(result.rows).toHaveLength(BLOCKS);
@@ -178,7 +179,7 @@ test('loading a comparison of a big article, the first time and again', async ()
 test('comparing an article ten times as big with one block removed', async () => {
 	const big = tenfold(older);
 	const { result, ms } = await timed(() =>
-		diffEditorStates(big, { root: { children: big.root.children.slice(1) } })
+		diffSplit(big, { root: { children: big.root.children.slice(1) } })
 	);
 
 	report('10,000 blocks, one block removed', ms);
@@ -187,10 +188,29 @@ test('comparing an article ten times as big with one block removed', async () =>
 });
 
 test('comparing an article ten times as big of which every text changed', async () => {
-	const { result, ms } = await timed(() => diffEditorStates(tenfold(older), tenfold(newer)));
+	const { result, ms } = await timed(() => diffSplit(tenfold(older), tenfold(newer)));
 
 	report(`10,000 blocks, every text changed (cut short: ${result.partial})`, ms);
 	expect(result.rows).toHaveLength(BLOCKS * 10);
+});
+
+test('a comparison that is cut short leaves the unchanged blocks out', async () => {
+	const big = tenfold(older);
+	const edited = tenfold(newer);
+	const partly = {
+		root: {
+			...big.root,
+			children: big.root.children.map((block, index) =>
+				index % 4 === 0 ? edited.root.children[index] : block
+			),
+		},
+	};
+
+	const { result, ms } = await timed(() => diffSplit(big, partly));
+
+	report(`10,000 blocks, every fourth changed (cut short: ${result.partial})`, ms);
+	expect(result.partial).toBe(true);
+	expect(result.rows).toHaveLength((BLOCKS * 10) / 4);
 });
 
 test(

@@ -21,8 +21,10 @@ import { $getDiffMark, diffExtension } from '$lib/components/editor/config/diff'
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { $createALinkNode, $createImageNode } from '$lib/lexical/custom';
 import { getYAndEditor, readState, seedState } from '$lib/y/headless';
-import { blockIdOf, diffEditorStates, INLINE_WRAPPERS } from './diffEditorState';
-import type { SerializedNode, SerializedState } from './patchEditorState';
+import { diffCombined } from './combined';
+import { blockIdOf, INLINE_WRAPPERS } from './helpers';
+import { diffSplit } from './split';
+import type { SerializedNode, SerializedState } from '../patchEditorState';
 
 const article = () => articleExtension(null, EDITOR_IS_READONLY, null);
 
@@ -109,15 +111,15 @@ const render = (blocks: Array<SerializedNode | null>) => {
 
 const compare = (versions: Version[], from: number, to: number) => {
 	const { by, at } = versions[to];
-	const { rows, partial } = diffEditorStates(versions[from].json, versions[to].json, {
+	const { rows, partial } = diffSplit(versions[from].json, versions[to].json, {
 		attribute: () => ({ by, at }),
 	});
 
 	return {
 		rows,
 		partial,
-		older: render(rows.map((row) => row.older)),
-		newer: render(rows.map((row) => row.newer)),
+		older: render(rows.flatMap((row) => row.columns[0])),
+		newer: render(rows.flatMap((row) => row.columns[1])),
 	};
 };
 
@@ -261,7 +263,7 @@ test('removed and added blocks are shown whole, changed fields with their values
 
 	const { rows, older, newer } = compare(versions, 0, 1);
 
-	expect(rows.map((row) => [row.older?.type ?? null, row.newer?.type ?? null])).toEqual([
+	expect(rows.map((row) => row.columns.map(([block]) => block?.type ?? null))).toEqual([
 		['heading', 'heading'],
 		[null, 'paragraph'],
 		['paragraph', null],
@@ -420,6 +422,61 @@ test('an added line break is flagged as a break, and does not make its block bla
 	expect(newer.html.match(/<span[^>]*data-diff-break[^>]*><br><\/span>/g)).toHaveLength(2);
 });
 
+test('the combined view shows one block with what was removed and added in it', async () => {
+	let versions = seed(() =>
+		$getRoot().append(paragraph('Hello World'), paragraph('Kept'), paragraph('Removed'))
+	);
+
+	versions = await edit(versions, 'bob', () => {
+		const [hello, , removed] = children();
+		hello.getFirstChild().setTextContent('Hello there');
+		removed.remove();
+		hello.insertBefore(paragraph('Added'));
+	});
+
+	const { by, at } = versions[1];
+	const { rows, partial } = diffCombined(versions[0].json, versions[1].json, {
+		attribute: () => ({ by, at }),
+	});
+
+	expect(partial).toBe(false);
+	expect(rows.map((row) => row.columns.map((column) => column.length))).toEqual([[1], [1], [1]]);
+	expect(rows.map((row) => row.start)).toEqual([
+		{ older: 1, newer: 1 },
+		undefined,
+		{ older: 3, newer: 4 },
+	]);
+	expect(render(rows.flatMap((row) => row.columns[0])).tree).toEqual([
+		'paragraph insert:bob',
+		'  text "Added" insert:bob',
+		'paragraph change:bob',
+		'  text "Hello "',
+		'  text "World" delete:bob',
+		'  text "there" insert:bob',
+		'paragraph delete:bob',
+		'  text "Removed" delete:bob',
+	]);
+});
+
+test('the combined view shows both blocks whole when cut short', async () => {
+	let versions = seed(() => $getRoot().append(paragraph('Before')));
+
+	versions = await edit(versions, 'bob', () => {
+		children()[0].getFirstChild().setTextContent('After');
+	});
+
+	const { rows, partial } = diffCombined(versions[0].json, versions[1].json, { timeout: -1 });
+
+	expect(partial).toBe(true);
+	expect(rows).toHaveLength(1);
+	expect(render(rows[0].columns[0]).tree).toEqual([
+		'paragraph delete:undefined',
+		'  text "Before" delete:undefined',
+		'paragraph insert:undefined',
+		'  text "After" insert:undefined',
+	]);
+});
+
 test('a moved block is shown as removed where it was and added where it is', async () => {
 	let versions = seed(() => $getRoot().append(paragraph('Moved'), paragraph('Kept'), heading()));
 
@@ -431,7 +488,7 @@ test('a moved block is shown as removed where it was and added where it is', asy
 
 	const { rows } = compare(versions, 0, 1);
 
-	expect(rows.map((row) => [row.older?.type ?? null, row.newer?.type ?? null])).toEqual([
+	expect(rows.map((row) => row.columns.map(([block]) => block?.type ?? null))).toEqual([
 		['paragraph', null],
 		[null, 'paragraph'],
 	]);
@@ -456,12 +513,12 @@ test('a block that became another type is compared with what it was', () => {
 			...extra,
 		}) as unknown as SerializedNode;
 
-	const { rows } = diffEditorStates(
+	const { rows } = diffSplit(
 		{ root: { children: [block('paragraph', 'Now a title')] } },
 		{ root: { children: [block('heading', 'Now a heading', { tag: 'h2' })] } }
 	);
 
-	expect(render(rows.map((row) => row.newer)).tree).toEqual([
+	expect(render(rows.flatMap((row) => row.columns[1])).tree).toEqual([
 		'heading h2 change:undefined {"type":{"__old":"paragraph","__new":"heading"},"tag":{"__new":"h2"}}',
 		'  text "Now a "',
 		'  text "heading" insert:undefined',
@@ -480,11 +537,11 @@ test('every change of a block is attributed to who changed the block', async () 
 		[second as string]: { by: 'carol', at: 3000 },
 	};
 
-	const { rows } = diffEditorStates(versions[0].json, versions[2].json, {
+	const { rows } = diffSplit(versions[0].json, versions[2].json, {
 		attribute: ({ newer }) => authors[newer as string],
 	});
 
-	expect(render(rows.map((row) => row.newer)).tree).toEqual([
+	expect(render(rows.flatMap((row) => row.columns[1])).tree).toEqual([
 		'paragraph change:bob',
 		'  text "First"',
 		'  text " bob" insert:bob',
@@ -501,14 +558,14 @@ test('a comparison that runs out of time shows the remaining blocks whole', asyn
 		children()[0].getFirstChild().setTextContent('Hello there')
 	);
 
-	const { rows, partial } = diffEditorStates(versions[0].json, versions[1].json, { timeout: -1 });
+	const { rows, partial } = diffSplit(versions[0].json, versions[1].json, { timeout: -1 });
 
 	expect(partial).toBe(true);
-	expect(render(rows.map((row) => row.older)).tree).toEqual([
+	expect(render(rows.flatMap((row) => row.columns[0])).tree).toEqual([
 		'paragraph delete:undefined',
 		'  text "Hello World" delete:undefined',
 	]);
-	expect(render(rows.map((row) => row.newer)).tree).toEqual([
+	expect(render(rows.flatMap((row) => row.columns[1])).tree).toEqual([
 		'paragraph insert:undefined',
 		'  text "Hello there" insert:undefined',
 	]);

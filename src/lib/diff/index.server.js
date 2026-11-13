@@ -6,6 +6,7 @@ import { attributeBlocks } from './attribution';
 
 /**
  * @typedef {import('$lib/worker/toHTML').Version} Version
+ * @typedef {'split' | 'combined'} DiffView
  * @typedef {import('$lib/worker/toHTML').ToHTMLResult} ToHTMLResult
  * @typedef {{ id: string, content: string, createdTimestamp: Date, metadata: { userId: string } }} VersionRow
  */
@@ -135,9 +136,11 @@ const attribute = async (rows, olderIndex, newerIndex, deadline, large) => {
  * @param {VersionRow[]} rows
  * @param {number} olderIndex
  * @param {number} newerIndex
- * @param {{ article?: ToHTMLResult | null }} [options]
+ * @param {{ article?: ToHTMLResult | null, view?: DiffView }} [options] Without a view, a large article is shown combined.
  */
-export const diffVersions = async (rows, olderIndex, newerIndex, { article = null } = {}) => {
+export const diffVersions = async (rows, olderIndex, newerIndex, options = {}) => {
+	const { article = null } = options;
+
 	const started = performance.now();
 	const renderDeadline = Date.now() + DIFF_BUDGET - RENDER_RESERVE;
 
@@ -155,9 +158,12 @@ export const diffVersions = async (rows, olderIndex, newerIndex, { article = nul
 		large
 	);
 
+	const view = options.view ?? (large ? 'combined' : 'split');
+
 	const { changes, partial, omitted } = await renderDiff({
 		older: older.json,
 		newer: newer.json,
+		view,
 		timeout: COMPARE_BUDGET,
 		deadline: renderDeadline,
 		...attribution,
@@ -167,6 +173,7 @@ export const diffVersions = async (rows, olderIndex, newerIndex, { article = nul
 		changes,
 		partial,
 		omitted,
+		view,
 		large,
 		attributed: Object.keys(attribution).length > 0,
 		article: /** @type {ToHTMLResult} */ (article ?? newer.article),

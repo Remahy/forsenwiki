@@ -1,6 +1,7 @@
 import * as Y from '@y/y';
 import { expect, test, vi } from 'vitest';
 import { $createParagraphNode, $createTextNode, $getRoot } from 'lexical';
+import { $createListItemNode, $createListNode } from '@lexical/list';
 import { uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { articleExtension } from '$lib/components/editor/config/article';
@@ -83,8 +84,8 @@ test('two versions next to each other show what the newer one changed, by its au
 	expect(partial).toBe(false);
 	expect(attributed).toBe(true);
 	expect(changes).toHaveLength(1);
-	expect(marks(changes[0].older)).toEqual(['change bob First']);
-	expect(marks(changes[0].newer)).toEqual(['change bob First by bob', 'insert bob  by bob']);
+	expect(marks(changes[0].columns[0])).toEqual(['change bob First']);
+	expect(marks(changes[0].columns[1])).toEqual(['change bob First by bob', 'insert bob  by bob']);
 	expect(article.html).toContain('First by bob');
 	expect(article.html).toContain('Second');
 });
@@ -95,7 +96,7 @@ test('over several versions each changed block is marked with who changed it', a
 	const { changes, attributed, article } = await diffVersions(rows, 0, 2);
 
 	expect(attributed).toBe(true);
-	expect(changes.map((change) => [marks(change.older), marks(change.newer)])).toEqual([
+	expect(changes.map((change) => change.columns.map(marks))).toEqual([
 		[['change bob First'], ['change bob First by bob', 'insert bob  by bob']],
 		[['delete carol Second', 'delete carol Second'], []],
 		[[], ['insert carol Added by carol', 'insert carol Added by carol']],
@@ -126,4 +127,43 @@ test('an article already rendered is shown as given, without rendering the newer
 	expect(article).toBe(stored);
 	expect(changes).toHaveLength(3);
 	expect(vi.mocked(readVersion).mock.calls.at(-1)?.[0].html).toBe(false);
+});
+
+test('either view can be asked for, and gives its own columns', async () => {
+	const rows = await history();
+
+	const split = await diffVersions(rows, 0, 1);
+	const combined = await diffVersions(rows, 0, 1, { view: 'combined' });
+
+	expect(split.view).toBe('split');
+	expect(combined.view).toBe('combined');
+	expect(combined.changes).toHaveLength(split.changes.length);
+	expect(combined.changes.map((change) => change.columns.map(marks))).toEqual([
+		[['change bob First by bob', 'insert bob  by bob']],
+	]);
+});
+
+test('changed lists that are not neighbours in the article stay apart', async () => {
+	const list = (text: string) =>
+		$createListNode('bullet').append($createListItemNode().append($createTextNode(text)));
+
+	let rows = seed(() => $getRoot().append(list('One'), paragraph('Kept'), list('Two')));
+
+	rows = await edit(rows, 'bob', () => {
+		for (const item of $getRoot().getAllTextNodes()) {
+			if (item.getTextContent() !== 'Kept') {
+				item.setTextContent(`${item.getTextContent()} more`);
+			}
+		}
+	});
+
+	for (const view of ['split', 'combined'] as const) {
+		const { changes } = await diffVersions(rows, 0, 1, { view });
+
+		expect(changes).toHaveLength(2);
+
+		for (const change of changes) {
+			expect(change.columns.at(-1)?.match(/<ul/g)).toHaveLength(1);
+		}
+	}
 });
