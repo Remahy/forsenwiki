@@ -11,7 +11,8 @@ export async function GET({ params }) {
 		return error(404);
 	}
 
-	const res = await readAuthorsForYPostByTitle(post.title);
+	const rawAuthors = await readAuthorsForYPostByTitle(post.title);
+	const authors = rawAuthors.map(({ user }) => user);
 
-	return json(res);
+	return json(authors);
 }

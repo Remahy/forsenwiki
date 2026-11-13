@@ -1,5 +1,5 @@
 import prisma from '$lib/prisma.server';
-import { Y_POST_TYPES } from '$lib/constants/constants';
+import { SYSTEM, Y_POST_TYPES } from '$lib/constants/constants';
 
 /**
  * @param {string} title
@@ -203,22 +203,14 @@ export async function readSystemYPostRelations(postId) {
 
 /** @param {string} title */
 export async function readAuthorsForYPostByTitle(title) {
-	return prisma.user.findMany({
+	return prisma.yPostUpdateMetadata.findMany({
 		where: {
-			postUpdatesMetadata: {
-				some: {
-					postUpdate: {
-						post: {
-							title,
-						},
-					},
-				},
-			},
+			userId: { not: SYSTEM },
+			postUpdate: { post: { title } },
 		},
-		select: {
-			name: true,
-			id: true,
-		},
+		orderBy: { postUpdate: { createdTimestamp: 'asc' } },
+		distinct: ['userId'],
+		select: { user: { select: { name: true, id: true } } },
 	});
 }
 
