@@ -1,6 +1,4 @@
-// What two edits of the same article merge into when they were made apart, without either user
-// seeing the other's. These tests record what happens today: the cases under "garbles" and
-// "loses" are not what anyone wants.
+// Records current behaviour: the "garbles" and "loses" cases are not wanted.
 import { expect, test } from 'vitest';
 import { $createTextNode, $getRoot, $isElementNode } from 'lexical';
 import { $createListItemNode, $createListNode } from '@lexical/list';
@@ -47,9 +45,8 @@ type Case = {
 	one: () => void;
 	other: () => void;
 	merged: string[];
-	/** The other result, where which edit goes first is a toss-up between the two users. */
+	/** Which edit goes first is random. */
 	orMerged?: string[];
-	/** Where a migrated Yjs 13 draft (holding `one`) merges differently. */
 	migrated?: string[];
 };
 
@@ -180,7 +177,6 @@ const loses: Record<string, Case> = {
 
 const cases = (group: Record<string, Case>) => Object.entries(group);
 
-/** Two users of the `@lexical/y` editor who opened the same version of the article. */
 const mergeEdits = async ({ one, other }: Case) => {
 	const base = seedState(config(), $article);
 	const theirs = await edited(base, one);
@@ -189,7 +185,6 @@ const mergeEdits = async ({ one, other }: Case) => {
 	return { merged: read(theirs, mine), reversed: read(mine, theirs) };
 };
 
-/** A Yjs 13 draft holding `one`, migrated into an article that got `other` since. */
 const mergeMigratedDraft = async ({ one, other }: Case) => {
 	const legacy = legacyEdit($article);
 	const base = convertLegacyUpdate(legacy);
@@ -203,7 +198,6 @@ const mergeMigratedDraft = async ({ one, other }: Case) => {
 	return read(current, update as Uint8Array);
 };
 
-/** The results an edit pair may merge into. */
 const outcomes = ({ merged, orMerged }: Case) => (orMerged ? [merged, orMerged] : [merged]);
 
 test.each([

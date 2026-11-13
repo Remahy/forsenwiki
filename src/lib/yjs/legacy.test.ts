@@ -19,7 +19,6 @@ const $article = () => {
 	);
 };
 
-/** An article as the Yjs 13 editor stored it. */
 const legacyArticle = () => legacyEdit($article);
 
 const $firstText = () => {

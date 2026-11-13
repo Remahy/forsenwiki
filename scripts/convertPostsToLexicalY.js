@@ -112,7 +112,6 @@ async function main() {
 	console.log(dryRun ? 'dry run' : 'done', stats);
 
 	if (mismatched.length || failed.length) {
-		// These posts stay readable, and can't be edited until they are converted.
 		console.error('NOT CONVERTED', { mismatched, failed });
 	}
 
@@ -122,7 +121,6 @@ async function main() {
 try {
 	const notConvertedCount = await main();
 	await prisma.$disconnect();
-	// The site starts without the posts that could not be converted. A dry run is a check.
 	process.exit(dryRun && notConvertedCount ? 1 : 0);
 } catch (err) {
 	console.error(err);

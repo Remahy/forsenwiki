@@ -22,7 +22,6 @@ import { applyRemoteUpdateV2, encodeYDocToUpdateV2 } from './utils';
 
 const config = () => articleExtension(null, EDITOR_IS_READONLY, null);
 
-/** A client: the editor bound to its document, as editor.svelte builds it. */
 const setup = (updateV2?: Uint8Array) => {
 	const doc = createYDoc();
 	if (updateV2) {
@@ -49,7 +48,6 @@ const write = (editor: LexicalEditor, text: string, tag?: string) => {
 const readText = (editor: LexicalEditor) =>
 	editor.getEditorState().read(() => $getRoot().getTextContent());
 
-/** How the backend reads an article from its stored update. */
 const readDoc = (doc: YDoc) =>
 	readState(config(), encodeYDocToUpdateV2(doc), () => $getRoot().getTextContent());
 

@@ -1,5 +1,4 @@
-// Drafts saved by the Yjs 13 editor.
-// TODO: Remove once no such drafts are around anymore.
+// TODO: Remove once no Yjs 13 drafts are around anymore.
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 export const LEGACY_DRAFT_KEY = 'legacyDraft';
@@ -7,10 +6,10 @@ export const LEGACY_DRAFT_KEY = 'legacyDraft';
 const TIMEOUT = 60_000;
 
 /**
- * What a draft changed in its article, from the server: only it has the article's Yjs 13 history.
- * @param {string | null} title Null for an article that is not created yet.
+ * Done on the server, which has the article's Yjs 13 history.
+ * @param {string | null} title Null for a new article.
  * @param {Uint8Array} legacyUpdate
- * @returns {Promise<Uint8Array | null>} A V2 update for the article's document, if anything changed.
+ * @returns {Promise<Uint8Array | null>} V2 update.
  */
 export const migrateLegacyDraft = async (title, legacyUpdate) => {
 	/** @type {import('../../routes/api/post/legacy-draft/+server').LegacyDraftBody} */

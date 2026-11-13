@@ -16,7 +16,7 @@
 	/** @type {Props} */
 	let { id, update, title = null, initialUpdate = null } = $props();
 
-	// The document is loaded before the editor is built: it has to be created from its stored state.
+	// The doc must be created from its stored state (yjs/yjs#824), so it loads before the editor.
 	// svelte-ignore state_referenced_locally
 	const opening = openArticleDoc({ id, title, update, initialUpdate });
 

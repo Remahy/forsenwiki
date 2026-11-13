@@ -18,8 +18,8 @@ const config = () => articleExtension(null, EDITOR_IS_READONLY, null);
 const IGNORED_FIELDS = new Set(['$', 'direction', 'children']);
 
 /**
- * Values the two editors store differently without meaning something else: nothing as `null`,
- * `undefined` or `''`, a number as a string, no column width as `''` or `0`.
+ * The two editors store these differently: nothing as `null`, `undefined` or `''`, a number as a
+ * string, no column width as `''` or `0`.
  * @param {string} key
  * @param {unknown} value
  * @returns {unknown}
@@ -90,7 +90,6 @@ const compare = (before, after, path, differences) => {
 };
 
 /**
- * Where a converted article says something else than the article it was converted from.
  * @param {{ root: SerializedNode }} before
  * @param {{ root: SerializedNode }} after
  */
@@ -104,15 +103,13 @@ export const conversionDifferences = (before, after) => {
 };
 
 /**
- * Seeds a `@lexical/y` document from an article stored by the Yjs 13 editor, and compares what
- * the two read as.
  * @param {Uint8Array} updateV2 The article's merged Yjs 13 updates.
  * @returns {{ update: Uint8Array, differences: string[] }}
  */
 export const convertLegacyArticle = (updateV2) => {
 	const json = legacyUpdateToJSON(updateV2);
 
-	// Parsed by the same nodes as the converted article, so deprecated node types compare equal.
+	// Same nodes as the converted article, so deprecated node types compare equal.
 	const legacy = buildEditorFromExtensions(HeadlessExtension, config());
 	legacy.setEditorState(legacy.parseEditorState(json));
 	const before = legacy.getEditorState().toJSON();

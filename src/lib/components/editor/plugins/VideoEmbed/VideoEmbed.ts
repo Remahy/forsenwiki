@@ -42,7 +42,6 @@ import {
 
 export type Subtitle = { id: string; title: string; src: string; language: string };
 
-/** The label shown for a subtitle track, e.g. "Commentary (English)". */
 const getSubtitleLabel = ({ title, language }: Pick<Subtitle, 'title' | 'language'>) =>
 	`${title} (${bcp47.find((l) => l.lang === language)?.label})`;
 
@@ -437,7 +436,6 @@ function generateCDNSrc(node: VideoEmbedNode, staticURL: string) {
 	return { element };
 }
 
-/** Exported sizes are a number or `inherit`. */
 const toVideoSize = (value: string | null): number | 'inherit' => {
 	const size = Number(value);
 

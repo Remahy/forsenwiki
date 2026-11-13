@@ -14,7 +14,6 @@ const config = () => articleExtension(null, EDITOR_IS_READONLY, null);
 const $json = () => $getEditor().getEditorState().toJSON();
 
 /**
- * A Yjs 13 (`@lexical/yjs`) article as the `@lexical/y` editor stores it.
  * @param {Uint8Array} updateV2
  */
 export const convertLegacyUpdate = (updateV2) =>
@@ -27,17 +26,15 @@ const converted = (updateV2) => readState(config(), convertLegacyUpdate(updateV2
 
 /**
  * @typedef {Object} LegacyChanges
- * @property {Uint8Array | null} legacyArticle The article's Yjs 13 history, merged. Null when it has none.
- * @property {Uint8Array} legacyUpdate A draft or submission of the Yjs 13 editor.
- * @property {Uint8Array} base The `@lexical/y` state `legacyArticle` was converted to.
+ * @property {Uint8Array | null} legacyArticle
+ * @property {Uint8Array} legacyUpdate
+ * @property {Uint8Array} base What `legacyArticle` was converted to.
  */
 
 /**
- * What a Yjs 13 draft changed in its article, as an update of the `@lexical/y` document.
- * The draft is merged with the article's Yjs 13 history as the Yjs 13 editor did. What that adds
- * is written as an edit of `base`, so it merges with the edits made since the conversion.
+ * Written as a patch of `base`, so it merges with the edits made since the conversion.
  * @param {LegacyChanges} changes
- * @returns {Promise<Uint8Array | null>} A V2 update on top of `base`, null when nothing changed.
+ * @returns {Promise<Uint8Array | null>} V2 update, null when nothing changed.
  */
 export async function migrateLegacyChanges({ legacyArticle, legacyUpdate, base }) {
 	const after = converted(

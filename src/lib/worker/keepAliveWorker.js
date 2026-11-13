@@ -6,8 +6,7 @@ import { Worker } from 'node:worker_threads';
  */
 
 /**
- * Starting a worker takes about a second (jsdom, Lexical), so one is kept alive between jobs.
- * The worker has to handle its jobs with `handleJobs` from worker/handleJobs.js.
+ * Starting a worker takes about a second. The worker must use `handleJobs` (worker/handleJobs.js).
  * @template Data, Result
  * @param {string} workerPath
  * @param {{ name: string, jobTimeout?: number, idleTimeout?: number }} options
@@ -75,7 +74,6 @@ export function createKeepAliveWorker(
 		worker.on('error', fail);
 		worker.on('exit', (code) => fail(new Error(`${name} exited (code ${code}) without a result`)));
 
-		// Don't keep the process alive just for an idle worker.
 		worker.unref();
 
 		return self;

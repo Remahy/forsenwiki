@@ -34,7 +34,6 @@ vi.mock('$lib/components/editor/validations/index.server', () => ({
 vi.mock('../../read/[title]/+server', () => ({ _getYPostByTitle: vi.fn() }));
 vi.mock('../../../adonis/frontpage/+server', () => ({ _emit: vi.fn() }));
 
-/** The article's Yjs 13 history, what it was converted to, and an edit someone made since. */
 const legacy = legacyEdit($write('stored before the migration'));
 const seed = convertLegacyUpdate(legacy);
 const current = await edited(seed, $write('written by someone else since'));
@@ -53,7 +52,6 @@ const submit = (update: Uint8Array) =>
 		},
 	} as never);
 
-/** The article with the row the request stored. */
 const stored = () => {
 	const [{ content }] = vi.mocked(updatePost).mock.calls[0];
 

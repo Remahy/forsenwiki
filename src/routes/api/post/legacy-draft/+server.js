@@ -11,8 +11,7 @@ import { migrateLegacyChanges } from '$lib/yjs/migrateLegacy';
 import { mergePostUpdatesV2, postUpdatesToUint8Arr } from '$lib/yjs/utils';
 
 /**
- * What a draft of the Yjs 13 editor changed, as an update of the article's `@lexical/y` document.
- * @param {string | null} title Null for an article that is not created yet.
+ * @param {string | null} title Null for a new article.
  * @param {Uint8Array} legacyUpdate
  * @returns {Promise<Uint8Array | null>} Null when the draft changed nothing.
  */
@@ -50,7 +49,7 @@ export async function _migrateLegacyDraft(title, legacyUpdate) {
 /**
  * @typedef {Object} LegacyDraftBody
  * @property {string | null} [title]
- * @property {string} content Base64 V2 update of the Yjs 13 editor.
+ * @property {string} content Base64 V2 update.
  */
 
 export async function POST({ request, locals }) {

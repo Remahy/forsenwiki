@@ -135,7 +135,7 @@ export async function POST({ request, locals, params }) {
 	let [incomingUpdate] = postUpdatesToUint8Arr([{ content }]);
 
 	if (isLegacyUpdate(incomingUpdate)) {
-		// A tab that still runs the Yjs 13 editor: its changes are brought over.
+		// A tab still running the Yjs 13 editor.
 		const migrated = await _migrateLegacyDraft(title, incomingUpdate);
 
 		incomingUpdate = migrated

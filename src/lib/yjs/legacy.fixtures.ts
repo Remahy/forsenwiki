@@ -15,14 +15,12 @@ export const $write = (text: string) => () => {
 	$getRoot().append($paragraph(text));
 };
 
-/** A document of the Yjs 13 editor: `update` (or nothing) with `$edit` made in that editor. */
 export const legacyEdit = ($edit: () => void, update = encodeYDocToUpdateV2(createNewYDoc())) => {
 	const { editor, doc } = getYjsAndEditor(config(), update);
 	editor.update($edit, { discrete: true });
 	return encodeYDocToUpdateV2(doc);
 };
 
-/** The stored article after an edit made in the `@lexical/y` editor. */
 export const edited = async (updateV2: Uint8Array, $edit: () => void) => {
 	const article = getYAndEditor(config(), updateV2);
 	article.editor.update($edit, { discrete: true });
@@ -36,6 +34,5 @@ const $blocks = () =>
 		.getChildren()
 		.map((node) => node.getTextContent().trim());
 
-/** The text of each block of the article these updates make up. */
 export const read = (...updates: Uint8Array[]) =>
 	readState(config(), mergePostUpdatesV2(updates as never), $blocks);

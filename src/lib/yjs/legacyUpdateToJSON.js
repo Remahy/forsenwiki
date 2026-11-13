@@ -4,7 +4,6 @@ import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { getYjsAndEditor } from './getYjsAndEditor';
 
 /**
- * Reads a Yjs 13 (`@lexical/yjs`) article into Lexical JSON.
  * @param {Uint8Array} updateV2
  * @returns {import('lexical').SerializedEditorState}
  */

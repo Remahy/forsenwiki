@@ -25,7 +25,6 @@ const config = () => articleExtension(null, EDITOR_IS_READONLY, null);
 
 const $firstChild = () => $getRoot().getFirstChildOrThrow() as FallbackNode;
 
-/** Same as the toHTML worker, which reads the article from its Yjs update. */
 const htmlFromYjs = async (build: () => void) => {
 	const article = getYAndEditor(config());
 	article.editor.update(build, { discrete: true });

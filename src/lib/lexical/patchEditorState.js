@@ -46,7 +46,7 @@ const sorted = (value) => {
 };
 
 /**
- * A node's content as text. Block ids are left out: they name a block in its document.
+ * Block ids are left out: they differ per document.
  * @param {SerializedNode} node
  * @returns {unknown}
  */
@@ -59,7 +59,7 @@ const content = (node) => ({
 /**
  * @param {SerializedNode} node
  */
-const signature = (node) => JSON.stringify(sorted(content(node)));
+export const signature = (node) => JSON.stringify(sorted(content(node)));
 
 /**
  * @param {SerializedState} a
@@ -70,7 +70,6 @@ export const sameContent = (a, b) =>
 	a.root.children.every((child, index) => signature(child) === signature(b.root.children[index]));
 
 /**
- * The children both lists hold, as index pairs in order.
  * @param {string[]} before
  * @param {string[]} after
  * @returns {Array<[number, number]>}
@@ -174,8 +173,8 @@ const $patchNode = (node, before, after) => {
 
 /**
  * @param {import('lexical').ElementNode} parent
- * @param {SerializedNode[]} before What `parent` holds.
- * @param {SerializedNode[]} after What it should hold.
+ * @param {SerializedNode[]} before
+ * @param {SerializedNode[]} after
  */
 const $patchChildren = (parent, before, after) => {
 	const nodes = parent.getChildren();
@@ -206,9 +205,9 @@ const $patchChildren = (parent, before, after) => {
 };
 
 /**
- * Turns the editor's content into `after` by changing only the nodes that differ, so the
- * collaboration binding writes the change and not the whole article.
- * @param {SerializedState} before The editor's state.
+ * Changes only the nodes that differ, so the binding writes a small update that merges with
+ * other edits.
+ * @param {SerializedState} before
  * @param {SerializedState} after
  */
 export const $patchEditorState = (before, after) => {

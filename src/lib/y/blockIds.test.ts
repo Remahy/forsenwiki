@@ -164,7 +164,6 @@ test('articles without ids get the same ids on every reader', async () => {
 
 	const ids = blockIds(client.editor);
 	expect(Object.keys(ids)).toHaveLength(9);
-	// Every reader derives the same ids from the document.
 	expect(blockIds(readBackend(source.doc))).toEqual(ids);
 	expect(blockIds(readBackend(client.doc))).toEqual(ids);
 });

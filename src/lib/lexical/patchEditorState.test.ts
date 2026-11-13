@@ -52,7 +52,6 @@ const $fillLastCell = () => {
 	cell.clear().append($createTextNode('cell'));
 };
 
-/** Patches an article holding `$before` into `$after`, and returns what that wrote. */
 const patch = async ($before: () => void, $after: () => void) => {
 	const base = seedState(config(), $before);
 	const after = readState(config(), seedState(config(), $after), $json);
@@ -75,7 +74,6 @@ const patch = async ($before: () => void, $after: () => void) => {
 	};
 };
 
-/** What `base` reads as after someone else's `$edit`, with `update` merged in. */
 const mergedWith = async (base: Uint8Array, update: Uint8Array, $edit: () => void) => {
 	const other = getYAndEditor(config(), base);
 	other.editor.update($edit, { discrete: true });

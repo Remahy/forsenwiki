@@ -16,7 +16,6 @@ import {
 const settle = () => new Promise((resolve) => setTimeout(resolve));
 
 /**
- * Whether an update comes from the Yjs 13 editor, e.g. a tab opened before the migration.
  * @param {Uint8Array} updateV2
  */
 export function isLegacyUpdate(updateV2) {
@@ -30,8 +29,6 @@ export function isLegacyUpdate(updateV2) {
 }
 
 /**
- * A headless editor bound to a Yjs 14 document, so the backend can validate and adjust an
- * article between awaits and store what it wrote.
  * @param {import('lexical').AnyLexicalExtensionArgument} extension
  * @param {Uint8Array | null} [updateV2]
  */
@@ -52,7 +49,7 @@ export function getYAndEditor(extension, updateV2 = null) {
 		editor,
 		doc,
 		binding,
-		/** Everything the editor holds, with the follow-ups of its last update included. */
+		/** Waits for the follow-ups of the last update. */
 		encodeV2: async () => {
 			flush();
 			await settle();

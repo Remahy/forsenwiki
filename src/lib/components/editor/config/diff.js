@@ -19,8 +19,6 @@ import { articleExtension, articleNodes, htmlExport } from './article';
 const VOID_ELEMENTS = new Set(['BR', 'HR', 'IFRAME', 'IMG', 'VIDEO']);
 
 /**
- * What the compared versions did to a node: its own mark, or for an element what its children
- * add up to.
  * @param {LexicalNode} node
  * @returns {DiffMark | null}
  */
@@ -213,7 +211,6 @@ export const diffHtmlExport = new Map(
 );
 
 /**
- * The article's editor, exporting the marks of `$lib/y/diff` as colours and hovers.
  * @param {any} theme
  * @param {boolean} editable
  * @param {any} editorState

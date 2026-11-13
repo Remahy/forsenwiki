@@ -75,7 +75,6 @@ export function convertUpdateFormatV1ToV2(updateV1) {
 }
 
 /**
- * Applies what `doc` is missing from a V2 update, as a provider would.
  * @param {YDoc} doc
  * @param {Uint8Array} updateV2
  */
@@ -114,7 +113,7 @@ export function hasSharedContent(doc, name) {
 const LEGACY_ROOTS = ['root', 'root-v2'];
 
 /**
- * Whether the Yjs 13 editor (`@lexical/yjs`) wrote anything, deleted or not.
+ * Also true when the legacy content was deleted.
  * @param {YDoc} doc
  */
 export function hasLegacyData(doc) {

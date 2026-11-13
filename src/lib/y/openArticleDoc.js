@@ -13,8 +13,7 @@ import {
 } from './utils';
 
 /**
- * Bytes are loaded with `createYDoc` and never applied to a document: only it integrates all a
- * stored state holds (yjs/yjs#824).
+ * Never apply stored bytes to a doc: only `createYDoc` integrates all of them (yjs/yjs#824).
  * @param {Uint8Array[]} updates V1 updates.
  */
 const load = (updates) =>
@@ -32,8 +31,7 @@ const openDraft = (id) =>
 	idb.openDB(id, (db) => idb.createStores(db, [['updates', { autoIncrement: true }], ['custom']]));
 
 /**
- * The updates of the local draft. A draft saved by the Yjs 13 editor is taken out of them, and
- * kept aside until its changes are migrated.
+ * A Yjs 13 draft is moved to the `custom` store until it is migrated.
  * @param {IDBDatabase} db
  * @returns {Promise<Uint8Array[]>}
  */
@@ -66,7 +64,6 @@ const readDraft = async (db) => {
 };
 
 /**
- * What a draft that was kept aside changed in its article, now part of the local draft.
  * @param {IDBDatabase} db
  * @param {string | null} title
  * @returns {Promise<Uint8Array | null>} A V1 update.
@@ -113,8 +110,6 @@ const hasContent = (draft) => {
  */
 
 /**
- * The editor's Yjs document: the local draft from IndexedDB, with the article's current state
- * from the server merged into it (or the server's seed for a new article).
  * @param {OpenArticleDocOptions} options
  */
 export async function openArticleDoc({ id, title = null, update, initialUpdate = null }) {

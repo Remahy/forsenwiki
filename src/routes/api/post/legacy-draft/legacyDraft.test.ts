@@ -13,7 +13,6 @@ import { POST } from './+server';
 vi.mock('$lib/db/post/read', () => ({ readYPostUpdatesByTitle: vi.fn() }));
 vi.mock('$lib/worker/initialUpdate', () => ({ default: vi.fn() }));
 
-/** The article's Yjs 13 history in two rows, what it was converted to, and an edit made since. */
 const firstRow = legacyEdit($write('stored before the migration'));
 const legacy = legacyEdit($write('also stored before the migration'), firstRow);
 const seed = convertLegacyUpdate(legacy);

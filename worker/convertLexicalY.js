@@ -5,8 +5,7 @@ import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 import { convertLegacyArticle } from '$lib/yjs/convertLegacy';
 
 /**
- * Seeds a `@lexical/y` document from an article stored by the Yjs 13 editor.
- * @param {{ update: string }} data The post's merged Yjs 13 updates, base64 V2.
+ * @param {{ update: string }} data Merged Yjs 13 updates, base64 V2.
  * @returns {{ content: string, byteLength: number, differences: string[] }}
  */
 export const convertLegacyUpdate = ({ update }) => {
