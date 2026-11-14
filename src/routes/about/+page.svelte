@@ -1,6 +1,6 @@
 <script>
 	import { AtSignIcon } from '@lucide/svelte';
-	import { resolve } from '$app/paths';
+	import { asset, resolve } from '$app/paths';
 	import GitHub from '$lib/components/icons/GitHub.svelte';
 	import TwitchGlitch from '$lib/components/icons/TwitchGlitch.svelte';
 	import Discord from '$lib/components/icons/Discord.svelte';
@@ -34,7 +34,9 @@
 			>.
 		</p>
 		<br />
-		<p><a href="/THIRD-PARTY-LICENSES.txt">Full THIRD-PARTY-LICENSES available here.</a></p>
+		<p>
+			<a href={asset('/THIRD-PARTY-LICENSES.txt')}>Full THIRD-PARTY-LICENSES available here.</a>
+		</p>
 
 		<h2>Links</h2>
 		<ul>

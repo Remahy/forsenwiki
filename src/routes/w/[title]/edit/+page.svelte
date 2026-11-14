@@ -182,6 +182,7 @@
 
 			await reset(false);
 
+			// eslint-disable-next-line svelte/no-navigation-without-resolve
 			goto(`${resolve('/w/[title]', { title })}${stringSearchParams}`);
 		} else if (res.status >= 400) {
 			const json = await res.json();
