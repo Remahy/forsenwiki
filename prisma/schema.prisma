@@ -152,6 +152,8 @@ model YPostUpdateStateCache {
 
   madeBy  String /// App version hash.
   content Bytes /// Gzipped JSON.
+
+  createdTimestamp DateTime @default(now())
 }
 
 /// Can be cleared.
@@ -164,6 +166,8 @@ model YPostDiffPageCache {
 
   madeBy  String /// App version hash.
   content Bytes /// Gzipped JSON.
+
+  createdTimestamp DateTime @default(now())
 
   @@id([olderId, newerId, page])
 }

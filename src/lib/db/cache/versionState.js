@@ -26,6 +26,6 @@ export const writeVersionState = async (postUpdateId, { json, blocks, article })
 	await prisma.yPostUpdateStateCache.upsert({
 		where: { postUpdateId },
 		create: { postUpdateId, ...data },
-		update: data,
+		update: { ...data, createdTimestamp: new Date() },
 	});
 };
