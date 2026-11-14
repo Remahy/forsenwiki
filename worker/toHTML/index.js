@@ -2,18 +2,24 @@ import '../registerDOM.js';
 
 import { handleJobs } from '../handleJobs.js';
 
-import { $getRoot, $nodesOfType } from 'lexical';
+import { $getEditor, $getRoot, $nodesOfType } from 'lexical';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { buildEditorFromExtensions } from '@lexical/extension';
 import { HeadlessExtension } from '@lexical/headless';
+import { createHash } from 'node:crypto';
 import { base64ToUint8Array } from 'uint8array-extras';
 
-import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
+import { readState } from '$lib/y/headless';
+import { YJS13 } from '$lib/y/rows';
+import { legacyUpdateToJSON } from '$lib/yjs/legacyUpdateToJSON';
 import { articleExtension } from '$lib/components/editor/config/article';
 import { diffExtension } from '$lib/components/editor/config/diff';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 import { ImageNode } from '$lib/lexical/custom';
 import { migrations } from '$lib/components/editor/migrations';
+import { diffCombined } from '$lib/lexical/diff/combined';
+import { blockIdOf } from '$lib/lexical/diff/helpers';
+import { diffSplit } from '$lib/lexical/diff/split';
 import { twitchThumbnailURL } from './twitchThumbnailURL';
 
 const $$getTextInEditor = () => {
@@ -31,6 +37,10 @@ const $$getFirstImage = () => {
  * @param {string} html
  */
 const addTwitchThumbnails = async (html) => {
+	if (!html.includes('data-replace-me')) {
+		return html;
+	}
+
 	const replacedHTML = new DOMParser().parseFromString(
 		`<html><body>${html}</body></html>`,
 		'text/html'
@@ -42,7 +52,6 @@ const addTwitchThumbnails = async (html) => {
 		const image = twitchImages[index];
 		const thumbnailURL = await twitchThumbnailURL({ url: image.src });
 
-		// A missing thumbnail becomes `src="null"`, same as before.
 		image.src = /** @type {string} */ (thumbnailURL);
 	}
 
@@ -50,9 +59,191 @@ const addTwitchThumbnails = async (html) => {
 };
 
 /**
- * @param {{ config: string, update?: string, content?: string }} data
+ * @param {string} html
  */
-export const toHTMLWorker = async ({ config, content, update }) => {
+const topLevelBlocks = (html) => {
+	const { body } = new DOMParser().parseFromString(
+		`<html><body>${html}</body></html>`,
+		'text/html'
+	);
+	const blocks = [];
+
+	// Not `[...body.children]`: jsdom walks that live collection from its start for every index.
+	for (let block = body.firstElementChild; block; block = block.nextElementSibling) {
+		blocks.push(block.outerHTML);
+	}
+
+	return blocks;
+};
+
+const $$render = () => {
+	const editor = $getEditor();
+	const text = $$getTextInEditor().replace(/\n/g, ' ');
+	const image = $$getFirstImage();
+	const html = $generateHtmlFromNodes(editor, null);
+
+	return { html, text, image };
+};
+
+/**
+ * @typedef {import('$lib/lexical/patchEditorState').SerializedNode} SerializedNode
+ * @typedef {import('$lib/lexical/patchEditorState').SerializedState} SerializedState
+ * @typedef {import('$lib/lexical/diff/helpers').Author} Author
+ */
+
+/**
+ * @param {{ update: string, html?: boolean }} data
+ */
+export const readVersion = async ({ update, html = false }) => {
+	const read = readState(
+		articleExtension(null, EDITOR_IS_READONLY, null),
+		base64ToUint8Array(update),
+		() => ({
+			state: /** @type {SerializedState} */ (
+				/** @type {unknown} */ ($getEditor().getEditorState().toJSON())
+			),
+			rendered: html ? $$render() : null,
+		})
+	);
+
+	return {
+		json: JSON.stringify(read.state),
+		/** @type {Array<[id: string | null, hash: string]>} */
+		blocks: read.state.root.children.map((block) => [
+			blockIdOf(block) ?? null,
+			createHash('sha1').update(JSON.stringify(block)).digest('base64'),
+		]),
+		article: read.rendered && {
+			...read.rendered,
+			html: await addTwitchThumbnails(read.rendered.html),
+		},
+	};
+};
+
+const SEPARATOR = /** @type {SerializedNode} */ (
+	/** @type {unknown} */ ({
+		type: 'paragraph',
+		version: 1,
+		format: '',
+		indent: 0,
+		direction: null,
+		children: [],
+	})
+);
+
+/**
+ * @param {SerializedNode[]} blocks
+ * @returns {Promise<string[]>} The HTML of each block.
+ */
+const renderDiffBlocks = async (blocks) => {
+	if (!blocks.length) {
+		return [];
+	}
+
+	// Lexical merges lists that follow each other, and these may not be neighbours in the article.
+	const children = blocks.flatMap((block, index) =>
+		block.type === 'list' && blocks[index - 1]?.type === 'list' ? [SEPARATOR, block] : [block]
+	);
+
+	const editor = buildEditorFromExtensions(
+		HeadlessExtension,
+		diffExtension(null, EDITOR_IS_READONLY, null)
+	);
+
+	editor.setEditorState(
+		editor.parseEditorState(
+			/** @type {any} */ ({
+				root: { type: 'root', version: 1, format: '', indent: 0, direction: null, children },
+			})
+		)
+	);
+
+	const html = editor.read(() => $generateHtmlFromNodes(editor, null));
+
+	editor.dispose();
+
+	const twitchThumbnailsHTML = await addTwitchThumbnails(html);
+	const rendered = topLevelBlocks(twitchThumbnailsHTML);
+
+	if (rendered.length !== children.length) {
+		throw new Error('The compared blocks do not render as one element each.');
+	}
+
+	return rendered.filter((_html, index) => children[index] !== SEPARATOR);
+};
+
+/**
+ * @param {import('$lib/lexical/diff/helpers').DiffRow[]} rows
+ * @param {number} column
+ * @returns {Promise<string[]>} The HTML of that column of each row.
+ */
+const renderDiffColumn = async (rows, column) => {
+	const rendered = await renderDiffBlocks(rows.flatMap((row) => row.columns[column]));
+	let next = 0;
+
+	return rows.map((row) => rendered.slice(next, (next += row.columns[column].length)).join(''));
+};
+
+const DIFF_VIEWS = { split: diffSplit, combined: diffCombined };
+
+/**
+ * @param {{ older: string, newer: string, view: keyof typeof DIFF_VIEWS, timeout?: number, author?: Author, blocks?: Record<string, Author>, removed?: Record<string, Author> }} data
+ */
+export const compareVersions = async ({
+	older,
+	newer,
+	view,
+	timeout,
+	author,
+	blocks = {},
+	removed = {},
+}) =>
+	DIFF_VIEWS[view](JSON.parse(older), JSON.parse(newer), {
+		timeout,
+		attribute: (ids) =>
+			author ??
+			(ids.newer !== undefined ? blocks[ids.newer] : undefined) ??
+			(ids.older !== undefined ? (removed[ids.older] ?? blocks[ids.older]) : undefined),
+	});
+
+/**
+ * @param {{ rows: import('$lib/lexical/diff/helpers').DiffRow[] }} data
+ * @returns {Promise<Array<{ columns: string[], start?: { older: number, newer: number } }>>}
+ */
+export const renderRows = async ({ rows }) => {
+	if (!rows.length) {
+		return [];
+	}
+
+	const columns = await Promise.all(
+		rows[0].columns.map((_column, index) => renderDiffColumn(rows, index))
+	);
+
+	return rows.map((row, index) => ({
+		columns: columns.map((column) => column[index]),
+		start: row.start,
+	}));
+};
+
+/**
+ * @param {{ job: 'version', update: string, html?: boolean } | ({ job: 'compare' } & Parameters<typeof compareVersions>[0]) | ({ job: 'render' } & Parameters<typeof renderRows>[0]) | { job?: undefined, config: string, update?: string, content?: string, format?: import('$lib/y/rows').YPostUpdateFormat }} data
+ * @returns {Promise<any>}
+ */
+export const toHTMLWorker = async (data) => {
+	if (data.job === 'version') {
+		return readVersion(data);
+	}
+
+	if (data.job === 'compare') {
+		return compareVersions(data);
+	}
+
+	if (data.job === 'render') {
+		return renderRows(data);
+	}
+
+	const { config, content, update, format } = data;
+
 	if (!config) {
 		throw new Error('No config string provided.');
 	}
@@ -61,43 +252,33 @@ export const toHTMLWorker = async ({ config, content, update }) => {
 		throw new Error('No content and/or update provided.');
 	}
 
-	let cfg;
-	switch (config) {
-		case 'diff':
-			cfg = diffExtension;
-			break;
-		default:
-			cfg = articleExtension;
-			break;
-	}
+	const cfg = articleExtension;
 
-	/**
-	 * @type {import('lexical').LexicalEditor}
-	 */
-	let editor;
-	if (update) {
-		const eY = getYjsAndEditor(cfg(null, EDITOR_IS_READONLY, null), base64ToUint8Array(update));
-		editor = eY.editor;
+	const $render = $$render;
+
+	/** @type {ReturnType<typeof $render>} */
+	let rendered;
+	if (update && format !== YJS13) {
+		rendered = readState(cfg(null, EDITOR_IS_READONLY, null), base64ToUint8Array(update), $render);
 	} else {
-		editor = buildEditorFromExtensions(HeadlessExtension, cfg(null, EDITOR_IS_READONLY, null));
+		const editor = buildEditorFromExtensions(
+			HeadlessExtension,
+			cfg(null, EDITOR_IS_READONLY, null)
+		);
 
-		editor.setEditorState(editor.parseEditorState(/** @type {string} */ (content)));
+		const json = update
+			? legacyUpdateToJSON(base64ToUint8Array(update))
+			: JSON.parse(/** @type {string} */ (content));
+
+		editor.setEditorState(editor.parseEditorState(json));
 
 		migrations(editor);
+
+		rendered = editor.read($render);
+		editor.dispose();
 	}
 
-	const { html, text, image } = editor.read(() => {
-		const text = $$getTextInEditor().replace(/\n/g, ' ');
-		const image = $$getFirstImage();
-		const htmlString = $generateHtmlFromNodes(editor, null);
-
-		/**
-		 * @type {{ html: string, text: string, image?: string }}
-		 */
-		const response = { html: htmlString, text, image };
-
-		return response;
-	});
+	const { html, text, image } = rendered;
 
 	let replacedHTMLString = await addTwitchThumbnails(html);
 

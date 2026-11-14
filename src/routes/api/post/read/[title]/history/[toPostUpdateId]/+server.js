@@ -1,6 +1,7 @@
 import { error, json } from '@sveltejs/kit';
 import { readYPostUpdatesWithIdByTitle } from '$lib/db/post/read';
-import { yPostUpdatesV2ToBase64 } from '$lib/yjs/utils';
+import { yPostUpdatesV2ToBase64 } from '$lib/y/utils';
+import { canDiff, rowsForHistory } from '$lib/y/rows';
 import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
 import { replacer } from '$lib/utils/json';
 import { updateToHTML } from '$lib/lexical/updateToHTML';
@@ -34,14 +35,14 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 		metadata: { byteLength, newTitle, oldTitle },
 	} = res.postUpdates[toPostUpdateIdIndex];
 
-	const toPostUpdates = res.postUpdates.slice(0, toPostUpdateIdIndex + 1);
+	const { format, rows: toPostUpdates } = rowsForHistory(res.postUpdates, toPostUpdateIdIndex);
 	const base64String = yPostUpdatesV2ToBase64(toPostUpdates);
 
 	const recentPostUpdateId = res.postUpdates[res.postUpdates.length - 1].id;
 
 	const [author, html] = await Promise.allSettled([
 		readAuthorForYPostUpdate(id),
-		base64String ? updateToHTML(base64String) : null,
+		base64String ? updateToHTML(base64String, format) : null,
 	]);
 
 	return {
@@ -49,6 +50,7 @@ export async function _getToYPostUpdateIdByTitle(title, toPostUpdateId) {
 		author: author.status === 'fulfilled' ? author.value : null,
 		html: html.status === 'fulfilled' ? html.value : null,
 		current,
+		comparable: canDiff(res.postUpdates[toPostUpdateIdIndex], res.postUpdates.at(-1)),
 		byteLength,
 		newTitle,
 		oldTitle,

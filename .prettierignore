@@ -5,3 +5,4 @@ yarn.lock
 CHANGELOG.md
 src/routes/changelogs/changelogs.html
 package.json
+src/lib/worker/*/worker.js

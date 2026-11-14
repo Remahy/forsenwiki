@@ -39,14 +39,12 @@ const selectionOverride = (editor, before = false) => {
 		const node = nodes[0];
 
 		if ($isRootOrShadowRoot(node)) {
-			// Move into the leaf inside this node.
 			editor.update(() => {
 				node[selectionFn]();
 			});
 
 			return false;
 		} else {
-			// Move to sibling.
 			const sibling = node[siblingFn]();
 
 			if (!sibling) {
@@ -103,7 +101,7 @@ const selectionOverride = (editor, before = false) => {
 	return false;
 };
 
-// Delete this this after https://github.com/meta/lexical/issues/9282 lands.
+// Delete this after https://github.com/meta/lexical/issues/9282 lands.
 // Lexical removes the browser's range for a node selection, so the browser would type at the
 // top of the document. Move the caret next to the node and let Lexical's handler insert the text.
 // Based on the fix for block decorators in @lexical/rich-text after 0.53.0.

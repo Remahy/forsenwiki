@@ -1,15 +1,15 @@
 import { error, json } from '@sveltejs/kit';
+import { $getEditor as getEditor } from 'lexical';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import {
 	diffUpdateUsingStateVectorV2,
-	encodeYDocToUpdateV2,
 	getStateVectorFromUpdateV2,
 	mergePostUpdatesV2,
 	postUpdatesToUint8Arr,
-} from '$lib/yjs/utils';
+} from '$lib/y/utils';
 import { ForbiddenError } from '$lib/errors/Forbidden';
-import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
+import { getYAndEditor, isLegacyUpdate, readState } from '$lib/y/headless';
 import { InvalidPost } from '$lib/errors/InvalidPost';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/post/read';
@@ -29,6 +29,7 @@ import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
 import { validateUploads, pruneFailedUploads } from '$lib/s3/validateUploads.server';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
+import { _migrateLegacyDraft } from '../../legacy-draft/+server';
 import { _emit } from '../../../adonis/frontpage/+server';
 
 /**
@@ -112,7 +113,7 @@ export async function POST({ request, locals, params }) {
 		throw err;
 	}
 
-	if (isSystem(post)) {
+	if (isSystem(post) || !post.update) {
 		return ForbiddenError('This is a system post that cannot be edited.');
 	}
 
@@ -131,7 +132,16 @@ export async function POST({ request, locals, params }) {
 	const stateVector = getStateVectorFromUpdateV2(currentUpdate);
 
 	// Incoming update
-	const [incomingUpdate] = postUpdatesToUint8Arr([{ content }]);
+	let [incomingUpdate] = postUpdatesToUint8Arr([{ content }]);
+
+	if (isLegacyUpdate(incomingUpdate)) {
+		// A tab still running the Yjs 13 editor.
+		const migrated = await _migrateLegacyDraft(title, incomingUpdate);
+
+		incomingUpdate = migrated
+			? mergePostUpdatesV2([currentUpdate, /** @type {Uint8Array<ArrayBuffer>} */ (migrated)])
+			: currentUpdate;
+	}
 
 	// Diff the updates
 	const initialDiff = diffUpdateUsingStateVectorV2(incomingUpdate, stateVector);
@@ -139,15 +149,21 @@ export async function POST({ request, locals, params }) {
 	// We use this update to validate if the contents are valid.
 	const combinedInitialUpdate = mergePostUpdatesV2([currentUpdate, initialDiff]);
 
-	let e;
+	/** @type {ReturnType<typeof getYAndEditor>} */
+	let article;
 	try {
-		e = getYjsAndEditor(articleExtension(null, EDITOR_IS_READONLY, null), combinedInitialUpdate);
-		const editor = e.editor;
+		article = getYAndEditor(
+			articleExtension(null, EDITOR_IS_READONLY, null),
+			combinedInitialUpdate
+		);
+		const editor = article.editor;
 
 		await serverRunValidations(editor);
 
-		const oldImageHashes = getUniqueImageHashes(
-			getYjsAndEditor(articleExtension(null, EDITOR_IS_READONLY, null), currentUpdate).editor
+		const oldImageHashes = readState(
+			articleExtension(null, EDITOR_IS_READONLY, null),
+			currentUpdate,
+			() => getUniqueImageHashes(getEditor())
 		);
 		const currentImageHashes = getUniqueImageHashes(editor).map((hash, index) => ({ index, hash }));
 		const newHashes = currentImageHashes.filter(({ hash }) => !oldImageHashes.includes(hash));
@@ -169,10 +185,10 @@ export async function POST({ request, locals, params }) {
 		console.error(err);
 		return error(400);
 	}
-	const { editor, doc } = e;
+	const { editor } = article;
 
 	// By this point, we have probably modified the editor. Let's recreate a diff.
-	const backendUpdate = encodeYDocToUpdateV2(doc);
+	const backendUpdate = await article.encodeV2();
 
 	// Diff the updates
 	// This is also what we save as a postUpdate
@@ -220,6 +236,8 @@ export async function POST({ request, locals, params }) {
 		config: 'article',
 		content: JSON.stringify(editor.getEditorState().toJSON()),
 	});
+
+	article.dispose();
 
 	await upsertHTML(post.id, { content: html, text, image });
 

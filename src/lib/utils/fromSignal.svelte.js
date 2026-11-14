@@ -1,7 +1,6 @@
 import { createSubscriber } from 'svelte/reactivity';
 
 /**
- * Reads a Lexical extension signal from Svelte runes.
  * @template T
  * @param {import('@lexical/extension').ReadonlySignal<T>} signal
  * @returns {{ readonly current: T }}

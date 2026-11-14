@@ -1,4 +1,5 @@
 <script>
+	/* eslint-disable svelte/no-at-html-tags */
 	import Box from '$lib/components/Box.svelte';
 	import Container from '$lib/components/Container.svelte';
 	import ToC from '$lib/components/ToC/index.svelte';

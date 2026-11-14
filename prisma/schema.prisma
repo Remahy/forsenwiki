@@ -122,10 +122,16 @@ model YPostRelation {
   @@id([fromPostId, toPostId])
 }
 
+enum YPostUpdateFormat {
+  YJS13 /// Written by the Yjs 13 editor (`@lexical/yjs`). Only read for history.
+  LEXICAL_Y /// Written by the Yjs 14 editor (`@lexical/y`). The first such row seeds the chain.
+}
+
 model YPostUpdate {
   id String @id @default(cuid())
 
-  content String @db.Text
+  content String            @db.Text
+  format  YPostUpdateFormat @default(YJS13)
 
   post   YPost  @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String
@@ -133,7 +139,37 @@ model YPostUpdate {
   metadata   YPostUpdateMetadata @relation(fields: [metadataId], references: [id], onDelete: Cascade)
   metadataId String              @unique
 
+  stateCache      YPostUpdateStateCache?
+  olderDiffCaches YPostDiffPageCache[]   @relation("olderDiffPages")
+  newerDiffCaches YPostDiffPageCache[]   @relation("newerDiffPages")
+
   createdTimestamp DateTime @default(now())
+}
+
+model YPostUpdateStateCache {
+  postUpdate   YPostUpdate @relation(fields: [postUpdateId], references: [id], onDelete: Cascade)
+  postUpdateId String      @id
+
+  madeBy  String /// App version hash.
+  content Bytes /// Gzipped JSON.
+
+  createdTimestamp DateTime @default(now())
+}
+
+/// Can be cleared.
+model YPostDiffPageCache {
+  older   YPostUpdate @relation("olderDiffPages", fields: [olderId], references: [id], onDelete: Cascade)
+  olderId String
+  newer   YPostUpdate @relation("newerDiffPages", fields: [newerId], references: [id], onDelete: Cascade)
+  newerId String
+  page    Int
+
+  madeBy  String /// App version hash.
+  content Bytes /// Gzipped JSON.
+
+  createdTimestamp DateTime @default(now())
+
+  @@id([olderId, newerId, page])
 }
 
 model YPostUpdateMetadata {

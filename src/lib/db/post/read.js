@@ -1,5 +1,5 @@
 import prisma from '$lib/prisma.server';
-import { Y_POST_TYPES } from '$lib/constants/constants';
+import { SYSTEM, Y_POST_TYPES } from '$lib/constants/constants';
 
 /**
  * @param {string} title
@@ -32,6 +32,7 @@ export async function readYPostUpdatesByTitle(title) {
 			postUpdates: {
 				select: {
 					content: true,
+					format: true,
 					metadata: {
 						select: {
 							userId: true,
@@ -79,8 +80,10 @@ export async function readYPostUpdatesWithIdByTitle(title) {
 					id: true,
 					createdTimestamp: true,
 					content: true,
+					format: true,
 					metadata: {
 						select: {
+							userId: true,
 							byteLength: true,
 							newTitle: true,
 							oldTitle: true,
@@ -127,11 +130,13 @@ export async function readYPostUpdatesIdsByTitle(title) {
 				select: {
 					id: true,
 					createdTimestamp: true,
+					format: true,
 					metadata: {
 						select: {
 							user: {
 								select: {
 									name: true,
+									id: true,
 								},
 							},
 							byteLength: true,
@@ -199,22 +204,14 @@ export async function readSystemYPostRelations(postId) {
 
 /** @param {string} title */
 export async function readAuthorsForYPostByTitle(title) {
-	return prisma.user.findMany({
+	return prisma.yPostUpdateMetadata.findMany({
 		where: {
-			postUpdatesMetadata: {
-				some: {
-					postUpdate: {
-						post: {
-							title,
-						},
-					},
-				},
-			},
+			userId: { not: SYSTEM },
+			postUpdate: { post: { title } },
 		},
-		select: {
-			name: true,
-			id: true,
-		},
+		orderBy: { postUpdate: { createdTimestamp: 'asc' } },
+		distinct: ['userId'],
+		select: { user: { select: { name: true, id: true } } },
 	});
 }
 
@@ -319,4 +316,12 @@ export async function readMostLinkedArticles(take = 8) {
 	}
 
 	return result;
+}
+
+/** @param {string} postId */
+export async function readHTMLForYPost(postId) {
+	return prisma.html.findUnique({
+		where: { postId },
+		select: { content: true, text: true, image: true },
+	});
 }

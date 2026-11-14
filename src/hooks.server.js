@@ -4,6 +4,7 @@ import prisma, { Permissions } from '$lib/prisma.server';
 import { CLOUDFLARE_API_TOKEN, CLOUDFLARE_ZONE_ID } from '$env/static/private';
 import { STATIC_DOMAIN } from '$lib/environment/environment';
 import { validateToken } from '$lib/cloudflare.server';
+import { startCachePruning } from '$lib/db/cache/prune';
 import { handle as authenticationHandle } from './auth';
 
 import '$lib/goatcounter.server';
@@ -20,6 +21,11 @@ if (CLOUDFLARE_API_TOKEN && CLOUDFLARE_ZONE_ID && !building) {
 	}
 
 	console.log('Cloudflare cache purging enabled.');
+}
+
+// We delete diff caches that are older than a month.
+if (!building) {
+	startCachePruning();
 }
 
 /** @type {import('@sveltejs/kit').Handle} */

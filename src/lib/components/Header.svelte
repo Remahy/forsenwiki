@@ -65,11 +65,7 @@
 		<div class="mt-auto flex items-end">
 			<div class="flex">
 				{#if page.data.session?.user}
-					<Button
-						onclick={toggleUploadModal}
-						class="suggestion-box mr-4 p-2!"
-						title="Upload content"
-					>
+					<Button onclick={toggleUploadModal} class="mr-4 p-2!" title="Upload content">
 						<UploadIcon size="18" />
 					</Button>
 

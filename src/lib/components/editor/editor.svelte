@@ -1,122 +1,40 @@
 <script>
-	import './Article.css';
+	import { onDestroy } from 'svelte';
 
-	import { getAllContexts, getContext, onDestroy, onMount } from 'svelte';
-	import { buildEditorFromExtensions, configExtension } from '@lexical/extension';
-
-	import { instantiateProvider } from '$lib/yjs/providerFactory';
-	import { CollaborationExtension } from '$lib/yjs/CollaborationExtension';
-	import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
-	import { setEditor } from './context';
-	import { SvelteDecoratorsExtension } from './core/registerSvelteDecorators.svelte';
-	import EditorModal from '../EditorModal.svelte';
-	import Toolbar from './toolbar/index.svelte';
-	import TreeviewWrapper from './toolbar/TreeviewWrapper.svelte';
-	import MobileToolbar from './toolbar/MobileToolbar.svelte';
-	import Footer from './footer/index.svelte';
-	import { articleExtension, editableTheme } from './config/article';
-	import { editorExtension } from './config/editor';
-	import { ImageExtension } from './plugins/Image/ImageExtension';
-	import ImageFixerModalButton from './ImageFixer/index.svelte';
-	import { editorGlobals } from './editorGlobals.svelte';
+	import { openArticleDoc } from '$lib/y/openArticleDoc';
+	import Spinner from '../Spinner.svelte';
+	import EditorContent from './EditorContent.svelte';
 
 	/**
 	 * @typedef {Object} Props
 	 * @property {any} id
 	 * @property {any} update
+	 * @property {string | null} [title]
 	 * @property {any} [initialUpdate]
 	 */
 
 	/** @type {Props} */
-	let { id, update, initialUpdate = null } = $props();
+	let { id, update, title = null, initialUpdate = null } = $props();
 
-	/** @type {Map<string, YDoc>} */
-	const docMap = new Map();
+	// The doc must be created from its stored state (yjs/yjs#824), so it loads before the editor.
 	// svelte-ignore state_referenced_locally
-	const provider = instantiateProvider(update, initialUpdate)(id, docMap);
+	const opening = openArticleDoc({ id, title, update, initialUpdate });
 
-	// svelte-ignore state_referenced_locally
-	const editor = buildEditorFromExtensions(
-		articleExtension(editableTheme, EDITOR_IS_EDITABLE, null),
-		editorExtension,
-		configExtension(ImageExtension, { articleId: id }),
-		configExtension(SvelteDecoratorsExtension, { context: getAllContexts() }),
-		configExtension(CollaborationExtension, { id, provider, docMap })
-	);
-	setEditor(editor);
-
-	onDestroy(() => editor.dispose());
-
-	/** @type {HTMLDivElement} */
-	let rootElement;
-
-	let isEditable = $state(editor.isEditable());
-
-	onMount(() => {
-		editor.setRootElement(rootElement);
-		const unregisterEditableListener = editor.registerEditableListener((editable) => {
-			isEditable = editable;
-		});
-
-		return () => {
-			unregisterEditableListener();
-			editor.setRootElement(null);
-		};
-	});
-
-	$effect(() => {
-		getContext('COMPOSER').set({ getEditor: () => editor });
-		editorGlobals.articleId = id;
-	});
-
-	// This reloads pages when we leave editor.
-	onMount(() => {
-		return () => {
-			window.location.reload();
-		};
+	onDestroy(() => {
+		opening.then((article) => article.destroy());
 	});
 </script>
 
-<div class="relative flex min-h-96 gap-4">
-	<div class="min-w-0 flex-1">
-		<div class="editor-border sticky top-0 z-40 hidden w-full xl:block">
-			<div class="flex flex-wrap items-center gap-2 px-2">
-				<Toolbar />
-			</div>
-		</div>
-
-		<div class="overflow-hidden">
-			<article class="editor-border box flex min-h-96 grow flex-col">
-				<div class="prose dark:prose-invert relative flex max-w-[unset] grow">
-					<div
-						bind:this={rootElement}
-						class="editor-shell m-0 grow overflow-hidden border-0 p-4 outline-0"
-						contenteditable={isEditable}
-						role="textbox"
-						spellcheck="true"
-						aria-readonly={isEditable ? undefined : true}
-					></div>
-				</div>
-			</article>
-		</div>
-
-		<div class="editor-border sticky bottom-0 z-40 block w-full xl:hidden">
-			<div class="flex flex-wrap items-center gap-2 px-2 text-sm">
-				<MobileToolbar />
-			</div>
-		</div>
-
-		<div class="editor-border sticky bottom-0 hidden w-full border-t-0 p-2 xl:block">
-			<Footer />
-		</div>
+{#await opening}
+	<div class="editor-border box flex min-h-96 items-center justify-center gap-2">
+		<Spinner />
+		<span>Loading the editor...</span>
 	</div>
-
-	<div
-		class="editor-border sticky top-0 hidden h-fit max-h-screen shrink-0 flex-col self-start xl:flex xl:w-96 xl:min-w-96"
-	>
-		<TreeviewWrapper />
+{:then article}
+	<EditorContent {id} {article} />
+{:catch error}
+	<div class="editor-border bg-red-300! p-2 font-bold dark:text-black" role="alert">
+		The editor could not load this article's local draft ({error?.message ?? error}). Reload the
+		page, or reset the draft cache below.
 	</div>
-</div>
-
-<EditorModal />
-<ImageFixerModalButton />
+{/await}

@@ -42,7 +42,6 @@ import {
 
 export type Subtitle = { id: string; title: string; src: string; language: string };
 
-/** The label shown for a subtitle track, e.g. "Commentary (English)". */
 const getSubtitleLabel = ({ title, language }: Pick<Subtitle, 'title' | 'language'>) =>
 	`${title} (${bcp47.find((l) => l.lang === language)?.label})`;
 
@@ -437,7 +436,6 @@ function generateCDNSrc(node: VideoEmbedNode, staticURL: string) {
 	return { element };
 }
 
-/** Exported sizes are a number or `inherit`. */
 const toVideoSize = (value: string | null): number | 'inherit' => {
 	const size = Number(value);
 
@@ -657,6 +655,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 
 	static importDOM(): DOMConversionMap | null {
 		return {
+			// YouTube, Twitch
 			iframe: (domNode: HTMLElement) => {
 				if (
 					!domNode.hasAttribute('data-lexical-youtube') &&
@@ -667,7 +666,7 @@ export class VideoEmbedNode extends DecoratorBlockNode {
 
 				return { conversion: $convertVideoElement, priority: 1 };
 			},
-			// Uploaded videos are exported as <video>, see generateCDNSrc.
+			// Internal
 			video: (domNode: HTMLElement) => {
 				if (!domNode.hasAttribute('data-lexical-usercontent')) {
 					return null;

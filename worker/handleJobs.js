@@ -1,7 +1,6 @@
 import { isMainThread, parentPort } from 'node:worker_threads';
 
 /**
- * Runs `fn` for every job sent by `createKeepAliveWorker` (src/lib/worker/keepAliveWorker.js).
  * Does nothing when imported outside a worker, e.g. in dev mode.
  * @param {(data: any) => unknown} fn
  */

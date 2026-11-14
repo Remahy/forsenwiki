@@ -26,6 +26,7 @@
 	import UploadingContentModal from '$lib/components/UploadingContentModal.svelte';
 	import { resetUploadingContentModalGlobals } from '$lib/components/uploadingContentModalGlobals.svelte';
 	import { runValidations } from '$lib/components/editor/validations';
+	import { editorGlobals } from '$lib/components/editor/editorGlobals.svelte';
 	import Satire from '$lib/components/Disclaimer/Satire.svelte';
 	import NSFW from '$lib/components/Disclaimer/NSFW.svelte';
 
@@ -50,7 +51,7 @@
 	const c = getContext('COMPOSER');
 	let composer = $derived($c);
 	let editor = $derived(composer?.getEditor?.());
-	let canEdit = $derived(editor?.isEditable());
+	let canEdit = $derived(!!editor && editorGlobals.isEditable);
 
 	const y = getContext('YDOC');
 	let yjsDocMap = $derived($y);
@@ -181,6 +182,7 @@
 
 			await reset(false);
 
+			// eslint-disable-next-line svelte/no-navigation-without-resolve
 			goto(`${resolve('/w/[title]', { title })}${stringSearchParams}`);
 		} else if (res.status >= 400) {
 			const json = await res.json();
@@ -280,7 +282,7 @@
 	{/if}
 
 	{#if browser}
-		<Editor {update} {id} />
+		<Editor {update} {id} {title} />
 	{/if}
 
 	{#if error}
