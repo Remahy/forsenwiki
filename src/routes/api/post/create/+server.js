@@ -54,6 +54,7 @@ export async function POST({ request, locals }) {
 		? [...new Set(disclaimerRawTags.filter((tag) => AVAILABLE_DISCLAIMER_TAGS.includes(tag)))]
 		: [];
 
+	// TODO: Support bio.
 	// let type = AVAILABLE_Y_POST_TYPES.includes(rawType) ? rawType : Y_POST_TYPES.ARTICLE;
 	const type = Y_POST_TYPES.ARTICLE;
 	// @ts-ignore

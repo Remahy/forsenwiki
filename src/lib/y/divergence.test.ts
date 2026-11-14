@@ -1,4 +1,3 @@
-// Records current behaviour: the "garbles" and "loses" cases are not wanted.
 import { expect, test } from 'vitest';
 import { $createTextNode, $getRoot, $isElementNode } from 'lexical';
 import { $createListItemNode, $createListNode } from '@lexical/list';

@@ -18,8 +18,7 @@ const config = () => articleExtension(null, EDITOR_IS_READONLY, null);
 const IGNORED_FIELDS = new Set(['$', 'direction', 'children']);
 
 /**
- * The two editors store these differently: nothing as `null`, `undefined` or `''`, a number as a
- * string, no column width as `''` or `0`.
+ * nothing as `null`, `undefined` or `''`, a number as a string, no column width as `''` or `0`.
  * @param {string} key
  * @param {unknown} value
  * @returns {unknown}

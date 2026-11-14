@@ -207,7 +207,7 @@ export const compareVersions = async ({
 	});
 
 /**
- * @param {{ rows: import('$lib/lexical/diff/helpers').DiffRow[] }} data As many as are shown at once: nothing here limits the time.
+ * @param {{ rows: import('$lib/lexical/diff/helpers').DiffRow[] }} data
  * @returns {Promise<Array<{ columns: string[], start?: { older: number, newer: number } }>>}
  */
 export const renderRows = async ({ rows }) => {

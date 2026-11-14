@@ -13,7 +13,7 @@ import {
 } from './utils';
 
 /**
- * Never apply stored bytes to a doc: only `createYDoc` integrates all of them (yjs/yjs#824).
+ * Never apply stored bytes to a doc, only `createYDoc` integrates all of them (yjs/yjs#824).
  * @param {Uint8Array[]} updates V1 updates.
  */
 const load = (updates) =>
