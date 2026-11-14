@@ -23,6 +23,23 @@ export const rowsForHistory = (rows, index) => {
 	return { format, rows: rows.slice(0, index + 1).filter((row) => row.format === format) };
 };
 
+/**
+ * @template {FormattedRow & { content: string }} T
+ * @param {T[]} rows
+ */
+export const readableRows = (rows) => {
+	const current = currentRows(rows);
+	const format = current.length ? LEXICAL_Y : YJS13;
+
+	return {
+		format,
+		rows: current.length ? current : rows.filter((row) => row.format === YJS13 && row.content),
+	};
+};
+
+export const NOT_CONVERTED_MESSAGE =
+	"This article has not been moved to the new editor yet, so it can't be edited. It can still be read.";
+
 export const NOT_COMPARABLE_MESSAGE = 'This version is too old to be compared.';
 
 /**

@@ -5,7 +5,7 @@ import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 import { readYPostUpdatesByTitle } from '$lib/db/post/read';
 import initialUpdate from '$lib/worker/initialUpdate';
 import { isLegacyUpdate, seedState } from '$lib/y/headless';
-import { LEXICAL_Y, YJS13 } from '$lib/y/rows';
+import { LEXICAL_Y, NOT_CONVERTED_MESSAGE, YJS13 } from '$lib/y/rows';
 import { $paragraph, $write, config, edited, legacyEdit, read } from '$lib/yjs/legacy.fixtures';
 import { convertLegacyUpdate } from '$lib/yjs/migrateLegacy';
 import { POST } from './+server';
@@ -80,4 +80,17 @@ test('only drafts of the Yjs 13 editor are taken', async () => {
 	await expect(
 		migrate({ title: 'article', content: uint8ArrayToBase64(current) })
 	).rejects.toMatchObject({ status: 400 });
+});
+
+test('a draft of an article that is not converted is refused with the reason, and kept', async () => {
+	vi.mocked(readYPostUpdatesByTitle).mockResolvedValue({
+		postUpdates: [
+			{ format: YJS13, content: uint8ArrayToBase64(firstRow) },
+			{ format: YJS13, content: uint8ArrayToBase64(legacy) },
+		],
+	} as never);
+
+	await expect(
+		migrate({ title: 'article', content: uint8ArrayToBase64(legacy) })
+	).rejects.toMatchObject({ status: 503, body: { message: NOT_CONVERTED_MESSAGE } });
 });

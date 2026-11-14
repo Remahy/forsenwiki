@@ -6,7 +6,7 @@ import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { readYPostUpdatesByTitle } from '$lib/db/post/read';
 import initialUpdate from '$lib/worker/initialUpdate';
 import { isLegacyUpdate } from '$lib/y/headless';
-import { currentRows, YJS13 } from '$lib/y/rows';
+import { currentRows, NOT_CONVERTED_MESSAGE, YJS13 } from '$lib/y/rows';
 import { migrateLegacyChanges } from '$lib/yjs/migrateLegacy';
 import { mergePostUpdatesV2, postUpdatesToUint8Arr } from '$lib/yjs/utils';
 
@@ -34,8 +34,8 @@ export async function _migrateLegacyDraft(title, legacyUpdate) {
 	const [seed] = currentRows(post.postUpdates);
 
 	if (!seed) {
-		// Not converted to @lexical/y yet, see scripts/convertPostsToLexicalY.js.
-		error(503);
+		// See scripts/convertPostsToLexicalY.js.
+		error(503, NOT_CONVERTED_MESSAGE);
 	}
 
 	const legacyRows = post.postUpdates.filter(({ format, content }) => format === YJS13 && content);

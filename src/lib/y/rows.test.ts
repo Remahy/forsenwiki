@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 
-import { canDiff, currentRows, LEXICAL_Y, rowsForHistory, YJS13 } from './rows';
+import { canDiff, currentRows, LEXICAL_Y, readableRows, rowsForHistory, YJS13 } from './rows';
 
 const rows = [
 	{ id: 'a', format: YJS13 },
@@ -29,4 +29,12 @@ test('only @lexical/y versions can be compared', () => {
 	expect(canDiff(rows[1], rows[2])).toBe(false);
 	expect(canDiff(rows[0], rows[1])).toBe(false);
 	expect(canDiff(rows[3], undefined)).toBe(false);
+});
+
+test('an article is read from its @lexical/y rows, or from its Yjs 13 rows while it has none', () => {
+	const stored = rows.map((row) => ({ ...row, content: row.id }));
+
+	expect(readableRows(stored)).toEqual({ format: LEXICAL_Y, rows: stored.slice(2) });
+	expect(readableRows(stored.slice(0, 2))).toEqual({ format: YJS13, rows: stored.slice(0, 2) });
+	expect(readableRows([{ format: YJS13, content: '' }])).toEqual({ format: YJS13, rows: [] });
 });

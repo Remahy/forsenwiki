@@ -1,7 +1,7 @@
 import { json, error } from '@sveltejs/kit';
 import { readYPostsByIds, readYPostByTitle, readYPostUpdatesByTitle } from '$lib/db/post/read';
 import { yPostUpdatesV2ToBase64 } from '$lib/y/utils';
-import { currentRows } from '$lib/y/rows';
+import { LEXICAL_Y, NOT_CONVERTED_MESSAGE, readableRows } from '$lib/y/rows';
 import { upsertHTML } from '$lib/db/post/html';
 import { updateToHTML } from '$lib/lexical/updateToHTML';
 import { replacer } from '$lib/utils/json';
@@ -11,7 +11,7 @@ import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
  * @param {string} title
  * @throws {number}
  */
-export const _getYPostByTitle = async (title) => {
+const readArticle = async (title) => {
 	const post = await readYPostUpdatesByTitle(title);
 
 	if (!post) {
@@ -21,23 +21,29 @@ export const _getYPostByTitle = async (title) => {
 	// Important: We're destructuring away postUpdates to make sure we don't return it.
 	const { postUpdates, ..._post } = post;
 
-	const rows = currentRows(postUpdates);
+	const { format, rows } = readableRows(postUpdates);
 
-	if (postUpdates.some(({ content }) => content) && !rows.length) {
-		// Not converted to @lexical/y yet, see scripts/convertPostsToLexicalY.js.
-		throw 503;
-	}
-
-	const originalAuthorId = postUpdates[0].metadata.userId;
-
-	if (!rows.length) {
+	return {
+		post: { ..._post, originalAuthorId: postUpdates[0].metadata.userId },
+		format,
 		// System posts have no content.
-		return { ..._post, update: null, originalAuthorId };
+		update: rows.length ? yPostUpdatesV2ToBase64(rows) : null,
+	};
+};
+
+/**
+ * @param {string} title
+ * @throws {number}
+ */
+export const _getYPostByTitle = async (title) => {
+	const { post, format, update } = await readArticle(title);
+
+	if (update && format !== LEXICAL_Y) {
+		// See scripts/convertPostsToLexicalY.js.
+		error(503, NOT_CONVERTED_MESSAGE);
 	}
 
-	const base64String = yPostUpdatesV2ToBase64(rows);
-
-	return { ..._post, update: base64String, originalAuthorId };
+	return { ...post, update };
 };
 
 /**
@@ -76,13 +82,13 @@ export const _getYPostHTML = async (title, shouldCacheBust) => {
 		throw err;
 	}
 
-	const { post, update } = await _getYPostUpdate(title);
+	const { post, format, update } = await readArticle(title);
 
 	if (!update) {
 		return { post, html: null, text: null, image: null };
 	}
 
-	const { html, text, image } = await updateToHTML(update);
+	const { html, text, image } = await updateToHTML(update, format);
 
 	Promise.resolve(upsertHTML(post.id, { content: html, text, image }));
 
