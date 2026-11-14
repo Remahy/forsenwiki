@@ -2,10 +2,13 @@
 	import { FileIcon, HistoryIcon } from '@lucide/svelte';
 	import { page } from '$app/stores';
 
+	import { readPostHistoryDiffPage } from '$lib/api/posts';
+
 	import '$lib/components/editor/Article.css';
 	import '$lib/components/editor/Diff.css';
 
 	import Container from '$lib/components/Container.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import Box from '$lib/components/Box.svelte';
 	import Article from '$lib/components/Article.svelte';
@@ -22,10 +25,12 @@
 		fromDate,
 		fromAuthor,
 		authors,
-		changes,
+		toPostUpdateId,
+		fromPostUpdateId,
+		changes: firstChanges,
+		pages,
+		total,
 		partial,
-		omitted,
-		large,
 		view,
 		attributed,
 		html,
@@ -39,6 +44,40 @@
 			{ date: toDate, author: toAuthor },
 		].sort((a, b) => a.date.getTime() - b.date.getTime())
 	);
+
+	/** @type {{ firstPage: typeof firstChanges, changes: typeof firstChanges, loading: boolean, failed: boolean }} */
+	let later = $state.raw({ firstPage: [], changes: [], loading: false, failed: false });
+
+	const more = $derived(later.firstPage === firstChanges ? later.changes : []);
+	const changes = $derived([...firstChanges, ...more]);
+
+	const loadMore = async () => {
+		const firstPage = firstChanges;
+		const page = Math.ceil(changes.length / firstChanges.length);
+
+		later = { firstPage, changes: more, loading: true, failed: false };
+
+		try {
+			const response = await readPostHistoryDiffPage({
+				postTitle: title,
+				toPostUpdateId,
+				fromPostUpdateId,
+				page,
+			});
+
+			if (!response.ok) {
+				throw new Error(response.statusText);
+			}
+
+			const loaded = await response.json();
+
+			if (firstPage === firstChanges) {
+				later = { firstPage, changes: [...more, ...loaded.changes], loading: false, failed: false };
+			}
+		} catch {
+			later = { firstPage, changes: more, loading: false, failed: true };
+		}
+	};
 
 	const CHANGE_LABELS = { insert: 'Added', delete: 'Deleted', change: 'Modified' };
 
@@ -165,27 +204,15 @@
 				</p>
 			</div>
 
-			{#if partial || omitted || !attributed}
+			{#if partial || !attributed}
 				<Box class="flex flex-col gap-4 bg-yellow-300/75! p-4 text-black">
 					{#if partial}
-						<p class="text-sm" role="note">
-							These versions differ too much to compare in detail in time.
-						</p>
+						<p class="text-sm" role="note">These versions differ too much to compare in detail.</p>
 					{/if}
 
-					{#if omitted}
+					{#if !attributed}
 						<p class="text-sm" role="note">
-							{omitted.toLocaleString()} changed blocks are left out after the last one below.
-						</p>
-					{/if}
-
-					{#if !attributed && large}
-						<p class="text-sm" role="note">
-							This article is too large to work out who made each change across several versions.
-						</p>
-					{:else if !attributed}
-						<p class="text-sm" role="note">
-							Who made each change could not be worked out in time. Reload the page to try again.
+							Who made each change could not be worked out. Reload the page to try again.
 						</p>
 					{/if}
 				</Box>
@@ -225,6 +252,24 @@
 						<i class="col-span-2">No visible changes.</i>
 					{/each}
 				</div>
+
+				{#if pages > 1}
+					<div class="mt-4 flex flex-wrap items-center gap-4 text-sm">
+						<span>
+							Showing {changes.length.toLocaleString()} of {total.toLocaleString()} changed blocks.
+						</span>
+
+						{#if changes.length < total}
+							<Button onclick={loadMore} disabled={later.loading}>
+								{later.loading ? 'Loading…' : 'Show more'}
+							</Button>
+						{/if}
+
+						{#if later.failed}
+							<span role="alert">The next changes could not be loaded. Try again.</span>
+						{/if}
+					</div>
+				{/if}
 			</Box>
 		</section>
 

@@ -139,7 +139,33 @@ model YPostUpdate {
   metadata   YPostUpdateMetadata @relation(fields: [metadataId], references: [id], onDelete: Cascade)
   metadataId String              @unique
 
+  stateCache      YPostUpdateStateCache?
+  olderDiffCaches YPostDiffPageCache[]   @relation("olderDiffPages")
+  newerDiffCaches YPostDiffPageCache[]   @relation("newerDiffPages")
+
   createdTimestamp DateTime @default(now())
+}
+
+model YPostUpdateStateCache {
+  postUpdate   YPostUpdate @relation(fields: [postUpdateId], references: [id], onDelete: Cascade)
+  postUpdateId String      @id
+
+  madeBy  String /// App version hash.
+  content Bytes /// Gzipped JSON.
+}
+
+/// Can be cleared.
+model YPostDiffPageCache {
+  older   YPostUpdate @relation("olderDiffPages", fields: [olderId], references: [id], onDelete: Cascade)
+  olderId String
+  newer   YPostUpdate @relation("newerDiffPages", fields: [newerId], references: [id], onDelete: Cascade)
+  newerId String
+  page    Int
+
+  madeBy  String /// App version hash.
+  content Bytes /// Gzipped JSON.
+
+  @@id([olderId, newerId, page])
 }
 
 model YPostUpdateMetadata {

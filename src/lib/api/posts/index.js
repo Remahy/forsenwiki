@@ -58,3 +58,18 @@ export const updatePost = async ({ postTitle, yDoc, newTitle, disclaimerTags }) 
 export const readPost = ({ postTitle }) => {
 	return fetch(`/api/post/read/${postTitle}`, { headers });
 };
+
+/**
+ * A later page of the changed blocks between two versions.
+ * @param {object} Arg
+ * @param {string} Arg.postTitle
+ * @param {string} Arg.toPostUpdateId
+ * @param {string} Arg.fromPostUpdateId
+ * @param {number} Arg.page
+ */
+export const readPostHistoryDiffPage = ({ postTitle, toPostUpdateId, fromPostUpdateId, page }) => {
+	return fetch(
+		`/api/post/read/${postTitle}/history/${toPostUpdateId}-${fromPostUpdateId}?page=${page}`,
+		{ headers }
+	);
+};

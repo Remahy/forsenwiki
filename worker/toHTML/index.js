@@ -186,25 +186,19 @@ const renderDiffColumn = async (rows, column) => {
 
 const DIFF_VIEWS = { split: diffSplit, combined: diffCombined };
 
-const RENDER_BATCH = 100;
-
 /**
- * @param {{ older: string, newer: string, view: keyof typeof DIFF_VIEWS, timeout?: number, deadline: number, author?: Author, blocks?: Record<string, Author>, removed?: Record<string, Author> }} data
- * `deadline` is a `Date.now()` time: this runs on another thread, with its own `performance.now()`.
+ * @param {{ older: string, newer: string, view: keyof typeof DIFF_VIEWS, timeout?: number, author?: Author, blocks?: Record<string, Author>, removed?: Record<string, Author> }} data
  */
-export const renderDiff = async ({
+export const compareVersions = async ({
 	older,
 	newer,
 	view,
 	timeout,
-	deadline,
 	author,
 	blocks = {},
 	removed = {},
-}) => {
-	const getView = DIFF_VIEWS[view];
-
-	const { rows, partial } = getView(JSON.parse(older), JSON.parse(newer), {
+}) =>
+	DIFF_VIEWS[view](JSON.parse(older), JSON.parse(newer), {
 		timeout,
 		attribute: (ids) =>
 			author ??
@@ -212,29 +206,27 @@ export const renderDiff = async ({
 			(ids.older !== undefined ? (removed[ids.older] ?? blocks[ids.older]) : undefined),
 	});
 
-	/** @type {Array<{ columns: string[], start?: { older: number, newer: number } }>} */
-	const changes = [];
-
-	while (changes.length < rows.length && (!changes.length || Date.now() < deadline)) {
-		const batch = rows.slice(changes.length, changes.length + RENDER_BATCH);
-
-		const columns = await Promise.all(
-			batch[0].columns.map((_column, index) => renderDiffColumn(batch, index))
-		);
-
-		changes.push(
-			...batch.map((row, index) => ({
-				columns: columns.map((column) => column[index]),
-				start: row.start,
-			}))
-		);
+/**
+ * @param {{ rows: import('$lib/lexical/diff/helpers').DiffRow[] }} data As many as are shown at once: nothing here limits the time.
+ * @returns {Promise<Array<{ columns: string[], start?: { older: number, newer: number } }>>}
+ */
+export const renderRows = async ({ rows }) => {
+	if (!rows.length) {
+		return [];
 	}
 
-	return { changes, partial, omitted: rows.length - changes.length };
+	const columns = await Promise.all(
+		rows[0].columns.map((_column, index) => renderDiffColumn(rows, index))
+	);
+
+	return rows.map((row, index) => ({
+		columns: columns.map((column) => column[index]),
+		start: row.start,
+	}));
 };
 
 /**
- * @param {{ job: 'version', update: string, html?: boolean } | { job: 'diff', older: string, newer: string, view: 'split' | 'combined', timeout?: number, deadline: number } | { job?: undefined, config: string, update?: string, content?: string, format?: import('$lib/y/rows').YPostUpdateFormat }} data
+ * @param {{ job: 'version', update: string, html?: boolean } | ({ job: 'compare' } & Parameters<typeof compareVersions>[0]) | ({ job: 'render' } & Parameters<typeof renderRows>[0]) | { job?: undefined, config: string, update?: string, content?: string, format?: import('$lib/y/rows').YPostUpdateFormat }} data
  * @returns {Promise<any>}
  */
 export const toHTMLWorker = async (data) => {
@@ -242,8 +234,12 @@ export const toHTMLWorker = async (data) => {
 		return readVersion(data);
 	}
 
-	if (data.job === 'diff') {
-		return renderDiff(data);
+	if (data.job === 'compare') {
+		return compareVersions(data);
+	}
+
+	if (data.job === 'render') {
+		return renderRows(data);
 	}
 
 	const { config, content, update, format } = data;

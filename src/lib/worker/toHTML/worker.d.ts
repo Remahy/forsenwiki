@@ -13,17 +13,18 @@ export function readVersion(data: { update: string; html?: boolean }): Promise<{
 	article: { html: string; text: string; image?: string } | null;
 }>;
 
-export function renderDiff(data: {
+type DiffRow = import('$lib/lexical/diff/helpers').DiffRow;
+
+export function compareVersions(data: {
 	older: string;
 	newer: string;
 	view: 'split' | 'combined';
 	timeout?: number;
-	deadline: number;
 	author?: Author;
 	blocks?: Record<string, Author>;
 	removed?: Record<string, Author>;
-}): Promise<{
-	changes: Array<{ columns: string[]; start?: { older: number; newer: number } }>;
-	partial: boolean;
-	omitted: number;
-}>;
+}): Promise<{ rows: DiffRow[]; partial: boolean }>;
+
+export function renderRows(data: {
+	rows: DiffRow[];
+}): Promise<Array<{ columns: string[]; start?: { older: number; newer: number } }>>;

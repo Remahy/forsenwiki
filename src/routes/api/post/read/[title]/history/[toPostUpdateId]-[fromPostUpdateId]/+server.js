@@ -1,6 +1,6 @@
 import { error, json } from '@sveltejs/kit';
 
-import { diffVersions } from '$lib/diff/index.server';
+import { diffPage, diffVersions } from '$lib/diff/index.server';
 import { readHTMLForYPost, readYPostUpdatesWithIdByTitle } from '$lib/db/post/read';
 import { readAuthorForYPostUpdate, readUserNamesByIds } from '$lib/db/metadata/read';
 import { replacer } from '$lib/utils/json';
@@ -59,11 +59,7 @@ export async function _getYPostUpdateIds(title, toPostUpdateId, _fromPostUpdateI
  * @param {string} _toPostUpdateId
  * @param {string} _fromPostUpdateId
  */
-export async function _getToYPostUpdateFromYPostUpdateByTitle(
-	title,
-	_toPostUpdateId,
-	_fromPostUpdateId
-) {
+const comparedVersions = async (title, _toPostUpdateId, _fromPostUpdateId) => {
 	const { res, toPostUpdateId, toPostUpdateIdIndex, fromPostUpdateId, fromPostUpdateIdIndex } =
 		await _getYPostUpdateIds(title, _toPostUpdateId, _fromPostUpdateId);
 
@@ -71,15 +67,64 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		throw 404;
 	}
 
-	const { createdTimestamp: toDate } = res.postUpdates[toPostUpdateIdIndex];
-	const { createdTimestamp: fromDate } = res.postUpdates[fromPostUpdateIdIndex];
-
 	const rows = currentRows(res.postUpdates);
 	const indexes = [fromPostUpdateId, toPostUpdateId].map((postUpdateId) =>
 		rows.findIndex(({ id }) => id === postUpdateId)
 	);
-	const olderIndex = Math.min(...indexes);
-	const newerIndex = Math.max(...indexes);
+
+	return {
+		res,
+		toPostUpdateId,
+		toPostUpdateIdIndex,
+		fromPostUpdateId,
+		fromPostUpdateIdIndex,
+		rows,
+		olderIndex: Math.min(...indexes),
+		newerIndex: Math.max(...indexes),
+	};
+};
+
+/**
+ * @param {string} title
+ * @param {string} toPostUpdateId
+ * @param {string} fromPostUpdateId
+ * @param {number} page
+ */
+export async function _getDiffPage(title, toPostUpdateId, fromPostUpdateId, page) {
+	const { rows, olderIndex, newerIndex } = await comparedVersions(
+		title,
+		toPostUpdateId,
+		fromPostUpdateId
+	);
+
+	const { changes, pages } = await diffPage(rows, olderIndex, newerIndex, page);
+
+	return { changes, page, pages };
+}
+
+/**
+ * @param {string} title
+ * @param {string} _toPostUpdateId
+ * @param {string} _fromPostUpdateId
+ */
+export async function _getToYPostUpdateFromYPostUpdateByTitle(
+	title,
+	_toPostUpdateId,
+	_fromPostUpdateId
+) {
+	const {
+		res,
+		toPostUpdateId,
+		toPostUpdateIdIndex,
+		fromPostUpdateId,
+		fromPostUpdateIdIndex,
+		rows,
+		olderIndex,
+		newerIndex,
+	} = await comparedVersions(title, _toPostUpdateId, _fromPostUpdateId);
+
+	const { createdTimestamp: toDate } = res.postUpdates[toPostUpdateIdIndex];
+	const { createdTimestamp: fromDate } = res.postUpdates[fromPostUpdateIdIndex];
 
 	const authorIds = rows
 		.slice(olderIndex + 1, newerIndex + 1)
@@ -109,10 +154,10 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		fromAuthor,
 		authors,
 		changes: diff.changes,
+		pages: diff.pages,
+		total: diff.total,
 		partial: diff.partial,
-		omitted: diff.omitted,
 		view: diff.view,
-		large: diff.large,
 		attributed: diff.attributed,
 		html: diff.article,
 		post: {
@@ -123,16 +168,19 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 	};
 }
 
-export async function GET({ params }) {
+export async function GET({ params, url }) {
 	const { title: rawTitle, fromPostUpdateId, toPostUpdateId } = params;
 	const { sanitized: title } = sanitizeTitle(rawTitle);
+	const page = Number(url.searchParams.get('page') ?? 0);
+
+	if (!Number.isInteger(page) || page < 0) {
+		return error(400);
+	}
 
 	try {
-		const res = await _getToYPostUpdateFromYPostUpdateByTitle(
-			title,
-			toPostUpdateId,
-			fromPostUpdateId
-		);
+		const res = page
+			? await _getDiffPage(title, toPostUpdateId, fromPostUpdateId, page)
+			: await _getToYPostUpdateFromYPostUpdateByTitle(title, toPostUpdateId, fromPostUpdateId);
 
 		const safeJSON = JSON.parse(JSON.stringify(res, replacer));
 

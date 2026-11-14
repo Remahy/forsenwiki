@@ -12,17 +12,42 @@ import { blockIdOf } from '$lib/lexical/diff/helpers';
 import { diffSplit } from '$lib/lexical/diff/split';
 import type { SerializedNode, SerializedState } from '$lib/lexical/patchEditorState';
 import { getYAndEditor, readState, seedState } from '$lib/y/headless';
-import { DIFF_BUDGET, diffVersions, type VersionRow } from './index.server';
+import type { PageRow, StateRow } from './fakePrisma';
+import { DIFF_BUDGET, PAGE_ROWS } from './constants';
+import { diffPage, diffVersions, type VersionRow } from './index.server';
+
+const stored = vi.hoisted(() => ({
+	stateRows: new Map<string, StateRow>(),
+	pageRows: new Map<string, PageRow>(),
+	readVersion: vi.fn(),
+}));
 
 vi.mock('$lib/worker/toHTML', async () => {
 	const worker = await import('../../../worker/toHTML/index.js');
 
 	return {
 		default: vi.fn(worker.toHTMLWorker),
-		readVersion: vi.fn(worker.readVersion),
-		renderDiff: vi.fn(worker.renderDiff),
+		readVersion: stored.readVersion.mockImplementation(worker.readVersion),
+		compareVersions: vi.fn(worker.compareVersions),
+		renderRows: vi.fn(worker.renderRows),
 	};
 });
+
+vi.mock('$lib/prisma.server', async () => ({
+	default: (await import('./fakePrisma')).fakePrisma(stored),
+}));
+vi.mock('$lib/utils/version', () => ({ version: 'this-version' }));
+
+const restarted = async (...stays: VersionRow[]) => {
+	await vi.waitFor(() => {
+		expect(stays.every(({ id }) => stored.stateRows.has(id))).toBe(true);
+		expect(stays.length === 0 || stored.pageRows.has(`${stays[0].id}:${stays[1].id}:0`)).toBe(true);
+	});
+
+	vi.resetModules();
+
+	return import('./index.server');
+};
 
 const BLOCKS = 1000;
 const WORDS = ['version', 'article', 'paragraph', 'history', 'editor', 'change', 'block', 'text'];
@@ -267,14 +292,14 @@ test(
 		});
 		const range = await diffVersions(later, 0, 2);
 
-		expect(range.large).toBe(true);
-		expect(range.attributed).toBe(false);
+		expect(range.view).toBe('combined');
+		expect(range.attributed).toBe(true);
 		expect(range.changes).toHaveLength(3);
 	}
 );
 
 test(
-	'a comparison with more changed blocks than can be rendered in time leaves the rest out',
+	'a comparison with many changed blocks is loaded a page at a time',
 	{ timeout: 120_000 },
 	async () => {
 		let huge = [
@@ -293,14 +318,31 @@ test(
 
 		const first = await timed(() => diffVersions(huge, 0, 1));
 		const again = await timed(() => diffVersions(huge, 0, 1));
+		const next = await timed(() => diffPage(huge, 0, 1, 1));
 
-		report('10,000 blocks, every text changed, comparison loaded the first time', first.ms);
-		report('10,000 blocks, every text changed, comparison loaded again', again.ms, DIFF_BUDGET);
+		const after = await restarted(huge[0], huge[1]);
+		const fromStored = await timed(() => after.diffVersions(huge, 0, 1));
 
-		for (const { result } of [first, again]) {
-			expect(result.omitted).toBeGreaterThan(0);
-			expect(result.changes.length + result.omitted).toBe(BLOCKS * 10);
+		report('10,000 blocks, every text changed, first page loaded the first time', first.ms);
+		report('10,000 blocks, every text changed, first page loaded again', again.ms, CACHED_BUDGET);
+		report('10,000 blocks, every text changed, second page', next.ms, CACHED_BUDGET);
+		// Not within the cached budget.
+		report(
+			'10,000 blocks, every text changed, first page with nothing in memory',
+			fromStored.ms,
+			DIFF_BUDGET
+		);
+
+		for (const { result } of [first, again, fromStored]) {
+			expect(result.total).toBe(BLOCKS * 10);
+			expect(result.pages).toBe((BLOCKS * 10) / PAGE_ROWS);
+			expect(result.changes).toHaveLength(PAGE_ROWS);
 			expect(result.changes[0].start).toEqual({ older: 1, newer: 1 });
 		}
+
+		expect(again.result.changes).toEqual(first.result.changes);
+		expect(fromStored.result.changes).toEqual(first.result.changes);
+		expect(next.result.changes).toHaveLength(PAGE_ROWS);
+		expect(next.result.changes[0]).not.toEqual(first.result.changes[0]);
 	}
 );

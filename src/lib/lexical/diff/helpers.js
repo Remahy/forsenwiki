@@ -2,6 +2,7 @@ import { blockIdState } from '@lexical/extension';
 import { diffArrays } from 'diff';
 import { TEXT_TYPE_TO_FORMAT } from 'lexical';
 
+import { COMPARE_BUDGET } from '$lib/diff/constants';
 import { DIFF_STATE_KEY } from '$lib/y/diffState';
 import { signature } from '../patchEditorState';
 
@@ -15,7 +16,7 @@ import { signature } from '../patchEditorState';
  * @typedef {{ key: string, wrappers: Wrapper[], node: SerializedNode, text?: string }} Item
  * @typedef {{ item: Item, mark?: DiffMark, node?: SerializedNode }} Entry
  * @typedef {{ older: number, newer: number }} BlockNumbers One-based top-level block numbers.
- * @typedef {{ columns: SerializedNode[][], start?: BlockNumbers }} DiffRow One column per shown side, each with the row's blocks.
+ * @typedef {{ columns: SerializedNode[][], start?: BlockNumbers }} DiffRow One column per shown side.
  * @typedef {{ deadline: number, partial: boolean, wrappers: number }} Context
  * @typedef {{ kind: 'same', older: Item, newer: Item, fields?: DiffFields }} SameStep
  * @typedef {{ kind: 'delete', older: Item }} DeleteStep
@@ -44,8 +45,6 @@ const IGNORED_FIELDS = new Set([
 
 /** @type {Record<string, string[]>} */
 const DERIVED_FIELDS = { listitem: ['value'] };
-
-const DEFAULT_TIMEOUT = 1500;
 
 const WORDS = /\s+|[\p{L}\p{N}_]+|[^\s\p{L}\p{N}_]/gu;
 
@@ -216,7 +215,7 @@ const itemsOf = (children, context, flat, wrappers = [], items = []) => {
  * @returns {PairStep}
  */
 const comparePair = (older, newer, context) => {
-	// Also when there is no time left: an unchanged block must not be shown as a change.
+	// When there is no time left then an unchanged block shouldn't be shown as a change.
 	if (older.key === newer.key) {
 		return { kind: 'pair', older, newer, changed: false };
 	}
@@ -358,7 +357,7 @@ const anchorsOf = (older, newer) => {
 		}
 	}
 
-	// Longest increasing run of the newer positions: `ends[n]` is the last pair of the best run of n + 1.
+	// `ends[n]` is the last pair of the best run of n + 1.
 	/** @type {number[]} */
 	const ends = [];
 	/** @type {number[]} */
@@ -622,7 +621,7 @@ const diffRun = (older, newer, context) => {
  * @param {number} [timeout] In milliseconds.
  * @returns {{ steps: Step[], partial: boolean }}
  */
-export const compare = (older, newer, timeout = DEFAULT_TIMEOUT) => {
+export const compare = (older, newer, timeout = COMPARE_BUDGET) => {
 	/** @type {Context} */
 	const context = { deadline: performance.now() + timeout, partial: false, wrappers: 0 };
 
