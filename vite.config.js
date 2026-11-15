@@ -20,7 +20,7 @@ export default defineConfig({
 		exclude: ['yjs'],
 	},
 	resolve: {
-		dedupe: ['yjs'],
+		dedupe: ['yjs', '@y/y'],
 		alias: {
 			yjs: path.resolve('./node_modules/yjs/dist/yjs.mjs'),
 		},

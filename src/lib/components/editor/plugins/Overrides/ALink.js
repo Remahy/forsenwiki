@@ -3,7 +3,14 @@
  * https://github.com/facebook/lexical/blob/7150421fabb25fef65f62e18e097d0a8d4a2cde9/packages/lexical-playground/src/nodes/MentionNode.ts
  */
 
-import { $applyNodeReplacement } from 'lexical';
+import {
+	$applyNodeReplacement,
+	booleanValue,
+	nodeSchema,
+	optional,
+	stringValue,
+	withField,
+} from 'lexical';
 
 import { LinkNode } from '$lib/lexical/index';
 
@@ -12,13 +19,17 @@ import { LinkNode } from '$lib/lexical/index';
  * @typedef {import('lexical').EditorConfig} EditorConfig
  */
 
+const aLinkNodeSchema = /** @type {typeof nodeSchema<ALinkNode>} */ (nodeSchema)()({
+	isInternal: withField(booleanValue(), { field: '__isInternal' }),
+	internalId: withField(optional(stringValue()), { field: '__internalId' }),
+});
+
 export class ALinkNode extends LinkNode {
 	__isInternal = false;
 	/** @type {string | undefined} */
 	__internalId = undefined;
 
 	/**
-	 * Every argument has a default, so $config can create getType, clone and importJSON.
 	 * @param {string} [url]
 	 * @param {LinkAttributes} [attrs]
 	 * @param {boolean} [internal]
@@ -33,26 +44,7 @@ export class ALinkNode extends LinkNode {
 	}
 
 	$config() {
-		return this.config('a-link', { extends: LinkNode });
-	}
-
-	/** @param {this} prevNode */
-	afterCloneFrom(prevNode) {
-		super.afterCloneFrom(prevNode);
-
-		this.__isInternal = prevNode.__isInternal;
-		this.__internalId = prevNode.__internalId;
-	}
-
-	/** @param {import('lexical').LexicalUpdateJSON<import('@lexical/link').SerializedLinkNode & { __isInternal?: boolean, __internalId?: string }>} serializedNode */
-	updateFromJSON(serializedNode) {
-		return (
-			super
-				.updateFromJSON(serializedNode)
-				// Missing in links saved before it existed.
-				.setIsInternal(serializedNode.__isInternal ?? false)
-				.setInternalId(serializedNode.__internalId)
-		);
+		return this.config('a-link', { extends: LinkNode, json: aLinkNodeSchema });
 	}
 
 	// Getters
@@ -91,19 +83,16 @@ export class ALinkNode extends LinkNode {
 		return this;
 	}
 
-	exportJSON() {
-		return {
-			...super.exportJSON(),
-			__isInternal: this.__isInternal,
-			__internalId: this.__internalId,
-		};
-	}
-
 	/**
 	 * @param {EditorConfig} config
 	 */
 	createDOM(config) {
 		const dom = super.createDOM(config);
+
+		// Links parsed without a target open externally.
+		if (!this.getIsInternal() && !dom.getAttribute('target')) {
+			dom.setAttribute('target', '_blank');
+		}
 
 		// For internal links, we need to reload the page to make the ToC update.
 		if (!dom.getAttribute('target')) {

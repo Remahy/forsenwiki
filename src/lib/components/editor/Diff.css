@@ -1,0 +1,37 @@
+@reference "../../../app.css";
+
+.diff-old {
+	[data-diff='insert'],
+	[data-diff-info],
+	.gallery:has(.embla__viewport[data-diff='insert']) {
+		@apply hidden;
+	}
+
+	[data-diff='change'] {
+		@apply bg-transparent! outline-none!;
+	}
+}
+
+.diff-new {
+	[data-diff='delete'],
+	.gallery:has(.embla__viewport[data-diff='delete']) {
+		@apply hidden;
+	}
+}
+
+.diff-start {
+	@apply forsen-wiki-theme-border mt-6! mb-1! border-b text-sm font-bold opacity-75 first:mt-0! nth-2:mt-0!;
+}
+
+[data-diff-blank]::before,
+[data-diff-break]::before {
+	@apply opacity-50;
+}
+
+[data-diff-blank]::before {
+	content: '¶';
+}
+
+[data-diff-break]::before {
+	content: '↵';
+}

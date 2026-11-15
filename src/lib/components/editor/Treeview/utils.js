@@ -158,7 +158,6 @@ export const expandParents = (tree, item) => {
 /**
  * Checks whether nodes were added, removed or moved. Unchanged nodes are shared
  * between editor states, so only nodes that were actually edited get compared.
- *
  * @param {import('lexical').EditorState} prevEditorState
  * @param {import('lexical').EditorState} editorState
  */

@@ -5,7 +5,6 @@ import { createKeepAliveWorker } from '../keepAliveWorker';
 // @ts-ignore
 import workerPath from './worker?modulePath';
 
-// The result is cached below, so the worker only runs once and can stop right away.
 /** @type {(data: {}) => Promise<string>} */
 const run = createKeepAliveWorker(workerPath, { name: 'initialUpdate', idleTimeout: 0 });
 
@@ -27,7 +26,6 @@ export default function initialUpdate() {
 		return run({});
 	})();
 
-	// Retry next time if it failed.
 	initialUpdatePromise.catch(() => {
 		initialUpdatePromise = null;
 	});

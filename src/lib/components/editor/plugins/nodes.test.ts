@@ -14,8 +14,7 @@ import { $createLinkNode } from '@lexical/link';
 import { $createTableNode, $createTableNodeWithDimensions } from '@lexical/table';
 
 import { articleExtension } from '../config/article';
-import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { createNewYDoc, encodeYDocToUpdateV2 } from '$lib/yjs/utils';
+import { getYAndEditor } from '$lib/y/headless';
 import { $createALinkNode } from './Overrides/ALink';
 import { $createFloatBlockNode } from './FloatBlock/FloatBlock';
 import { $createGalleryNode } from './Gallery/Gallery';
@@ -79,13 +78,13 @@ test('nodes survive a JSON round trip', () => {
 	expect(json(imported)).toEqual(json(editor));
 });
 
-test('nodes survive a Yjs round trip', () => {
-	const { editor, doc } = getYjsAndEditor(config(), encodeYDocToUpdateV2(createNewYDoc()));
-	editor.update($build, { discrete: true });
+test('nodes survive a Yjs round trip', async () => {
+	const article = getYAndEditor(config());
+	article.editor.update($build, { discrete: true });
 
-	const reloaded = getYjsAndEditor(config(), encodeYDocToUpdateV2(doc)).editor;
+	const reloaded = getYAndEditor(config(), await article.encodeV2()).editor;
 
-	expect(json(reloaded)).toEqual(json(editor));
+	expect(json(reloaded)).toEqual(json(article.editor));
 });
 
 test('nodes keep their fields when cloned', () => {
@@ -111,7 +110,7 @@ test('nodes keep their fields when cloned', () => {
 	expect(json(editor)).toEqual(before);
 });
 
-test('legacy link JSON without __isInternal is external', () => {
+test('link JSON without isInternal is external', () => {
 	const editor = buildEditorFromExtensions(HeadlessExtension, config());
 	editor.update(
 		() => {
@@ -140,7 +139,7 @@ test('legacy link JSON without __isInternal is external', () => {
 	);
 
 	const link = json(editor).root.children[0] as unknown as { children: Record<string, unknown>[] };
-	expect(link.children[0]).toMatchObject({ __isInternal: false, target: '_blank' });
+	expect(link.children[0]).toMatchObject({ isInternal: false });
 });
 
 test('the extension keeps the node replacements', () => {

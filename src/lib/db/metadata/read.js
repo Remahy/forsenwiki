@@ -18,3 +18,16 @@ export async function readAuthorForYPostUpdate(postUpdateId) {
 		},
 	});
 }
+
+/**
+ * @param {string[]} userIds
+ * @returns {Promise<Record<string, string | null>>}
+ */
+export async function readUserNamesByIds(userIds) {
+	const users = await prisma.user.findMany({
+		where: { id: { in: [...new Set(userIds)] } },
+		select: { id: true, name: true },
+	});
+
+	return Object.fromEntries(users.map(({ id, name }) => [id, name]));
+}

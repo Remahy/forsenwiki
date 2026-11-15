@@ -29,10 +29,10 @@ declare global {
 
 	export type ComposerWritable = Writable<{ getEditor: () => LexicalEditor } | null>;
 
-	export type YDoc = import('yjs').Doc;
-	export type YEvent<T> = import('yjs').YEvent<T>;
+	export type YDoc = import('@lexical/y').YDoc;
+	export type LegacyYDoc = import('yjs').Doc;
 
-	export type YDOCPERSISTENCE = import('y-indexeddb').IndexeddbPersistence;
+	export type YDOCPERSISTENCE = import('./lib/y/IndexeddbPersistence').IndexeddbPersistence;
 
 	export namespace Prisma {
 		export = P;

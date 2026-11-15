@@ -38,7 +38,6 @@
 	/** @type {Record<string, { snapshot: unknown[], row: ItemInstance }>} */
 	let cache = {};
 
-	// A row keeps its identity until something it renders from changes, so Svelte only re-renders those rows.
 	const rows = $derived.by(() => {
 		/** @type {typeof cache} */
 		const next = {};

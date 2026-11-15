@@ -1,4 +1,5 @@
 <script>
+	/* eslint-disable svelte/no-navigation-without-resolve */
 	/**
 	 * @typedef {Object} Props
 	 * @property {string} href

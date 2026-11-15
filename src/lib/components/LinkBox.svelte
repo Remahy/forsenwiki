@@ -1,4 +1,5 @@
 <script>
+	/* eslint-disable svelte/no-navigation-without-resolve */
 	import Box from './Box.svelte';
 
 	/**

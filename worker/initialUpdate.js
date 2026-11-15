@@ -1,14 +1,9 @@
 import { handleJobs } from './handleJobs.js';
 
 import { $createTextNode, $getRoot, $createParagraphNode } from 'lexical';
+import { uint8ArrayToBase64 } from 'uint8array-extras';
 
-import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import {
-	encodeYDocToUpdateV2ToBase64,
-	encodeYDocToUpdateV2,
-	createNewYDoc,
-	YXmlText,
-} from '$lib/yjs/utils';
+import { seedState } from '$lib/y/headless';
 import { articleExtension } from '$lib/components/editor/config/article';
 import { EDITOR_IS_READONLY } from '$lib/constants/constants';
 
@@ -16,36 +11,16 @@ import { EDITOR_IS_READONLY } from '$lib/constants/constants';
  * @returns {string}
  */
 export const initialUpdateWorker = () => {
-	let emptyUpdate;
-	{
-		const yDoc = createNewYDoc();
-		yDoc.get('root', YXmlText);
-		emptyUpdate = encodeYDocToUpdateV2(yDoc);
-	}
+	const seed = seedState(articleExtension(null, EDITOR_IS_READONLY, null), () => {
+		const text = $createTextNode('forsen');
+		const p = $createParagraphNode();
 
-	const { doc, editor } = getYjsAndEditor(
-		articleExtension(null, EDITOR_IS_READONLY, null),
-		emptyUpdate
-	);
+		p.append(text);
 
-	editor.update(
-		() => {
-			const text = $createTextNode('forsen');
-			const p = $createParagraphNode();
-
-			p.append(text);
-
-			const root = $getRoot();
-
-			root.append(p);
-		},
-		{ discrete: true }
-	);
-
-	return editor.read(() => {
-		const encodedContent = encodeYDocToUpdateV2ToBase64(doc);
-		return encodedContent;
+		$getRoot().append(p);
 	});
+
+	return uint8ArrayToBase64(seed);
 };
 
 handleJobs(initialUpdateWorker);

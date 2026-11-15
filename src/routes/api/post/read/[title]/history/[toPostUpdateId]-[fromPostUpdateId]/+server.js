@@ -1,20 +1,11 @@
 import { error, json } from '@sveltejs/kit';
-/*
-import { buildEditorFromExtensions } from '@lexical/extension';
-import { HeadlessExtension } from '@lexical/headless';
 
-import { mergePostUpdatesV2, postUpdatesToUint8Arr } from '$lib/yjs/utils';
-import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
-import { getDiffJSON } from '$lib/diff/index.server';
-import { articleExtension } from '$lib/components/editor/config/article';
-import { diffExtension } from '$lib/components/editor/config/diff';
-import toHTML from '$lib/worker/toHTML';
-import { EDITOR_IS_READONLY } from '$lib/constants/constants';
-*/
-import { readYPostUpdatesWithIdByTitle } from '$lib/db/post/read';
-import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
+import { diffPage, diffVersions } from '$lib/diff/index.server';
+import { readHTMLForYPost, readYPostUpdatesWithIdByTitle } from '$lib/db/post/read';
+import { readAuthorForYPostUpdate, readUserNamesByIds } from '$lib/db/metadata/read';
 import { replacer } from '$lib/utils/json';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
+import { canDiff, currentRows, NOT_COMPARABLE_MESSAGE } from '$lib/y/rows';
 
 /**
  * @param {string} title
@@ -34,11 +25,13 @@ export async function _getYPostUpdateIds(title, toPostUpdateId, _fromPostUpdateI
 		throw 404;
 	}
 
+	const toPostUpdate = res.postUpdates[toPostUpdateIdIndex];
+
 	let fromPostUpdateId = _fromPostUpdateId;
 	if (!_fromPostUpdateId) {
-		const index = toPostUpdateIdIndex - 1;
+		const previous = res.postUpdates[toPostUpdateIdIndex - 1];
 
-		fromPostUpdateId = index > -1 ? res.postUpdates[index].id : null;
+		fromPostUpdateId = canDiff(toPostUpdate, previous) ? previous.id : null;
 	}
 
 	if (!fromPostUpdateId) {
@@ -51,7 +44,62 @@ export async function _getYPostUpdateIds(title, toPostUpdateId, _fromPostUpdateI
 
 	const fromPostUpdateIdIndex = res.postUpdates.findIndex(({ id }) => id === fromPostUpdateId);
 
+	if (
+		fromPostUpdateIdIndex !== -1 &&
+		!canDiff(toPostUpdate, res.postUpdates[fromPostUpdateIdIndex])
+	) {
+		error(400, NOT_COMPARABLE_MESSAGE);
+	}
+
 	return { res, toPostUpdateId, toPostUpdateIdIndex, fromPostUpdateId, fromPostUpdateIdIndex };
+}
+
+/**
+ * @param {string} title
+ * @param {string} _toPostUpdateId
+ * @param {string} _fromPostUpdateId
+ */
+const comparedVersions = async (title, _toPostUpdateId, _fromPostUpdateId) => {
+	const { res, toPostUpdateId, toPostUpdateIdIndex, fromPostUpdateId, fromPostUpdateIdIndex } =
+		await _getYPostUpdateIds(title, _toPostUpdateId, _fromPostUpdateId);
+
+	if (!fromPostUpdateId || fromPostUpdateIdIndex === undefined || fromPostUpdateIdIndex === -1) {
+		throw 404;
+	}
+
+	const rows = currentRows(res.postUpdates);
+	const indexes = [fromPostUpdateId, toPostUpdateId].map((postUpdateId) =>
+		rows.findIndex(({ id }) => id === postUpdateId)
+	);
+
+	return {
+		res,
+		toPostUpdateId,
+		toPostUpdateIdIndex,
+		fromPostUpdateId,
+		fromPostUpdateIdIndex,
+		rows,
+		olderIndex: Math.min(...indexes),
+		newerIndex: Math.max(...indexes),
+	};
+};
+
+/**
+ * @param {string} title
+ * @param {string} toPostUpdateId
+ * @param {string} fromPostUpdateId
+ * @param {number} page
+ */
+export async function _getDiffPage(title, toPostUpdateId, fromPostUpdateId, page) {
+	const { rows, olderIndex, newerIndex } = await comparedVersions(
+		title,
+		toPostUpdateId,
+		fromPostUpdateId
+	);
+
+	const { changes, pages } = await diffPage(rows, olderIndex, newerIndex, page);
+
+	return { changes, page, pages };
 }
 
 /**
@@ -64,40 +112,37 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 	_toPostUpdateId,
 	_fromPostUpdateId
 ) {
-	const { res, toPostUpdateId, toPostUpdateIdIndex, fromPostUpdateId, fromPostUpdateIdIndex } =
-		await _getYPostUpdateIds(title, _toPostUpdateId, _fromPostUpdateId);
-
-	if (!fromPostUpdateId || fromPostUpdateIdIndex === -1 || !fromPostUpdateIdIndex) {
-		throw 404;
-	}
+	const {
+		res,
+		toPostUpdateId,
+		toPostUpdateIdIndex,
+		fromPostUpdateId,
+		fromPostUpdateIdIndex,
+		rows,
+		olderIndex,
+		newerIndex,
+	} = await comparedVersions(title, _toPostUpdateId, _fromPostUpdateId);
 
 	const { createdTimestamp: toDate } = res.postUpdates[toPostUpdateIdIndex];
 	const { createdTimestamp: fromDate } = res.postUpdates[fromPostUpdateIdIndex];
 
-	/*
-	const toPostUpdates = postUpdatesToUint8Arr(res.postUpdates.slice(0, toPostUpdateIdIndex + 1));
-	const fromPostUpdates = postUpdatesToUint8Arr(
-		res.postUpdates.slice(0, fromPostUpdateIdIndex + 1)
-	);
+	const authorIds = rows
+		.slice(olderIndex + 1, newerIndex + 1)
+		.map(({ metadata }) => metadata.userId);
 
-	const updatesTo = mergePostUpdatesV2(toPostUpdates);
-	const updatesFrom = mergePostUpdatesV2(fromPostUpdates);
+	const isLive = rows[newerIndex].id === res.postUpdates.at(-1)?.id;
+	const stored = isLive ? await readHTMLForYPost(res.id) : null;
+	const article = stored && {
+		html: stored.content,
+		text: stored.text ?? '',
+		image: stored.image ?? undefined,
+	};
 
-	const { editor: tEditor } = getYjsAndEditor(
-		articleExtension(null, EDITOR_IS_READONLY, null),
-		updatesTo
-	);
-	const toUpdate = tEditor.toJSON();
-	const { editor: fEditor } = getYjsAndEditor(
-		articleExtension(null, EDITOR_IS_READONLY, null),
-		updatesFrom
-	);
-	const fromUpdate = fEditor.toJSON();
-	*/
-
-	const [toAuthor, fromAuthor] = await Promise.all([
+	const [toAuthor, fromAuthor, authors, diff] = await Promise.all([
 		readAuthorForYPostUpdate(toPostUpdateId),
 		readAuthorForYPostUpdate(fromPostUpdateId),
+		readUserNamesByIds(authorIds),
+		diffVersions(rows, olderIndex, newerIndex, { article }),
 	]);
 
 	return {
@@ -107,51 +152,35 @@ export async function _getToYPostUpdateFromYPostUpdateByTitle(
 		fromPostUpdateId,
 		fromDate,
 		fromAuthor,
-		/** @type {null | { html: string }} */
-		html: { html: 'Diffing is temporarily disabled.' },
+		authors,
+		changes: diff.changes,
+		pages: diff.pages,
+		total: diff.total,
+		partial: diff.partial,
+		view: diff.view,
+		attributed: diff.attributed,
+		html: diff.article,
 		post: {
 			title: res.title,
 			rawTitle: res.rawTitle,
 			outRelations: res.outRelations,
 		},
 	};
-
-	/*
-	const diffJSON = getDiffJSON(toUpdate, fromUpdate);
-
-	const editor = buildEditorFromExtensions(HeadlessExtension, diffExtension(null, EDITOR_IS_READONLY, null));
-
-	editor.setEditorState(editor.parseEditorState(diffJSON.editorState));
-
-	const html = await toHTML({ config: 'diff', content: JSON.stringify(diffJSON.editorState) });
-
-	return {
-		toPostUpdateId,
-		toDate,
-		toAuthor,
-		fromPostUpdateId,
-		fromDate,
-		fromAuthor,
-		html,
-		post: {
-			title: res.title,
-			rawTitle: res.rawTitle,
-			outRelations: res.outRelations,
-		},
-	};
-	*/
 }
 
-export async function GET({ params }) {
+export async function GET({ params, url }) {
 	const { title: rawTitle, fromPostUpdateId, toPostUpdateId } = params;
 	const { sanitized: title } = sanitizeTitle(rawTitle);
+	const page = Number(url.searchParams.get('page') ?? 0);
+
+	if (!Number.isInteger(page) || page < 0) {
+		return error(400);
+	}
 
 	try {
-		const res = await _getToYPostUpdateFromYPostUpdateByTitle(
-			title,
-			toPostUpdateId,
-			fromPostUpdateId
-		);
+		const res = page
+			? await _getDiffPage(title, toPostUpdateId, fromPostUpdateId, page)
+			: await _getToYPostUpdateFromYPostUpdateByTitle(title, toPostUpdateId, fromPostUpdateId);
 
 		const safeJSON = JSON.parse(JSON.stringify(res, replacer));
 

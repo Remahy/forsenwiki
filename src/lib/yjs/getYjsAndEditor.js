@@ -46,7 +46,7 @@ function registerCollaborationListeners(provider, binding) {
 /**
  * @param {import('lexical').AnyLexicalExtensionArgument} extension
  * @param {Uint8Array} update
- * @returns {{editor: LexicalEditor, doc: YDoc}}
+ * @returns {{editor: LexicalEditor, doc: LegacyYDoc}}
  */
 export function getYjsAndEditor(extension, update) {
 	const editor = buildEditorFromExtensions(HeadlessExtension, extension);

@@ -8,7 +8,7 @@
 
 	import { resetContent } from '$lib/utils/indexedDb/content';
 	import { resetArticle } from '$lib/utils/indexedDb/article';
-	import { updatePost } from '$lib/api/posts';
+	import { readForcedMigration, updatePost } from '$lib/api/posts';
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import Editor from '$lib/components/editor/editor.svelte';
@@ -26,6 +26,7 @@
 	import UploadingContentModal from '$lib/components/UploadingContentModal.svelte';
 	import { resetUploadingContentModalGlobals } from '$lib/components/uploadingContentModalGlobals.svelte';
 	import { runValidations } from '$lib/components/editor/validations';
+	import { editorGlobals } from '$lib/components/editor/editorGlobals.svelte';
 	import Satire from '$lib/components/Disclaimer/Satire.svelte';
 	import NSFW from '$lib/components/Disclaimer/NSFW.svelte';
 
@@ -37,7 +38,36 @@
 	const {
 		post: { id, title, rawTitle, outRelations },
 		update,
+		notConverted,
 	} = data;
+
+	// Kept apart from the draft of the converted article.
+	const draftId = notConverted ? `${id}-forced` : id;
+
+	/** @type {import('../../../api/post/read/[title]/forced-migration/+server').ForcedMigration | null} */
+	let forcedMigration = $state(null);
+	let isMigrating = $state(false);
+
+	const loadForcedMigration = async () => {
+		isMigrating = true;
+
+		try {
+			const res = await readForcedMigration({ postTitle: title });
+			const json = await res.json();
+
+			if (!res.ok) {
+				error = json;
+				return;
+			}
+
+			forcedMigration = json;
+		} catch (err) {
+			console.error(err);
+			error = new Error(err?.toString());
+		} finally {
+			isMigrating = false;
+		}
+	};
 
 	/** @type {Error | null} */
 	let error = $state(null);
@@ -50,7 +80,7 @@
 	const c = getContext('COMPOSER');
 	let composer = $derived($c);
 	let editor = $derived(composer?.getEditor?.());
-	let canEdit = $derived(editor?.isEditable());
+	let canEdit = $derived(!!editor && editorGlobals.isEditable);
 
 	const y = getContext('YDOC');
 	let yjsDocMap = $derived($y);
@@ -95,7 +125,7 @@
 		isUploading = true;
 
 		try {
-			await resetArticle(id);
+			await resetArticle(draftId);
 			await resetContent(id);
 			isUploading = false;
 
@@ -149,6 +179,7 @@
 					yDoc: yjsDocMap,
 					newTitle,
 					disclaimerTags: data.isModerator ? disclaimerTags : undefined,
+					forced: notConverted || undefined,
 				})
 			);
 		} catch (err) {
@@ -181,6 +212,7 @@
 
 			await reset(false);
 
+			// eslint-disable-next-line svelte/no-navigation-without-resolve
 			goto(`${resolve('/w/[title]', { title })}${stringSearchParams}`);
 		} else if (res.status >= 400) {
 			const json = await res.json();
@@ -279,8 +311,43 @@
 		</Box>
 	{/if}
 
-	{#if browser}
-		<Editor {update} {id} />
+	{#if notConverted}
+		<Box class="flex flex-col gap-2 bg-yellow-300/75! p-4 dark:text-black" role="alert">
+			<p>
+				<strong>This article could not be migrated to the new editor automatically.</strong>
+				It stays read-only until a moderator submits a migrated version of it.
+			</p>
+
+			{#if forcedMigration}
+				<p>
+					This is the forcefully migrated version. Check what was lost or changed, fix it, and
+					submit to migrate the article. Use historical versions of the article to compare.
+				</p>
+
+				{#if forcedMigration.differences.length}
+					<ul class="list-inside list-disc font-mono text-sm wrap-anywhere">
+						{#each forcedMigration.differences as difference, index (index)}
+							<li>{difference}</li>
+						{/each}
+					</ul>
+				{/if}
+			{:else}
+				<p>You can load a forcefully migrated version into the editor.</p>
+
+				<div>
+					<Button disabled={isMigrating} on:click={loadForcedMigration}>
+						{#if isMigrating}
+							<Spinner />
+						{/if}
+						<span>Load the forcefully migrated version</span>
+					</Button>
+				</div>
+			{/if}
+		</Box>
+	{/if}
+
+	{#if browser && (!notConverted || forcedMigration)}
+		<Editor update={forcedMigration?.update ?? update} {id} {draftId} {title} />
 	{/if}
 
 	{#if error}
@@ -291,7 +358,7 @@
 
 	<!--
 	{#if warnings.length}
-		<Box class="flex items-center bg-yellow-300! p-2 dark:text-black">
+		<Box class="flex items-center bg-yellow-300/75! p-2 dark:text-black">
 			{#each warnings as warning (warning.name)}
 				<p>{warning.message}</p>
 			{/each}

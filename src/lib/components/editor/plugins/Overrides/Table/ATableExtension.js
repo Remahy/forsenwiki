@@ -76,7 +76,6 @@ const openInsertTableModal = (editor, { columns, rows, includeHeaders }) => {
 };
 
 /**
- * Runs inside the KEY_ARROW command, which is already an editor update.
  * @param {boolean} atBefore
  */
 const $insertParagraphAtTableEdge = (atBefore) => {

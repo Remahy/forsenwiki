@@ -1,15 +1,18 @@
 import { error, json } from '@sveltejs/kit';
+import { $getEditor as getEditor } from 'lexical';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import {
 	diffUpdateUsingStateVectorV2,
-	encodeYDocToUpdateV2,
 	getStateVectorFromUpdateV2,
 	mergePostUpdatesV2,
 	postUpdatesToUint8Arr,
-} from '$lib/yjs/utils';
+} from '$lib/y/utils';
 import { ForbiddenError } from '$lib/errors/Forbidden';
-import { getYjsAndEditor } from '$lib/yjs/getYjsAndEditor';
+import { getYAndEditor, isLegacyUpdate, readState } from '$lib/y/headless';
+import { ALREADY_MIGRATED_MESSAGE, STALE_MIGRATION_MESSAGE } from '$lib/y/rows';
+import { convertLegacyUpdate } from '$lib/yjs/migrateLegacy';
+import { sameContent } from '$lib/lexical/patchEditorState';
 import { InvalidPost } from '$lib/errors/InvalidPost';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/post/read';
@@ -29,6 +32,7 @@ import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
 import { validateUploads, pruneFailedUploads } from '$lib/s3/validateUploads.server';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
+import { _migrateLegacyDraft } from '../../legacy-draft/+server';
 import { _emit } from '../../../adonis/frontpage/+server';
 
 /**
@@ -75,7 +79,10 @@ const validateTitle = async (post, newTitle, partialErrors) => {
  * @property {string} content
  * @property {string | null} [newTitle] Skip if user is not moderator.
  * @property {string[]} [disclaimerTags]
+ * @property {boolean} [forced] Skip if user is not moderator.
  */
+
+const $json = () => getEditor().getEditorState().toJSON();
 
 export async function POST({ request, locals, params }) {
 	const { isBlocked, isModerator, auth } = locals;
@@ -95,7 +102,7 @@ export async function POST({ request, locals, params }) {
 	}
 
 	/** @type {UpdateBody} */
-	const { content, disclaimerTags: disclaimerRawTags, ...rest } = await request.json();
+	const { content, disclaimerTags: disclaimerRawTags, forced, ...rest } = await request.json();
 
 	let { newTitle } = rest;
 
@@ -103,7 +110,7 @@ export async function POST({ request, locals, params }) {
 
 	let post;
 	try {
-		post = await _getYPostByTitle(title);
+		post = await _getYPostByTitle(title, { allowUnconverted: isModerator && forced === true });
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);
@@ -112,8 +119,23 @@ export async function POST({ request, locals, params }) {
 		throw err;
 	}
 
-	if (isSystem(post)) {
+	/** @type {import('$lib/db/post/update').Seed | undefined} */
+	let seed;
+
+	if (post.legacyUpdate) {
+		const forcedSeed = convertLegacyUpdate(base64ToUint8Array(post.legacyUpdate));
+
+		seed = { content: uint8ArrayToBase64(forcedSeed), byteLength: forcedSeed.byteLength };
+	}
+
+	const current = seed ? seed.content : post.update;
+
+	if (isSystem(post) || !current) {
 		return ForbiddenError('This is a system post that cannot be edited.');
+	}
+
+	if (forced && !seed) {
+		return error(409, ALREADY_MIGRATED_MESSAGE);
 	}
 
 	const systemRelations = await readSystemYPostRelations(post.id);
@@ -127,11 +149,20 @@ export async function POST({ request, locals, params }) {
 	}
 
 	// Current
-	const currentUpdate = base64ToUint8Array(post.update);
+	const currentUpdate = base64ToUint8Array(current);
 	const stateVector = getStateVectorFromUpdateV2(currentUpdate);
 
 	// Incoming update
-	const [incomingUpdate] = postUpdatesToUint8Arr([{ content }]);
+	let [incomingUpdate] = postUpdatesToUint8Arr([{ content }]);
+
+	if (isLegacyUpdate(incomingUpdate)) {
+		// A tab still running the Yjs 13 editor.
+		const migrated = await _migrateLegacyDraft(title, incomingUpdate);
+
+		incomingUpdate = migrated
+			? mergePostUpdatesV2([currentUpdate, /** @type {Uint8Array<ArrayBuffer>} */ (migrated)])
+			: currentUpdate;
+	}
 
 	// Diff the updates
 	const initialDiff = diffUpdateUsingStateVectorV2(incomingUpdate, stateVector);
@@ -139,19 +170,36 @@ export async function POST({ request, locals, params }) {
 	// We use this update to validate if the contents are valid.
 	const combinedInitialUpdate = mergePostUpdatesV2([currentUpdate, initialDiff]);
 
-	let e;
+	if (seed) {
+		const extension = articleExtension(null, EDITOR_IS_READONLY, null);
+		const submitted = readState(extension, incomingUpdate, $json);
+		const merged = readState(extension, combinedInitialUpdate, $json);
+
+		if (!sameContent(submitted, merged)) {
+			return error(409, STALE_MIGRATION_MESSAGE);
+		}
+	}
+
+	/** @type {ReturnType<typeof getYAndEditor>} */
+	let article;
 	try {
-		e = getYjsAndEditor(articleExtension(null, EDITOR_IS_READONLY, null), combinedInitialUpdate);
-		const editor = e.editor;
+		article = getYAndEditor(
+			articleExtension(null, EDITOR_IS_READONLY, null),
+			combinedInitialUpdate
+		);
+		const editor = article.editor;
 
 		await serverRunValidations(editor);
 
-		const oldImageHashes = getUniqueImageHashes(
-			getYjsAndEditor(articleExtension(null, EDITOR_IS_READONLY, null), currentUpdate).editor
+		const oldImageHashes = readState(
+			articleExtension(null, EDITOR_IS_READONLY, null),
+			currentUpdate,
+			() => getUniqueImageHashes(getEditor())
 		);
 		const currentImageHashes = getUniqueImageHashes(editor).map((hash, index) => ({ index, hash }));
 		const newHashes = currentImageHashes.filter(({ hash }) => !oldImageHashes.includes(hash));
 		const failedUploads = await validateUploads(newHashes);
+
 		// Remove failed uploads from database.
 		await pruneFailedUploads(
 			failedUploads.map(({ hash }) => hash),
@@ -169,10 +217,10 @@ export async function POST({ request, locals, params }) {
 		console.error(err);
 		return error(400);
 	}
-	const { editor, doc } = e;
+	const { editor } = article;
 
 	// By this point, we have probably modified the editor. Let's recreate a diff.
-	const backendUpdate = encodeYDocToUpdateV2(doc);
+	const backendUpdate = await article.encodeV2();
 
 	// Diff the updates
 	// This is also what we save as a postUpdate
@@ -197,14 +245,14 @@ export async function POST({ request, locals, params }) {
 	let potentialNewTitle =
 		isModerator && newTitle ? await validateTitle(post, newTitle, partialErrors) : undefined;
 
-	// Only moderators can change disclaimer tags. `undefined` leaves the current tags untouched.
+	// Only moderators can change disclaimer tags. Note: `undefined` leaves the current tags untouched.
 	const disclaimerTags =
 		isModerator && Array.isArray(disclaimerRawTags)
 			? [...new Set(disclaimerRawTags.filter((tag) => AVAILABLE_DISCLAIMER_TAGS.includes(tag)))]
 			: undefined;
 
 	/** @type {import('$lib/db/post/update').UpdatePostData} */
-	const body = { post, outRelations, disclaimerTags, content: contentBase64 };
+	const body = { post, outRelations, disclaimerTags, content: contentBase64, seed };
 	/** @type {import('$lib/db/post/update').UpdatePostMetadata} */
 	const metadata = {
 		user: { id: session.user.id },
@@ -220,6 +268,8 @@ export async function POST({ request, locals, params }) {
 		config: 'article',
 		content: JSON.stringify(editor.getEditorState().toJSON()),
 	});
+
+	article.dispose();
 
 	await upsertHTML(post.id, { content: html, text, image });
 

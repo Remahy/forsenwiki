@@ -126,7 +126,8 @@ const addFilesToZip = async (files, zip) => {
 				throw new Error(`Failed to fetch ${file.name}`);
 			}
 
-			const data = new Uint8Array(await response.arrayBuffer());
+			const arrayBuffer = await response.arrayBuffer();
+			const data = new Uint8Array(arrayBuffer);
 
 			zip.add(entry);
 

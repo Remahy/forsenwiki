@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "YPostUpdateStateCache" ADD COLUMN     "createdTimestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "YPostDiffPageCache" ADD COLUMN     "createdTimestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

@@ -4,11 +4,12 @@ import { _getYPostUpdate } from '../../../api/post/read/[title]/+server';
 import { isSystem } from '$lib/utils/isSystem';
 import prisma from '$lib/prisma.server';
 
-export async function load({ params }) {
+export async function load({ params, locals }) {
 	const { sanitized: title } = sanitizeTitle(params.title);
 
 	try {
-		const res = await _getYPostUpdate(title);
+		// A moderator can load a forced migration of an article that is not converted.
+		const res = await _getYPostUpdate(title, { allowUnconverted: locals.isModerator });
 
 		if (!res) {
 			return error(404, 'Not found');

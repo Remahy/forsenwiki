@@ -15,8 +15,9 @@ export const youtubeClipURLWorker = async ({ url }) => {
 		return url;
 	}
 
-	// Fail this request on its own, the worker's timeout would stop every job in it.
-	const text = await (await fetch(url, { headers, signal: AbortSignal.timeout(10_000) })).text();
+	// Fail this request on its own otherwise the worker's timeout would stop every job in it.
+	const res = await fetch(url, { headers, signal: AbortSignal.timeout(10_000) });
+	const text = await res.text();
 
 	const html = new DOMParser().parseFromString(text, 'text/html');
 

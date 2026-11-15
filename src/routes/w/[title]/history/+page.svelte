@@ -1,5 +1,5 @@
 <script>
-	import { SquarePenIcon, FileIcon } from '@lucide/svelte';
+	import { SquarePenIcon, FileIcon, CircleAlertIcon } from '@lucide/svelte';
 	import { page } from '$app/stores';
 
 	import Box from '$lib/components/Box.svelte';
@@ -8,6 +8,7 @@
 	import LinkButton from '$lib/components/LinkButton.svelte';
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+	import { canDiff, NOT_COMPARABLE_MESSAGE } from '$lib/y/rows';
 
 	let { data } = $props();
 
@@ -17,7 +18,9 @@
 	let from = $state(0);
 
 	let link = $derived(
-		postUpdates.length > 1 ? `history/${postUpdates[to].id}-${postUpdates[from].id}` : null
+		canDiff(postUpdates[to], postUpdates[from])
+			? `history/${postUpdates[to].id}-${postUpdates[from].id}`
+			: null
 	);
 </script>
 
@@ -76,16 +79,24 @@
 							: ''}"
 					>
 						<div class="flex items-center">
-							{#if from < index}
-								<input type="radio" value={index} bind:group={to} />
-							{:else}
+							{#if !canDiff(postUpdate)}
+								<span title={NOT_COMPARABLE_MESSAGE}>
+									<CircleAlertIcon size={16} />
+									<span class="hidden">{NOT_COMPARABLE_MESSAGE}</span>
+								</span>
 								<input type="radio" disabled class="invisible" />
-							{/if}
+							{:else}
+								{#if from < index}
+									<input type="radio" value={index} bind:group={to} />
+								{:else}
+									<input type="radio" disabled class="invisible" />
+								{/if}
 
-							{#if to > index}
-								<input type="radio" value={index} bind:group={from} />
-							{:else}
-								<input type="radio" disabled class="invisible" />
+								{#if to > index}
+									<input type="radio" value={index} bind:group={from} />
+								{:else}
+									<input type="radio" disabled class="invisible" />
+								{/if}
 							{/if}
 
 							<span>
@@ -97,23 +108,31 @@
 									{new Date(postUpdate.createdTimestamp).toLocaleString()}
 								</Link>
 
-								<span>by <StreamerModeShow>{postUpdate.metadata.user.name}</StreamerModeShow></span>
+								<span class="text-xs"
+									>by <StreamerModeShow>
+										<Link
+											href="/user/{postUpdate.metadata.user.id}"
+											target="_blank"
+											class="decoration-1!">{postUpdate.metadata.user.name}</Link
+										>
+									</StreamerModeShow>
+								</span>
 
 								{#if postUpdate.metadata.byteLength}
-									<span class="opacity-50">({postUpdate.metadata.byteLength})</span>
+									<span class="text-xs opacity-50">({postUpdate.metadata.byteLength})</span>
 								{/if}
 
 								{#if postUpdate.metadata.newTitle}
-									<small
-										>(<span class="font-bold">Title change:</span>
+									<span class="text-xs">
+										(<span class="font-bold">Title change:</span>
 										"{postUpdate.metadata.newTitle}"{#if postUpdate.metadata.oldTitle}
 											&nbsp;<i>was "{postUpdate.metadata.oldTitle}"</i>
-										{/if})</small
-									>
+										{/if})
+									</span>
 								{/if}
 
 								{#if index === 0}
-									(current)
+									<span class="text-xs">(current)</span>
 								{/if}
 							</span>
 						</div>

@@ -31,7 +31,8 @@ export async function load({ params, url, setHeaders }) {
 	try {
 		const res = await _getYPostHTML(title, shouldCacheBust);
 
-		const authors = await readAuthorsForYPostByTitle(res.post.title);
+		const rawAuthors = await readAuthorsForYPostByTitle(res.post.title);
+		const authors = rawAuthors.map(({ user }) => user);
 
 		const relatedPosts = await readRelationsToYPostTitle(res.post.title);
 

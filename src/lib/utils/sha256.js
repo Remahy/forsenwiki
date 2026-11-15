@@ -2,7 +2,8 @@
  * @param {File} file
  */
 export async function calculateChecksumSha256(file) {
-	const uint8Array = new Uint8Array(await file.arrayBuffer());
+	const arrayBuffer = await file.arrayBuffer();
+	const uint8Array = new Uint8Array(arrayBuffer);
 	const hashBuffer = await crypto.subtle.digest('SHA-256', uint8Array);
 	const hashArray = Array.from(new Uint8Array(hashBuffer));
 
