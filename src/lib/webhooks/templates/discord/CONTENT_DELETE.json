@@ -1,0 +1,8 @@
+{
+	"title": "{{content.name}}",
+	"description": "{{content.type}}, {{content.contentType}}\n({{{content.contentLength}}})",
+	"color": 15680580,
+	"author": { "name": "{{{user.name}}}", "url": "{{{user.url}}}" },
+	"footer": { "text": "{{{label}}}" },
+	"timestamp": "{{{timestamp}}}"
+}

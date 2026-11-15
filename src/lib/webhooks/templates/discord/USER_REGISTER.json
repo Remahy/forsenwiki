@@ -1,0 +1,7 @@
+{
+	"title": "{{user.name}}",
+	"url": "{{{user.url}}}",
+	"color": 6583435,
+	"footer": { "text": "{{{label}}}" },
+	"timestamp": "{{{timestamp}}}"
+}

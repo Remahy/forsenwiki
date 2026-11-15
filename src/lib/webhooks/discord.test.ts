@@ -1,7 +1,8 @@
 import { expect, test } from 'vitest';
 
 import type { ActivityEntry, ChildActivityEntry } from '$lib/db/activity/read';
-import { isDiscordWebhook, toDiscordMessages } from './discord';
+import { AVAILABLE_ACTIVITY_TYPES } from '$lib/constants/activity';
+import { EMBED_TEMPLATES, isDiscordWebhook, toDiscordMessages } from './discord';
 
 const base: ChildActivityEntry = {
 	id: 'activity',
@@ -67,7 +68,8 @@ test('an article update links to the version and the comparison, with linked act
 		[
 			'[Compare with previous](https://forsen.wiki/w/forsen_games/history/v2-) (120)',
 			'**Title change:** "forsen games" was "games"',
-			'**Tag change:** Added: NSFW Removed: Satire',
+			'**Tags added:** NSFW',
+			'**Tags removed:** Satire',
 		].join('\n')
 	);
 });
@@ -91,7 +93,7 @@ test('deleted content has no link, existing content links to its page', () => {
 
 	expect(message.embeds[0]).toMatchObject({
 		url: 'https://forsen.wiki/content/c1',
-		description: '(1234) image, image/png',
+		description: 'image, image/png\n(1234)',
 	});
 	expect(message.embeds[1]).not.toHaveProperty('url');
 });
@@ -103,7 +105,10 @@ test('nothing users wrote can ping or format the channel', () => {
 	);
 
 	expect(message.allowed_mentions).toEqual({ parse: [] });
-	expect(message.embeds[0].description).toBe('"@everyone \\*bold\\*" was "\\[x\\]\\(evil\\)"');
+	expect(message.embeds[0]).toMatchObject({
+		title: '@everyone \\*bold\\*',
+		description: 'Was "\\[x\\]\\(evil\\)"',
+	});
 });
 
 test('more than ten activities are split over messages, in order', () => {
@@ -114,4 +119,8 @@ test('more than ten activities are split over messages, in order', () => {
 	const messages = toDiscordMessages(activities, origin);
 
 	expect(messages.map(({ embeds }) => embeds.length)).toEqual([10, 10, 3]);
+});
+
+test('every activity type has a template', () => {
+	expect(AVAILABLE_ACTIVITY_TYPES.filter((type) => !EMBED_TEMPLATES[type])).toEqual([]);
 });

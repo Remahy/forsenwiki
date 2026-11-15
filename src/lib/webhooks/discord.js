@@ -1,9 +1,14 @@
-import { ACTIVITY_TYPES, ACTIVITY_TYPE_LABELS } from '$lib/constants/activity';
+import { ACTIVITY_TYPE_LABELS } from '$lib/constants/activity';
 import { DISCLAIMER_TAG_LABELS } from '$lib/constants/constants';
+import { render } from './template';
+import message from './templates/discord/message.json';
+import children from './templates/discord/children.json';
 
 /**
  * @typedef {import('$lib/db/activity/read').ActivityEntry} ActivityEntry
  * @typedef {import('$lib/db/activity/read').ChildActivityEntry} ChildActivityEntry
+ * @typedef {{ title?: string, description?: string, [key: string]: unknown }} DiscordEmbed
+ * @typedef {{ embeds: DiscordEmbed[], allowed_mentions?: { parse: string[] }, [key: string]: unknown }} DiscordMessage
  */
 
 // https://discord.com/developers/docs/resources/message#embed-object-embed-limits
@@ -11,18 +16,15 @@ const MAX_EMBEDS = 10;
 const MAX_TITLE = 256;
 const MAX_DESCRIPTION = 4096;
 
-/** @type {Record<import('$lib/constants/activity').ActivityType, number>} */
-const COLORS = {
-	ARTICLE_CREATE: 0x10b981,
-	ARTICLE_UPDATE: 0xf97316,
-	ARTICLE_RENAME: 0xf97316,
-	ARTICLE_RETAG: 0xf97316,
-	USER_REGISTER: 0x64748b,
-	USER_RENAME: 0x64748b,
-	CONTENT_UPLOAD: 0x8b5cf6,
-	CONTENT_DELETE: 0xef4444,
-	CONTENT_RENAME: 0xd946ef,
-};
+/** @type {Record<string, unknown>} */
+export const EMBED_TEMPLATES = Object.fromEntries(
+	Object.entries(
+		import.meta.glob('./templates/discord/*.json', { eager: true, import: 'default' })
+	).map(([path, template]) => [path.split('/').pop()?.replace('.json', ''), template])
+);
+
+/** @type {Record<string, string>} */
+const CHILD_TEMPLATES = children;
 
 export const isDiscordWebhook = (/** @type {string} */ url) =>
 	/^https:\/\/(?:[a-z]+\.)?discord(?:app)?\.com\/api\/webhooks\//.test(url);
@@ -36,76 +38,42 @@ const escape = (text) => text.replace(/[\\*_~`|>#[\]()-]/g, '\\$&');
  */
 const truncate = (text, max) => (text.length > max ? `${text.slice(0, max - 1)}…` : text);
 
-/** @param {string} tag */
-const tagLabel = (tag) => DISCLAIMER_TAG_LABELS[tag] ?? tag;
-
-/**
- * @param {ChildActivityEntry} activity
- * @param {string} origin
- * @returns {{ title: string, url?: string }}
- */
-const subject = ({ type, post, postUpdate, user, content }, origin) => {
-	if (post) {
-		const article = `${origin}/w/${encodeURIComponent(post.title)}`;
-
-		return {
-			title: post.rawTitle,
-			url: postUpdate ? `${article}/history/${postUpdate.id}` : article,
-		};
-	}
-
-	if (content) {
-		return {
-			title: content.name,
-			url: content.deleted ? undefined : `${origin}/content/${content.id}`,
-		};
-	}
-
-	if (user && type === ACTIVITY_TYPES.USER_REGISTER) {
-		return { title: user.name ?? 'Unknown', url: `${origin}/user/${user.id}` };
-	}
-
-	return { title: ACTIVITY_TYPE_LABELS[type] ?? type };
-};
+/** @param {string[]} tags */
+const tagLabels = (tags) => tags.map((tag) => DISCLAIMER_TAG_LABELS[tag] ?? tag).join(', ');
 
 /**
  * @param {ChildActivityEntry} activity
  * @param {string} origin
  */
-const details = (
-	{ type, post, postUpdate, content, oldName, newName, oldTags, newTags },
-	origin
-) => {
-	switch (type) {
-		case ACTIVITY_TYPES.ARTICLE_UPDATE:
-			return post && postUpdate
-				? `[Compare with previous](${origin}/w/${encodeURIComponent(post.title)}/history/${postUpdate.id}-) (${postUpdate.byteLength})`
-				: '';
-		case ACTIVITY_TYPES.ARTICLE_CREATE:
-			return postUpdate ? `(${postUpdate.byteLength})` : '';
-		case ACTIVITY_TYPES.ARTICLE_RENAME:
-			return `"${escape(postUpdate?.newTitle ?? '')}" was "${escape(postUpdate?.oldTitle ?? '')}"`;
-		case ACTIVITY_TYPES.ARTICLE_RETAG: {
-			const added = newTags.filter((tag) => !oldTags.includes(tag)).map(tagLabel);
-			const removed = oldTags.filter((tag) => !newTags.includes(tag)).map(tagLabel);
+const toView = (activity, origin) => {
+	const { type, user, post, postUpdate, content, oldTags, newTags } = activity;
+	const article = post && `${origin}/w/${encodeURIComponent(post.title)}`;
 
-			return [
-				added.length ? `Added: ${added.join(', ')}` : '',
-				removed.length ? `Removed: ${removed.join(', ')}` : '',
-			]
-				.filter(Boolean)
-				.join(' ');
-		}
-		case ACTIVITY_TYPES.CONTENT_UPLOAD:
-		case ACTIVITY_TYPES.CONTENT_DELETE:
-			return content
-				? `${content.contentLength !== null ? `(${content.contentLength}) ` : ''}${content.type ?? 'unknown'}${content.contentType ? `, ${content.contentType}` : ''}`
-				: '';
-		case ACTIVITY_TYPES.CONTENT_RENAME:
-			return `"${escape(newName ?? '')}" was "${escape(oldName ?? '')}"`;
-		default:
-			return '';
-	}
+	return {
+		label: ACTIVITY_TYPE_LABELS[type] ?? type,
+		timestamp: activity.createdTimestamp,
+		explanation: activity.explanation,
+		oldName: activity.oldName,
+		newName: activity.newName,
+		addedTags: tagLabels(newTags.filter((tag) => !oldTags.includes(tag))),
+		removedTags: tagLabels(oldTags.filter((tag) => !newTags.includes(tag))),
+		user: user?.name ? { name: user.name, url: `${origin}/user/${user.id}` } : null,
+		post: post && { title: post.rawTitle, url: article },
+		postUpdate: postUpdate && {
+			url: `${article}/history/${postUpdate.id}`,
+			compareUrl: `${article}/history/${postUpdate.id}-`,
+			byteLength: postUpdate.byteLength?.toString(),
+			newTitle: postUpdate.newTitle,
+			oldTitle: postUpdate.oldTitle,
+		},
+		content: content && {
+			name: content.name,
+			url: content.deleted ? null : `${origin}/content/${content.id}`,
+			type: content.type,
+			contentType: content.contentType,
+			contentLength: content.contentLength?.toString(),
+		},
+	};
 };
 
 /**
@@ -113,47 +81,43 @@ const details = (
  * @param {string} origin
  */
 const toEmbed = (activity, origin) => {
-	const { type, user, explanation, children, createdTimestamp } = activity;
-	const { title, url } = subject(activity, origin);
+	const childLines = activity.children
+		.map((child) =>
+			render(CHILD_TEMPLATES[child.type] ?? CHILD_TEMPLATES.default, toView(child, origin), {
+				escape,
+			})
+		)
+		.filter(Boolean);
 
-	const childLines = children.map((child) => {
-		const detail =
-			details(child, origin) || (child.explanation ? `*${escape(child.explanation)}*` : '');
-
-		return `**${ACTIVITY_TYPE_LABELS[child.type] ?? child.type}:** ${detail}`;
-	});
-
-	const description = [
-		details(activity, origin),
-		explanation ? `*${escape(explanation)}*` : '',
-		...childLines,
-	]
-		.filter(Boolean)
-		.join('\n');
+	const embed = /** @type {DiscordEmbed} */ (
+		render(
+			EMBED_TEMPLATES[activity.type],
+			{ ...toView(activity, origin), children: childLines.join('\n') },
+			{ escape }
+		) ?? {}
+	);
 
 	return {
-		title: truncate(title, MAX_TITLE),
-		...(url ? { url } : {}),
-		...(description ? { description: truncate(description, MAX_DESCRIPTION) } : {}),
-		color: COLORS[type],
-		...(user?.name && type !== ACTIVITY_TYPES.USER_REGISTER
-			? { author: { name: user.name, url: `${origin}/user/${user.id}` } }
-			: {}),
-		footer: { text: ACTIVITY_TYPE_LABELS[type] ?? type },
-		timestamp: createdTimestamp,
+		...embed,
+		...(embed.title ? { title: truncate(embed.title, MAX_TITLE) } : {}),
+		...(embed.description ? { description: truncate(embed.description, MAX_DESCRIPTION) } : {}),
 	};
 };
 
 /**
+ * One message per ten activities, in the given order.
  * @param {ActivityEntry[]} activities
  * @param {string} origin
+ * @returns {DiscordMessage[]}
  */
 export const toDiscordMessages = (activities, origin) => {
 	const embeds = activities.map((activity) => toEmbed(activity, origin));
 
-	return Array.from({ length: Math.ceil(embeds.length / MAX_EMBEDS) }, (_, index) => ({
-		embeds: embeds.slice(index * MAX_EMBEDS, (index + 1) * MAX_EMBEDS),
-		// Titles and names are user written, "@everyone" in one must not ping.
-		allowed_mentions: { parse: [] },
-	}));
+	return Array.from(
+		{ length: Math.ceil(embeds.length / MAX_EMBEDS) },
+		(_, index) =>
+			/** @type {DiscordMessage} */ (
+				render(message, { embeds: embeds.slice(index * MAX_EMBEDS, (index + 1) * MAX_EMBEDS) })
+			)
+	);
 };

@@ -1,0 +1,9 @@
+{
+	"title": "{{newName}}",
+	"url": "{{{content.url}}}",
+	"description": "Was \"{{oldName}}\"",
+	"color": 14239471,
+	"author": { "name": "{{{user.name}}}", "url": "{{{user.url}}}" },
+	"footer": { "text": "{{{label}}}" },
+	"timestamp": "{{{timestamp}}}"
+}

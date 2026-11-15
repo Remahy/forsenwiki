@@ -1,0 +1,9 @@
+{
+	"title": "{{post.title}}",
+	"url": "{{{postUpdate.url}}}",
+	"description": "({{{postUpdate.byteLength}}})\n*{{explanation}}*\n{{{children}}}",
+	"color": 1096065,
+	"author": { "name": "{{{user.name}}}", "url": "{{{user.url}}}" },
+	"footer": { "text": "{{{label}}}" },
+	"timestamp": "{{{timestamp}}}"
+}
