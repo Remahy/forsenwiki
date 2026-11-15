@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import prisma from '$lib/prisma.server.js';
+import { toSnippet } from '$lib/utils/snippet';
 
 /**
  * @typedef {import('$lib/s3/limits.js').MimetypeType} MimetypeType
@@ -85,7 +86,7 @@ const getRecentUploads = async (types = [], options) => {
 		const result = results[index];
 		const { text } = result.html || {};
 		if (result.html && text) {
-			result.html.text = `${text.substring(0, 150)}${text.length > 150 ? '...' : ''}`;
+			result.html.text = toSnippet(text);
 		}
 	}
 
@@ -263,7 +264,7 @@ export const _getSearch = async (query, types = [], options) => {
 		const result = results[index];
 		const { text } = result.html || {};
 		if (result.html && text) {
-			result.html.text = `${text.substring(0, 150)}${text.length > 150 ? '...' : ''}`;
+			result.html.text = toSnippet(text);
 		}
 	}
 

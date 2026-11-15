@@ -1,0 +1,144 @@
+@reference "../../app.css";
+
+/* A falling slab reaches past the sides of the screen. Cutting it off there, and not at a box inside the page, keeps the cut out of sight and adds no sideways scrollbar. */
+html:has(.puzzle-globe) {
+	@apply overflow-x-clip;
+}
+
+.globe-stage {
+	@apply grid grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-2 sm:gap-y-6 xl:grid-cols-[1fr_minmax(0,32rem)_1fr] xl:items-center xl:gap-x-8;
+	grid-template-areas: 'globe' 'left' 'right';
+
+	@variant sm {
+		grid-template-areas: 'globe globe' 'left right';
+	}
+
+	@variant xl {
+		grid-template-areas: 'left globe right';
+	}
+}
+
+/* Keeps the pieces' z-index inside the globe. */
+.globe-stage .puzzle-globe {
+	@apply @container relative isolate;
+	grid-area: globe;
+}
+
+.globe-stage .references {
+	@apply m-0 flex list-none flex-col gap-2 p-0 opacity-0 xl:w-[min(100%,16rem)];
+}
+
+.globe-stage.animate .references {
+	@apply transition-opacity duration-300;
+}
+
+.globe-stage .references.left {
+	grid-area: left;
+	/* Next to the globe, reading towards it. */
+	@apply xl:justify-self-end xl:text-right;
+}
+
+.globe-stage .references.right {
+	grid-area: right;
+}
+
+.globe-stage .references.left .reference {
+	@apply xl:flex-row-reverse;
+}
+
+.globe-stage.landed .references {
+	@apply opacity-100;
+}
+
+/* A citation like [3], placed on its piece. */
+.puzzle-globe .marker {
+	@apply pointer-events-none absolute z-25 -translate-1/2 opacity-0 transition-colors duration-120;
+}
+
+.globe-stage.landed .marker {
+	@apply opacity-100;
+}
+
+.globe-stage.animate.landed .marker {
+	animation: cite 250ms calc(var(--order) * 50ms) both cubic-bezier(0.34, 1.56, 0.64, 1);
+	@apply motion-reduce:animate-none;
+}
+
+@keyframes cite {
+	from {
+		opacity: 0;
+		scale: 0;
+	}
+}
+
+.puzzle-globe .slab {
+	@apply pointer-events-none absolute inset-0 opacity-0;
+}
+
+.puzzle-globe.ready .slab {
+	@apply opacity-100;
+}
+
+.globe-stage.animate .puzzle-globe.ready .slab {
+	animation: drop 400ms both;
+	@apply motion-reduce:animate-none;
+}
+
+/* Seen from above: a slab starts close to the viewer at a corner of the screen, speeds up like a falling weight and barely rebounds. */
+@keyframes drop {
+	0% {
+		opacity: 0;
+		transform: translate(var(--from-x), var(--from-y)) scale(5);
+		animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+	}
+
+	35% {
+		opacity: 0;
+	}
+
+	72% {
+		opacity: 1;
+		transform: translate(0, 0) scale(1);
+		animation-timing-function: ease-out;
+	}
+
+	84% {
+		transform: translate(0, 0) scale(1.025);
+		animation-timing-function: ease-in;
+	}
+
+	100% {
+		transform: translate(0, 0) scale(1);
+	}
+}
+
+.puzzle-globe .piece {
+	@apply pointer-events-auto absolute block overflow-hidden outline-none;
+}
+
+.puzzle-globe .piece img {
+	@apply h-full w-full object-cover;
+}
+
+.puzzle-globe .piece img.small {
+	@apply object-none;
+}
+
+.puzzle-globe svg {
+	@apply pointer-events-none absolute inset-0 h-full w-full;
+}
+
+.puzzle-globe svg.hover {
+	@apply z-20;
+}
+
+/* The viewBox is about ten times the displayed size. */
+.puzzle-globe .seam {
+	@apply fill-[url(#puzzle-globe-shade)] stroke-white/80 stroke-14;
+	stroke-linejoin: round;
+}
+
+.puzzle-globe .piece-outline {
+	@apply fill-none stroke-violet-600 stroke-40 dark:stroke-violet-300;
+	stroke-linejoin: round;
+}

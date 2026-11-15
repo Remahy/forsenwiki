@@ -72,7 +72,8 @@ const getLatest = async () => {
 		take: 10,
 	});
 
-	const mostLinked = readMostLinkedArticles(8);
+	// Enough for every piece of the globe.
+	const mostLinked = readMostLinkedArticles(18);
 
 	const [rawLatestArticles, mostLinkedArticles] = await Promise.all([yPosts, mostLinked]);
 

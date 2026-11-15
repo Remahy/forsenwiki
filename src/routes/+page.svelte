@@ -5,7 +5,7 @@
 		HistoryIcon,
 		FolderSearchIcon,
 		SquarePenIcon,
-		ImageIcon,
+		LibraryIcon,
 	} from '@lucide/svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
@@ -28,8 +28,17 @@
 	 * @typedef {import('./+page.server').MostLinkedArticle} MostLinkedArticle
 	 */
 
-	/** @type {MostLinkedArticle[]} */
-	const mostLinkedArticles = $page.data.mostLinkedArticles ?? [];
+	const globeItems = ($page.data.mostLinkedArticles ?? []).map(
+		(/** @type {MostLinkedArticle} */ article) => ({
+			href: `/w/${article.title}`,
+			title: article.rawTitle,
+			description: article.snippet ?? '',
+			image:
+				article.image && !streamerMode
+					? getImageCacheURL(article.image, { height: 400 }).toString()
+					: null,
+		})
+	);
 
 	/** @type {Writable<LatestArticle[]>} */
 	const latestPosts = writable($page.data.latestArticles);
@@ -86,12 +95,15 @@
 		</SuggestionBox>
 	{/if}
 
-	<div class="mb-12 w-full">
-		<PuzzleGlobe seed={$page.data.globeSeed} />
+	<div class="mb-4 w-full lg:mb-12">
+		<PuzzleGlobe items={globeItems} seed={$page.data.globeSeed} />
 	</div>
 
-	<nav aria-label="Navigation" class="mb-4">
-		<Box class="grid grid-cols-2 gap-2 p-4 sm:grid-cols-4">
+	<nav aria-label="Navigation">
+		<Box class="grid grid-cols-2 gap-2 p-4 sm:grid-cols-3 lg:grid-cols-5">
+			<LinkButton href="/w" class="flex gap-2 whitespace-nowrap">
+				<LibraryIcon /> <span>All articles</span>
+			</LinkButton>
 			<LinkButton href="/activity" class="flex gap-2 whitespace-nowrap">
 				<HistoryIcon /> <span>Activity</span>
 			</LinkButton>
@@ -135,55 +147,8 @@
 			</Box>
 		</div>
 
-		<div class="flex flex-col gap-4 lg:w-96 lg:min-w-96">
-			{#if mostLinkedArticles.length}
-				<Box class="p-4">
-					<ul class="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2 lg:grid-cols-1">
-						{#each mostLinkedArticles as article (article.title)}
-							<li class="suggestion-box rounded-sm p-2!">
-								<Link
-									href="/w/{article.title}"
-									class="flex items-center gap-3 no-underline! decoration-0!"
-								>
-									{#if article.image && !streamerMode}
-										<img
-											src={getImageCacheURL(article.image, {
-												height: 112,
-												quality: 'low',
-											}).toString()}
-											alt=""
-											loading="lazy"
-											width="56"
-											height="56"
-											class="h-14 w-14 shrink-0 rounded-sm object-cover"
-										/>
-									{:else}
-										<span
-											aria-hidden="true"
-											class="flex h-14 w-14 shrink-0 items-center justify-center rounded-sm bg-black/10 opacity-50 dark:bg-white/5"
-										>
-											<ImageIcon />
-										</span>
-									{/if}
-									<span class="flex min-w-0 flex-col">
-										<strong class="wrap-break-words">{article.rawTitle}</strong>
-										{#if article.linkCount > 1}
-											<small>Linked in {article.linkCount} articles</small>
-										{/if}
-									</span>
-								</Link>
-							</li>
-						{/each}
-					</ul>
-					<div
-						class="box-heading-wrapper mt-2 flex items-center justify-end border-t-2 border-b-0! pt-2 pb-0!"
-					>
-						<Link href="/w" target="_blank">All articles</Link>
-					</div>
-				</Box>
-			{/if}
-
-			{#if $popularArticles.length}
+		{#if $popularArticles.length}
+			<div class="flex flex-col gap-4 lg:w-96 lg:min-w-96">
 				<Box class="p-4">
 					<div class="box-heading-wrapper mb-2">
 						<h2 class="text-2xl">Popular articles</h2>
@@ -204,7 +169,7 @@
 						<Link href="https://stats.forsen.wiki/" target="_blank">STATS.FORSEN.WIKI</Link>
 					</div>
 				</Box>
-			{/if}
-		</div>
+			</div>
+		{/if}
 	</div>
 </Container>
