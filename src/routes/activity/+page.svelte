@@ -31,6 +31,16 @@
 	 * @typedef {import('$lib/db/activity/read').ChildActivityEntry} ChildActivityEntry
 	 */
 
+	/** @type {Record<import('$lib/constants/activity').ActivityType, string>} */
+	const BADGE_COLORS = {
+		ARTICLE_CREATE: 'bg-emerald-500/25',
+		ARTICLE_UPDATE: 'bg-amber-500/25',
+		ARTICLE_RENAME: 'bg-orange-500/25',
+		USER_REGISTER: 'bg-sky-500/25',
+		CONTENT_UPLOAD: 'bg-violet-500/25',
+		CONTENT_DELETE: 'bg-red-500/25',
+	};
+
 	const filters = $derived(getActivityFilters($page.url.searchParams));
 
 	let authorsInput = $derived(filters.authors.join(', '));
@@ -106,28 +116,32 @@
 	/** @type {ActivityEntry | null} */ parent
 )}
 	{@const { type, user, post, postUpdate, content } = activity}
+	<span
+		class="rounded-sm p-1 text-xs text-slate-900 dark:text-slate-100 {BADGE_COLORS[type] ??
+			'bg-black/10 dark:bg-white/10'}">{ACTIVITY_TYPE_LABELS[type] ?? type}</span
+	>
 	{#if type === ACTIVITY_TYPES.USER_REGISTER && user}
-		<span class="rounded-sm bg-sky-500/25 p-1 text-xs">New user</span>
 		<StreamerModeShow>
 			<Link href="/user/{user.id}" target="_blank"><span class="font-bold">{user.name}</span></Link>
 		</StreamerModeShow>&nbsp;
-	{:else if type === ACTIVITY_TYPES.CONTENT_UPLOAD && content}
+	{:else if (type === ACTIVITY_TYPES.CONTENT_UPLOAD || type === ACTIVITY_TYPES.CONTENT_DELETE) && content}
 		<span>
-			<Link href="{STATIC_DOMAIN}/{content.hash}" target="_blank">
-				<span class="font-bold">{content.name}</span>
-			</Link>&nbsp;
+			{#if content.deleted}
+				<span class="font-bold" title="Deleted">{content.name}</span>&nbsp;
+			{:else}
+				<Link href="{STATIC_DOMAIN}/{content.hash}" target="_blank">
+					<span class="font-bold">{content.name}</span>
+				</Link>&nbsp;
+			{/if}
 		</span>
-		<span class="rounded-sm bg-violet-500/25 p-1 text-xs">Upload</span>
 		<span>
 			<small class="opacity-85"
-				>{content.type ?? 'unknown'}{content.contentType
-					? `, ${content.contentType}`
-					: ''}{content.contentLength !== null ? ` (${content.contentLength})` : ''}&nbsp;</small
+				>{content.contentLength !== null ? `(${content.contentLength}) ` : ''}{content.type ??
+					'unknown'}{content.contentType ? `, ${content.contentType}` : ''}&nbsp;</small
 			>
 		</span>
 	{:else if type === ACTIVITY_TYPES.ARTICLE_RENAME}
 		<small>
-			<span class="font-bold">Title change:</span>
 			"{postUpdate?.newTitle}"{#if postUpdate?.oldTitle}
 				&nbsp;<i>was "{postUpdate.oldTitle}"</i>
 			{/if}&nbsp;
@@ -140,13 +154,6 @@
 				</Link>&nbsp;
 			</span>
 		{/if}
-		{#if type === ACTIVITY_TYPES.ARTICLE_CREATE}
-			<span class="rounded-sm bg-emerald-500/25 p-1 text-xs">New!</span>
-		{:else if type !== ACTIVITY_TYPES.ARTICLE_UPDATE}
-			<span class="rounded-sm bg-black/10 p-1 text-xs dark:bg-white/10"
-				>{ACTIVITY_TYPE_LABELS[type] ?? type}</span
-			>
-		{/if}
 		{#if postUpdate}
 			<span><small class="opacity-85">({postUpdate.byteLength})&nbsp;</small></span>
 		{/if}
@@ -157,9 +164,6 @@
 				>&nbsp;</span
 			>
 		{/if}
-	{/if}
-	{#if activity.explanation}
-		<small><i>{activity.explanation}</i>&nbsp;</small>
 	{/if}
 	{#if !parent}
 		<small
@@ -177,6 +181,9 @@
 				</StreamerModeShow>
 			</small>
 		</span>
+	{/if}
+	{#if activity.explanation}
+		<small>&nbsp;<i>{activity.explanation}</i></small>
 	{/if}
 	{#if content?.metadata}
 		<details class="mt-1">
