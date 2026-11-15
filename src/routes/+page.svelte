@@ -17,6 +17,7 @@
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 	import Container from '$lib/components/Container.svelte';
 	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+	import PuzzleGlobe from '$lib/components/PuzzleGlobe.svelte';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 
 	let streamerMode = $state($page.data.session?.user?.userSettings?.streamerMode);
@@ -84,6 +85,10 @@
 			</p>
 		</SuggestionBox>
 	{/if}
+
+	<div class="mb-12 w-full">
+		<PuzzleGlobe />
+	</div>
 
 	<nav aria-label="Navigation" class="mb-4">
 		<Box class="grid grid-cols-2 gap-2 p-4 sm:grid-cols-4">
