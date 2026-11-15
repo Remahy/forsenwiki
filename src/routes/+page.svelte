@@ -87,7 +87,7 @@
 	{/if}
 
 	<div class="mb-12 w-full">
-		<PuzzleGlobe />
+		<PuzzleGlobe seed={$page.data.globeSeed} />
 	</div>
 
 	<nav aria-label="Navigation" class="mb-4">

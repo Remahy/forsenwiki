@@ -94,6 +94,6 @@ const getLatest = async () => {
 	return cache;
 };
 
-export function load() {
-	return getLatest();
+export async function load() {
+	return { ...(await getLatest()), globeSeed: Math.random() };
 }
