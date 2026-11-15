@@ -111,15 +111,19 @@
 	});
 </script>
 
+{#snippet badge(/** @type {import('$lib/constants/activity').ActivityType} */ type)}
+	<span
+		class="rounded-sm p-1 text-xs text-slate-900 dark:text-slate-100 {BADGE_COLORS[type] ??
+			'bg-black/10 dark:bg-white/10'}">{ACTIVITY_TYPE_LABELS[type] ?? type}</span
+	>
+{/snippet}
+
 {#snippet line(
 	/** @type {ChildActivityEntry} */ activity,
 	/** @type {ActivityEntry | null} */ parent
 )}
 	{@const { type, user, post, postUpdate, content } = activity}
-	<span
-		class="rounded-sm p-1 text-xs text-slate-900 dark:text-slate-100 {BADGE_COLORS[type] ??
-			'bg-black/10 dark:bg-white/10'}">{ACTIVITY_TYPE_LABELS[type] ?? type}</span
-	>
+	{@render badge(type)}
 	{#if type === ACTIVITY_TYPES.USER_REGISTER && user}
 		<StreamerModeShow>
 			<Link href="/user/{user.id}" target="_blank"><span class="font-bold">{user.name}</span></Link>
@@ -212,14 +216,14 @@
 			<div class="flex flex-col gap-1">
 				<strong>Filter by types:</strong>
 				<div class="flex flex-wrap items-baseline gap-3">
-					<label class="flex items-baseline gap-2">
+					<label class="flex items-center gap-2">
 						<input type="checkbox" checked={!typesInput.length} disabled class="opacity-50" />
 						<span>All</span>
 					</label>
 					{#each AVAILABLE_ACTIVITY_TYPES as type (type)}
-						<label class="flex items-baseline gap-2">
+						<label class="flex items-center gap-2">
 							<input type="checkbox" name="type" bind:group={typesInput} value={type} />
-							<span>{ACTIVITY_TYPE_LABELS[type]}</span>
+							{@render badge(type)}
 						</label>
 					{/each}
 				</div>
