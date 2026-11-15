@@ -212,6 +212,8 @@ model Content {
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
 
+  activities Activity[]
+
   createdTimestamp DateTime @default(now())
 }
 
@@ -244,7 +246,12 @@ enum ActivityType {
   ARTICLE_CREATE
   ARTICLE_UPDATE
   ARTICLE_RENAME
+  ARTICLE_RETAG
   USER_REGISTER
+  USER_RENAME
+  CONTENT_UPLOAD
+  CONTENT_DELETE
+  CONTENT_RENAME
 }
 
 model Activity {
@@ -266,10 +273,21 @@ model Activity {
   postUpdate   YPostUpdate? @relation(fields: [postUpdateId], references: [id], onDelete: Cascade)
   postUpdateId String?
 
+  content         Content? @relation(fields: [contentId], references: [id], onDelete: SetNull)
+  contentId       String?
+  contentSnapshot Json? /// What the content was when it was deleted.
+
+  oldName String?
+  newName String?
+
+  oldTags String[] @default([])
+  newTags String[] @default([])
+
   createdTimestamp DateTime @default(now())
 
   @@index([createdTimestamp, id])
   @@index([parentId])
   @@index([userId])
   @@index([postUpdateId])
+  @@index([contentId])
 }

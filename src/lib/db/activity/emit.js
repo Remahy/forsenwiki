@@ -1,16 +1,18 @@
 import { replacer } from '$lib/utils/json';
 import { _emit } from '../../../routes/api/adonis/frontpage/+server';
-import { readActivity } from './read';
+import { readActivitiesWhere } from './read';
 
 /**
- * Call it once everything the activity points to is committed.
+ * Call it once everything the activities point to is committed. Oldest is emitted first.
  * @param {Prisma.Prisma.ActivityWhereInput} where
  */
 export const emitActivity = async (where) => {
 	try {
-		const activity = await readActivity(where);
+		// It must be read as a non-moderator.
+		const activities = await readActivitiesWhere(where, { isModerator: false });
 
-		if (activity) {
+		for (let index = 0; index < activities.length; index++) {
+			const activity = activities[index];
 			_emit('activity:create', JSON.stringify(activity, replacer));
 		}
 	} catch (err) {

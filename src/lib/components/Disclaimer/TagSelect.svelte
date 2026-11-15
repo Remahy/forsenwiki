@@ -1,14 +1,14 @@
 <script>
-	import { DISCLAIMER_TAGS } from '$lib/constants/constants';
+	import { DISCLAIMER_TAG_LABELS, DISCLAIMER_TAGS } from '$lib/constants/constants';
 
 	/** @type {{ [tag: string]: { label: string, description: string } }} */
 	const DISCLAIMER_TAG_INFO = {
 		[DISCLAIMER_TAGS.SATIRE]: {
-			label: 'Satire',
+			label: DISCLAIMER_TAG_LABELS[DISCLAIMER_TAGS.SATIRE],
 			description: 'Shows a disclaimer that the article is satire.',
 		},
 		[DISCLAIMER_TAGS.NSFW]: {
-			label: 'NSFW',
+			label: DISCLAIMER_TAG_LABELS[DISCLAIMER_TAGS.NSFW],
 			description: 'Hides the article until the reader chooses to proceed.',
 		},
 	};

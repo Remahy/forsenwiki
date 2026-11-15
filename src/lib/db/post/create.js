@@ -1,10 +1,10 @@
 import prisma from '$lib/prisma.server';
 import { ACTIVITY_TYPES } from '$lib/constants/activity';
-import { createActivity } from '$lib/db/activity/create';
+import { contentUploadActivities, createActivity } from '$lib/db/activity/create';
 import { LEXICAL_Y } from '$lib/y/rows';
 
 /**
- * @typedef {{ title: { raw: string, sanitized: string }, data: { content: string }, ids: string[], disclaimerTags?: string[] }} CreatePostData
+ * @typedef {{ title: { raw: string, sanitized: string }, data: { content: string }, ids: string[], disclaimerTags?: string[], imageHashes?: string[] }} CreatePostData
  * @typedef {{ user: { name: string, id: string }, byteLength: number, type: import('$lib/constants/constants').Y_POST_TYPES_VALUES }} CreatePostMetadata
  */
 
@@ -12,7 +12,10 @@ import { LEXICAL_Y } from '$lib/y/rows';
  * @param {CreatePostData} postData
  * @param {CreatePostMetadata} metadata
  */
-export const createPost = async ({ title, data, ids, disclaimerTags }, metadata) => {
+export const createPost = async (
+	{ title, data, ids, disclaimerTags, imageHashes = [] },
+	metadata
+) => {
 	const outRelations = ids.map((id) => ({ isSystem: false, toPostId: id }));
 	const disclaimerTagRelations = (disclaimerTags ?? []).map((tag) => ({
 		isSystem: true,
@@ -85,6 +88,7 @@ export const createPost = async ({ title, data, ids, disclaimerTags }, metadata)
 			postId: post.id,
 			postUpdateId: postUpdate.id,
 			createdTimestamp: postUpdate.createdTimestamp,
+			children: await contentUploadActivities(tx, { authorId: user.id, hashes: imageHashes }),
 		});
 
 		return { post, postUpdate };

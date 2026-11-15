@@ -182,6 +182,8 @@ export async function POST({ request, locals, params }) {
 
 	/** @type {ReturnType<typeof getYAndEditor>} */
 	let article;
+	/** @type {string[]} */
+	let newImageHashes;
 	try {
 		article = getYAndEditor(
 			articleExtension(null, EDITOR_IS_READONLY, null),
@@ -198,6 +200,7 @@ export async function POST({ request, locals, params }) {
 		);
 		const currentImageHashes = getUniqueImageHashes(editor).map((hash, index) => ({ index, hash }));
 		const newHashes = currentImageHashes.filter(({ hash }) => !oldImageHashes.includes(hash));
+		newImageHashes = newHashes.map(({ hash }) => hash);
 		const failedUploads = await validateUploads(newHashes);
 
 		// Remove failed uploads from database.
@@ -252,7 +255,14 @@ export async function POST({ request, locals, params }) {
 			: undefined;
 
 	/** @type {import('$lib/db/post/update').UpdatePostData} */
-	const body = { post, outRelations, disclaimerTags, content: contentBase64, seed };
+	const body = {
+		post,
+		outRelations,
+		disclaimerTags,
+		content: contentBase64,
+		seed,
+		newImageHashes,
+	};
 	/** @type {import('$lib/db/post/update').UpdatePostMetadata} */
 	const metadata = {
 		user: { id: session.user.id },

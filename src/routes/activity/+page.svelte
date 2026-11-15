@@ -8,6 +8,7 @@
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+	import Badge from '$lib/components/Badge.svelte';
 	import {
 		getActivityFilters,
 		MINIMUM_LIMIT,
@@ -20,17 +21,38 @@
 		AVAILABLE_ACTIVITY_TYPES,
 		ACTIVITY_TYPES,
 		ACTIVITY_TYPE_LABELS,
+		MODERATOR_ACTIVITY_TYPES,
 	} from '$lib/constants/activity';
 	import Button from '$lib/components/Button.svelte';
 	import { getMoreActivity } from '$lib/api/activity';
 	import { reviver } from '$lib/utils/json';
+	import { DISCLAIMER_TAG_LABELS } from '$lib/constants/constants';
 
 	/**
 	 * @typedef {import('$lib/db/activity/read').ActivityEntry} ActivityEntry
 	 * @typedef {import('$lib/db/activity/read').ChildActivityEntry} ChildActivityEntry
 	 */
 
+	/** @type {Record<import('$lib/constants/activity').ActivityType, string>} */
+	const BADGE_COLORS = {
+		ARTICLE_CREATE: 'bg-emerald-500/25',
+		ARTICLE_UPDATE: 'bg-orange-500/25',
+		ARTICLE_RENAME: 'bg-orange-500/25',
+		ARTICLE_RETAG: 'bg-orange-500/25',
+		USER_REGISTER: 'bg-black/10 dark:bg-black',
+		USER_RENAME: 'bg-black/10 dark:bg-black',
+		CONTENT_UPLOAD: 'bg-violet-500/25',
+		CONTENT_DELETE: 'bg-red-500/25',
+		CONTENT_RENAME: 'bg-fuchsia-500/25',
+	};
+
 	const filters = $derived(getActivityFilters($page.url.searchParams));
+
+	const filterTypes = $derived(
+		AVAILABLE_ACTIVITY_TYPES.filter(
+			(type) => $page.data.isModerator || !MODERATOR_ACTIVITY_TYPES.includes(type)
+		)
+	);
 
 	let authorsInput = $derived(filters.authors.join(', '));
 	let typesInput = $derived([...filters.types]);
@@ -100,19 +122,70 @@
 	});
 </script>
 
+{#snippet badge(/** @type {import('$lib/constants/activity').ActivityType} */ type)}
+	<Badge class={BADGE_COLORS[type]}>{ACTIVITY_TYPE_LABELS[type] ?? type}</Badge>
+{/snippet}
+
 {#snippet line(
 	/** @type {ChildActivityEntry} */ activity,
 	/** @type {ActivityEntry | null} */ parent
 )}
-	{@const { type, user, post, postUpdate } = activity}
+	{@const { type, user, post, postUpdate, content } = activity}
+	{@render badge(type)}
 	{#if type === ACTIVITY_TYPES.USER_REGISTER && user}
-		<span class="rounded-sm bg-sky-500/25 p-1 text-xs">New user</span>
 		<StreamerModeShow>
 			<Link href="/user/{user.id}" target="_blank"><span class="font-bold">{user.name}</span></Link>
 		</StreamerModeShow>&nbsp;
+	{:else if type === ACTIVITY_TYPES.USER_RENAME && user}
+		<StreamerModeShow>
+			<small>
+				<Link href="/user/{user.id}" target="_blank">"{activity.newName}"</Link
+				>{#if activity.oldName}
+					&nbsp;<i>was "{activity.oldName}"</i>
+				{/if}&nbsp;
+			</small>
+		</StreamerModeShow>
+	{:else if (type === ACTIVITY_TYPES.CONTENT_UPLOAD || type === ACTIVITY_TYPES.CONTENT_DELETE) && content}
+		<span>
+			{#if content.deleted}
+				<span class="font-bold" title="Deleted">{content.name}</span>&nbsp;
+			{:else}
+				<Link href="/content/{content.id}" target="_blank">
+					<span class="font-bold">{content.name}</span>
+				</Link>&nbsp;
+			{/if}
+		</span>
+		<span>
+			<small class="opacity-85"
+				>{content.contentLength !== null ? `(${content.contentLength}) ` : ''}{content.type ??
+					'unknown'}{content.contentType ? `, ${content.contentType}` : ''}&nbsp;</small
+			>
+		</span>
+	{:else if type === ACTIVITY_TYPES.CONTENT_RENAME}
+		<small>
+			{#if content && !content.deleted}
+				<Link href="/content/{content.id}" target="_blank">"{activity.newName}"</Link>
+			{:else}
+				"{activity.newName}"
+			{/if}
+			{#if activity.oldName}
+				&nbsp;<i>was "{activity.oldName}"</i>
+			{/if}&nbsp;
+		</small>
+	{:else if type === ACTIVITY_TYPES.ARTICLE_RETAG}
+		{@const label = (/** @type {string} */ tag) => DISCLAIMER_TAG_LABELS[tag] ?? tag}
+		{@const added = activity.newTags.filter((tag) => !activity.oldTags.includes(tag))}
+		{@const removed = activity.oldTags.filter((tag) => !activity.newTags.includes(tag))}
+		<small>
+			{#if added.length}
+				<span class="font-bold">Added:</span> {added.map(label).join(', ')}&nbsp;
+			{/if}
+			{#if removed.length}
+				<span class="font-bold">Removed:</span> {removed.map(label).join(', ')}&nbsp;
+			{/if}
+		</small>
 	{:else if type === ACTIVITY_TYPES.ARTICLE_RENAME}
 		<small>
-			<span class="font-bold">Title change:</span>
 			"{postUpdate?.newTitle}"{#if postUpdate?.oldTitle}
 				&nbsp;<i>was "{postUpdate.oldTitle}"</i>
 			{/if}&nbsp;
@@ -125,13 +198,6 @@
 				</Link>&nbsp;
 			</span>
 		{/if}
-		{#if type === ACTIVITY_TYPES.ARTICLE_CREATE}
-			<span class="rounded-sm bg-emerald-500/25 p-1 text-xs">New!</span>
-		{:else if type !== ACTIVITY_TYPES.ARTICLE_UPDATE}
-			<span class="rounded-sm bg-black/10 p-1 text-xs dark:bg-white/10"
-				>{ACTIVITY_TYPE_LABELS[type] ?? type}</span
-			>
-		{/if}
 		{#if postUpdate}
 			<span><small class="opacity-85">({postUpdate.byteLength})&nbsp;</small></span>
 		{/if}
@@ -143,9 +209,6 @@
 			>
 		{/if}
 	{/if}
-	{#if activity.explanation}
-		<small><i>{activity.explanation}</i>&nbsp;</small>
-	{/if}
 	{#if !parent}
 		<small
 			>{formatRelative(activity.createdTimestamp, Date.now(), {
@@ -153,7 +216,7 @@
 			})}&nbsp;</small
 		>
 	{/if}
-	{#if user && type !== ACTIVITY_TYPES.USER_REGISTER && user.id !== parent?.user?.id}
+	{#if user && type !== ACTIVITY_TYPES.USER_REGISTER && type !== ACTIVITY_TYPES.USER_RENAME && user.id !== parent?.user?.id}
 		<span>
 			<small>
 				<span class="font-bold">By:</span>
@@ -162,6 +225,15 @@
 				</StreamerModeShow>
 			</small>
 		</span>
+	{/if}
+	{#if activity.explanation}
+		<small>&nbsp;<i>{activity.explanation}</i></small>
+	{/if}
+	{#if content?.metadata}
+		<details class="mt-1">
+			<summary class="cursor-pointer"><small>Metadata</small></summary>
+			<pre class="overflow-x-auto text-xs">{JSON.stringify(content.metadata, null, 2)}</pre>
+		</details>
 	{/if}
 {/snippet}
 
@@ -188,7 +260,7 @@
 						<input type="checkbox" checked={!typesInput.length} disabled class="opacity-50" />
 						<span>All</span>
 					</label>
-					{#each AVAILABLE_ACTIVITY_TYPES as type (type)}
+					{#each filterTypes as type (type)}
 						<label class="flex items-baseline gap-2">
 							<input type="checkbox" name="type" bind:group={typesInput} value={type} />
 							<span>{ACTIVITY_TYPE_LABELS[type]}</span>

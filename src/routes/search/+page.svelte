@@ -11,6 +11,8 @@
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 	import Box from '$lib/components/Box.svelte';
 	import ContentPreview from '$lib/components/content/ContentPreview.svelte';
+	import Badge from '$lib/components/Badge.svelte';
+	import { CONTENT_TYPE_BADGES, SEARCH_TYPE_BADGES } from '$lib/components/Search/badges';
 	import { parseSearchURL } from '$lib/components/Search/parseSearchURL';
 
 	/** @type {import('../api/search/+server').QueryResult[]} */
@@ -90,9 +92,17 @@
 						<div class="flex grow flex-col gap-2">
 							<div>
 								{#if !result.type}
-									<span class="rounded-sm bg-black/10 p-1 text-xs dark:bg-black">Article</span>
+									<Badge class={SEARCH_TYPE_BADGES.article.color}
+										>{SEARCH_TYPE_BADGES.article.label}</Badge
+									>
 								{:else if result.type === 'content'}
-									<span class="rounded-sm bg-violet-500/25 p-1 text-xs">Content</span>
+									<Badge class={SEARCH_TYPE_BADGES.content.color}
+										>{SEARCH_TYPE_BADGES.content.label}</Badge
+									>
+									{#if result.fileType}
+										{@const { icon, label } = CONTENT_TYPE_BADGES[result.fileType]}
+										<Badge {icon}>{label}</Badge>
+									{/if}
 								{/if}
 
 								<span title={result.rawTitle}>

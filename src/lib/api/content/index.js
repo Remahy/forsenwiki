@@ -41,3 +41,12 @@ export const uploadContent = async (files) => {
 
 	return fetch(`/api/content`, { method: 'POST', body, headers });
 };
+
+/**
+ * @param {string[]} ids
+ */
+export const confirmUploads = async (ids) => {
+	const body = JSON.stringify(ids);
+
+	return fetch(`/api/content/uploaded`, { method: 'POST', body, headers });
+};

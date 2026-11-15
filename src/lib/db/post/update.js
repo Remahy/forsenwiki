@@ -1,7 +1,7 @@
 import prisma from '$lib/prisma.server';
 import { AVAILABLE_DISCLAIMER_TAGS, SYSTEM } from '$lib/constants/constants';
 import { ACTIVITY_TYPES, FORCED_CONVERSION_EXPLANATION } from '$lib/constants/activity';
-import { createActivity } from '$lib/db/activity/create';
+import { contentUploadActivities, createActivity } from '$lib/db/activity/create';
 import { LEXICAL_Y } from '$lib/y/rows';
 import { postYRelationDeleteByFromPostId } from './delete';
 
@@ -16,11 +16,21 @@ import { postYRelationDeleteByFromPostId } from './delete';
 /**
  * @param {Prisma.PrismaClient | Prisma.Prisma.TransactionClient} tx
  * @param {UpdateYPost} arg2
+ * @returns {Promise<{ oldTags: string[], newTags: string[] } | null>}
  */
 const updateYPost = async (tx, { post, outRelations, disclaimerTags, metadata }) => {
 	await postYRelationDeleteByFromPostId(tx, post.id);
 
+	/** @type {string[]} */
+	let oldTags = [];
+
 	if (disclaimerTags) {
+		const current = await tx.yPostRelation.findMany({
+			where: { fromPostId: post.id, isSystem: true, toPostId: { in: AVAILABLE_DISCLAIMER_TAGS } },
+			select: { toPostId: true },
+		});
+		oldTags = current.map(({ toPostId }) => toPostId);
+
 		await tx.yPostRelation.deleteMany({
 			where: { fromPostId: post.id, isSystem: true, toPostId: { in: AVAILABLE_DISCLAIMER_TAGS } },
 		});
@@ -46,6 +56,18 @@ const updateYPost = async (tx, { post, outRelations, disclaimerTags, metadata })
 			lastUpdated: new Date(),
 		},
 	});
+
+	if (!disclaimerTags) {
+		return null;
+	}
+
+	const newTags = AVAILABLE_DISCLAIMER_TAGS.filter((tag) => disclaimerTags.includes(tag));
+	const changed =
+		newTags.length !== oldTags.length || newTags.some((tag) => !oldTags.includes(tag));
+
+	return changed
+		? { oldTags: AVAILABLE_DISCLAIMER_TAGS.filter((tag) => oldTags.includes(tag)), newTags }
+		: null;
 };
 
 /**
@@ -81,7 +103,7 @@ const createYPostUpdate = async (tx, data, metadata) => {
 
 /**
  * @typedef {{ content: string, byteLength: number }} Seed
- * @typedef {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], disclaimerTags?: string[], content: string, seed?: Seed }} UpdatePostData
+ * @typedef {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], disclaimerTags?: string[], content: string, seed?: Seed, newImageHashes?: string[] }} UpdatePostData
  * @typedef {{ user: { id: string }, byteLength: number, totalByteLength: number, newTitle?: string, oldTitle?: string }} UpdatePostMetadata
  */
 
@@ -90,10 +112,10 @@ const createYPostUpdate = async (tx, data, metadata) => {
  * @param {UpdatePostMetadata} metadata
  */
 export const updatePost = async (data, metadata) => {
-	const { post, outRelations, disclaimerTags, content, seed } = data;
+	const { post, outRelations, disclaimerTags, content, seed, newImageHashes = [] } = data;
 
 	return prisma.$transaction(async (tx) => {
-		await updateYPost(tx, {
+		const tagChange = await updateYPost(tx, {
 			post,
 			outRelations,
 			disclaimerTags,
@@ -151,6 +173,19 @@ export const updatePost = async (data, metadata) => {
 
 		if (metadata.newTitle) {
 			childActivities.push({ ...activity, type: ACTIVITY_TYPES.ARTICLE_RENAME });
+		}
+
+		if (tagChange) {
+			childActivities.push({ ...activity, type: ACTIVITY_TYPES.ARTICLE_RETAG, ...tagChange });
+		}
+
+		if (newImageHashes.length) {
+			const contents = await contentUploadActivities(tx, {
+				authorId: metadata.user.id,
+				hashes: newImageHashes,
+			});
+
+			childActivities.push(...contents);
 		}
 
 		await createActivity(tx, {
