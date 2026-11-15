@@ -41,7 +41,7 @@
 		notConverted,
 	} = data;
 
-	// Kept apart from the draft of the converted article, which is built on what is stored.
+	// Kept apart from the draft of the converted article.
 	const draftId = notConverted ? `${id}-forced` : id;
 
 	/** @type {import('../../../api/post/read/[title]/forced-migration/+server').ForcedMigration | null} */

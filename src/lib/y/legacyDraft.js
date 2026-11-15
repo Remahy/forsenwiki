@@ -6,7 +6,7 @@ export const LEGACY_DRAFT_KEY = 'legacyDraft';
 const TIMEOUT = 60_000;
 
 /**
- * Done on the server, which has the article's Yjs 13 history.
+ * Done on the server because it has the article's Yjs 13 history.
  * @param {string | null} title Null for a new article.
  * @param {Uint8Array} legacyUpdate
  * @returns {Promise<Uint8Array | null>} V2 update.

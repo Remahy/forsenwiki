@@ -140,7 +140,7 @@ const renderDiffBlocks = async (blocks) => {
 		return [];
 	}
 
-	// Lexical merges lists that follow each other, and these may not be neighbours in the article.
+	// Lexical merges lists that follow each other but these may not be neighbours in the article.
 	const children = blocks.flatMap((block, index) =>
 		block.type === 'list' && blocks[index - 1]?.type === 'list' ? [SEPARATOR, block] : [block]
 	);

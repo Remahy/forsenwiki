@@ -14,7 +14,7 @@ import { legacyUpdateToJSON } from './legacyUpdateToJSON';
 
 const config = () => articleExtension(null, EDITOR_IS_READONLY, null);
 
-// Block ids are new, and a direction is derived from the text again.
+// Block ids are new. A direction is derived from the text.
 const IGNORED_FIELDS = new Set(['$', 'direction', 'children']);
 
 /**
@@ -108,7 +108,7 @@ export const conversionDifferences = (before, after) => {
 export const convertLegacyArticle = (updateV2) => {
 	const json = legacyUpdateToJSON(updateV2);
 
-	// Same nodes as the converted article, so deprecated node types compare equal.
+	// Same nodes as the converted article. Deprecated node types are ignored.
 	const legacy = buildEditorFromExtensions(HeadlessExtension, config());
 	legacy.setEditorState(legacy.parseEditorState(json));
 	const before = legacy.getEditorState().toJSON();

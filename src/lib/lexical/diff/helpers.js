@@ -249,7 +249,7 @@ const comparePair = (older, newer, context) => {
 };
 
 /**
- * By block id, else the next node of the same type.
+ * By block id or the next node of the same type.
  * @param {Item[]} removed
  * @param {Item[]} added
  * @returns {Map<Item, Item>}
@@ -392,7 +392,7 @@ const anchorsOf = (older, newer) => {
 };
 
 /**
- * Match blocks with the same id. What is between them is compared by content.
+ * Match blocks with the same id. Anything between them is compared by content instead.
  * @param {Item[]} older
  * @param {Item[]} newer
  * @param {Context} context
@@ -727,7 +727,7 @@ const finish = (node, author) => {
 };
 
 /**
- * The changed top-level steps, numbered by where they are in either version.
+ * The changed top-level steps numbered by where they are in either version.
  * @param {Step[]} steps
  * @param {DiffOptions['attribute']} attribute
  * @param {(step: Step) => SerializedNode[][]} columnsOf

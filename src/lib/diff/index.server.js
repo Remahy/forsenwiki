@@ -17,7 +17,7 @@ import {
  * @typedef {import('$lib/worker/toHTML').Version} Version
  * @typedef {'split' | 'combined'} DiffView
  * @typedef {import('$lib/db/cache/diffPages').DiffPage} DiffPage
- * @typedef {{ view?: DiffView, html?: boolean }} PageOptions Without a view, a large article is shown combined.
+ * @typedef {{ view?: DiffView, html?: boolean }} PageOptions Articles are shown combined when view is left empty.
  * @typedef {import('$lib/worker/toHTML').ToHTMLResult} ToHTMLResult
  * @typedef {{ id: string, content: string, createdTimestamp: Date, metadata: { userId: string } }} VersionRow
  */

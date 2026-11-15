@@ -139,7 +139,7 @@ const decorate = (element, mark, node) => {
 	let target = element;
 
 	if (VOID_ELEMENTS.has(element.tagName)) {
-		// A void element can't hold the outline's hover, nor be positioned against.
+		// A void element can't hold the outline's hover.
 		target = document.createElement('span');
 		target.appendChild(element);
 	}

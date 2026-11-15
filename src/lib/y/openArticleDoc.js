@@ -13,7 +13,7 @@ import {
 } from './utils';
 
 /**
- * Never apply stored bytes to a doc, only `createYDoc` integrates all of them (yjs/yjs#824).
+ * Never apply stored bytes to a doc because only `createYDoc` integrates all of them (yjs/yjs#824).
  * @param {Uint8Array[]} updates V1 updates.
  */
 const load = (updates) =>
@@ -80,7 +80,7 @@ const migrateStashedDraft = async (db, title) => {
 	const migrated = await migrateLegacyDraft(title, legacyUpdate);
 	const update = migrated ? convertUpdateFormatV2ToV1(migrated) : null;
 
-	// Stored and unstashed together, so a draft is never merged twice.
+	// Stored and unstashed together.
 	const [updates, custom] = idb.transact(db, ['updates', 'custom']);
 
 	await Promise.all([

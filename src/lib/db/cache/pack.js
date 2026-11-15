@@ -6,7 +6,7 @@ import { version } from '$lib/utils/version';
 const compress = promisify(gzip);
 const decompress = promisify(gunzip);
 
-// What is cached depends on the nodes' code, so nothing written by another version is read.
+// What is cached depends on the nodes' code.
 export const MADE_BY = version;
 
 /**

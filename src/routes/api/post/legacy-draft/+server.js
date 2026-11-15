@@ -68,7 +68,7 @@ export async function POST({ request, locals }) {
 	const legacyUpdate = base64ToUint8Array(content);
 
 	if (!isLegacyUpdate(legacyUpdate)) {
-		error(400, 'Not a draft of the previous editor.');
+		error(400, 'Not a draft of the previous version.');
 	}
 
 	const update = await _migrateLegacyDraft(title, legacyUpdate);
