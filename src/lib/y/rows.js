@@ -6,6 +6,17 @@
 export const YJS13 = /** @type {const} */ ('YJS13');
 export const LEXICAL_Y = /** @type {const} */ ('LEXICAL_Y');
 
+export const NOT_CONVERTED_MESSAGE =
+	"This article has not been moved to the new editor yet, so it can't be edited. It can still be read.";
+
+export const ALREADY_MIGRATED_MESSAGE =
+	'This article has been moved to the new editor in the meantime. Reload the page to edit it.';
+
+export const STALE_MIGRATION_MESSAGE =
+	'The migrated version you loaded is outdated. Reload the page and load it again.';
+
+export const NOT_COMPARABLE_MESSAGE = 'This version is too old to be compared.';
+
 /**
  * @template {FormattedRow} T
  * @param {T[]} rows
@@ -36,11 +47,6 @@ export const readableRows = (rows) => {
 		rows: current.length ? current : rows.filter((row) => row.format === YJS13 && row.content),
 	};
 };
-
-export const NOT_CONVERTED_MESSAGE =
-	"This article has not been moved to the new editor yet, so it can't be edited. It can still be read.";
-
-export const NOT_COMPARABLE_MESSAGE = 'This version is too old to be compared.';
 
 /**
  * @param {...(FormattedRow | undefined)} rows

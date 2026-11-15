@@ -32,29 +32,41 @@ const readArticle = async (title) => {
 };
 
 /**
+ * @typedef {Object} ReadOptions
+ * @property {boolean} [allowUnconverted]
+ */
+
+/**
  * @param {string} title
+ * @param {ReadOptions} [options]
  * @throws {number}
  */
-export const _getYPostByTitle = async (title) => {
+export const _getYPostByTitle = async (title, { allowUnconverted = false } = {}) => {
 	const { post, format, update } = await readArticle(title);
 
 	if (update && format !== LEXICAL_Y) {
-		// See scripts/convertPostsToLexicalY.js.
-		error(503, NOT_CONVERTED_MESSAGE);
+		if (!allowUnconverted) {
+			// See scripts/convertPostsToLexicalY.js.
+			error(503, NOT_CONVERTED_MESSAGE);
+		}
+
+		return { ...post, update: null, legacyUpdate: update };
 	}
 
-	return { ...post, update };
+	return { ...post, update, legacyUpdate: null };
 };
 
 /**
  * @param {string} title
+ * @param {ReadOptions} [options]
  */
-export const _getYPostUpdate = async (title) => {
-	const { update, ...yPost } = await _getYPostByTitle(title);
+export const _getYPostUpdate = async (title, options) => {
+	const { update, legacyUpdate, ...yPost } = await _getYPostByTitle(title, options);
 
 	return {
 		post: yPost,
 		update,
+		notConverted: Boolean(legacyUpdate),
 	};
 };
 

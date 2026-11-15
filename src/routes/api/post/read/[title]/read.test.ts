@@ -42,6 +42,9 @@ const stored = (postUpdates: ReturnType<typeof row>[]) =>
 		postUpdates,
 	} as never);
 
+const editPage = (isModerator: boolean) =>
+	loadEditPage({ params: { title: 'article' }, locals: { isModerator } } as never);
+
 beforeEach(() => {
 	vi.mocked(updateToHTML).mockClear();
 });
@@ -53,10 +56,32 @@ test('an article that is not converted cannot be opened for editing, and says wh
 		status: 503,
 		body: { message: NOT_CONVERTED_MESSAGE },
 	});
-	await expect(loadEditPage({ params: { title: 'article' } } as never)).rejects.toMatchObject({
+	await expect(editPage(false)).rejects.toMatchObject({
 		status: 503,
 		body: { message: NOT_CONVERTED_MESSAGE },
 	});
+});
+
+test('a moderator opens an article that is not converted, without content to edit', async () => {
+	stored(legacyRows);
+
+	expect(await editPage(true)).toMatchObject({ update: null, notConverted: true });
+	expect(await editPage(true)).not.toHaveProperty('legacyUpdate');
+	expect(await editPage(true)).not.toHaveProperty('post.legacyUpdate');
+
+	expect(await _getYPostByTitle('article', { allowUnconverted: true })).toMatchObject({
+		update: null,
+		legacyUpdate: uint8ArrayToBase64(legacy),
+	});
+});
+
+test('a converted article opens the same for everyone', async () => {
+	stored([...legacyRows, row(LEXICAL_Y, seed)]);
+
+	const update = uint8ArrayToBase64(seed);
+
+	expect(await editPage(false)).toMatchObject({ update, notConverted: false });
+	expect(await editPage(true)).toMatchObject({ update, notConverted: false });
 });
 
 test('an article that is not converted is still rendered, from its Yjs 13 rows', async () => {

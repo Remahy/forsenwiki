@@ -39,13 +39,14 @@ export const createPost = async ({ title, type, yDoc, disclaimerTags = [] }) => 
  * @param {string} Arg.postTitle
  * @param {YDoc} Arg.yDoc
  * @param {string} Arg.newTitle
- * @param {string[]} [Arg.disclaimerTags] - Only applied for moderators.
+ * @param {string[]} [Arg.disclaimerTags] Only applied for moderators.
+ * @param {boolean} [Arg.forced] The document is built on a forced migration.
  */
-export const updatePost = async ({ postTitle, yDoc, newTitle, disclaimerTags }) => {
+export const updatePost = async ({ postTitle, yDoc, newTitle, disclaimerTags, forced }) => {
 	const encodedContent = encodeYDocToUpdateV2ToBase64(yDoc);
 
 	/** @type {import('../../../routes/api/post/update/[title]/+server').UpdateBody} */
-	const updateBody = { content: encodedContent, newTitle, disclaimerTags };
+	const updateBody = { content: encodedContent, newTitle, disclaimerTags, forced };
 	const body = JSON.stringify(updateBody);
 
 	return fetch(`/api/post/update/${postTitle}`, { method: 'POST', body, headers });
@@ -57,6 +58,15 @@ export const updatePost = async ({ postTitle, yDoc, newTitle, disclaimerTags }) 
  */
 export const readPost = ({ postTitle }) => {
 	return fetch(`/api/post/read/${postTitle}`, { headers });
+};
+
+/**
+ * Moderators only.
+ * @param {object} Arg
+ * @param {string} Arg.postTitle
+ */
+export const readForcedMigration = ({ postTitle }) => {
+	return fetch(`/api/post/read/${postTitle}/forced-migration`, { headers });
 };
 
 /**

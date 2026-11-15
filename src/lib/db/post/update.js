@@ -1,5 +1,5 @@
 import prisma from '$lib/prisma.server';
-import { AVAILABLE_DISCLAIMER_TAGS } from '$lib/constants/constants';
+import { AVAILABLE_DISCLAIMER_TAGS, SYSTEM } from '$lib/constants/constants';
 import { LEXICAL_Y } from '$lib/y/rows';
 import { postYRelationDeleteByFromPostId } from './delete';
 
@@ -49,7 +49,7 @@ const updateYPost = async (tx, { post, outRelations, disclaimerTags, metadata })
 /**
  * Create YPostUpdateMetadata, & YPostUpdate
  * @param {Prisma.PrismaClient | Prisma.Prisma.TransactionClient} tx
- * @param {Pick<Prisma.YPostUpdate, 'content' | 'format' | 'postId'>} data
+ * @param {Pick<Prisma.YPostUpdate, 'content' | 'format' | 'postId'> & { createdTimestamp?: Date }} data
  * @param {{ user: { id: string }, byteLength: number, newTitle?: string, oldTitle?: string }} metadata
  */
 const createYPostUpdate = async (tx, data, metadata) => {
@@ -76,7 +76,8 @@ const createYPostUpdate = async (tx, data, metadata) => {
 };
 
 /**
- * @typedef {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], disclaimerTags?: string[], content: string }} UpdatePostData
+ * @typedef {{ content: string, byteLength: number }} Seed
+ * @typedef {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], disclaimerTags?: string[], content: string, seed?: Seed }} UpdatePostData
  * @typedef {{ user: { id: string }, byteLength: number, totalByteLength: number, newTitle?: string, oldTitle?: string }} UpdatePostMetadata
  */
 
@@ -85,7 +86,7 @@ const createYPostUpdate = async (tx, data, metadata) => {
  * @param {UpdatePostMetadata} metadata
  */
 export const updatePost = async (data, metadata) => {
-	const { post, outRelations, disclaimerTags, content } = data;
+	const { post, outRelations, disclaimerTags, content, seed } = data;
 
 	return prisma.$transaction(async (tx) => {
 		await updateYPost(tx, {
@@ -96,13 +97,32 @@ export const updatePost = async (data, metadata) => {
 		});
 
 		/**
-		 * @type {Pick<Prisma.YPostUpdate, 'content' | 'format' | 'postId'>}
+		 * @type {Pick<Prisma.YPostUpdate, 'content' | 'format' | 'postId'> & { createdTimestamp?: Date }}
 		 */
 		const dataToInsert = {
 			content,
 			format: LEXICAL_Y,
 			postId: post.id,
 		};
+
+		if (seed) {
+			const seededAt = Date.now();
+
+			// The row scripts/convertPostsToLexicalY.js writes.
+			await createYPostUpdate(
+				tx,
+				{
+					content: seed.content,
+					format: LEXICAL_Y,
+					postId: post.id,
+					createdTimestamp: new Date(seededAt),
+				},
+				{ user: { id: SYSTEM }, byteLength: seed.byteLength }
+			);
+
+			// The user update receives a newer timestamp to make sure the seed is "before" in the database table.
+			dataToInsert.createdTimestamp = new Date(seededAt + 1);
+		}
 
 		return createYPostUpdate(tx, dataToInsert, metadata);
 	});

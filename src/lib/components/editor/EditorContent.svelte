@@ -122,7 +122,7 @@
 		{/if}
 
 		{#if article.legacyDraftFailed}
-			<div class="editor-border bg-yellow-300! p-2 dark:text-black" role="alert">
+			<div class="editor-border bg-yellow-300/75! p-2 dark:text-black" role="alert">
 				<strong>Your draft from the previous version of the editor could not be loaded.</strong>
 				It is kept. Reload the page to try again.
 			</div>

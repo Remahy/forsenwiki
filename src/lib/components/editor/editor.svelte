@@ -8,17 +8,18 @@
 	/**
 	 * @typedef {Object} Props
 	 * @property {any} id
+	 * @property {string} [draftId]
 	 * @property {any} update
 	 * @property {string | null} [title]
 	 * @property {any} [initialUpdate]
 	 */
 
 	/** @type {Props} */
-	let { id, update, title = null, initialUpdate = null } = $props();
+	let { id, draftId = id, update, title = null, initialUpdate = null } = $props();
 
-	// The doc must be created from its stored state (yjs/yjs#824), so it loads before the editor.
+	// The doc must be created from its stored state (yjs/yjs#824) so it loads before the editor.
 	// svelte-ignore state_referenced_locally
-	const opening = openArticleDoc({ id, title, update, initialUpdate });
+	const opening = openArticleDoc({ id: draftId, title, update, initialUpdate });
 
 	onDestroy(() => {
 		opening.then((article) => article.destroy());
