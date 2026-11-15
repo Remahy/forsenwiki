@@ -212,6 +212,8 @@ model Content {
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
 
+  activities Activity[]
+
   createdTimestamp DateTime @default(now())
 }
 
@@ -245,6 +247,7 @@ enum ActivityType {
   ARTICLE_UPDATE
   ARTICLE_RENAME
   USER_REGISTER
+  CONTENT_UPLOAD
 }
 
 model Activity {
@@ -266,10 +269,14 @@ model Activity {
   postUpdate   YPostUpdate? @relation(fields: [postUpdateId], references: [id], onDelete: Cascade)
   postUpdateId String?
 
+  content   Content? @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  contentId String?
+
   createdTimestamp DateTime @default(now())
 
   @@index([createdTimestamp, id])
   @@index([parentId])
   @@index([userId])
   @@index([postUpdateId])
+  @@index([contentId])
 }

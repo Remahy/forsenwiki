@@ -33,6 +33,11 @@ vi.mock('$lib/prisma.server', () => {
 				return { postUpdate: async () => ({ id: `row-${created.length}` }) };
 			},
 		},
+		content: {
+			findMany: vi.fn(async ({ where }: { where: { hash: { in: string[] } } }) =>
+				where.hash.in.map((hash) => ({ id: `content-${hash}`, createdTimestamp: new Date(0) }))
+			),
+		},
 		activity: {
 			create: ({ data }: { data: CreatedActivity }) => {
 				activities.push(data);
@@ -121,5 +126,28 @@ test('a seed is stored first, by the system, and is older than the update built 
 			userId: SYSTEM,
 			postUpdateId: 'row-1',
 		}),
+	]);
+});
+
+test('images new to the article are uploads linked to the update', async () => {
+	await updatePost(
+		{ post, outRelations: [], content: 'update', newImageHashes: ['a', 'b'] },
+		metadata
+	);
+
+	expect(activities).toHaveLength(1);
+	expect(activities[0].children.create).toEqual([
+		{
+			type: 'CONTENT_UPLOAD',
+			userId: 'moderator',
+			contentId: 'content-a',
+			createdTimestamp: new Date(0),
+		},
+		{
+			type: 'CONTENT_UPLOAD',
+			userId: 'moderator',
+			contentId: 'content-b',
+			createdTimestamp: new Date(0),
+		},
 	]);
 });

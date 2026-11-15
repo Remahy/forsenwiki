@@ -64,6 +64,8 @@ export async function POST({ request, locals }) {
 	/** @type {ReturnType<typeof getYAndEditor>} */
 	let article;
 	let title;
+	/** @type {string[]} */
+	let imageHashes;
 	try {
 		title = isBio
 			? {
@@ -96,11 +98,10 @@ export async function POST({ request, locals }) {
 
 		await serverRunValidations(article.editor);
 
-		const imageHashes = getUniqueImageHashes(article.editor).map((hash, index) => ({
-			index,
-			hash,
-		}));
-		const failedUploads = await validateUploads(imageHashes);
+		imageHashes = getUniqueImageHashes(article.editor);
+		const failedUploads = await validateUploads(
+			imageHashes.map((hash, index) => ({ index, hash }))
+		);
 		// Remove failed uploads from database.
 		await pruneFailedUploads(
 			failedUploads.map(({ hash }) => hash),
@@ -135,7 +136,13 @@ export async function POST({ request, locals }) {
 	const internalIds = getInternalIds(editor);
 
 	/** @type {import('$lib/db/post/create').CreatePostData} */
-	const body = { title, data: { content: backendContent }, ids: internalIds, disclaimerTags };
+	const body = {
+		title,
+		data: { content: backendContent },
+		ids: internalIds,
+		disclaimerTags,
+		imageHashes,
+	};
 
 	/** @type {import('$lib/db/post/create').CreatePostMetadata} */
 	const metadata = {

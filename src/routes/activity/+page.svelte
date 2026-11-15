@@ -24,6 +24,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import { getMoreActivity } from '$lib/api/activity';
 	import { reviver } from '$lib/utils/json';
+	import { STATIC_DOMAIN } from '$lib/environment/environment';
 
 	/**
 	 * @typedef {import('$lib/db/activity/read').ActivityEntry} ActivityEntry
@@ -104,12 +105,26 @@
 	/** @type {ChildActivityEntry} */ activity,
 	/** @type {ActivityEntry | null} */ parent
 )}
-	{@const { type, user, post, postUpdate } = activity}
+	{@const { type, user, post, postUpdate, content } = activity}
 	{#if type === ACTIVITY_TYPES.USER_REGISTER && user}
 		<span class="rounded-sm bg-sky-500/25 p-1 text-xs">New user</span>
 		<StreamerModeShow>
 			<Link href="/user/{user.id}" target="_blank"><span class="font-bold">{user.name}</span></Link>
 		</StreamerModeShow>&nbsp;
+	{:else if type === ACTIVITY_TYPES.CONTENT_UPLOAD && content}
+		<span>
+			<Link href="{STATIC_DOMAIN}/{content.hash}" target="_blank">
+				<span class="font-bold">{content.name}</span>
+			</Link>&nbsp;
+		</span>
+		<span class="rounded-sm bg-violet-500/25 p-1 text-xs">Upload</span>
+		<span>
+			<small class="opacity-85"
+				>{content.type ?? 'unknown'}{content.contentType
+					? `, ${content.contentType}`
+					: ''}{content.contentLength !== null ? ` (${content.contentLength})` : ''}&nbsp;</small
+			>
+		</span>
 	{:else if type === ACTIVITY_TYPES.ARTICLE_RENAME}
 		<small>
 			<span class="font-bold">Title change:</span>
@@ -162,6 +177,12 @@
 				</StreamerModeShow>
 			</small>
 		</span>
+	{/if}
+	{#if content?.metadata}
+		<details class="mt-1">
+			<summary class="cursor-pointer"><small>Metadata</small></summary>
+			<pre class="overflow-x-auto text-xs">{JSON.stringify(content.metadata, null, 2)}</pre>
+		</details>
 	{/if}
 {/snippet}
 

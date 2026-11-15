@@ -1,6 +1,6 @@
 import { STATIC_DOMAIN } from '$lib/environment/environment';
 import { loadContent } from '$lib/utils/indexedDb/content';
-import { deleteContent, uploadContent } from '$lib/api/content';
+import { confirmUploads, deleteContent, uploadContent } from '$lib/api/content';
 import { createFileUploadObject } from '$lib/components/editor/utils/fileUploadObject';
 import {
 	addNewUploaded,
@@ -79,9 +79,9 @@ const getImages = async (editor, id) => {
 
 /**
  * @param {Array<FileUpload & { file: File }>} contentToUpload
- * @returns
+ * @param {{ confirm?: boolean }} [options]
  */
-const uploadContentHandler = async (contentToUpload) => {
+const uploadContentHandler = async (contentToUpload, { confirm = false } = {}) => {
 	const presignRes = await uploadContent(contentToUpload);
 
 	if (presignRes.status !== 200) {
@@ -132,14 +132,16 @@ const uploadContentHandler = async (contentToUpload) => {
 				headers: headers(presignEntry.contentType, hash, presignEntry.metadata),
 				body: file,
 			})
-				.then(() =>
+				.then(() => {
 					addNewUploaded({
 						id: presignEntry.metadata.id,
 						url: `${STATIC_DOMAIN}/${hash}`,
 						contentType: presignEntry.contentType,
 						name: presignEntry.name,
-					})
-				)
+					});
+
+					return presignEntry.metadata.id;
+				})
 				.catch((err) => {
 					deleteContent(presignEntry.metadata.id);
 					throw err;
@@ -149,13 +151,18 @@ const uploadContentHandler = async (contentToUpload) => {
 
 	const uploadsRes = await Promise.allSettled(uploads);
 
+	const successes = uploadsRes.filter((r) => r.status === 'fulfilled').map((r) => r.value);
+
+	if (confirm && successes.length) {
+		await confirmUploads(successes).catch(console.error);
+	}
+
 	const errors = uploadsRes.filter((r) => r.status === 'rejected').map((r) => r.reason);
 	if (errors.length) {
 		console.error(errors);
 		throw new Error('Error uploading new file contents.');
 	}
 
-	const successes = uploadsRes.filter((r) => r.status === 'fulfilled').map((r) => r.value);
 	return successes;
 };
 
@@ -185,5 +192,5 @@ export const uploadFiles = async (filesToUpload) => {
 		return true;
 	}
 
-	return uploadContentHandler(filesToUpload);
+	return uploadContentHandler(filesToUpload, { confirm: true });
 };

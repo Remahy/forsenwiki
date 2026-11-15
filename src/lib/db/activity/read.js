@@ -13,6 +13,17 @@ const fields = /** @satisfies {Prisma.Prisma.ActivitySelect} */ ({
 			metadata: { select: { byteLength: true, newTitle: true, oldTitle: true } },
 		},
 	},
+	content: {
+		select: {
+			id: true,
+			hash: true,
+			name: true,
+			type: true,
+			contentType: true,
+			contentLength: true,
+			metadata: true,
+		},
+	},
 });
 
 const select = /** @satisfies {Prisma.Prisma.ActivitySelect} */ ({
@@ -37,35 +48,56 @@ const select = /** @satisfies {Prisma.Prisma.ActivitySelect} */ ({
  *   user: { id: string, name: string | null } | null,
  *   post: { title: string, rawTitle: string } | null,
  *   postUpdate: { id: string, byteLength: bigint | null, newTitle: string | null, oldTitle: string | null } | null,
+ *   content: { id: string, hash: string, name: string, type: string | null, contentType: string | null, contentLength: bigint | null, metadata?: Prisma.Prisma.JsonValue } | null,
  * }} ChildActivityEntry
  *
  * @typedef {ChildActivityEntry & { children: ChildActivityEntry[] }} ActivityEntry
  */
 
 /**
+ * @typedef {{ isModerator: boolean }} Viewer
+ */
+
+/**
+ * Same rule as /api/content/validate/[hash]: only moderators see content metadata.
  * @param {ActivityRow} row
+ * @param {Viewer} viewer
  * @returns {ChildActivityEntry}
  */
-const toChildEntry = ({ createdTimestamp, postUpdate, ...row }) => ({
-	...row,
-	createdTimestamp: createdTimestamp.toISOString(),
-	postUpdate: postUpdate && { id: postUpdate.id, ...postUpdate.metadata },
-});
+const toChildEntry = ({ createdTimestamp, postUpdate, content, ...row }, { isModerator }) => {
+	/** @type {ChildActivityEntry['content']} */
+	let visibleContent = content;
+
+	if (content && !isModerator) {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { metadata, ...rest } = content;
+		visibleContent = rest;
+	}
+
+	return {
+		...row,
+		createdTimestamp: createdTimestamp.toISOString(),
+		postUpdate: postUpdate && { id: postUpdate.id, ...postUpdate.metadata },
+		content: visibleContent,
+	};
+};
 
 /**
  * @param {ActivityRow & { children: ActivityRow[] }} row
+ * @param {Viewer} viewer
  * @returns {ActivityEntry}
  */
-const toEntry = ({ children, ...row }) => ({
-	...toChildEntry(row),
-	children: children.map(toChildEntry),
+const toEntry = ({ children, ...row }, viewer) => ({
+	...toChildEntry(row, viewer),
+	children: children.map((child) => toChildEntry(child, viewer)),
 });
 
 /**
  * Do not list child activities on their own.
  * @param {ReturnType<import('$lib/utils/activity').getActivityFilters>} filters
+ * @param {Viewer} viewer
  */
-export const readActivities = async ({ authors, types, cursor, limit }) => {
+export const readActivities = async ({ authors, types, cursor, limit }, viewer) => {
 	const rows = await prisma.activity.findMany({
 		select,
 		where: {
@@ -80,14 +112,20 @@ export const readActivities = async ({ authors, types, cursor, limit }) => {
 		take: limit,
 	});
 
-	return rows.map(toEntry);
+	return rows.map((row) => toEntry(row, viewer));
 };
 
 /**
+ * Oldest first.
  * @param {Prisma.Prisma.ActivityWhereInput} where
+ * @param {Viewer} viewer
  */
-export const readActivity = async (where) => {
-	const row = await prisma.activity.findFirst({ select, where: { ...where, parentId: null } });
+export const readActivitiesWhere = async (where, viewer) => {
+	const rows = await prisma.activity.findMany({
+		select,
+		where: { ...where, parentId: null },
+		orderBy: [{ createdTimestamp: 'asc' }, { id: 'asc' }],
+	});
 
-	return row && toEntry(row);
+	return rows.map((row) => toEntry(row, viewer));
 };
