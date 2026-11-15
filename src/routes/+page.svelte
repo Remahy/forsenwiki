@@ -102,9 +102,9 @@
 		</Box>
 	</nav>
 
-	<div class="block grow gap-4 lg:flex">
+	<div class="block grow gap-4 lg:flex lg:items-start">
 		<div class="mb-4 flex grow flex-col lg:mb-0">
-			<Box class="grow p-4">
+			<Box class="p-4">
 				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">Latest articles</h2>
 				</div>
@@ -128,27 +128,10 @@
 					</div>
 				{/each}
 			</Box>
-
-			{#if $popularArticles.length}
-				<Box class="mt-4 grow p-4">
-					<div class="box-heading-wrapper mb-2 flex items-center justify-between">
-						<h2 class="text-2xl">Popular articles</h2>
-						<Link href="https://stats.forsen.wiki/" target="_blank">STATS.FORSEN.WIKI</Link>
-					</div>
-					{#each $popularArticles as article, index (article.path)}
-						<div class="p-2 {index % 2 ? 'bg-black/10 dark:bg-white/5' : ''}">
-							<Link href={article.path} class="inline-block min-w-32"
-								><strong>{article.title}</strong></Link
-							>
-							&nbsp; <span>{article.count} hits</span>
-						</div>
-					{/each}
-				</Box>
-			{/if}
 		</div>
 
-		{#if mostLinkedArticles.length}
-			<div class="block flex-col gap-4 lg:flex lg:w-96 lg:min-w-96">
+		<div class="flex flex-col gap-4 lg:w-96 lg:min-w-96">
+			{#if mostLinkedArticles.length}
 				<Box class="p-4">
 					<ul class="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2 lg:grid-cols-1">
 						{#each mostLinkedArticles as article (article.title)}
@@ -193,7 +176,30 @@
 						<Link href="/w" target="_blank">All articles</Link>
 					</div>
 				</Box>
-			</div>
-		{/if}
+			{/if}
+
+			{#if $popularArticles.length}
+				<Box class="p-4">
+					<div class="box-heading-wrapper mb-2">
+						<h2 class="text-2xl">Popular articles</h2>
+					</div>
+					{#each $popularArticles as article, index (article.path)}
+						<div
+							class="flex items-baseline justify-between gap-2 p-2 {index % 2
+								? 'bg-black/10 dark:bg-white/5'
+								: ''}"
+						>
+							<Link href={article.path}><strong>{article.title}</strong></Link>
+							<span class="shrink-0">{article.count} hits</span>
+						</div>
+					{/each}
+					<div
+						class="box-heading-wrapper mt-2 flex items-center justify-end border-t-2 border-b-0! pt-2 pb-0!"
+					>
+						<Link href="https://stats.forsen.wiki/" target="_blank">STATS.FORSEN.WIKI</Link>
+					</div>
+				</Box>
+			{/if}
+		</div>
 	</div>
 </Container>
