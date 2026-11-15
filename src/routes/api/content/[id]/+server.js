@@ -36,9 +36,13 @@ export async function POST({ request, locals, params }) {
 
 	const { name } = await request.json();
 
-	const updateRes = await updateContentName(id, name);
+	const { content, activity } = await updateContentName(id, name, session.user.id);
 
-	return json(updateRes);
+	if (activity) {
+		await emitActivity({ id: activity.id });
+	}
+
+	return json(content);
 }
 
 export async function DELETE({ locals, params }) {

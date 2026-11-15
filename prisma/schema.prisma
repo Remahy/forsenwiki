@@ -249,6 +249,7 @@ enum ActivityType {
   USER_REGISTER
   CONTENT_UPLOAD
   CONTENT_DELETE
+  CONTENT_RENAME
 }
 
 model Activity {
@@ -273,6 +274,9 @@ model Activity {
   content         Content? @relation(fields: [contentId], references: [id], onDelete: SetNull)
   contentId       String?
   contentSnapshot Json? /// What the content was when it was deleted.
+
+  oldName String?
+  newName String?
 
   createdTimestamp DateTime @default(now())
 

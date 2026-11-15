@@ -25,7 +25,6 @@
 	import Button from '$lib/components/Button.svelte';
 	import { getMoreActivity } from '$lib/api/activity';
 	import { reviver } from '$lib/utils/json';
-	import { STATIC_DOMAIN } from '$lib/environment/environment';
 
 	/**
 	 * @typedef {import('$lib/db/activity/read').ActivityEntry} ActivityEntry
@@ -40,6 +39,7 @@
 		USER_REGISTER: 'bg-black/10 dark:bg-black',
 		CONTENT_UPLOAD: 'bg-violet-500/25',
 		CONTENT_DELETE: 'bg-red-500/25',
+		CONTENT_RENAME: 'bg-fuchsia-500/25',
 	};
 
 	const filters = $derived(getActivityFilters($page.url.searchParams));
@@ -131,7 +131,7 @@
 			{#if content.deleted}
 				<span class="font-bold" title="Deleted">{content.name}</span>&nbsp;
 			{:else}
-				<Link href="{STATIC_DOMAIN}/{content.hash}" target="_blank">
+				<Link href="/content/{content.id}" target="_blank">
 					<span class="font-bold">{content.name}</span>
 				</Link>&nbsp;
 			{/if}
@@ -142,6 +142,17 @@
 					'unknown'}{content.contentType ? `, ${content.contentType}` : ''}&nbsp;</small
 			>
 		</span>
+	{:else if type === ACTIVITY_TYPES.CONTENT_RENAME}
+		<small>
+			{#if content && !content.deleted}
+				<Link href="/content/{content.id}" target="_blank">"{activity.newName}"</Link>
+			{:else}
+				"{activity.newName}"
+			{/if}
+			{#if activity.oldName}
+				&nbsp;<i>was "{activity.oldName}"</i>
+			{/if}&nbsp;
+		</small>
 	{:else if type === ACTIVITY_TYPES.ARTICLE_RENAME}
 		<small>
 			"{postUpdate?.newTitle}"{#if postUpdate?.oldTitle}
@@ -214,14 +225,14 @@
 			<div class="flex flex-col gap-1">
 				<strong>Filter by types:</strong>
 				<div class="flex flex-wrap items-baseline gap-3">
-					<label class="flex items-center gap-2">
+					<label class="flex items-baseline gap-2">
 						<input type="checkbox" checked={!typesInput.length} disabled class="opacity-50" />
 						<span>All</span>
 					</label>
 					{#each AVAILABLE_ACTIVITY_TYPES as type (type)}
-						<label class="flex items-center gap-2">
+						<label class="flex items-baseline gap-2">
 							<input type="checkbox" name="type" bind:group={typesInput} value={type} />
-							{@render badge(type)}
+							<span>{ACTIVITY_TYPE_LABELS[type]}</span>
 						</label>
 					{/each}
 				</div>

@@ -9,6 +9,8 @@ import { ACTIVITY_TYPES } from '$lib/constants/activity';
  *   postUpdateId?: string,
  *   contentId?: string,
  *   contentSnapshot?: import('$lib/db/content/delete').ContentSnapshot,
+ *   oldName?: string,
+ *   newName?: string,
  *   createdTimestamp?: Date,
  * }} ActivityData
  */

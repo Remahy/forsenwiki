@@ -6,6 +6,7 @@ export const ACTIVITY_TYPES = /** @type {const} */ ({
 	USER_REGISTER: 'USER_REGISTER',
 	CONTENT_UPLOAD: 'CONTENT_UPLOAD',
 	CONTENT_DELETE: 'CONTENT_DELETE',
+	CONTENT_RENAME: 'CONTENT_RENAME',
 });
 
 /**
@@ -22,6 +23,7 @@ export const ACTIVITY_TYPE_LABELS = {
 	USER_REGISTER: 'New user',
 	CONTENT_UPLOAD: 'Content upload',
 	CONTENT_DELETE: 'Content deletion',
+	CONTENT_RENAME: 'Content rename',
 };
 
 export const CONVERTED_EXPLANATION = 'Converted to a newer format.';
