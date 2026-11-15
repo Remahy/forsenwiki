@@ -6,7 +6,7 @@ Are you considering to prepare a PR to create a new release?
 - Open package.json, change version number accordingly. (E.g. 1.0.1)
 - Run `npm run generate-changelog`.
 - Open package.json again, reset number back to previous version. (E.g. 1.0.0)
-- Commit and push the two generated files, `CHANGELOG.md` & `src/routes/changelogs/changelogs.html`.
+- Commit and push the generated files.
 
 Squash branch into main with commit message `chore: Changelogs for v1.0.1`.
 

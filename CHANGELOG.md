@@ -1,3 +1,66 @@
+## [1.0.0-rc.1](https://github.com/Remahy/forsenwiki/compare/v1.0.0-beta.17...v1.0.0-rc.1) (2026-11-15)
+
+### ⚠ BREAKING CHANGES
+
+* Activity & New splash page (#288)
+* Lexical Y & Split-view diff viewer (#286)
+
+### Features
+
+* `/w` endpoint ([#281](https://github.com/Remahy/forsenwiki/issues/281)) ([68cf445](https://github.com/Remahy/forsenwiki/commit/68cf445b42b322545f686e50ad6eb6b18dba56d0))
+* Activity & New splash page ([#288](https://github.com/Remahy/forsenwiki/issues/288)) ([9b002fd](https://github.com/Remahy/forsenwiki/commit/9b002fd3448dd0f26c48f354d61535bff2752aba))
+* Add NSFW and Satire disclaimer tags ([#270](https://github.com/Remahy/forsenwiki/issues/270)) ([eaeaa2a](https://github.com/Remahy/forsenwiki/commit/eaeaa2ac4c687fa0e46fc9763ca1b46fd1b2f644))
+* Add sub/sup formatting options ([#267](https://github.com/Remahy/forsenwiki/issues/267)) ([dd3bddb](https://github.com/Remahy/forsenwiki/commit/dd3bddb6033277f2a4f45d0524bda0c8aa62f825))
+* Gallery node ([#236](https://github.com/Remahy/forsenwiki/issues/236)) ([e81400c](https://github.com/Remahy/forsenwiki/commit/e81400cf7662c6c2beee4053348c9a7b7c3a7448))
+* Image zoom ([#238](https://github.com/Remahy/forsenwiki/issues/238)) ([5fe7918](https://github.com/Remahy/forsenwiki/commit/5fe79187e560f763c87f847e3bcc0409e132ff7b))
+* Internal heading linking ([#279](https://github.com/Remahy/forsenwiki/issues/279)) ([78f2b27](https://github.com/Remahy/forsenwiki/commit/78f2b277377fb21a8900dee73ad45c8622755477))
+* Lexical Y & Split-view diff viewer ([#286](https://github.com/Remahy/forsenwiki/issues/286)) ([fd17ef2](https://github.com/Remahy/forsenwiki/commit/fd17ef261c73a48db699efa26fe4a455b967b469))
+* Modal for modifying name of local draft images ([#231](https://github.com/Remahy/forsenwiki/issues/231)) ([1da5945](https://github.com/Remahy/forsenwiki/commit/1da5945426a16a7ed320911b60ad5477b16977c5))
+* Most linked articles ([#280](https://github.com/Remahy/forsenwiki/issues/280)) ([18b7a09](https://github.com/Remahy/forsenwiki/commit/18b7a0995840b33fa6c46d69342c99c297741f21))
+* Subtitles for videos ([#271](https://github.com/Remahy/forsenwiki/issues/271)) ([673b50c](https://github.com/Remahy/forsenwiki/commit/673b50ce9a728d09a73f91c0b40b5fa1d96a855b))
+* Treeview for editor ([#227](https://github.com/Remahy/forsenwiki/issues/227)) ([2c059b1](https://github.com/Remahy/forsenwiki/commit/2c059b1f7dd23281955af2f278d81583a84f53af))
+* Video embed audio & video image thumbnails ([#254](https://github.com/Remahy/forsenwiki/issues/254)) ([d11b991](https://github.com/Remahy/forsenwiki/commit/d11b9913d2e4fc4fad2dd9d8dcaef204ed39b3e2))
+* **VideoEmbed:** Experimental browser lazy load ([#228](https://github.com/Remahy/forsenwiki/issues/228)) ([7eb0fca](https://github.com/Remahy/forsenwiki/commit/7eb0fca1153c7e1bd1c400bd182b7b0f983941ef))
+
+### Bug Fixes
+
+* Add `Disallow: /w/*/history/*` to robots.txt ([#256](https://github.com/Remahy/forsenwiki/issues/256)) ([a9fd61c](https://github.com/Remahy/forsenwiki/commit/a9fd61cd7d0d75455d98ed1efb983fcce0182dee))
+* Add styling to embedded Video node thumbnails in editor ([#257](https://github.com/Remahy/forsenwiki/issues/257)) ([effd282](https://github.com/Remahy/forsenwiki/commit/effd28259195d27ea6afd7eb1d569156e644ee54))
+* Add Treeview modal button for smaller screens ([#233](https://github.com/Remahy/forsenwiki/issues/233)) ([0093eab](https://github.com/Remahy/forsenwiki/commit/0093eab36ca06acd2c29ee3b436558c77a4caed3))
+* Content upload fixes ([#230](https://github.com/Remahy/forsenwiki/issues/230)) ([dd187aa](https://github.com/Remahy/forsenwiki/commit/dd187aa46a3b4c3414fc97495e58811bc58a9d2f))
+* **dev:** Rename uploadContent file to uploadContentState ([#268](https://github.com/Remahy/forsenwiki/issues/268)) ([650a489](https://github.com/Remahy/forsenwiki/commit/650a489b83d42e2795a15466fc9b8746446a0dcd))
+* **dev:** Use `building` variable to not fail builds ([#273](https://github.com/Remahy/forsenwiki/issues/273)) ([43b643d](https://github.com/Remahy/forsenwiki/commit/43b643d809c090a52367ddd58fb99a243ce7c7c1))
+* Disable autoplay for VideoEmbed ([#226](https://github.com/Remahy/forsenwiki/issues/226)) ([f89bda0](https://github.com/Remahy/forsenwiki/commit/f89bda0435b397b091ec595da8b3da12b2ccb6dc))
+* Editor tree QoL ([#232](https://github.com/Remahy/forsenwiki/issues/232)) ([c5c8818](https://github.com/Remahy/forsenwiki/commit/c5c8818885b73388eecf98ff8b3ee21a2e7df0e1))
+* Float block siblings margin & decorator block keyboard selection ([#229](https://github.com/Remahy/forsenwiki/issues/229)) ([dbc2fed](https://github.com/Remahy/forsenwiki/commit/dbc2fed9cbc49eebd73689f19b24600667781b8c))
+* Improve content endpoints usability & Fixes to image zoom ([#269](https://github.com/Remahy/forsenwiki/issues/269)) ([00e8329](https://github.com/Remahy/forsenwiki/commit/00e83293e16b004de428d7591d0c1b10c2e1cfa0))
+* Improve suggestion box styling, hide front page images on streamer mode ([#282](https://github.com/Remahy/forsenwiki/issues/282)) ([2ccb8fc](https://github.com/Remahy/forsenwiki/commit/2ccb8fcdca618252e1850afafb277e084fbeaa13))
+* Increase image scroll speed ([#263](https://github.com/Remahy/forsenwiki/issues/263)) ([ef8b286](https://github.com/Remahy/forsenwiki/commit/ef8b2861e1b72925202517598885f1ea7fa6e48e))
+* Make sure DiffVideoEmbedNode properly sends correct values to `super()` ([#272](https://github.com/Remahy/forsenwiki/issues/272)) ([606079c](https://github.com/Remahy/forsenwiki/commit/606079cad83c4924f80501a3d9f50f343527b4f9))
+* Make sure element is properly assigned to treeview ([#244](https://github.com/Remahy/forsenwiki/issues/244)) ([7126043](https://github.com/Remahy/forsenwiki/commit/7126043c01fb40fc3440cdddeea75b9330d7af48))
+* Make Twitch video embeds work & Allow user lookup by username ([#217](https://github.com/Remahy/forsenwiki/issues/217)) ([9aebd6a](https://github.com/Remahy/forsenwiki/commit/9aebd6afec1fb9d4865d11549883fe8f8d8749f2))
+* Make upload button available in header ([#278](https://github.com/Remahy/forsenwiki/issues/278)) ([595bc82](https://github.com/Remahy/forsenwiki/commit/595bc828fd6010893d0f6d7bb69279ecadbc0ee0))
+* Pause video on gallery thumbnail switch ([#247](https://github.com/Remahy/forsenwiki/issues/247)) ([672ce4e](https://github.com/Remahy/forsenwiki/commit/672ce4e7a4150c06fd4e161c0a15ddca231c2b1c))
+* Prevent Treeview crash & EditImage size labeling changes ([#234](https://github.com/Remahy/forsenwiki/issues/234)) ([2f97b1c](https://github.com/Remahy/forsenwiki/commit/2f97b1cd1e2387da552be7d4f7ca1fc2c1878d69))
+* Properly initialize custom node values ([#235](https://github.com/Remahy/forsenwiki/issues/235)) ([e851f78](https://github.com/Remahy/forsenwiki/commit/e851f780917e73572558f4248cfa71b036ce9a71))
+* Refactor UploadContent uploading via EditVideoModal ([#241](https://github.com/Remahy/forsenwiki/issues/241)) ([874c36a](https://github.com/Remahy/forsenwiki/commit/874c36a94b66f3ecbce06945d03ad922114ae40b))
+* Refresh image on resize ([#243](https://github.com/Remahy/forsenwiki/issues/243)) ([8be06fc](https://github.com/Remahy/forsenwiki/commit/8be06fc64fad7f0ecd6c078c5baa93a5fbbcdb41))
+* Remove scroll to zoom on images and add press to fullscreen ([#264](https://github.com/Remahy/forsenwiki/issues/264)) ([94922bc](https://github.com/Remahy/forsenwiki/commit/94922bc37cdb92b0364c615af1afc548deeda072))
+* Respect setting image size via modal ([#239](https://github.com/Remahy/forsenwiki/issues/239)) ([18f4935](https://github.com/Remahy/forsenwiki/commit/18f493549cdc099911be103f481ddf8462e47df2))
+* Show ALinkNode in tree when selecting closest child text node ([#245](https://github.com/Remahy/forsenwiki/issues/245)) ([717a1c6](https://github.com/Remahy/forsenwiki/commit/717a1c631ccb10b8768881613fd66ac4a0bcb3cc))
+* Support block Float block node alignment ([#246](https://github.com/Remahy/forsenwiki/issues/246)) ([04ebde3](https://github.com/Remahy/forsenwiki/commit/04ebde382a7947ddb857482dda327fdd1f575a1f))
+* Update Node.js version & Sveltekit 3 migration ([#274](https://github.com/Remahy/forsenwiki/issues/274)) ([6ae5bb0](https://github.com/Remahy/forsenwiki/commit/6ae5bb0ad92d8b80c70dedccda9fb6c40239bdf0))
+* UploadingContentModal reset uploaded array on close ([#242](https://github.com/Remahy/forsenwiki/issues/242)) ([d5b6cd6](https://github.com/Remahy/forsenwiki/commit/d5b6cd6b058fadae95c147f1d025b37871983d31))
+* Use `0.jpg` endpoint for YouTube thumbnails ([#255](https://github.com/Remahy/forsenwiki/issues/255)) ([63db750](https://github.com/Remahy/forsenwiki/commit/63db750a98c0be35c7621c65fe2838210cc165f4))
+* Use `preload="metadata"` for user content ([#259](https://github.com/Remahy/forsenwiki/issues/259)) ([5803866](https://github.com/Remahy/forsenwiki/commit/58038664dd056edef5352a018f28f18abab4c0fc))
+* Various UI & editor fixes ([#258](https://github.com/Remahy/forsenwiki/issues/258)) ([b3f6496](https://github.com/Remahy/forsenwiki/commit/b3f6496b0af49676c973abfb3b24c5c108759b7a))
+* **VideoEmbed:** Do not set poster ([#260](https://github.com/Remahy/forsenwiki/issues/260)) ([f7aa0f7](https://github.com/Remahy/forsenwiki/commit/f7aa0f7e8058921502c15d2b248b8715d81119a9))
+* YouTube embed attempt default to nocookie domain ([#240](https://github.com/Remahy/forsenwiki/issues/240)) ([716d293](https://github.com/Remahy/forsenwiki/commit/716d2931beb350b4ad00911136f6f7f3fb046cbe))
+
+### Reverts
+
+* Revert "fix: Update Node.js version & Sveltekit 3 migration (#274)" (#276) ([b70b7a6](https://github.com/Remahy/forsenwiki/commit/b70b7a6bcc7209190d763a27bc43068a50959027)), references [#274](https://github.com/Remahy/forsenwiki/issues/274) [#276](https://github.com/Remahy/forsenwiki/issues/276)
+
 ## [1.0.0-beta.17](https://github.com/Remahy/forsenwiki/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2026-07-27)
 
 ### ⚠ BREAKING CHANGES
