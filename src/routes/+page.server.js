@@ -34,7 +34,7 @@ const getLatest = async () => {
 		}
 	}
 
-	const yPosts = prisma.yPost.findMany({
+	const yPostsLatest = prisma.yPost.findMany({
 		where: {
 			outRelations: {
 				some: {
@@ -69,13 +69,13 @@ const getLatest = async () => {
 		orderBy: {
 			createdTimestamp: 'desc',
 		},
-		take: 10,
+		take: 20,
 	});
 
 	// Enough for every piece of the globe.
 	const mostLinked = readMostLinkedArticles(18);
 
-	const [rawLatestArticles, mostLinkedArticles] = await Promise.all([yPosts, mostLinked]);
+	const [rawLatestArticles, mostLinkedArticles] = await Promise.all([yPostsLatest, mostLinked]);
 
 	const latestArticles = rawLatestArticles.map((post) => ({
 		rawTitle: post.rawTitle,
