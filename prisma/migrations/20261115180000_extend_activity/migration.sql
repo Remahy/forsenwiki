@@ -1,5 +1,5 @@
 -- AlterEnum: recreated rather than extended, a value added with ADD VALUE cannot be used by the backfill in the same transaction.
-CREATE TYPE "ActivityType_new" AS ENUM ('ARTICLE_CREATE', 'ARTICLE_UPDATE', 'ARTICLE_RENAME', 'ARTICLE_RETAG', 'USER_REGISTER', 'CONTENT_UPLOAD', 'CONTENT_DELETE', 'CONTENT_RENAME');
+CREATE TYPE "ActivityType_new" AS ENUM ('ARTICLE_CREATE', 'ARTICLE_UPDATE', 'ARTICLE_RENAME', 'ARTICLE_RETAG', 'USER_REGISTER', 'USER_RENAME', 'CONTENT_UPLOAD', 'CONTENT_DELETE', 'CONTENT_RENAME');
 ALTER TABLE "Activity" ALTER COLUMN "type" TYPE "ActivityType_new" USING ("type"::text::"ActivityType_new");
 DROP TYPE "ActivityType";
 ALTER TYPE "ActivityType_new" RENAME TO "ActivityType";

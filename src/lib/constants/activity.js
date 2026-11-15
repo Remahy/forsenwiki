@@ -5,6 +5,7 @@ export const ACTIVITY_TYPES = /** @type {const} */ ({
 	ARTICLE_RENAME: 'ARTICLE_RENAME',
 	ARTICLE_RETAG: 'ARTICLE_RETAG',
 	USER_REGISTER: 'USER_REGISTER',
+	USER_RENAME: 'USER_RENAME',
 	CONTENT_UPLOAD: 'CONTENT_UPLOAD',
 	CONTENT_DELETE: 'CONTENT_DELETE',
 	CONTENT_RENAME: 'CONTENT_RENAME',
@@ -16,6 +17,9 @@ export const ACTIVITY_TYPES = /** @type {const} */ ({
 
 export const AVAILABLE_ACTIVITY_TYPES = Object.values(ACTIVITY_TYPES);
 
+/** @type {ActivityType[]} */
+export const MODERATOR_ACTIVITY_TYPES = [ACTIVITY_TYPES.USER_RENAME];
+
 /** @type {Record<ActivityType, string>} */
 export const ACTIVITY_TYPE_LABELS = {
 	ARTICLE_CREATE: 'New article',
@@ -23,6 +27,7 @@ export const ACTIVITY_TYPE_LABELS = {
 	ARTICLE_RENAME: 'Title change',
 	ARTICLE_RETAG: 'Tag change',
 	USER_REGISTER: 'New user',
+	USER_RENAME: 'Username change',
 	CONTENT_UPLOAD: 'Content upload',
 	CONTENT_DELETE: 'Content deletion',
 	CONTENT_RENAME: 'Content rename',

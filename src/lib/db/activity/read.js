@@ -1,4 +1,5 @@
 import prisma from '$lib/prisma.server';
+import { MODERATOR_ACTIVITY_TYPES } from '$lib/constants/activity';
 
 const fields = /** @satisfies {Prisma.Prisma.ActivitySelect} */ ({
 	id: true,
@@ -127,6 +128,13 @@ const toEntry = ({ children, ...row }, viewer) => ({
 });
 
 /**
+ * @param {Viewer} viewer
+ * @returns {Prisma.Prisma.ActivityWhereInput}
+ */
+const visibleTo = ({ isModerator }) =>
+	isModerator ? {} : { type: { notIn: MODERATOR_ACTIVITY_TYPES } };
+
+/**
  * Do not list child activities on their own.
  * @param {ReturnType<import('$lib/utils/activity').getActivityFilters>} filters
  * @param {Viewer} viewer
@@ -136,6 +144,7 @@ export const readActivities = async ({ authors, types, cursor, limit }, viewer) 
 		select,
 		where: {
 			parentId: null,
+			...visibleTo(viewer),
 			...(authors.length ? { user: { name: { in: authors } } } : {}),
 			...(types.length
 				? { OR: [{ type: { in: types } }, { children: { some: { type: { in: types } } } }] }
@@ -157,7 +166,7 @@ export const readActivities = async ({ authors, types, cursor, limit }, viewer) 
 export const readActivitiesWhere = async (where, viewer) => {
 	const rows = await prisma.activity.findMany({
 		select,
-		where: { ...where, parentId: null },
+		where: { AND: [where, visibleTo(viewer)], parentId: null },
 		orderBy: [{ createdTimestamp: 'asc' }, { id: 'asc' }],
 	});
 

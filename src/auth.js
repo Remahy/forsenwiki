@@ -104,6 +104,15 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 			if (id && Object.keys(updateObj).length) {
 				await adapter.updateUser?.({ id, ...updateObj });
 			}
+
+			if (id && name && updateObj.name) {
+				await createActivity(prisma, {
+					type: ACTIVITY_TYPES.USER_RENAME,
+					userId: id,
+					oldName: name,
+					newName: updateObj.name,
+				});
+			}
 		},
 	},
 	providers: [

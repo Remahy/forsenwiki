@@ -21,6 +21,7 @@
 		AVAILABLE_ACTIVITY_TYPES,
 		ACTIVITY_TYPES,
 		ACTIVITY_TYPE_LABELS,
+		MODERATOR_ACTIVITY_TYPES,
 	} from '$lib/constants/activity';
 	import Button from '$lib/components/Button.svelte';
 	import { getMoreActivity } from '$lib/api/activity';
@@ -39,12 +40,19 @@
 		ARTICLE_RENAME: 'bg-orange-500/25',
 		ARTICLE_RETAG: 'bg-orange-500/25',
 		USER_REGISTER: 'bg-black/10 dark:bg-black',
+		USER_RENAME: 'bg-black/10 dark:bg-black',
 		CONTENT_UPLOAD: 'bg-violet-500/25',
 		CONTENT_DELETE: 'bg-red-500/25',
 		CONTENT_RENAME: 'bg-fuchsia-500/25',
 	};
 
 	const filters = $derived(getActivityFilters($page.url.searchParams));
+
+	const filterTypes = $derived(
+		AVAILABLE_ACTIVITY_TYPES.filter(
+			(type) => $page.data.isModerator || !MODERATOR_ACTIVITY_TYPES.includes(type)
+		)
+	);
 
 	let authorsInput = $derived(filters.authors.join(', '));
 	let typesInput = $derived([...filters.types]);
@@ -128,6 +136,15 @@
 		<StreamerModeShow>
 			<Link href="/user/{user.id}" target="_blank"><span class="font-bold">{user.name}</span></Link>
 		</StreamerModeShow>&nbsp;
+	{:else if type === ACTIVITY_TYPES.USER_RENAME && user}
+		<StreamerModeShow>
+			<small>
+				<Link href="/user/{user.id}" target="_blank">"{activity.newName}"</Link
+				>{#if activity.oldName}
+					&nbsp;<i>was "{activity.oldName}"</i>
+				{/if}&nbsp;
+			</small>
+		</StreamerModeShow>
 	{:else if (type === ACTIVITY_TYPES.CONTENT_UPLOAD || type === ACTIVITY_TYPES.CONTENT_DELETE) && content}
 		<span>
 			{#if content.deleted}
@@ -199,7 +216,7 @@
 			})}&nbsp;</small
 		>
 	{/if}
-	{#if user && type !== ACTIVITY_TYPES.USER_REGISTER && user.id !== parent?.user?.id}
+	{#if user && type !== ACTIVITY_TYPES.USER_REGISTER && type !== ACTIVITY_TYPES.USER_RENAME && user.id !== parent?.user?.id}
 		<span>
 			<small>
 				<span class="font-bold">By:</span>
@@ -243,7 +260,7 @@
 						<input type="checkbox" checked={!typesInput.length} disabled class="opacity-50" />
 						<span>All</span>
 					</label>
-					{#each AVAILABLE_ACTIVITY_TYPES as type (type)}
+					{#each filterTypes as type (type)}
 						<label class="flex items-baseline gap-2">
 							<input type="checkbox" name="type" bind:group={typesInput} value={type} />
 							<span>{ACTIVITY_TYPE_LABELS[type]}</span>
