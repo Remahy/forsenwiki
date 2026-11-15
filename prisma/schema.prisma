@@ -246,6 +246,7 @@ enum ActivityType {
   ARTICLE_CREATE
   ARTICLE_UPDATE
   ARTICLE_RENAME
+  ARTICLE_RETAG
   USER_REGISTER
   CONTENT_UPLOAD
   CONTENT_DELETE
@@ -277,6 +278,9 @@ model Activity {
 
   oldName String?
   newName String?
+
+  oldTags String[] @default([])
+  newTags String[] @default([])
 
   createdTimestamp DateTime @default(now())
 

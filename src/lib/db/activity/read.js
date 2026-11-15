@@ -27,6 +27,8 @@ const fields = /** @satisfies {Prisma.Prisma.ActivitySelect} */ ({
 	contentSnapshot: true,
 	oldName: true,
 	newName: true,
+	oldTags: true,
+	newTags: true,
 });
 
 const select = /** @satisfies {Prisma.Prisma.ActivitySelect} */ ({
@@ -54,6 +56,8 @@ const select = /** @satisfies {Prisma.Prisma.ActivitySelect} */ ({
  *   content: { id: string, hash: string, name: string, type: string | null, contentType: string | null, contentLength: bigint | null, metadata?: Prisma.Prisma.JsonValue, deleted: boolean } | null,
  *   oldName: string | null,
  *   newName: string | null,
+ *   oldTags: string[],
+ *   newTags: string[],
  * }} ChildActivityEntry
  *
  * @typedef {ChildActivityEntry & { children: ChildActivityEntry[] }} ActivityEntry

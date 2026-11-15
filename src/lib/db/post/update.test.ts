@@ -21,10 +21,14 @@ type CreatedActivity = {
 
 const created = vi.hoisted(() => [] as Created[]);
 const activities = vi.hoisted(() => [] as CreatedActivity[]);
+const currentTags = vi.hoisted(() => [] as string[]);
 
 vi.mock('$lib/prisma.server', () => {
 	const tx = {
-		yPostRelation: { deleteMany: vi.fn() },
+		yPostRelation: {
+			deleteMany: vi.fn(),
+			findMany: async () => currentTags.map((toPostId) => ({ toPostId })),
+		},
 		yPost: { update: vi.fn() },
 		yPostUpdateMetadata: {
 			create: ({ data }: { data: Created }) => {
@@ -56,6 +60,7 @@ const metadata = { user: { id: 'moderator' }, byteLength: 5, totalByteLength: 10
 beforeEach(() => {
 	created.length = 0;
 	activities.length = 0;
+	currentTags.length = 0;
 });
 
 test('an update of a converted article is one row', async () => {
@@ -150,4 +155,35 @@ test('images new to the article are uploads linked to the update', async () => {
 			createdTimestamp: new Date(0),
 		},
 	]);
+});
+
+test('a change of disclaimer tags is an activity of its own, linked to the update', async () => {
+	currentTags.push('satire');
+
+	await updatePost(
+		{ post, outRelations: [], content: 'update', disclaimerTags: ['nsfw', 'satire'] },
+		metadata
+	);
+
+	expect(activities[0].children.create).toEqual([
+		expect.objectContaining({
+			type: 'ARTICLE_RETAG',
+			userId: 'moderator',
+			postUpdateId: 'row-1',
+			oldTags: ['satire'],
+			newTags: ['satire', 'nsfw'],
+		}),
+	]);
+});
+
+test('the same disclaimer tags, or none sent, are not a tag change', async () => {
+	currentTags.push('satire', 'nsfw');
+
+	await updatePost(
+		{ post, outRelations: [], content: 'update', disclaimerTags: ['nsfw', 'satire'] },
+		metadata
+	);
+	await updatePost({ post, outRelations: [], content: 'update' }, metadata);
+
+	expect(activities.flatMap(({ children }) => children.create)).toEqual([]);
 });

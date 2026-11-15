@@ -25,6 +25,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import { getMoreActivity } from '$lib/api/activity';
 	import { reviver } from '$lib/utils/json';
+	import { DISCLAIMER_TAG_LABELS } from '$lib/constants/constants';
 
 	/**
 	 * @typedef {import('$lib/db/activity/read').ActivityEntry} ActivityEntry
@@ -36,6 +37,7 @@
 		ARTICLE_CREATE: 'bg-emerald-500/25',
 		ARTICLE_UPDATE: 'bg-orange-500/25',
 		ARTICLE_RENAME: 'bg-orange-500/25',
+		ARTICLE_RETAG: 'bg-orange-500/25',
 		USER_REGISTER: 'bg-black/10 dark:bg-black',
 		CONTENT_UPLOAD: 'bg-violet-500/25',
 		CONTENT_DELETE: 'bg-red-500/25',
@@ -152,6 +154,18 @@
 			{#if activity.oldName}
 				&nbsp;<i>was "{activity.oldName}"</i>
 			{/if}&nbsp;
+		</small>
+	{:else if type === ACTIVITY_TYPES.ARTICLE_RETAG}
+		{@const label = (/** @type {string} */ tag) => DISCLAIMER_TAG_LABELS[tag] ?? tag}
+		{@const added = activity.newTags.filter((tag) => !activity.oldTags.includes(tag))}
+		{@const removed = activity.oldTags.filter((tag) => !activity.newTags.includes(tag))}
+		<small>
+			{#if added.length}
+				<span class="font-bold">Added:</span> {added.map(label).join(', ')}&nbsp;
+			{/if}
+			{#if removed.length}
+				<span class="font-bold">Removed:</span> {removed.map(label).join(', ')}&nbsp;
+			{/if}
 		</small>
 	{:else if type === ACTIVITY_TYPES.ARTICLE_RENAME}
 		<small>

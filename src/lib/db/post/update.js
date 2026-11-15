@@ -16,11 +16,21 @@ import { postYRelationDeleteByFromPostId } from './delete';
 /**
  * @param {Prisma.PrismaClient | Prisma.Prisma.TransactionClient} tx
  * @param {UpdateYPost} arg2
+ * @returns {Promise<{ oldTags: string[], newTags: string[] } | null>}
  */
 const updateYPost = async (tx, { post, outRelations, disclaimerTags, metadata }) => {
 	await postYRelationDeleteByFromPostId(tx, post.id);
 
+	/** @type {string[]} */
+	let oldTags = [];
+
 	if (disclaimerTags) {
+		const current = await tx.yPostRelation.findMany({
+			where: { fromPostId: post.id, isSystem: true, toPostId: { in: AVAILABLE_DISCLAIMER_TAGS } },
+			select: { toPostId: true },
+		});
+		oldTags = current.map(({ toPostId }) => toPostId);
+
 		await tx.yPostRelation.deleteMany({
 			where: { fromPostId: post.id, isSystem: true, toPostId: { in: AVAILABLE_DISCLAIMER_TAGS } },
 		});
@@ -46,6 +56,18 @@ const updateYPost = async (tx, { post, outRelations, disclaimerTags, metadata })
 			lastUpdated: new Date(),
 		},
 	});
+
+	if (!disclaimerTags) {
+		return null;
+	}
+
+	const newTags = AVAILABLE_DISCLAIMER_TAGS.filter((tag) => disclaimerTags.includes(tag));
+	const changed =
+		newTags.length !== oldTags.length || newTags.some((tag) => !oldTags.includes(tag));
+
+	return changed
+		? { oldTags: AVAILABLE_DISCLAIMER_TAGS.filter((tag) => oldTags.includes(tag)), newTags }
+		: null;
 };
 
 /**
@@ -93,7 +115,7 @@ export const updatePost = async (data, metadata) => {
 	const { post, outRelations, disclaimerTags, content, seed, newImageHashes = [] } = data;
 
 	return prisma.$transaction(async (tx) => {
-		await updateYPost(tx, {
+		const tagChange = await updateYPost(tx, {
 			post,
 			outRelations,
 			disclaimerTags,
@@ -151,6 +173,10 @@ export const updatePost = async (data, metadata) => {
 
 		if (metadata.newTitle) {
 			childActivities.push({ ...activity, type: ACTIVITY_TYPES.ARTICLE_RENAME });
+		}
+
+		if (tagChange) {
+			childActivities.push({ ...activity, type: ACTIVITY_TYPES.ARTICLE_RETAG, ...tagChange });
 		}
 
 		if (newImageHashes.length) {

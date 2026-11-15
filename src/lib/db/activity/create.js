@@ -11,6 +11,8 @@ import { ACTIVITY_TYPES } from '$lib/constants/activity';
  *   contentSnapshot?: import('$lib/db/content/delete').ContentSnapshot,
  *   oldName?: string,
  *   newName?: string,
+ *   oldTags?: string[],
+ *   newTags?: string[],
  *   createdTimestamp?: Date,
  * }} ActivityData
  */

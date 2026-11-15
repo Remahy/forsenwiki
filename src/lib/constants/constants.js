@@ -18,6 +18,12 @@ export const DISCLAIMER_TAGS = /** @type {const} */ ({
 /** @type {string[]} */
 export const AVAILABLE_DISCLAIMER_TAGS = Object.values(DISCLAIMER_TAGS);
 
+/** @type {Record<string, string>} */
+export const DISCLAIMER_TAG_LABELS = {
+	[DISCLAIMER_TAGS.SATIRE]: 'Satire',
+	[DISCLAIMER_TAGS.NSFW]: 'NSFW',
+};
+
 export const SYSTEM = 'system';
 
 export const EDITOR_IS_EDITABLE = true;
