@@ -2,6 +2,8 @@
 	import { page } from '$app/stores';
 	import Button from '../Button.svelte';
 	import Select from '../Select.svelte';
+	import Badge from '../Badge.svelte';
+	import { CONTENT_TYPE_BADGES, SEARCH_TYPE_BADGES } from './badges';
 	import { parseSearchURL } from './parseSearchURL';
 
 	/** @type {string[]} */
@@ -35,7 +37,7 @@
 <div class="flex flex-col gap-1">
 	<strong class="min-w-25">Type</strong>
 	<div class="flex items-baseline gap-3">
-		<label class="flex flex-wrap items-baseline gap-2">
+		<label class="flex flex-wrap items-center gap-2">
 			<input
 				type="checkbox"
 				checked={!types.length || types.includes('')}
@@ -44,15 +46,12 @@
 			/>
 			<span>All</span>
 		</label>
-		<label class="flex items-baseline gap-2">
-			<input type="checkbox" name="type" bind:group={types} value="article" />
-			<span>Articles</span>
-		</label>
-
-		<label class="flex items-baseline gap-2">
-			<input type="checkbox" name="type" bind:group={types} value="content" />
-			<span>Content</span>
-		</label>
+		{#each Object.entries(SEARCH_TYPE_BADGES) as [value, { label, color }] (value)}
+			<label class="flex items-center gap-2">
+				<input type="checkbox" name="type" bind:group={types} {value} />
+				<Badge class={color}>{label}</Badge>
+			</label>
+		{/each}
 	</div>
 </div>
 
@@ -60,7 +59,7 @@
 	<div class="flex flex-col gap-1">
 		<strong class="min-w-25">Content type</strong>
 		<div class="flex flex-wrap items-baseline gap-3">
-			<label class="flex items-baseline gap-2">
+			<label class="flex items-center gap-2">
 				<input
 					type="checkbox"
 					checked={!contentTypes.length || contentTypes.includes('')}
@@ -70,22 +69,12 @@
 				<span>All</span>
 			</label>
 
-			<label class="flex items-baseline gap-2">
-				<input type="checkbox" name="contenttype" bind:group={contentTypes} value="image" />
-				<span>Image</span>
-			</label>
-			<label class="flex items-baseline gap-2">
-				<input type="checkbox" name="contenttype" bind:group={contentTypes} value="video" />
-				<span>Video</span>
-			</label>
-			<label class="flex items-baseline gap-2">
-				<input type="checkbox" name="contenttype" bind:group={contentTypes} value="audio" />
-				<span>Audio</span>
-			</label>
-			<label class="flex items-baseline gap-2">
-				<input type="checkbox" name="contenttype" bind:group={contentTypes} value="document" />
-				<span>Document</span>
-			</label>
+			{#each Object.entries(CONTENT_TYPE_BADGES) as [value, { label, icon }] (value)}
+				<label class="flex items-center gap-2">
+					<input type="checkbox" name="contenttype" bind:group={contentTypes} {value} />
+					<Badge {icon}>{label}</Badge>
+				</label>
+			{/each}
 		</div>
 	</div>
 {/if}

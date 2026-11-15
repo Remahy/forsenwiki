@@ -8,6 +8,7 @@
 	import Box from '$lib/components/Box.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+	import Badge from '$lib/components/Badge.svelte';
 	import {
 		getActivityFilters,
 		MINIMUM_LIMIT,
@@ -34,9 +35,9 @@
 	/** @type {Record<import('$lib/constants/activity').ActivityType, string>} */
 	const BADGE_COLORS = {
 		ARTICLE_CREATE: 'bg-emerald-500/25',
-		ARTICLE_UPDATE: 'bg-amber-500/25',
+		ARTICLE_UPDATE: 'bg-orange-500/25',
 		ARTICLE_RENAME: 'bg-orange-500/25',
-		USER_REGISTER: 'bg-sky-500/25',
+		USER_REGISTER: 'bg-black/10 dark:bg-black',
 		CONTENT_UPLOAD: 'bg-violet-500/25',
 		CONTENT_DELETE: 'bg-red-500/25',
 	};
@@ -112,10 +113,7 @@
 </script>
 
 {#snippet badge(/** @type {import('$lib/constants/activity').ActivityType} */ type)}
-	<span
-		class="rounded-sm p-1 text-xs text-slate-900 dark:text-slate-100 {BADGE_COLORS[type] ??
-			'bg-black/10 dark:bg-white/10'}">{ACTIVITY_TYPE_LABELS[type] ?? type}</span
-	>
+	<Badge class={BADGE_COLORS[type]}>{ACTIVITY_TYPE_LABELS[type] ?? type}</Badge>
 {/snippet}
 
 {#snippet line(
