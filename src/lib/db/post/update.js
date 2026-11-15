@@ -1,5 +1,7 @@
 import prisma from '$lib/prisma.server';
 import { AVAILABLE_DISCLAIMER_TAGS, SYSTEM } from '$lib/constants/constants';
+import { ACTIVITY_TYPES, FORCED_CONVERSION_EXPLANATION } from '$lib/constants/activity';
+import { createActivity } from '$lib/db/activity/create';
 import { LEXICAL_Y } from '$lib/y/rows';
 import { postYRelationDeleteByFromPostId } from './delete';
 
@@ -54,7 +56,7 @@ const updateYPost = async (tx, { post, outRelations, disclaimerTags, metadata })
  */
 const createYPostUpdate = async (tx, data, metadata) => {
 	const { user, byteLength } = metadata;
-	return tx.yPostUpdateMetadata
+	const row = await tx.yPostUpdateMetadata
 		.create({
 			data: {
 				user: {
@@ -73,6 +75,8 @@ const createYPostUpdate = async (tx, data, metadata) => {
 			},
 		})
 		.postUpdate({ select: { id: true, createdTimestamp: true, postId: true } });
+
+	return /** @type {NonNullable<typeof row>} */ (row);
 };
 
 /**
@@ -105,11 +109,14 @@ export const updatePost = async (data, metadata) => {
 			postId: post.id,
 		};
 
+		/** @type {import('$lib/db/activity/create').ActivityData[]} */
+		const childActivities = [];
+
 		if (seed) {
 			const seededAt = Date.now();
 
 			// The row scripts/convertPostsToLexicalY.js writes.
-			await createYPostUpdate(
+			const seedRow = await createYPostUpdate(
 				tx,
 				{
 					content: seed.content,
@@ -120,11 +127,39 @@ export const updatePost = async (data, metadata) => {
 				{ user: { id: SYSTEM }, byteLength: seed.byteLength }
 			);
 
+			childActivities.push({
+				type: ACTIVITY_TYPES.ARTICLE_UPDATE,
+				explanation: FORCED_CONVERSION_EXPLANATION,
+				userId: SYSTEM,
+				postId: post.id,
+				postUpdateId: seedRow.id,
+				createdTimestamp: seedRow.createdTimestamp,
+			});
+
 			// The user update receives a newer timestamp to make sure the seed is "before" in the database table.
 			dataToInsert.createdTimestamp = new Date(seededAt + 1);
 		}
 
-		return createYPostUpdate(tx, dataToInsert, metadata);
+		const row = await createYPostUpdate(tx, dataToInsert, metadata);
+
+		const activity = {
+			userId: metadata.user.id,
+			postId: post.id,
+			postUpdateId: row.id,
+			createdTimestamp: row.createdTimestamp,
+		};
+
+		if (metadata.newTitle) {
+			childActivities.push({ ...activity, type: ACTIVITY_TYPES.ARTICLE_RENAME });
+		}
+
+		await createActivity(tx, {
+			...activity,
+			type: ACTIVITY_TYPES.ARTICLE_UPDATE,
+			children: childActivities,
+		});
+
+		return row;
 	});
 };
 

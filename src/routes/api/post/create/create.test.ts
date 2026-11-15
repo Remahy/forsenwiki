@@ -7,7 +7,10 @@ import { $write, config, legacyEdit, read } from '$lib/yjs/legacy.fixtures';
 import { POST } from './+server';
 
 vi.mock('$lib/db/post/read', () => ({ readYPostByTitle: vi.fn(async () => null) }));
-vi.mock('$lib/db/post/create', () => ({ createPost: vi.fn(async () => ({ id: 'post' })) }));
+vi.mock('$lib/db/post/create', () => ({
+	createPost: vi.fn(async () => ({ id: 'post', postUpdate: { id: 'post-update' } })),
+}));
+vi.mock('$lib/db/activity/emit', () => ({ emitActivity: vi.fn() }));
 vi.mock('$lib/db/post/html', () => ({ upsertHTML: vi.fn() }));
 vi.mock('$lib/worker/toHTML', () => ({ default: vi.fn(async () => ({ html: '', text: '' })) }));
 vi.mock('$lib/s3/validateUploads.server', () => ({

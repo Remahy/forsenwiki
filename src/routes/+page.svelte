@@ -205,8 +205,8 @@
 				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">Navigation</h2>
 				</div>
-				<LinkButton href="/recentchanges" class="flex gap-2 whitespace-nowrap">
-					<HistoryIcon /> <span>Recent changes</span>
+				<LinkButton href="/activity" class="flex gap-2 whitespace-nowrap">
+					<HistoryIcon /> <span>Activity</span>
 				</LinkButton>
 				<LinkButton href="/create" class="flex gap-2 whitespace-nowrap" reload>
 					<SquarePenIcon /> <span>New article</span>

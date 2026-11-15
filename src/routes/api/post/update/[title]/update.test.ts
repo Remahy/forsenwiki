@@ -32,7 +32,7 @@ vi.mock('$lib/components/editor/validations/index.server', () => ({
 	serverRunValidations: vi.fn(),
 }));
 vi.mock('../../read/[title]/+server', () => ({ _getYPostByTitle: vi.fn() }));
-vi.mock('../../../adonis/frontpage/+server', () => ({ _emit: vi.fn() }));
+vi.mock('$lib/db/activity/emit', () => ({ emitActivity: vi.fn() }));
 
 const legacy = legacyEdit($write('stored before the migration'));
 const seed = convertLegacyUpdate(legacy);

@@ -37,7 +37,7 @@ const prisma = /** @type {any} */ (
 					delete args._metadata;
 					return query(args);
 				},
-				// See "src/routes/api/post/update/[title]/+server.js" for "post:update".
+				// See "src/lib/db/activity/emit.js" for "activity:create".
 			},
 		},
 	})
