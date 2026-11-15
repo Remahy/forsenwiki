@@ -27,6 +27,8 @@ model User {
   permissions Permission[]
 
   userSettings UserSettings?
+
+  activities Activity[]
 }
 
 model UserSettings {
@@ -105,6 +107,8 @@ model YPost {
 
   html Html?
 
+  activities Activity[]
+
   totalByteLength BigInt?
 
   lastUpdated      DateTime @default(now())
@@ -142,6 +146,8 @@ model YPostUpdate {
   stateCache      YPostUpdateStateCache?
   olderDiffCaches YPostDiffPageCache[]   @relation("olderDiffPages")
   newerDiffCaches YPostDiffPageCache[]   @relation("newerDiffPages")
+
+  activities Activity[]
 
   createdTimestamp DateTime @default(now())
 }
@@ -232,4 +238,38 @@ model Html {
   content String
   text    String?
   image   String?
+}
+
+enum ActivityType {
+  ARTICLE_CREATE
+  ARTICLE_UPDATE
+  ARTICLE_RENAME
+  USER_REGISTER
+}
+
+model Activity {
+  id String @id @default(cuid())
+
+  type        ActivityType
+  explanation String?
+
+  parent   Activity?  @relation("activityChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  parentId String?
+  children Activity[] @relation("activityChildren")
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String?
+
+  post   YPost?  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String?
+
+  postUpdate   YPostUpdate? @relation(fields: [postUpdateId], references: [id], onDelete: Cascade)
+  postUpdateId String?
+
+  createdTimestamp DateTime @default(now())
+
+  @@index([createdTimestamp, id])
+  @@index([parentId])
+  @@index([userId])
+  @@index([postUpdateId])
 }

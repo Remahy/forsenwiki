@@ -9,6 +9,7 @@ import dotenvExpand from 'dotenv-expand';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../src/generated/prisma/client.ts';
 import { SYSTEM } from '../src/lib/constants/constants.js';
+import { CONVERTED_EXPLANATION, ACTIVITY_TYPES } from '../src/lib/constants/activity.js';
 import { mergeUpdatesV2 } from '@y/y';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
@@ -96,7 +97,19 @@ async function main() {
 						user: { connect: { id: SYSTEM } },
 						byteLength,
 						postUpdate: {
-							create: { content, format: 'LEXICAL_Y', post: { connect: { id: post.id } } },
+							create: {
+								content,
+								format: 'LEXICAL_Y',
+								post: { connect: { id: post.id } },
+								activities: {
+									create: {
+										type: ACTIVITY_TYPES.ARTICLE_UPDATE,
+										explanation: CONVERTED_EXPLANATION,
+										user: { connect: { id: SYSTEM } },
+										post: { connect: { id: post.id } },
+									},
+								},
+							},
 						},
 					},
 				});

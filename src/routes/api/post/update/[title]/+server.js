@@ -19,6 +19,7 @@ import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/post/read';
 import { updatePostTitle, updatePost } from '$lib/db/post/update';
 import { invalidatePostCache } from '$lib/cloudflare.server';
 import { upsertHTML } from '$lib/db/post/html';
+import { emitActivity } from '$lib/db/activity/emit';
 import { articleExtension } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
 import {
@@ -33,7 +34,6 @@ import { validateUploads, pruneFailedUploads } from '$lib/s3/validateUploads.ser
 import { serverRunValidations } from '$lib/components/editor/validations/index.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import { _migrateLegacyDraft } from '../../legacy-draft/+server';
-import { _emit } from '../../../adonis/frontpage/+server';
 
 /**
  * @typedef {Array<{ code: string, field: string, value?: string }>} PartialErrors
@@ -281,15 +281,7 @@ export async function POST({ request, locals, params }) {
 		_post = await updatePostTitle({ post, newTitle: potentialNewTitle });
 	}
 
-	_emit('post:update', {
-		title: _post.title,
-		rawTitle: _post.rawTitle,
-		id: updatedPost?.id,
-		lastUpdated: updatedPost?.createdTimestamp.toString(),
-		byteLength,
-		author: session.user.name,
-		authorId: session.user.id,
-	});
+	await emitActivity({ postUpdateId: updatedPost.id });
 
 	return json({
 		...updatedPost,

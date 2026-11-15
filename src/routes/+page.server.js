@@ -6,29 +6,16 @@ import { readMostLinkedArticles } from '$lib/db/post/read';
 
 /**
  * @typedef {{ rawTitle: string, title: string, createdTimestamp: string, author: string | null, authorId: string | null }} LatestArticle
- * @typedef {{ name: string | null }} LatestUser
  * @typedef {import('$lib/goatcounter.server').GoatCounterHit} GoatCounterHit
  * @typedef {import('$lib/db/post/read').MostLinkedArticle} MostLinkedArticle
  */
 
-/** @type {Prisma.Prisma.UserFindManyArgs} */
-const usersQuery = {
-	select: {
-		name: true,
-	},
-	orderBy: {
-		createdAt: 'desc',
-	},
-	take: 18,
-};
-
 /** @type {{
  *	latestArticles: LatestArticle[],
- *	latestUsers: LatestUser[],
  *	popularArticles: GoatCounterHit[],
  *	mostLinkedArticles: MostLinkedArticle[]
  * }} */
-let cache = { latestArticles: [], latestUsers: [], popularArticles: [], mostLinkedArticles: [] };
+let cache = { latestArticles: [], popularArticles: [], mostLinkedArticles: [] };
 let lastCacheUpdate = Date.now() - 1_800_000;
 
 const getLatest = async () => {
@@ -85,15 +72,10 @@ const getLatest = async () => {
 		take: 10,
 	});
 
-	const users = prisma.user.findMany(usersQuery);
+	// Enough for every piece of the globe.
+	const mostLinked = readMostLinkedArticles(18);
 
-	const mostLinked = readMostLinkedArticles(8);
-
-	const [rawLatestArticles, latestUsers, mostLinkedArticles] = await Promise.all([
-		yPosts,
-		users,
-		mostLinked,
-	]);
+	const [rawLatestArticles, mostLinkedArticles] = await Promise.all([yPosts, mostLinked]);
 
 	const latestArticles = rawLatestArticles.map((post) => ({
 		rawTitle: post.rawTitle,
@@ -105,7 +87,6 @@ const getLatest = async () => {
 
 	cache = {
 		latestArticles,
-		latestUsers,
 		popularArticles,
 		mostLinkedArticles,
 	};
@@ -114,6 +95,6 @@ const getLatest = async () => {
 	return cache;
 };
 
-export function load() {
-	return getLatest();
+export async function load() {
+	return { ...(await getLatest()), globeSeed: Math.random() };
 }

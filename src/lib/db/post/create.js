@@ -1,4 +1,6 @@
 import prisma from '$lib/prisma.server';
+import { ACTIVITY_TYPES } from '$lib/constants/activity';
+import { createActivity } from '$lib/db/activity/create';
 import { LEXICAL_Y } from '$lib/y/rows';
 
 /**
@@ -75,6 +77,14 @@ export const createPost = async ({ title, data, ids, disclaimerTags }, metadata)
 					},
 				},
 			},
+		});
+
+		await createActivity(tx, {
+			type: ACTIVITY_TYPES.ARTICLE_CREATE,
+			userId: user.id,
+			postId: post.id,
+			postUpdateId: postUpdate.id,
+			createdTimestamp: postUpdate.createdTimestamp,
 		});
 
 		return { post, postUpdate };

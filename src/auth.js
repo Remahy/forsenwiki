@@ -4,6 +4,9 @@ import Twitch from '@auth/sveltekit/providers/twitch';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 
 import prisma from '$lib/prisma.server';
+import { ACTIVITY_TYPES } from '$lib/constants/activity';
+import { createActivity } from '$lib/db/activity/create';
+import { emitActivity } from '$lib/db/activity/emit';
 import { AccountTooYoung } from '$lib/errors/auth/AccountTooYoung';
 import { NoUser } from '$lib/errors/auth/NoUser';
 import { version } from '$lib/utils/version';
@@ -69,6 +72,13 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 						streamerMode: false,
 					},
 				});
+
+				const activity = await createActivity(prisma, {
+					type: ACTIVITY_TYPES.USER_REGISTER,
+					userId: id,
+				});
+
+				await emitActivity({ id: activity.id });
 			}
 		},
 		async signIn(message) {

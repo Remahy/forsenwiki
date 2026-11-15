@@ -3,6 +3,7 @@ import { readAuthorsForYPostByTitle, readRelationsToYPostTitle } from '$lib/db/p
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { _getYPostHTML } from '../../api/post/read/[title]/+server';
 import { getShouldCacheBust } from '$lib/utils/cacheBust';
+import { toSnippet } from '$lib/utils/snippet';
 
 /** @type {Map<string, number>} */
 const cacheBustRateLimit = new Map();
@@ -42,7 +43,7 @@ export async function load({ params, url, setHeaders }) {
 
 		if (res) {
 			if (res.text) {
-				res.text = `${res.text.substring(0, 150)}${res.text.length > 150 ? '...' : ''}`;
+				res.text = toSnippet(res.text);
 			}
 
 			return { ...res, authors, relatedPosts };

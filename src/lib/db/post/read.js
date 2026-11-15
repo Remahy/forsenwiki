@@ -1,5 +1,6 @@
 import prisma from '$lib/prisma.server';
 import { SYSTEM, Y_POST_TYPES } from '$lib/constants/constants';
+import { toSnippet } from '$lib/utils/snippet';
 
 /**
  * @param {string} title
@@ -272,6 +273,7 @@ export async function readAllArticleTitles() {
  *	title: string,
  *	rawTitle: string,
  *	image: string | null,
+ *	snippet: string | null,
  *	linkCount: number
  * }} MostLinkedArticle
  */
@@ -295,7 +297,12 @@ export async function readMostLinkedArticles(take = 8) {
 
 	const posts = await prisma.yPost.findMany({
 		where: { id: { in: counts.map((c) => c.toPostId) } },
-		select: { id: true, title: true, rawTitle: true, html: { select: { image: true } } },
+		select: {
+			id: true,
+			title: true,
+			rawTitle: true,
+			html: { select: { image: true, text: true } },
+		},
 	});
 
 	const byId = new Map(posts.map((p) => [p.id, p]));
@@ -310,6 +317,7 @@ export async function readMostLinkedArticles(take = 8) {
 				title: post.title,
 				rawTitle: post.rawTitle,
 				image: post.html?.image ?? null,
+				snippet: post.html?.text ? toSnippet(post.html.text, 32) : null,
 				linkCount: _count.fromPostId,
 			});
 		}

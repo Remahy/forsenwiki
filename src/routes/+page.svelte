@@ -5,7 +5,7 @@
 		HistoryIcon,
 		FolderSearchIcon,
 		SquarePenIcon,
-		ImageIcon,
+		LibraryIcon,
 	} from '@lucide/svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
@@ -17,29 +17,35 @@
 	import SuggestionBox from '$lib/components/SuggestionBox.svelte';
 	import Container from '$lib/components/Container.svelte';
 	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
+	import PuzzleGlobe from '$lib/components/PuzzleGlobe.svelte';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
 
 	let streamerMode = $state($page.data.session?.user?.userSettings?.streamerMode);
 
 	/**
 	 * @typedef {import('./+page.server').LatestArticle} LatestArticle
-	 * @typedef {import('./+page.server').LatestUser} LatestUser
 	 * @typedef {import('./+page.server').GoatCounterHit} GoatCounterHit
 	 * @typedef {import('./+page.server').MostLinkedArticle} MostLinkedArticle
 	 */
 
-	/** @type {MostLinkedArticle[]} */
-	const mostLinkedArticles = $page.data.mostLinkedArticles ?? [];
+	const globeItems = ($page.data.mostLinkedArticles ?? []).map(
+		(/** @type {MostLinkedArticle} */ article) => ({
+			href: `/w/${article.title}`,
+			title: article.rawTitle,
+			description: article.snippet ?? '',
+			image:
+				article.image && !streamerMode
+					? getImageCacheURL(article.image, { height: 400 }).toString()
+					: null,
+		})
+	);
 
 	/** @type {Writable<LatestArticle[]>} */
 	const latestPosts = writable($page.data.latestArticles);
-	/** @type {Writable<LatestUser[]>} */
-	const latestUsers = writable($page.data.latestUsers);
 	/** @type {Writable<GoatCounterHit[]>} */
 	const popularArticles = writable($page.data.popularArticles);
 
 	const ssePostCreate = source('/api/adonis/frontpage').select('post:create');
-	const sseUserCreate = source('/api/adonis/frontpage').select('user:create');
 	const sseArticlesPopular = source('/api/adonis/frontpage').select('articles:popular');
 
 	onMount(() => {
@@ -62,25 +68,6 @@
 				}
 
 				latestPosts.set(values);
-			}
-		});
-		sseUserCreate.subscribe((v) => {
-			if (v) {
-				const values = $latestUsers;
-
-				/** @type {LatestUser} */
-				const input = JSON.parse(v);
-				if (values[0].name === input.name) {
-					return;
-				}
-
-				const newLength = values.unshift(input);
-
-				if (newLength > 5) {
-					values.pop();
-				}
-
-				latestUsers.set(values);
 			}
 		});
 		sseArticlesPopular.subscribe((v) => {
@@ -108,56 +95,33 @@
 		</SuggestionBox>
 	{/if}
 
-	<div class="block grow gap-4 lg:flex">
-		<div class="mb-4 flex grow flex-col lg:mb-0">
-			{#if mostLinkedArticles.length}
-				<Box class="mb-4 p-4">
-					<ul class="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2 xl:grid-cols-4">
-						{#each mostLinkedArticles as article (article.title)}
-							<li class="suggestion-box rounded-sm p-2!">
-								<Link
-									href="/w/{article.title}"
-									class="flex items-center gap-3 no-underline! decoration-0!"
-								>
-									{#if article.image && !streamerMode}
-										<img
-											src={getImageCacheURL(article.image, {
-												height: 112,
-												quality: 'low',
-											}).toString()}
-											alt=""
-											loading="lazy"
-											width="56"
-											height="56"
-											class="h-14 w-14 shrink-0 rounded-sm object-cover"
-										/>
-									{:else}
-										<span
-											aria-hidden="true"
-											class="flex h-14 w-14 shrink-0 items-center justify-center rounded-sm bg-black/10 opacity-50 dark:bg-white/5"
-										>
-											<ImageIcon />
-										</span>
-									{/if}
-									<span class="flex min-w-0 flex-col">
-										<strong class="wrap-break-words">{article.rawTitle}</strong>
-										{#if article.linkCount > 1}
-											<small>Linked in {article.linkCount} articles</small>
-										{/if}
-									</span>
-								</Link>
-							</li>
-						{/each}
-					</ul>
-					<div
-						class="box-heading-wrapper mt-2 flex items-center justify-end border-t-2 border-b-0! pt-2 pb-0!"
-					>
-						<Link href="/w" target="_blank">All articles</Link>
-					</div>
-				</Box>
-			{/if}
+	<div class="mb-4 w-full lg:mb-12">
+		<PuzzleGlobe items={globeItems} seed={$page.data.globeSeed} />
+	</div>
 
-			<Box class="grow p-4">
+	<nav aria-label="Navigation">
+		<Box class="grid grid-cols-2 gap-2 p-4 sm:grid-cols-3 lg:grid-cols-5">
+			<LinkButton href="/w" class="flex gap-2 whitespace-nowrap">
+				<LibraryIcon /> <span>All articles</span>
+			</LinkButton>
+			<LinkButton href="/activity" class="flex gap-2 whitespace-nowrap">
+				<HistoryIcon /> <span>Activity</span>
+			</LinkButton>
+			<LinkButton href="/create" class="flex gap-2 whitespace-nowrap" reload>
+				<SquarePenIcon /> <span>New article</span>
+			</LinkButton>
+			<LinkButton href="/content" class="flex gap-2 whitespace-nowrap">
+				<FolderSearchIcon /> <span>Content</span>
+			</LinkButton>
+			<LinkButton href="/random" class="flex gap-2 whitespace-nowrap">
+				<Dice4Icon /> <span>Random</span>
+			</LinkButton>
+		</Box>
+	</nav>
+
+	<div class="block grow gap-4 lg:flex lg:items-start">
+		<div class="mb-4 flex grow flex-col lg:mb-0">
+			<Box class="p-4">
 				<div class="box-heading-wrapper mb-2">
 					<h2 class="text-2xl">Latest articles</h2>
 				</div>
@@ -181,57 +145,31 @@
 					</div>
 				{/each}
 			</Box>
+		</div>
 
-			{#if $popularArticles.length}
-				<Box class="mt-4 grow p-4">
-					<div class="box-heading-wrapper mb-2 flex items-center justify-between">
+		{#if $popularArticles.length}
+			<div class="flex flex-col gap-4 lg:w-96 lg:min-w-96">
+				<Box class="p-4">
+					<div class="box-heading-wrapper mb-2">
 						<h2 class="text-2xl">Popular articles</h2>
-						<Link href="https://stats.forsen.wiki/" target="_blank">STATS.FORSEN.WIKI</Link>
 					</div>
 					{#each $popularArticles as article, index (article.path)}
-						<div class="p-2 {index % 2 ? 'bg-black/10 dark:bg-white/5' : ''}">
-							<Link href={article.path} class="inline-block min-w-32"
-								><strong>{article.title}</strong></Link
-							>
-							&nbsp; <span>{article.count} hits</span>
+						<div
+							class="flex items-baseline justify-between gap-2 p-2 {index % 2
+								? 'bg-black/10 dark:bg-white/5'
+								: ''}"
+						>
+							<Link href={article.path}><strong>{article.title}</strong></Link>
+							<span class="shrink-0">{article.count} hits</span>
 						</div>
 					{/each}
-				</Box>
-			{/if}
-		</div>
-
-		<div class="block flex-col gap-4 lg:flex lg:w-96 lg:min-w-96">
-			<Box class="mb-4 flex flex-col gap-2 p-4 lg:mb-0">
-				<div class="box-heading-wrapper mb-2">
-					<h2 class="text-2xl">Navigation</h2>
-				</div>
-				<LinkButton href="/recentchanges" class="flex gap-2 whitespace-nowrap">
-					<HistoryIcon /> <span>Recent changes</span>
-				</LinkButton>
-				<LinkButton href="/create" class="flex gap-2 whitespace-nowrap" reload>
-					<SquarePenIcon /> <span>New article</span>
-				</LinkButton>
-				<LinkButton href="/content" class="flex gap-2 whitespace-nowrap">
-					<FolderSearchIcon /> <span>Content</span>
-				</LinkButton>
-				<LinkButton href="/random" class="flex gap-2 whitespace-nowrap">
-					<Dice4Icon /> <span>Random</span>
-				</LinkButton>
-			</Box>
-
-			<Box class="overflow-hidden p-4">
-				<div class="box-heading-wrapper mb-2">
-					<h2 class="text-2xl">New users</h2>
-				</div>
-
-				{#each $latestUsers as user (user)}
-					<div class="p-2 pl-0">
-						<StreamerModeShow
-							><span title={user.name} class="font-bold">{user.name}</span></StreamerModeShow
-						>
+					<div
+						class="box-heading-wrapper mt-2 flex items-center justify-end border-t-2 border-b-0! pt-2 pb-0!"
+					>
+						<Link href="https://stats.forsen.wiki/" target="_blank">STATS.FORSEN.WIKI</Link>
 					</div>
-				{/each}
-			</Box>
-		</div>
+				</Box>
+			</div>
+		{/if}
 	</div>
 </Container>

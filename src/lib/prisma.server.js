@@ -14,12 +14,6 @@ const p = new PrismaClient({ adapter });
 const prisma = /** @type {any} */ (
 	p.$extends({
 		query: {
-			user: {
-				async create({ query, args }) {
-					_emit('user:create', { name: args.data.name });
-					return query(args);
-				},
-			},
 			yPost: {
 				async create({ query, args }) {
 					// @ts-ignore
@@ -37,7 +31,7 @@ const prisma = /** @type {any} */ (
 					delete args._metadata;
 					return query(args);
 				},
-				// See "src/routes/api/post/update/[title]/+server.js" for "post:update".
+				// See "src/lib/db/activity/emit.js" for "activity:create".
 			},
 		},
 	})

@@ -10,6 +10,7 @@ import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { createPost } from '$lib/db/post/create';
 import { readYPostByTitle } from '$lib/db/post/read';
 import { upsertHTML } from '$lib/db/post/html';
+import { emitActivity } from '$lib/db/activity/emit';
 import { articleExtension } from '$lib/components/editor/config/article';
 import toHTML from '$lib/worker/toHTML';
 import {
@@ -150,6 +151,8 @@ export async function POST({ request, locals }) {
 	const { html, text, image } = await toHTML({ config: 'article', update: backendContent });
 
 	await upsertHTML(createdPost.id, { content: html, text, image });
+
+	await emitActivity({ postUpdateId: createdPost.postUpdate.id });
 
 	return json({
 		...createdPost,

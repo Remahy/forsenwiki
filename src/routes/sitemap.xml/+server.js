@@ -75,7 +75,7 @@ export async function GET() {
 				<lastmod>${lastUpdated}</lastmod>
 			</url>
 			<url>
-				<loc>${DOMAIN}/recentchanges</loc>
+				<loc>${DOMAIN}/activity</loc>
 				<lastmod>${lastUpdated}</lastmod>
 			</url>
 			<url>
