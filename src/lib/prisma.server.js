@@ -14,12 +14,6 @@ const p = new PrismaClient({ adapter });
 const prisma = /** @type {any} */ (
 	p.$extends({
 		query: {
-			user: {
-				async create({ query, args }) {
-					_emit('user:create', { name: args.data.name });
-					return query(args);
-				},
-			},
 			yPost: {
 				async create({ query, args }) {
 					// @ts-ignore

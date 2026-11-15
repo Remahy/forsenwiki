@@ -23,7 +23,6 @@
 
 	/**
 	 * @typedef {import('./+page.server').LatestArticle} LatestArticle
-	 * @typedef {import('./+page.server').LatestUser} LatestUser
 	 * @typedef {import('./+page.server').GoatCounterHit} GoatCounterHit
 	 * @typedef {import('./+page.server').MostLinkedArticle} MostLinkedArticle
 	 */
@@ -33,13 +32,10 @@
 
 	/** @type {Writable<LatestArticle[]>} */
 	const latestPosts = writable($page.data.latestArticles);
-	/** @type {Writable<LatestUser[]>} */
-	const latestUsers = writable($page.data.latestUsers);
 	/** @type {Writable<GoatCounterHit[]>} */
 	const popularArticles = writable($page.data.popularArticles);
 
 	const ssePostCreate = source('/api/adonis/frontpage').select('post:create');
-	const sseUserCreate = source('/api/adonis/frontpage').select('user:create');
 	const sseArticlesPopular = source('/api/adonis/frontpage').select('articles:popular');
 
 	onMount(() => {
@@ -62,25 +58,6 @@
 				}
 
 				latestPosts.set(values);
-			}
-		});
-		sseUserCreate.subscribe((v) => {
-			if (v) {
-				const values = $latestUsers;
-
-				/** @type {LatestUser} */
-				const input = JSON.parse(v);
-				if (values[0].name === input.name) {
-					return;
-				}
-
-				const newLength = values.unshift(input);
-
-				if (newLength > 5) {
-					values.pop();
-				}
-
-				latestUsers.set(values);
 			}
 		});
 		sseArticlesPopular.subscribe((v) => {
@@ -217,20 +194,6 @@
 				<LinkButton href="/random" class="flex gap-2 whitespace-nowrap">
 					<Dice4Icon /> <span>Random</span>
 				</LinkButton>
-			</Box>
-
-			<Box class="overflow-hidden p-4">
-				<div class="box-heading-wrapper mb-2">
-					<h2 class="text-2xl">New users</h2>
-				</div>
-
-				{#each $latestUsers as user (user)}
-					<div class="p-2 pl-0">
-						<StreamerModeShow
-							><span title={user.name} class="font-bold">{user.name}</span></StreamerModeShow
-						>
-					</div>
-				{/each}
 			</Box>
 		</div>
 	</div>
