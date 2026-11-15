@@ -2,7 +2,7 @@ import { expect, test } from 'vitest';
 
 import { render } from './template';
 
-const escape = (text: string) => text.replace(/\*/g, '\\*');
+const escape = (text: string) => text.replace(/[\\*]/g, '\\$&');
 
 test('double braces escape, triple braces do not', () => {
 	expect(render('{{a}} {{{a}}}', { a: '*x*' }, { escape })).toBe('\\*x\\* *x*');
