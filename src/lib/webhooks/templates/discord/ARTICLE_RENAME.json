@@ -1,0 +1,9 @@
+{
+	"title": "{{post.title}}",
+	"url": "{{{postUpdate.url}}}",
+	"description": "\"{{postUpdate.newTitle}}\" was \"{{postUpdate.oldTitle}}\"",
+	"color": 16347926,
+	"author": { "name": "{{{user.name}}}", "url": "{{{user.url}}}" },
+	"footer": { "text": "{{{label}}}" },
+	"timestamp": "{{{timestamp}}}"
+}

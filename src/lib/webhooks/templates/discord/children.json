@@ -1,0 +1,7 @@
+{
+	"ARTICLE_UPDATE": "**{{{label}}}:** *{{explanation}}*",
+	"ARTICLE_RENAME": "**{{{label}}}:** \"{{postUpdate.newTitle}}\" was \"{{postUpdate.oldTitle}}\"",
+	"ARTICLE_RETAG": "**Tags added:** {{{addedTags}}}\n**Tags removed:** {{{removedTags}}}",
+	"CONTENT_UPLOAD": "**{{{label}}}:** {{content.name}}",
+	"default": "**{{{label}}}**"
+}

@@ -1,5 +1,6 @@
 import { replacer } from '$lib/utils/json';
 import { _emit } from '../../../routes/api/adonis/frontpage/+server';
+import { sendActivityWebhooks } from '$lib/webhooks/activity.server';
 import { readActivitiesWhere } from './read';
 
 /**
@@ -15,6 +16,9 @@ export const emitActivity = async (where) => {
 			const activity = activities[index];
 			_emit('activity:create', JSON.stringify(activity, replacer));
 		}
+
+		// Not awaited because a slow or failing webhook must not hold up the request.
+		sendActivityWebhooks(activities).catch(console.error);
 	} catch (err) {
 		console.error(err);
 	}
