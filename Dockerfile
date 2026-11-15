@@ -34,6 +34,7 @@ COPY --from=build /app/prisma.config.ts ./prisma.config.ts
 COPY --from=build /app/src/generated ./src/generated
 COPY --from=build /app/src/lib/version.txt ./src/lib/version.txt
 COPY --from=build /app/src/lib/constants/constants.js ./src/lib/constants/constants.js
+COPY --from=build /app/src/lib/constants/activity.js ./src/lib/constants/activity.js
 
 # Used by start.sh
 COPY --from=build /app/scripts ./scripts
