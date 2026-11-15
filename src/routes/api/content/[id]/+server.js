@@ -4,6 +4,7 @@ import { ForbiddenError } from '$lib/errors/Forbidden';
 import { deleteContent } from '$lib/db/content/delete';
 import { updateContentName } from '$lib/db/content/updateName';
 import { deleteByKey } from '$lib/s3/index.server.js';
+import { emitActivity } from '$lib/db/activity/emit';
 
 export async function POST({ request, locals, params }) {
 	const { isBlocked, isModerator, auth } = locals;
@@ -66,7 +67,7 @@ export async function DELETE({ locals, params }) {
 
 	let deleteRes;
 	try {
-		deleteRes = await deleteContent(id);
+		deleteRes = await deleteContent(id, session.user.id);
 
 		await deleteByKey(res.hash);
 	} catch (err) {
@@ -77,5 +78,9 @@ export async function DELETE({ locals, params }) {
 		return error(500);
 	}
 
-	return json({ hash: deleteRes.hash, id: deleteRes.id });
+	if (deleteRes.activity) {
+		await emitActivity({ id: deleteRes.activity.id });
+	}
+
+	return json({ hash: deleteRes.content.hash, id: deleteRes.content.id });
 }

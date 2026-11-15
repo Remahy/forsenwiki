@@ -248,6 +248,7 @@ enum ActivityType {
   ARTICLE_RENAME
   USER_REGISTER
   CONTENT_UPLOAD
+  CONTENT_DELETE
 }
 
 model Activity {
@@ -269,8 +270,9 @@ model Activity {
   postUpdate   YPostUpdate? @relation(fields: [postUpdateId], references: [id], onDelete: Cascade)
   postUpdateId String?
 
-  content   Content? @relation(fields: [contentId], references: [id], onDelete: Cascade)
-  contentId String?
+  content         Content? @relation(fields: [contentId], references: [id], onDelete: SetNull)
+  contentId       String?
+  contentSnapshot Json? /// What the content was when it was deleted.
 
   createdTimestamp DateTime @default(now())
 

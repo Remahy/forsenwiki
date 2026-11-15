@@ -24,6 +24,7 @@ const fields = /** @satisfies {Prisma.Prisma.ActivitySelect} */ ({
 			metadata: true,
 		},
 	},
+	contentSnapshot: true,
 });
 
 const select = /** @satisfies {Prisma.Prisma.ActivitySelect} */ ({
@@ -48,7 +49,7 @@ const select = /** @satisfies {Prisma.Prisma.ActivitySelect} */ ({
  *   user: { id: string, name: string | null } | null,
  *   post: { title: string, rawTitle: string } | null,
  *   postUpdate: { id: string, byteLength: bigint | null, newTitle: string | null, oldTitle: string | null } | null,
- *   content: { id: string, hash: string, name: string, type: string | null, contentType: string | null, contentLength: bigint | null, metadata?: Prisma.Prisma.JsonValue } | null,
+ *   content: { id: string, hash: string, name: string, type: string | null, contentType: string | null, contentLength: bigint | null, metadata?: Prisma.Prisma.JsonValue, deleted: boolean } | null,
  * }} ChildActivityEntry
  *
  * @typedef {ChildActivityEntry & { children: ChildActivityEntry[] }} ActivityEntry
@@ -59,23 +60,48 @@ const select = /** @satisfies {Prisma.Prisma.ActivitySelect} */ ({
  */
 
 /**
+ * @param {ActivityRow} row
+ * @returns {ChildActivityEntry['content']}
+ */
+const toContent = ({ content, contentSnapshot }) => {
+	if (content) {
+		return { ...content, deleted: false };
+	}
+
+	if (!contentSnapshot) {
+		return null;
+	}
+
+	const { contentLength, ...snapshot } =
+		/** @type {import('$lib/db/content/delete').ContentSnapshot} */ (contentSnapshot);
+
+	return {
+		...snapshot,
+		contentLength: contentLength === null ? null : BigInt(contentLength),
+		deleted: true,
+	};
+};
+
+/**
  * Same rule as /api/content/validate/[hash]: only moderators see content metadata.
  * @param {ActivityRow} row
  * @param {Viewer} viewer
  * @returns {ChildActivityEntry}
  */
-const toChildEntry = ({ createdTimestamp, postUpdate, content, ...row }, { isModerator }) => {
-	/** @type {ChildActivityEntry['content']} */
-	let visibleContent = content;
+const toChildEntry = (row, { isModerator }) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { createdTimestamp, postUpdate, content: _content, contentSnapshot, ...rest } = row;
 
-	if (content && !isModerator) {
+	let visibleContent = toContent(row);
+
+	if (visibleContent && !isModerator) {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { metadata, ...rest } = content;
-		visibleContent = rest;
+		const { metadata, ...withoutMetadata } = visibleContent;
+		visibleContent = withoutMetadata;
 	}
 
 	return {
-		...row,
+		...rest,
 		createdTimestamp: createdTimestamp.toISOString(),
 		postUpdate: postUpdate && { id: postUpdate.id, ...postUpdate.metadata },
 		content: visibleContent,
