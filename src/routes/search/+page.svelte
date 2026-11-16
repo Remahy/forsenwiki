@@ -35,7 +35,12 @@
 				const newData = await res.json();
 				if (newData.length) {
 					const scrollTop = window.scrollY;
-					results = [...results, ...newData];
+					// Articles found by title and by editor are paged apart, so one can come again.
+					const shown = new Set(results.map(({ id }) => id));
+					results = [
+						...results,
+						...newData.filter((/** @type {{ id: string }} */ { id }) => !shown.has(id)),
+					];
 					setTimeout(() => {
 						window.scrollTo({ top: scrollTop, behavior: 'instant' });
 						loaded();
@@ -77,9 +82,6 @@
 
 	<main class="flex flex-col gap-2">
 		{#if results?.length}
-			{#if $page.url.searchParams.get('query') === '' && (!$page.url.searchParams.get('order') || $page.url.searchParams.get('order') === 'desc')}
-				<p><strong>Recently created articles & content.</strong></p>
-			{/if}
 			<Masonry items={results} animate={false} order="row-first">
 				{#snippet children({ item: result })}
 					<LinkBox

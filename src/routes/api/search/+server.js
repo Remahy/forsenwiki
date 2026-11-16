@@ -21,6 +21,24 @@ const contentEntry = (content) => ({
 	title: content.hash,
 });
 
+const PAGE_SIZE = 50;
+
+/**
+ * Break ties by id.
+ * @param {QueryResult[]} results
+ * @param {'asc' | 'desc'} orderBy
+ */
+const sortResults = (results, orderBy) => {
+	const direction = orderBy === 'asc' ? 1 : -1;
+
+	results.sort(
+		(a, b) =>
+			direction *
+			(a.createdTimestamp.getTime() - b.createdTimestamp.getTime() ||
+				(a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
+	);
+};
+
 /**
  * @param {string[]} types
  * @param {{ orderBy: 'asc' | 'desc', contentTypes: string[], page: number }} [options]
@@ -34,9 +52,9 @@ const getRecentUploads = async (types = [], options) => {
 	let rawRecentYPosts;
 	if ((types.length && types.includes('article')) || types.length === 0) {
 		rawRecentYPosts = prisma.yPost.findMany({
-			orderBy: { createdTimestamp: orderBy },
-			skip: 51 * page,
-			take: 50,
+			orderBy: [{ createdTimestamp: orderBy }, { id: orderBy }],
+			skip: PAGE_SIZE * page,
+			take: PAGE_SIZE,
 			select: {
 				html: {
 					select: {
@@ -63,9 +81,9 @@ const getRecentUploads = async (types = [], options) => {
 						}
 					: undefined,
 			},
-			orderBy: { createdTimestamp: orderBy },
-			skip: 51 * page,
-			take: 50,
+			orderBy: [{ createdTimestamp: orderBy }, { id: orderBy }],
+			skip: PAGE_SIZE * page,
+			take: PAGE_SIZE,
 		});
 	}
 
@@ -90,17 +108,13 @@ const getRecentUploads = async (types = [], options) => {
 		}
 	}
 
-	results.sort((a, b) =>
-		orderBy === 'asc'
-			? a.createdTimestamp.getTime() - b.createdTimestamp.getTime()
-			: b.createdTimestamp.getTime() - a.createdTimestamp.getTime()
-	);
+	sortResults(results, orderBy);
 
 	return { results };
 };
 
 /**
- * @typedef {{ type?: 'content', rawTitle: string, title: string, createdTimestamp: Date, id: string, fileType?: MimetypeType, contentType?: string | null, html?: { image: string | null, text: string | null } | null }} QueryResult
+ * @typedef {{ type?: 'content', rawTitle: string, title: string, createdTimestamp: Date, id: string, fileType?: MimetypeType | 'link', contentType?: string | null, html?: { image: string | null, text: string | null } | null }} QueryResult
  */
 
 /**
@@ -155,8 +169,9 @@ export const _getSearch = async (query, types = [], options) => {
 				createdTimestamp: true,
 				title: true,
 			},
-			skip: 51 * page,
-			take: 50,
+			orderBy: [{ createdTimestamp: orderBy }, { id: orderBy }],
+			skip: PAGE_SIZE * page,
+			take: PAGE_SIZE,
 		});
 
 		rawMetadata = prisma.yPost.findMany({
@@ -193,8 +208,9 @@ export const _getSearch = async (query, types = [], options) => {
 				createdTimestamp: true,
 				title: true,
 			},
-			skip: 51 * page,
-			take: 50,
+			orderBy: [{ createdTimestamp: orderBy }, { id: orderBy }],
+			skip: PAGE_SIZE * page,
+			take: PAGE_SIZE,
 		});
 	}
 
@@ -232,8 +248,9 @@ export const _getSearch = async (query, types = [], options) => {
 						}
 					: undefined,
 			},
-			skip: 51 * page,
-			take: 50,
+			orderBy: [{ createdTimestamp: orderBy }, { id: orderBy }],
+			skip: PAGE_SIZE * page,
+			take: PAGE_SIZE,
 		});
 	}
 
@@ -268,13 +285,10 @@ export const _getSearch = async (query, types = [], options) => {
 		}
 	}
 
-	results.sort((a, b) =>
-		orderBy === 'asc'
-			? a.createdTimestamp.getTime() - b.createdTimestamp.getTime()
-			: b.createdTimestamp.getTime() - a.createdTimestamp.getTime()
-	);
+	sortResults(results, orderBy);
 
-	return { results: results.flat() };
+	// An article can match by title and by editor.
+	return { results: [...new Map(results.map((result) => [result.id, result])).values()] };
 };
 
 /**
