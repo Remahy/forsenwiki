@@ -1,0 +1,9 @@
+@reference "../../../../../app.css";
+
+.article-root .heading-link {
+	@apply ms-2 inline-flex align-middle text-gray-400 no-underline opacity-0 transition-opacity hover:text-indigo-400 focus-visible:opacity-100 max-lg:opacity-100;
+}
+
+.article-root :is(h1, h2, h3, h4, h5):hover > .heading-link {
+	@apply opacity-100;
+}

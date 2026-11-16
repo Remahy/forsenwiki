@@ -13,7 +13,7 @@ const headers = new Headers({
 
 // https://www.goatcounter.com/api2.html
 const queryStrings = new URLSearchParams({
-	limit: '20',
+	limit: '200',
 	daily: 'true',
 });
 
@@ -81,7 +81,7 @@ const formattedHits = (arr) =>
 /**
  * @throws
  */
-export const getPopularArticles = async () => {
+export const getPopularArticles = async (LIMIT = 20) => {
 	const res = await fetch(`${GOATCOUNTER_DOMAIN}/api/v0/stats/hits?${queryStrings.toString()}`, {
 		headers,
 	});
@@ -91,7 +91,7 @@ export const getPopularArticles = async () => {
 	 */
 	const data = await res.json();
 
-	const filteredResults = filterArticlePages(data.hits || []);
+	const filteredResults = filterArticlePages(data.hits || []).slice(0, LIMIT);
 
 	const parsedResults = await parseResults(filteredResults);
 

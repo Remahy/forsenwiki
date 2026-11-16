@@ -27,7 +27,7 @@ const getLatest = async () => {
 	let popularArticles = [];
 
 	try {
-		popularArticles = await getPopularArticles();
+		popularArticles = await getPopularArticles(20);
 	} catch (err) {
 		if (GOATCOUNTER_API_KEY && !GOATCOUNTER_DISABLED) {
 			console.error(err);
