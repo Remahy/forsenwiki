@@ -22,6 +22,7 @@
 	import StreamerModeShow from '$lib/components/StreamerModeShow.svelte';
 	import { initializeEmblaForArticle } from '$lib/components/editor/plugins/Gallery/embla.js';
 	import { initializeZoomForImgElements } from '$lib/components/editor/plugins/Gallery/zoom.js';
+	import { addHeadingLinks } from '$lib/components/editor/plugins/Heading/headingLinks.js';
 	import NSFW from '$lib/components/Disclaimer/NSFW.svelte';
 	import Satire from '$lib/components/Disclaimer/Satire.svelte';
 
@@ -124,6 +125,7 @@
 		if (article) {
 			cleanups.push(initializeEmblaForArticle(article));
 			cleanups.push(initializeZoomForImgElements(article));
+			cleanups.push(addHeadingLinks(article));
 		}
 
 		return () => {
