@@ -1,6 +1,6 @@
 import { beforeEach, expect, test, vi } from 'vitest';
 
-import { deleteContent } from './delete';
+import { WIKI_LINK_HASH, deleteContent } from './delete';
 
 const content = {
 	id: 'content',
@@ -13,6 +13,8 @@ const content = {
 };
 
 const state = vi.hoisted(() => ({
+	hash: 'hash',
+	usages: 0,
 	recorded: 0,
 	snapshots: [] as unknown[],
 	activities: [] as Record<string, unknown>[],
@@ -21,8 +23,9 @@ const state = vi.hoisted(() => ({
 
 vi.mock('$lib/prisma.server', () => {
 	const tx = {
+		yPostContent: { count: async () => state.usages },
 		content: {
-			findUniqueOrThrow: async () => content,
+			findUniqueOrThrow: async () => ({ ...content, hash: state.hash }),
 			delete: async ({ where }: { where: { id: string } }) => state.deleted.push(where.id),
 		},
 		activity: {
@@ -45,6 +48,8 @@ vi.mock('$lib/prisma.server', () => {
 });
 
 beforeEach(() => {
+	state.hash = 'hash';
+	state.usages = 0;
 	state.recorded = 0;
 	state.snapshots.length = 0;
 	state.activities.length = 0;
@@ -77,4 +82,24 @@ test('content no activity points to is deleted without one', async () => {
 	expect(activity).toBeNull();
 	expect(state.activities).toEqual([]);
 	expect(state.deleted).toEqual(['content']);
+});
+
+test('content an article uses is not deleted', async () => {
+	state.usages = 2;
+
+	await expect(deleteContent('content', 'moderator')).rejects.toMatchObject({
+		code: 'CONTENT_IN_USE',
+	});
+	expect(state.activities).toEqual([]);
+	expect(state.deleted).toEqual([]);
+});
+
+test('the link to the wiki is never deleted', async () => {
+	state.hash = WIKI_LINK_HASH;
+
+	await expect(deleteContent('content', 'moderator')).rejects.toMatchObject({
+		code: 'CONTENT_PROTECTED',
+	});
+	expect(state.activities).toEqual([]);
+	expect(state.deleted).toEqual([]);
 });

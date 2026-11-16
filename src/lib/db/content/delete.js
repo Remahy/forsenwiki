@@ -1,18 +1,37 @@
 import prisma from '$lib/prisma.server';
 import { ACTIVITY_TYPES } from '$lib/constants/activity';
 import { createActivity } from '$lib/db/activity/create';
+import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
+import { DOMAIN } from '$lib/environment/environment';
+import { wikiLinkOf } from '$lib/utils/externalLink';
+import { hashLink } from '$lib/utils/hashLink.server';
+
+export const CONTENT_IN_USE = 'CONTENT_IN_USE';
+export const CONTENT_PROTECTED = 'CONTENT_PROTECTED';
+
+export const WIKI_LINK_HASH = hashLink(wikiLinkOf(DOMAIN));
 
 /**
  * @typedef {{ id: string, hash: string, name: string, type: string | null, contentType: string | null, contentLength: number | null, metadata: Prisma.Prisma.JsonValue }} ContentSnapshot
  */
 
 /**
- * Content no activity points to, such as a failed upload.
+ * Content no activity points to, such as a failed upload. Content an article uses, and the VITE_DOMAIN link, are refused.
  * @param {string} id
  * @param {string} userId
  */
 export const deleteContent = async (id, userId) => {
 	return prisma.$transaction(async (tx) => {
+		const usages = await tx.yPostContent.count({ where: { contentId: id } });
+
+		if (usages) {
+			const err = new ErrorWithCode(
+				`This content is used in ${usages} article${usages === 1 ? '' : 's'} and cannot be deleted. Remove it from them first.`
+			);
+			err.code = CONTENT_IN_USE;
+			throw err;
+		}
+
 		const { contentLength, ...content } = await tx.content.findUniqueOrThrow({
 			where: { id },
 			select: {
@@ -25,6 +44,12 @@ export const deleteContent = async (id, userId) => {
 				metadata: true,
 			},
 		});
+
+		if (content.hash === WIKI_LINK_HASH) {
+			const err = new ErrorWithCode('The link to the wiki itself cannot be deleted.');
+			err.code = CONTENT_PROTECTED;
+			throw err;
+		}
 
 		/** @type {ContentSnapshot} */
 		const contentSnapshot = {

@@ -14,6 +14,8 @@
 	import AudioPreview from '$lib/components/content/AudioPreview.svelte';
 	import { STATIC_DOMAIN } from '$lib/environment/environment';
 	import DocumentPreview from '$lib/components/content/DocumentPreview.svelte';
+	import LinkPreview from '$lib/components/content/LinkPreview.svelte';
+	import { LINK_CONTENT_TYPE } from '$lib/utils/externalLink';
 	import Link from '$lib/components/Link.svelte';
 
 	const id = page.params.id;
@@ -28,6 +30,8 @@
 	const contentType = $derived(result.contentType);
 	const contentLength = $derived(result.contentLength);
 	const fileType = $derived.by(() => result.type || '');
+	const isLink = $derived(fileType === LINK_CONTENT_TYPE);
+	const url = $derived(isLink ? result.name : `${STATIC_DOMAIN}/${result.hash}`);
 
 	const metadata = $derived.by(() => {
 		if (
@@ -42,6 +46,7 @@
 	});
 
 	const author = $derived(result.author);
+	const usedIn = $derived(result.usedIn);
 
 	const allowModify = $derived(data.isModerator || author.name === data.session?.user?.name);
 
@@ -148,12 +153,16 @@
 				name,
 			}),
 		},
+		link: {
+			component: LinkPreview,
+			props: () => ({ url }),
+		},
 	};
 
 	// @ts-ignore
-	const SvelteComponent = $derived(fileType && PreviewComponents[fileType].component);
+	const SvelteComponent = $derived(fileType && PreviewComponents[fileType]?.component);
 	// @ts-ignore
-	const SvelteComponentProps = $derived(fileType && PreviewComponents[fileType].props());
+	const SvelteComponentProps = $derived(fileType && PreviewComponents[fileType]?.props());
 
 	// @ts-ignore
 	BigInt.prototype.toJSON = function () {
@@ -164,8 +173,9 @@
 <svelte:head>
 	<meta property="og:site_name" content="Forsen Wiki" />
 	<title
-		>{fileType.substring(0, 1).toUpperCase()}{fileType.substring(1)}: {name} - Uploaded user content -
-		Community Forsen Wiki</title
+		>{fileType.substring(0, 1).toUpperCase()}{fileType.substring(1)}: {name} - {isLink
+			? 'External link'
+			: 'Uploaded user content'} - Community Forsen Wiki</title
 	>
 
 	{#if fileType === 'image'}
@@ -196,6 +206,12 @@
 			<meta property="og:video:type" content={contentType} />
 			<meta name="twitter:player:stream:content_type" content={contentType} />
 		{/if}
+	{/if}
+
+	{#if fileType === 'link'}
+		<meta name="description" content="External link on forsen.wiki." />
+
+		<meta property="og:description" content="External link on forsen.wiki." />
 	{/if}
 
 	{#if fileType === 'audio'}
@@ -241,7 +257,7 @@
 					<tbody>
 						<tr>
 							<td class="p-4"><strong>Name</strong></td>
-							{#if allowModify}
+							{#if allowModify && !isLink}
 								<td class="pl-4">
 									<div class="mt-0.5 mr-0.5 flex">
 										<input
@@ -261,7 +277,7 @@
 							{/if}
 						</tr>
 						<tr>
-							<td class="p-4"><strong>Uploader</strong></td>
+							<td class="p-4"><strong>{isLink ? 'Added by' : 'Uploader'}</strong></td>
 							<td class="p-4"
 								><Link href="/user/{author.id}" target="_blank" class="decoration-1!"
 									>{author.name}</Link
@@ -270,7 +286,10 @@
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Type</strong></td>
-							<td class="p-4">{fileType} <strong>({contentType})</strong></td>
+							<td class="p-4"
+								>{fileType}
+								{#if contentType}<strong>({contentType})</strong>{/if}</td
+							>
 						</tr>
 						{#if contentLength}
 							<tr>
@@ -280,7 +299,7 @@
 								>
 							</tr>
 						{/if}
-						{#if metadata}
+						{#if metadata && Object.keys(metadata).length}
 							<tr>
 								<td class="p-4"><strong>Metadata</strong></td>
 								<td class="p-4 wrap-break-word">
@@ -314,14 +333,34 @@
 						</tr>
 						<tr>
 							<td class="p-4"><strong>Used in</strong></td>
-							<td class="p-4 wrap-break-word"
-								><small><i>// TODO: Not implemented yet.</i></small></td
-							>
+							<td class="p-4 wrap-break-word">
+								{#if usedIn.length}
+									<ul>
+										{#each usedIn as { post, postUpdateId, createdTimestamp } (post.title)}
+											<li>
+												<Link href="/w/{post.title}" target="_blank">{post.rawTitle}</Link>
+												<small title={createdTimestamp.toUTCString()}>
+													since
+													{#if postUpdateId}
+														<Link href="/w/{post.title}/history/{postUpdateId}" target="_blank"
+															>{createdTimestamp.toDateString()}</Link
+														>
+													{:else}
+														{createdTimestamp.toDateString()}
+													{/if}
+												</small>
+											</li>
+										{/each}
+									</ul>
+								{:else}
+									<small><i>Not used in any article.</i></small>
+								{/if}
+							</td>
 						</tr>
 						<tr>
 							<td class="p-4"><strong>URL</strong></td>
 							<td class="p-4 wrap-break-word">
-								<Link href="{STATIC_DOMAIN}/{hash}" target="_blank">{STATIC_DOMAIN}/{hash}</Link>
+								<Link href={url} target="_blank" rel="noopener noreferrer nofollow">{url}</Link>
 							</td>
 						</tr>
 					</tbody>
@@ -330,9 +369,14 @@
 		</Box>
 	</div>
 
-	{#if allowModify}
-		<div>
-			<Button on:click={removeContent}><Trash2Icon /> Delete</Button>
+	{#if allowModify && !data.isWikiLink}
+		<div class="flex items-center gap-4">
+			<Button on:click={removeContent} disabled={isUpdating || usedIn.length > 0}
+				><Trash2Icon /> Delete</Button
+			>
+			{#if usedIn.length}
+				<small>Used in articles, remove it from them before deleting.</small>
+			{/if}
 		</div>
 	{/if}
 </Container>

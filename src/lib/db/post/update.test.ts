@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { beforeEach, expect, test, vi } from 'vitest';
 
 import { SYSTEM } from '$lib/constants/constants';
@@ -23,6 +24,14 @@ const created = vi.hoisted(() => [] as Created[]);
 const activities = vi.hoisted(() => [] as CreatedActivity[]);
 const currentTags = vi.hoisted(() => [] as string[]);
 
+type Usage = { postId: string; contentId: string; postUpdateId?: string; createdTimestamp: Date };
+
+const usages = vi.hoisted(() => [] as Usage[]);
+
+type LinkContent = { hash: string; name: string; type: string; authorId: string };
+
+const linkContents = vi.hoisted(() => [] as LinkContent[]);
+
 vi.mock('$lib/prisma.server', () => {
 	const tx = {
 		yPostRelation: {
@@ -34,13 +43,47 @@ vi.mock('$lib/prisma.server', () => {
 			create: ({ data }: { data: Created }) => {
 				created.push(data);
 
-				return { postUpdate: async () => ({ id: `row-${created.length}` }) };
+				const n = created.length;
+
+				return {
+					postUpdate: async () => ({ id: `row-${n}`, createdTimestamp: new Date(n * 1000) }),
+				};
 			},
 		},
 		content: {
 			findMany: vi.fn(async ({ where }: { where: { hash: { in: string[] } } }) =>
-				where.hash.in.map((hash) => ({ id: `content-${hash}`, createdTimestamp: new Date(0) }))
+				where.hash.in.map((hash) => ({
+					id: `content-${hash}`,
+					hash,
+					createdTimestamp: new Date(0),
+				}))
 			),
+			createMany: async ({ data }: { data: LinkContent[] }) => {
+				linkContents.push(...data);
+			},
+		},
+		yPostContent: {
+			deleteMany: async ({
+				where,
+			}: {
+				where: { postId: string; contentId: { notIn: string[] } };
+			}) => {
+				const kept = usages.filter(
+					(u) => u.postId !== where.postId || where.contentId.notIn.includes(u.contentId)
+				);
+				usages.splice(0, usages.length, ...kept);
+			},
+			createMany: async ({ data }: { data: Usage[] }) => {
+				for (const usage of data) {
+					const exists = usages.some(
+						(u) => u.postId === usage.postId && u.contentId === usage.contentId
+					);
+
+					if (!exists) {
+						usages.push(usage);
+					}
+				}
+			},
 		},
 		activity: {
 			create: ({ data }: { data: CreatedActivity }) => {
@@ -54,13 +97,16 @@ vi.mock('$lib/prisma.server', () => {
 	return { default: { $transaction: (run: (client: typeof tx) => unknown) => run(tx) } };
 });
 
-const post = { id: 'post', title: 'article', rawTitle: 'Article' } as never;
+const lastUpdated = new Date(500);
+const post = { id: 'post', title: 'article', rawTitle: 'Article', lastUpdated } as never;
 const metadata = { user: { id: 'moderator' }, byteLength: 5, totalByteLength: 105 };
 
 beforeEach(() => {
 	created.length = 0;
 	activities.length = 0;
 	currentTags.length = 0;
+	usages.length = 0;
+	linkContents.length = 0;
 });
 
 test('an update of a converted article is one row', async () => {
@@ -116,7 +162,7 @@ test('a seed is stored first, by the system, and is older than the update built 
 		Number(update.postUpdate.create.createdTimestamp)
 	);
 
-	expect(row).toEqual({ id: 'row-2' });
+	expect(row).toEqual({ id: 'row-2', createdTimestamp: new Date(2000) });
 
 	expect(activities).toHaveLength(1);
 	expect(activities[0]).toMatchObject({
@@ -186,4 +232,56 @@ test('the same disclaimer tags, or none sent, are not a tag change', async () =>
 	await updatePost({ post, outRelations: [], content: 'update' }, metadata);
 
 	expect(activities.flatMap(({ children }) => children.create)).toEqual([]);
+});
+
+test('content in use keeps the update that added it, removed content is dropped', async () => {
+	await updatePost(
+		{ post, outRelations: [], content: 'update', contentHashes: ['a', 'b'] },
+		metadata
+	);
+	await updatePost(
+		{ post, outRelations: [], content: 'update', contentHashes: ['b', 'c'] },
+		metadata
+	);
+
+	expect(usages).toEqual([
+		{
+			postId: 'post',
+			contentId: 'content-b',
+			postUpdateId: 'row-1',
+			createdTimestamp: new Date(1000),
+		},
+		{
+			postId: 'post',
+			contentId: 'content-c',
+			postUpdateId: 'row-2',
+			createdTimestamp: new Date(2000),
+		},
+	]);
+});
+
+test('external links are content hashed by their URL, used by the article', async () => {
+	await updatePost(
+		{ post, outRelations: [], content: 'update', externalLinks: ['https://x.com/forsen'] },
+		metadata
+	);
+
+	const hash = `link:${createHash('sha256').update('https://x.com/forsen').digest('hex')}`;
+
+	expect(linkContents).toEqual([
+		{
+			hash,
+			name: 'https://x.com/forsen',
+			type: 'link',
+			authorId: 'moderator',
+		},
+	]);
+	expect(usages).toEqual([
+		{
+			postId: 'post',
+			contentId: `content-${hash}`,
+			postUpdateId: 'row-1',
+			createdTimestamp: new Date(1000),
+		},
+	]);
 });

@@ -1,3 +1,8 @@
+const UPLOAD_HASH = /^[0-9a-f]{64}$/;
+
+export const isUploadHash = (/** @type {unknown} */ hash) =>
+	typeof hash === 'string' && UPLOAD_HASH.test(hash);
+
 /**
  * @param {File} file
  */

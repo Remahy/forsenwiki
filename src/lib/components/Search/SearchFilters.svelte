@@ -86,6 +86,10 @@
 				<input type="checkbox" name="contenttype" bind:group={contentTypes} value="document" />
 				<span>Document</span>
 			</label>
+			<label class="flex items-baseline gap-2">
+				<input type="checkbox" name="contenttype" bind:group={contentTypes} value="link" />
+				<span>Link</span>
+			</label>
 		</div>
 	</div>
 {/if}

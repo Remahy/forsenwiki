@@ -6,6 +6,7 @@ import { validateImageDimensions } from '$lib/s3/validateImageDimensions.server.
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
 import prisma from '$lib/prisma.server';
+import { isUploadHash } from '$lib/utils/sha256';
 
 /**
  * @param {Array<FileUpload>} files
@@ -38,6 +39,13 @@ export const _validateContent = async (files, isModerator) => {
 				message: `Index [${index + 1}] must be object: { mimetype: string, contentLength: number, hash: string, fileSnippet: string }`,
 			});
 			continue;
+		}
+
+		if (!isUploadHash(file.hash)) {
+			errors.push({
+				index,
+				message: `Index [${index + 1}]: hash must be the file's SHA-256 in lowercase hex.`,
+			});
 		}
 	}
 

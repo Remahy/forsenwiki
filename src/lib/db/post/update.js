@@ -4,6 +4,8 @@ import { ACTIVITY_TYPES, FORCED_CONVERSION_EXPLANATION } from '$lib/constants/ac
 import { contentUploadActivities, createActivity } from '$lib/db/activity/create';
 import { LEXICAL_Y } from '$lib/y/rows';
 import { postYRelationDeleteByFromPostId } from './delete';
+import { syncPostContent } from './content';
+import { createLinkContents } from '$lib/db/content/link';
 
 /**
  * @typedef {{ post: Pick<Prisma.YPost, 'id' | 'rawTitle' | 'title'>,
@@ -103,7 +105,7 @@ const createYPostUpdate = async (tx, data, metadata) => {
 
 /**
  * @typedef {{ content: string, byteLength: number }} Seed
- * @typedef {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], disclaimerTags?: string[], content: string, seed?: Seed, newImageHashes?: string[] }} UpdatePostData
+ * @typedef {{ post: Prisma.YPost, outRelations: Omit<Prisma.YPostRelation, 'fromPostId'>[], disclaimerTags?: string[], content: string, seed?: Seed, newImageHashes?: string[], contentHashes?: string[], externalLinks?: string[] }} UpdatePostData
  * @typedef {{ user: { id: string }, byteLength: number, totalByteLength: number, newTitle?: string, oldTitle?: string }} UpdatePostMetadata
  */
 
@@ -112,7 +114,16 @@ const createYPostUpdate = async (tx, data, metadata) => {
  * @param {UpdatePostMetadata} metadata
  */
 export const updatePost = async (data, metadata) => {
-	const { post, outRelations, disclaimerTags, content, seed, newImageHashes = [] } = data;
+	const {
+		post,
+		outRelations,
+		disclaimerTags,
+		content,
+		seed,
+		newImageHashes = [],
+		contentHashes = [],
+		externalLinks = [],
+	} = data;
 
 	return prisma.$transaction(async (tx) => {
 		const tagChange = await updateYPost(tx, {
@@ -163,6 +174,17 @@ export const updatePost = async (data, metadata) => {
 		}
 
 		const row = await createYPostUpdate(tx, dataToInsert, metadata);
+
+		const linkHashes = await createLinkContents(tx, {
+			authorId: metadata.user.id,
+			urls: externalLinks,
+		});
+
+		await syncPostContent(tx, {
+			postId: post.id,
+			postUpdate: row,
+			hashes: [...contentHashes, ...linkHashes],
+		});
 
 		const activity = {
 			userId: metadata.user.id,
