@@ -1,4 +1,6 @@
 import EmblaCarousel from 'embla-carousel';
+import { mount, unmount } from 'svelte';
+import { PlayIcon } from '@lucide/svelte';
 
 /**
  * @typedef {typeof EmblaCarousel} Embla
@@ -99,6 +101,31 @@ const addToggleThumbButtonsActive = (emblaApiMain, emblaApiThumb) => {
 	toggleThumbBtnsState();
 };
 
+// Added at runtime rather than in GalleryNodeDOMExport so already-stored article HTML gets it without a re-render.
+/**
+ * @param {HTMLElement} thumbnailViewport
+ */
+const addVideoIcons = (thumbnailViewport) => {
+	const videoThumbnails = thumbnailViewport.querySelectorAll(
+		'[data-lexical-youtube], [data-lexical-twitch], video'
+	);
+
+	const cleanups = [...videoThumbnails].map((thumbnail) => {
+		const target = document.createElement('span');
+		target.classList.add('embla-thumbs__video-icon');
+		thumbnail.after(target);
+
+		const icon = mount(PlayIcon, { target, props: { size: 18, fill: 'currentColor' } });
+
+		return () => {
+			unmount(icon);
+			target.remove();
+		};
+	});
+
+	return () => cleanups.forEach((fn) => fn());
+};
+
 /**
  * @param {HTMLElement} element
  */
@@ -146,6 +173,7 @@ export const initializeEmblaForArticle = (rootElement) => {
 
 			const emblaApiThumbnail = initializeEmblaThumbnailForElement(element);
 
+			cleanups.push(addVideoIcons(element));
 			cleanups.push(addThumbButtonClickHandlers(emblaApiMain, emblaApiThumbnail));
 			addToggleThumbButtonsActive(emblaApiMain, emblaApiThumbnail);
 
