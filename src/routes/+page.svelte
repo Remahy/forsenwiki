@@ -1,12 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import {
-		Dice4Icon,
-		HistoryIcon,
-		FolderSearchIcon,
-		SquarePenIcon,
-		LibraryIcon,
-	} from '@lucide/svelte';
+	import { Dice4Icon, HistoryIcon, FolderSearchIcon, SquarePenIcon } from '@lucide/svelte';
 	import { writable } from 'svelte/store';
 	import { source } from 'sveltekit-sse';
 
@@ -100,10 +94,7 @@
 	</div>
 
 	<nav aria-label="Navigation">
-		<Box class="grid grid-cols-2 gap-2 p-4 sm:grid-cols-3 lg:grid-cols-5">
-			<LinkButton href="/w" class="flex gap-2 whitespace-nowrap">
-				<LibraryIcon /> <span>All articles</span>
-			</LinkButton>
+		<Box class="grid grid-cols-2 gap-2 p-4 sm:grid-cols-4">
 			<LinkButton href="/activity" class="flex gap-2 whitespace-nowrap">
 				<HistoryIcon /> <span>Activity</span>
 			</LinkButton>
@@ -144,6 +135,11 @@
 						</small>
 					</div>
 				{/each}
+				<div
+					class="box-heading-wrapper mt-2 flex items-center justify-end border-t-2 border-b-0! pt-2 pb-0!"
+				>
+					<Link href="/w">ALL ARTICLES</Link>
+				</div>
 			</Box>
 		</div>
 
