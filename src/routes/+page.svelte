@@ -101,7 +101,7 @@
 			<LinkButton href="/create" class="flex gap-2 whitespace-nowrap" reload>
 				<SquarePenIcon /> <span>New article</span>
 			</LinkButton>
-			<LinkButton href="/content" class="flex gap-2 whitespace-nowrap">
+			<LinkButton href="/search?type=article" class="flex gap-2 whitespace-nowrap">
 				<FolderSearchIcon /> <span>Content</span>
 			</LinkButton>
 			<LinkButton href="/random" class="flex gap-2 whitespace-nowrap">
