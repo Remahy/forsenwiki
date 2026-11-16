@@ -101,7 +101,6 @@ const addToggleThumbButtonsActive = (emblaApiMain, emblaApiThumb) => {
 	toggleThumbBtnsState();
 };
 
-// Added at runtime rather than in GalleryNodeDOMExport so already-stored article HTML gets it without a re-render.
 /**
  * @param {HTMLElement} thumbnailViewport
  */
