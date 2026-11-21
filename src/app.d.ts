@@ -12,7 +12,6 @@ declare global {
 			blockIds?: string[];
 			/** What the blocks hold, e.g. "image". */
 			blockLabel?: string;
-			/** Articles links point to that no longer exist, sent back to save anyway. */
 			missingArticleIds?: string[];
 		}
 		interface Locals {

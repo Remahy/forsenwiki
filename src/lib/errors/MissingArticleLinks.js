@@ -1,8 +1,6 @@
 import { error } from '@sveltejs/kit';
 
 /**
- * Internal links to articles that no longer exist.
- * The editor sends `missingArticleIds` back when submitting again, to save anyway.
  * @param {{ ids: string[], links: number, blockIds: string[] }} missing
  */
 export const MissingArticleLinksError = ({ ids, links, blockIds }) => {
