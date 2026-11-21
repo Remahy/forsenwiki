@@ -29,6 +29,7 @@
 	import { editorGlobals } from '$lib/components/editor/editorGlobals.svelte';
 	import Satire from '$lib/components/Disclaimer/Satire.svelte';
 	import NSFW from '$lib/components/Disclaimer/NSFW.svelte';
+	import EditorError from '$lib/components/editor/EditorError.svelte';
 
 	/**
 	 * @type {import('./$types').PageProps}
@@ -56,20 +57,20 @@
 			const json = await res.json();
 
 			if (!res.ok) {
-				error = json;
+				error = { status: res.status, statusText: res.statusText, ...json };
 				return;
 			}
 
 			forcedMigration = json;
 		} catch (err) {
 			console.error(err);
-			error = new Error(err?.toString());
+			error = err instanceof Error ? err : new Error(String(err));
 		} finally {
 			isMigrating = false;
 		}
 	};
 
-	/** @type {Error | null} */
+	/** @type {EditorErrorValue | null} */
 	let error = $state(null);
 
 	/** @type {{[x: string]: Error}} */
@@ -184,7 +185,7 @@
 			);
 		} catch (err) {
 			console.error(err);
-			error = new Error(err?.toString());
+			error = err instanceof Error ? err : new Error(String(err));
 			$uploadModal.isOpen = false;
 		} finally {
 			isUploading = false;
@@ -216,7 +217,7 @@
 			goto(`${resolve('/w/[title]', { title })}${stringSearchParams}`);
 		} else if (res.status >= 400) {
 			const json = await res.json();
-			error = json;
+			error = { status: res.status, statusText: res.statusText, ...json };
 		}
 
 		$uploadModal.isOpen = false;
@@ -351,9 +352,7 @@
 	{/if}
 
 	{#if error}
-		<Box class="flex items-center bg-red-300! p-2 dark:text-black">
-			<p>{error.message}</p>
-		</Box>
+		<EditorError {error} {editor} />
 	{/if}
 
 	<!--

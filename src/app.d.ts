@@ -6,7 +6,11 @@ import * as P from '../src/generated/prisma/client';
 
 declare global {
 	namespace App {
-		// interface Error {}
+		interface Error {
+			message: string;
+			/** Blocks the error is about, for the editor to show. */
+			blockIds?: string[];
+		}
 		interface Locals {
 			isModerator: boolean;
 			isBlocked: boolean;
@@ -37,6 +41,13 @@ declare global {
 	export namespace Prisma {
 		export = P;
 	}
+
+	/** A thrown error, or the body of an error response with its status, as the editor pages show it. */
+	export type EditorErrorValue = Error & {
+		status?: number;
+		statusText?: string;
+		blockIds?: string[];
+	};
 
 	export type FileUpload = {
 		mimetype: string;

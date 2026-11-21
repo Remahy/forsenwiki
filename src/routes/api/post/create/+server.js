@@ -23,6 +23,9 @@ import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages.js'
 import { getContentReferences } from '$lib/components/editor/utils/getContentReferences';
 import { pruneFailedUploads, validateUploads } from '$lib/s3/validateUploads.server.js';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server.js';
+import { FailedUploadsError } from '$lib/errors/FailedUploads';
+import { getImageBlockIds } from '$lib/components/editor/utils/getImageBlockIds';
+import { InvalidImagesError, InvalidImagesResponse } from '$lib/errors/InvalidImages';
 
 /**
  * @typedef {Object} CreateBody
@@ -110,11 +113,18 @@ export async function POST({ request, locals }) {
 		);
 
 		if (failedUploads.length) {
-			throw `FAILED_UPLOADS: ${failedUploads.map(({ index }) => `Image index [${index + 1}] doesn't exist or failed to upload.`).join(' ')}`;
+			const failed = failedUploads.map(({ hash }) => hash);
+
+			// This throws, gets catched by isHttpError.
+			FailedUploadsError(failed.length, getImageBlockIds(article.editor, failed));
 		}
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidPost(err);
+		}
+
+		if (err instanceof InvalidImagesError) {
+			return InvalidImagesResponse(err);
 		}
 
 		if (isHttpError(err)) {

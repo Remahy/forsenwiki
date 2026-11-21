@@ -10,6 +10,8 @@ import { $paragraph, $write, config, edited, legacyEdit, read } from '$lib/yjs/l
 import { convertLegacyUpdate } from '$lib/yjs/migrateLegacy';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import { POST } from './+server';
+import { InvalidImagesError } from '$lib/errors/InvalidImages';
+import { serverRunValidations } from '$lib/components/editor/validations/index.server';
 
 vi.mock('$lib/db/post/read', () => ({
 	readSystemYPostRelations: vi.fn(async () => []),
@@ -207,4 +209,15 @@ test('an article that is converted stores no seed', async () => {
 	await submit(await edited(current, $write('typed now')), { isModerator: true });
 
 	expect(vi.mocked(updatePost).mock.calls[0][0].seed).toBeUndefined();
+});
+
+test('images that are base64 or links refuse the save with the blocks holding them', async () => {
+	vi.mocked(serverRunValidations).mockRejectedValueOnce(
+		new InvalidImagesError('An image is inserted as a link. Upload it instead.', ['block'])
+	);
+
+	await expect(submit(await edited(current, $write('typed now')))).rejects.toMatchObject({
+		status: 400,
+		body: { message: 'An image is inserted as a link. Upload it instead.', blockIds: ['block'] },
+	});
 });

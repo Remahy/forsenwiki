@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit';
+import { error, isHttpError, json } from '@sveltejs/kit';
 import { $getEditor as getEditor } from 'lexical';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
@@ -35,6 +35,9 @@ import { validateUploads, pruneFailedUploads } from '$lib/s3/validateUploads.ser
 import { serverRunValidations } from '$lib/components/editor/validations/index.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import { _migrateLegacyDraft } from '../../legacy-draft/+server';
+import { FailedUploadsError } from '$lib/errors/FailedUploads';
+import { getImageBlockIds } from '$lib/components/editor/utils/getImageBlockIds';
+import { InvalidImagesError, InvalidImagesResponse } from '$lib/errors/InvalidImages';
 
 /**
  * @typedef {Array<{ code: string, field: string, value?: string }>} PartialErrors
@@ -211,11 +214,21 @@ export async function POST({ request, locals, params }) {
 		);
 
 		if (failedUploads.length) {
-			throw `FAILED_UPLOADS: ${failedUploads.map(({ index }) => `Image index [${index + 1}] doesn't exist or failed to upload.`).join(' ')}`;
+			const failed = failedUploads.map(({ hash }) => hash);
+
+			FailedUploadsError(failed.length, getImageBlockIds(editor, failed));
 		}
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidPost(err);
+		}
+
+		if (err instanceof InvalidImagesError) {
+			return InvalidImagesResponse(err);
+		}
+
+		if (isHttpError(err)) {
+			throw err;
 		}
 
 		console.error(err);
