@@ -12,7 +12,7 @@ const activity = {
 	id: 'a1',
 	type: 'USER_REGISTER',
 	explanation: null,
-	createdTimestamp: '2026-11-15T20:00:00.000Z',
+	createdTimestamp: new Date('2026-11-15T20:00:00.000Z'),
 	user: { id: 'u1', name: 'forsen' },
 	post: null,
 	postUpdate: { id: 'v1', byteLength: 5n, newTitle: null, oldTitle: null },
