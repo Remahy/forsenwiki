@@ -272,7 +272,6 @@
 				signal,
 				contentTypes: ['image'],
 				// Todo allow loading in of more pages.
-				page: 0,
 				orderBy: 'desc',
 			});
 

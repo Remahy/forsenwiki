@@ -1,3 +1,5 @@
+import { toCursor } from './cursor';
+
 const headers = new Headers({ 'content-type': 'application/json' });
 
 /** @typedef {{ title: string, rawTitle: string, fileType?: import('$lib/s3/limits').MimetypeType, contentType?: string | null, createdTimestamp: string, id: string }} SearchResult */
@@ -5,10 +7,10 @@ const headers = new Headers({ 'content-type': 'application/json' });
 /**
  * @param {string} query
  * @param {string[]} [types]
- * @param {{ contentTypes?: string[], orderBy?: string, page?: number, signal?: AbortSignal } } [options]
+ * @param {{ contentTypes?: string[], orderBy?: string, after?: { createdTimestamp: Date | string, id: string }, signal?: AbortSignal } } [options]
  */
 export const searchRequest = async (query, types = [], options) => {
-	const { contentTypes = [], orderBy, page = 0, signal = null } = options || {};
+	const { contentTypes = [], orderBy, after, signal = null } = options || {};
 
 	const searchParams = new URLSearchParams();
 
@@ -27,11 +29,11 @@ export const searchRequest = async (query, types = [], options) => {
 	}
 
 	if (orderBy) {
-		searchParams.append('orderby', orderBy);
+		searchParams.append('order', orderBy);
 	}
 
-	if (page) {
-		searchParams.append('page', String(page));
+	if (after) {
+		searchParams.append('after', toCursor(after));
 	}
 
 	return fetch(`/api/search?${searchParams.toString()}`, {
