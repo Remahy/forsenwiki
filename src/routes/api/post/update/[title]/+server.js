@@ -227,6 +227,7 @@ export async function POST({ request, locals, params }) {
 		if (failedUploads.length) {
 			const failed = failedUploads.map(({ hash }) => hash);
 
+			// This throws, gets catched by isHttpError.
 			FailedUploadsError(failed.length, getImageBlockIds(editor, failed));
 		}
 	} catch (err) {

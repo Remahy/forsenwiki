@@ -69,11 +69,13 @@ test('links to articles that no longer exist refuse the save, with their blocks 
 		body: {
 			message:
 				'2 links point to articles that no longer exist. Remove them or link them to other articles, or submit again to save anyway.',
-			blockLabel: 'link',
 			missingArticleIds: ['gone'],
 		},
 	});
-	expect([...refused.body.blockIds].sort()).toEqual([ids.first, ids.second].sort());
+	expect(refused.body.blocks).toEqual([
+		{ id: ids.first, label: 'link' },
+		{ id: ids.second, label: 'link' },
+	]);
 });
 
 test('missing articles the writer was shown are kept and returned, a newly missing one is warned about again', async () => {

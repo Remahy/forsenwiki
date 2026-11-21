@@ -9,6 +9,8 @@ import {
 	IMAGE_MIN_HEIGHT,
 	IMAGE_MIN_WIDTH,
 } from '$lib/constants/image';
+import { labelBlocks } from '$lib/errors/ErrorBlocks';
+import { sortBlockIds } from '../utils/documentOrder';
 
 /**
  * @param {number} count
@@ -96,8 +98,7 @@ export const adjustImages = (editor) => {
 
 			return reject(
 				new InvalidArticleError(`${message} Upload ${count === 1 ? 'it' : 'them'} instead.`, {
-					blockIds: [...blockIds],
-					blockLabel: 'image',
+					blocks: labelBlocks(sortBlockIds(editor, [...blockIds]), 'image'),
 				})
 			);
 		}

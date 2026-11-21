@@ -44,11 +44,11 @@ test('every image inserted as base64 or as a link is refused at once, with the b
 	const refused = await adjustImages(editor).catch((err) => err);
 
 	expect(refused).toBeInstanceOf(InvalidArticleError);
-	expect(refused.blockLabel).toBe('image');
+
 	expect(refused.message).toBe(
 		'2 images are encoded base64 strings. An image is inserted as a link. Upload them instead.'
 	);
-	expect([...refused.blockIds].sort()).toEqual([...ids].sort());
+	expect(refused.blocks).toEqual(ids.map((id) => ({ id, label: 'image' })));
 });
 
 test('uploaded images pass, their size kept within the limits', async () => {

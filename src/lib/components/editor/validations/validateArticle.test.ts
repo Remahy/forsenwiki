@@ -52,7 +52,7 @@ test('an article without paragraphs is refused, about no block in particular', (
 
 	expect(err).toBeInstanceOf(InvalidArticleError);
 	expect(err?.message).toBe('The article has no paragraphs.');
-	expect(err?.blockIds).toEqual([]);
+	expect(err?.blocks).toEqual([]);
 });
 
 test('every malformed internal link is reported with the blocks holding them', () => {
@@ -79,8 +79,7 @@ test('every malformed internal link is reported with the blocks holding them', (
 
 	expect(err).toBeInstanceOf(InvalidArticleError);
 	expect(err?.message).toBe('3 internal links are malformed. Link them to their articles again.');
-	expect(err?.blockLabel).toBe('link');
-	expect([...(err?.blockIds ?? [])].sort()).toEqual([...ids].sort());
+	expect(err?.blocks).toEqual(ids.map((id) => ({ id, label: 'link' })));
 });
 
 test('an article with paragraphs and well-formed links passes', () => {

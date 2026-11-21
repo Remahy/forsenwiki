@@ -6,6 +6,8 @@ import { InvalidArticleError } from '$lib/errors/InvalidArticle';
 
 import { getOnlyInternalLinks } from '../utils/getInternalIds';
 import { $closestBlockId } from '../utils/closestBlockId';
+import { labelBlocks } from '$lib/errors/ErrorBlocks';
+import { $sortBlockIds } from '../utils/documentOrder';
 
 /**
  * @param {LexicalEditor} editor
@@ -28,7 +30,7 @@ export const validateArticle = (editor) => {
 				malformed.length === 1
 					? 'An internal link is malformed. Link it to the article again.'
 					: `${malformed.length} internal links are malformed. Link them to their articles again.`,
-				{ blockIds: [...blockIds], blockLabel: 'link' }
+				{ blocks: labelBlocks($sortBlockIds([...blockIds]), 'link') }
 			);
 		}
 	});

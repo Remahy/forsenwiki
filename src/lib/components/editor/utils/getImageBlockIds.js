@@ -1,6 +1,7 @@
 import { $nodesOfType } from 'lexical';
 import { ImageNode } from '$lib/lexical/custom';
 import { $closestBlockId } from './closestBlockId';
+import { $sortBlockIds } from './documentOrder';
 
 /**
  * The blocks holding images with these sources.
@@ -21,5 +22,5 @@ export const getImageBlockIds = (editor, sources) =>
 			}
 		}
 
-		return [...ids];
+		return $sortBlockIds([...ids]);
 	});

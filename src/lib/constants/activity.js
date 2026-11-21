@@ -35,5 +35,4 @@ export const ACTIVITY_TYPE_LABELS = {
 
 export const CONVERTED_EXPLANATION = 'Converted to a newer format.';
 export const FORCED_CONVERSION_EXPLANATION = 'Forceful conversion to a newer format.';
-export const MISSING_ARTICLE_LINKS_EXPLANATION =
-	"Submitted with links to articles that don't exist.";
+export const MISSING_ARTICLE_LINKS_EXPLANATION = "Submitted with links to posts that don't exist.";

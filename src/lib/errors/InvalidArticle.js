@@ -3,16 +3,15 @@ import { error } from '@sveltejs/kit';
 export class InvalidArticleError extends Error {
 	/**
 	 * @param {string} message
-	 * @param {{ blockIds?: string[], blockLabel?: string }} [blocks] `blockLabel` names what the blocks hold, e.g. "image".
+	 * @param {{ blocks?: ErrorBlock[] }} [details]
 	 */
-	constructor(message, { blockIds = [], blockLabel = 'block' } = {}) {
+	constructor(message, { blocks = [] } = {}) {
 		super(message);
-		this.blockIds = blockIds;
-		this.blockLabel = blockLabel;
+		this.blocks = blocks;
 	}
 }
 
 /** @param {InvalidArticleError} err */
 export const InvalidArticleResponse = (err) => {
-	error(400, { message: err.message, blockIds: err.blockIds, blockLabel: err.blockLabel });
+	error(400, { message: err.message, blocks: err.blocks });
 };

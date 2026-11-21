@@ -2,7 +2,6 @@ import { $getBlockId } from '@lexical/extension';
 import { $isRootNode } from 'lexical';
 
 /**
- * The node's own block, such as an image in a gallery, or the paragraph, list item or cell around it.
  * @param {LexicalNode} node
  * @returns {string | null}
  */

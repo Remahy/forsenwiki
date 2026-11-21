@@ -19,7 +19,7 @@
 		{/if}
 		{error.message}
 	</p>
-	{#if error.blockIds?.length && editor}
-		<ShowBlocksButton {editor} blockIds={error.blockIds} label={error.blockLabel ?? 'block'} />
+	{#if error.blocks?.length && editor}
+		<ShowBlocksButton {editor} blocks={error.blocks} />
 	{/if}
 </Box>

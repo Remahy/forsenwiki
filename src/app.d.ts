@@ -8,10 +8,8 @@ declare global {
 	namespace App {
 		interface Error {
 			message: string;
-			/** Blocks the error is about, for the editor to show. */
-			blockIds?: string[];
-			/** What the blocks hold, e.g. "image". */
-			blockLabel?: string;
+			/** Blocks the error is about. */
+			blocks?: ErrorBlock[];
 			missingArticleIds?: string[];
 		}
 		interface Locals {
@@ -46,11 +44,13 @@ declare global {
 	}
 
 	/** A thrown error, or the body of an error response with its status, as the editor pages show it. */
+	/** A block an error is about, and what it holds, e.g. "image". */
+	export type ErrorBlock = { id: string; label: string };
+
 	export type EditorErrorValue = Error & {
 		status?: number;
 		statusText?: string;
-		blockIds?: string[];
-		blockLabel?: string;
+		blocks?: ErrorBlock[];
 		missingArticleIds?: string[];
 	};
 

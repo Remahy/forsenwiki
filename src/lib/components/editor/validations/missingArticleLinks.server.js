@@ -1,6 +1,7 @@
 import { readMissingYPostIds } from '$lib/db/post/read';
 import { MissingArticleLinksError } from '$lib/errors/MissingArticleLinks';
 import { getInternalLinkTargets } from '../utils/getInternalLinkTargets';
+import { sortBlockIds } from '../utils/documentOrder';
 
 /**
  * Refuses internal links to articles that no longer exist, such as ones deleted from the database,
@@ -30,6 +31,6 @@ export const checkMissingArticleLinks = async (editor, allowed) => {
 	return MissingArticleLinksError({
 		ids: missing,
 		links: gone.reduce((sum, { links }) => sum + links, 0),
-		blockIds: [...new Set(gone.flatMap(({ blockIds }) => [...blockIds]))],
+		blockIds: sortBlockIds(editor, [...new Set(gone.flatMap(({ blockIds }) => [...blockIds]))]),
 	});
 };

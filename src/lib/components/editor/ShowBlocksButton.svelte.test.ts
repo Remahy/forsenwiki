@@ -16,26 +16,24 @@ afterEach(() => {
 	vi.mocked(revealBlock).mockClear();
 });
 
-const render = (blockIds: string[]) => {
+const render = (blocks: ErrorBlock[]) => {
 	const editor = {} as never;
-	component = mount(ShowBlocksButton, {
-		target: document.body,
-		props: { editor, blockIds, label: 'image' },
-	});
+	component = mount(ShowBlocksButton, { target: document.body, props: { editor, blocks } });
 
 	const button = document.body.querySelector('button')!;
+	const text = () => button.textContent?.replace(/\s+/g, ' ').trim();
 	const click = () => {
 		button.click();
 		flushSync();
 	};
 
-	return { editor, button, click };
+	return { editor, text, click };
 };
 
 test('one block is shown on every click', () => {
-	const { editor, button, click } = render(['one']);
+	const { editor, text, click } = render([{ id: 'one', label: 'image' }]);
 
-	expect(button.textContent?.trim()).toBe('Show image');
+	expect(text()).toBe('Show image');
 
 	click();
 	click();
@@ -46,23 +44,24 @@ test('one block is shown on every click', () => {
 	]);
 });
 
-test('several blocks are shown in turn, the label naming the one the next click shows', () => {
-	const { editor, button, click } = render(['one', 'two', 'three']);
-
-	expect(button.textContent?.replace(/\s+/g, ' ').trim()).toBe('Show image 1 of 3');
-
-	click();
-	expect(button.textContent?.replace(/\s+/g, ' ').trim()).toBe('Show image 2 of 3');
-
-	click();
-	click();
-	click();
-
-	expect(vi.mocked(revealBlock).mock.calls.map(([, id]) => id)).toEqual([
-		'one',
-		'two',
-		'three',
-		'one',
+test('several blocks are shown in turn, the label naming the block the next click shows', () => {
+	const { editor, text, click } = render([
+		{ id: 'one', label: 'link' },
+		{ id: 'two', label: 'image' },
+		{ id: 'three', label: 'link' },
 	]);
+
+	expect(text()).toBe('Show link 1 of 3');
+
+	click();
+	expect(text()).toBe('Show image 2 of 3');
+
+	click();
+	expect(text()).toBe('Show link 3 of 3');
+
+	click();
+	expect(text()).toBe('Show link 1 of 3');
+
+	expect(vi.mocked(revealBlock).mock.calls.map(([, id]) => id)).toEqual(['one', 'two', 'three']);
 	expect(vi.mocked(revealBlock).mock.calls.every(([used]) => used === editor)).toBe(true);
 });

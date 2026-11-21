@@ -44,7 +44,7 @@ test('a failed image is found by its own block, or the block around it, wherever
 	);
 
 	expect(Object.values(ids)).not.toContain(null);
-	expect(getImageBlockIds(editor, [failed]).sort()).toEqual([ids.inline, ids.galleryImage].sort());
+	expect(getImageBlockIds(editor, [failed])).toEqual([ids.inline, ids.galleryImage]);
 	expect(getImageBlockIds(editor, [uploaded])).toEqual([ids.fine]);
 	expect(getImageBlockIds(editor, [])).toEqual([]);
 });

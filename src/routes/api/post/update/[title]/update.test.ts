@@ -227,8 +227,7 @@ test('an article that is converted stores no seed', async () => {
 test('images that are base64 or links refuse the save with the blocks holding them', async () => {
 	vi.mocked(serverRunValidations).mockRejectedValueOnce(
 		new InvalidArticleError('An image is inserted as a link. Upload it instead.', {
-			blockIds: ['block'],
-			blockLabel: 'image',
+			blocks: [{ id: 'block', label: 'image' }],
 		})
 	);
 
@@ -236,8 +235,7 @@ test('images that are base64 or links refuse the save with the blocks holding th
 		status: 400,
 		body: {
 			message: 'An image is inserted as a link. Upload it instead.',
-			blockIds: ['block'],
-			blockLabel: 'image',
+			blocks: [{ id: 'block', label: 'image' }],
 		},
 	});
 });
