@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit';
+import { error, isHttpError, json } from '@sveltejs/kit';
 import { $getEditor as getEditor } from 'lexical';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
@@ -35,6 +35,10 @@ import { validateUploads, pruneFailedUploads } from '$lib/s3/validateUploads.ser
 import { serverRunValidations } from '$lib/components/editor/validations/index.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import { _migrateLegacyDraft } from '../../legacy-draft/+server';
+import { FailedUploadsError } from '$lib/errors/FailedUploads';
+import { getImageBlockIds } from '$lib/components/editor/utils/getImageBlockIds';
+import { InvalidArticleError, InvalidArticleResponse } from '$lib/errors/InvalidArticle';
+import { checkMissingArticleLinks } from '$lib/components/editor/validations/missingArticleLinks.server';
 
 /**
  * @typedef {Array<{ code: string, field: string, value?: string }>} PartialErrors
@@ -81,6 +85,7 @@ const validateTitle = async (post, newTitle, partialErrors) => {
  * @property {string | null} [newTitle] Skip if user is not moderator.
  * @property {string[]} [disclaimerTags]
  * @property {boolean} [forced] Skip if user is not moderator.
+ * @property {string[]} [allowMissingArticles]
  */
 
 const $json = () => getEditor().getEditorState().toJSON();
@@ -103,7 +108,13 @@ export async function POST({ request, locals, params }) {
 	}
 
 	/** @type {UpdateBody} */
-	const { content, disclaimerTags: disclaimerRawTags, forced, ...rest } = await request.json();
+	const {
+		content,
+		disclaimerTags: disclaimerRawTags,
+		forced,
+		allowMissingArticles,
+		...rest
+	} = await request.json();
 
 	let { newTitle } = rest;
 
@@ -185,6 +196,8 @@ export async function POST({ request, locals, params }) {
 	let article;
 	/** @type {string[]} */
 	let newImageHashes;
+	/** @type {string[]} */
+	let missingArticles;
 	try {
 		article = getYAndEditor(
 			articleExtension(null, EDITOR_IS_READONLY, null),
@@ -193,6 +206,7 @@ export async function POST({ request, locals, params }) {
 		const editor = article.editor;
 
 		await serverRunValidations(editor);
+		missingArticles = await checkMissingArticleLinks(editor, allowMissingArticles);
 
 		const oldImageHashes = readState(
 			articleExtension(null, EDITOR_IS_READONLY, null),
@@ -211,11 +225,22 @@ export async function POST({ request, locals, params }) {
 		);
 
 		if (failedUploads.length) {
-			throw `FAILED_UPLOADS: ${failedUploads.map(({ index }) => `Image index [${index + 1}] doesn't exist or failed to upload.`).join(' ')}`;
+			const failed = failedUploads.map(({ hash }) => hash);
+
+			// This throws, gets catched by isHttpError.
+			FailedUploadsError(failed.length, getImageBlockIds(editor, failed));
 		}
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidPost(err);
+		}
+
+		if (err instanceof InvalidArticleError) {
+			return InvalidArticleResponse(err);
+		}
+
+		if (isHttpError(err)) {
+			throw err;
 		}
 
 		console.error(err);
@@ -237,7 +262,7 @@ export async function POST({ request, locals, params }) {
 	// Total size of the YDoc with the new update.
 	const { byteLength: totalByteLength } = mergePostUpdatesV2([currentUpdate, combinedFinalDiff]);
 
-	const internalIds = getInternalIds(editor);
+	const internalIds = getInternalIds(editor).filter((id) => !missingArticles.includes(id));
 	const contentReferences = getContentReferences(editor);
 	const outRelations = internalIds.map((mentionPostId) => ({
 		isSystem: false,
@@ -266,6 +291,7 @@ export async function POST({ request, locals, params }) {
 		newImageHashes,
 		contentHashes: contentReferences.hashes,
 		externalLinks: contentReferences.links,
+		missingArticles,
 	};
 	/** @type {import('$lib/db/post/update').UpdatePostMetadata} */
 	const metadata = {

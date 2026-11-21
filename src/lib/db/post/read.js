@@ -229,6 +229,17 @@ export async function readYPostsByIds(ids) {
 	});
 }
 
+/**
+ * @param {string[]} ids
+ * @returns {Promise<string[]>}
+ */
+export async function readMissingYPostIds(ids) {
+	const found = await prisma.yPost.findMany({ where: { id: { in: ids } }, select: { id: true } });
+	const existing = new Set(found.map(({ id }) => id));
+
+	return ids.filter((id) => !existing.has(id));
+}
+
 /** @param {string} title */
 export async function readRelationsToYPostTitle(title) {
 	return prisma.yPost.findMany({

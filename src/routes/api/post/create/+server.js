@@ -23,6 +23,10 @@ import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages.js'
 import { getContentReferences } from '$lib/components/editor/utils/getContentReferences';
 import { pruneFailedUploads, validateUploads } from '$lib/s3/validateUploads.server.js';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server.js';
+import { FailedUploadsError } from '$lib/errors/FailedUploads';
+import { getImageBlockIds } from '$lib/components/editor/utils/getImageBlockIds';
+import { InvalidArticleError, InvalidArticleResponse } from '$lib/errors/InvalidArticle';
+import { checkMissingArticleLinks } from '$lib/components/editor/validations/missingArticleLinks.server';
 
 /**
  * @typedef {Object} CreateBody
@@ -30,6 +34,7 @@ import { serverRunValidations } from '$lib/components/editor/validations/index.s
  * @property {string} title
  * @property {import('$lib/constants/constants').Y_POST_TYPES_VALUES} type
  * @property {string[]} [disclaimerTags]
+ * @property {string[]} [allowMissingArticles]
  */
 
 export async function POST({ request, locals }) {
@@ -50,6 +55,7 @@ export async function POST({ request, locals }) {
 		content,
 		// type: rawType,
 		disclaimerTags: disclaimerRawTags,
+		allowMissingArticles,
 	} = await request.json();
 
 	const disclaimerTags = Array.isArray(disclaimerRawTags)
@@ -67,6 +73,8 @@ export async function POST({ request, locals }) {
 	let title;
 	/** @type {string[]} */
 	let imageHashes;
+	/** @type {string[]} */
+	let missingArticles = [];
 	try {
 		title = isBio
 			? {
@@ -98,6 +106,7 @@ export async function POST({ request, locals }) {
 		);
 
 		await serverRunValidations(article.editor);
+		missingArticles = await checkMissingArticleLinks(article.editor, allowMissingArticles);
 
 		imageHashes = getUniqueImageHashes(article.editor);
 		const failedUploads = await validateUploads(
@@ -110,11 +119,18 @@ export async function POST({ request, locals }) {
 		);
 
 		if (failedUploads.length) {
-			throw `FAILED_UPLOADS: ${failedUploads.map(({ index }) => `Image index [${index + 1}] doesn't exist or failed to upload.`).join(' ')}`;
+			const failed = failedUploads.map(({ hash }) => hash);
+
+			// This throws, gets catched by isHttpError.
+			FailedUploadsError(failed.length, getImageBlockIds(article.editor, failed));
 		}
 	} catch (err) {
 		if (typeof err === 'string') {
 			return InvalidPost(err);
+		}
+
+		if (err instanceof InvalidArticleError) {
+			return InvalidArticleResponse(err);
 		}
 
 		if (isHttpError(err)) {
@@ -134,7 +150,7 @@ export async function POST({ request, locals }) {
 
 	const backendContent = uint8ArrayToBase64(backendUpdate);
 
-	const internalIds = getInternalIds(editor);
+	const internalIds = getInternalIds(editor).filter((id) => !missingArticles.includes(id));
 	const contentReferences = getContentReferences(editor);
 
 	/** @type {import('$lib/db/post/create').CreatePostData} */
@@ -146,6 +162,7 @@ export async function POST({ request, locals }) {
 		imageHashes,
 		contentHashes: contentReferences.hashes,
 		externalLinks: contentReferences.links,
+		missingArticles,
 	};
 
 	/** @type {import('$lib/db/post/create').CreatePostMetadata} */

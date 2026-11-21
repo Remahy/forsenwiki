@@ -51,7 +51,7 @@ const toView = (activity, origin) => {
 
 	return {
 		label: ACTIVITY_TYPE_LABELS[type] ?? type,
-		timestamp: activity.createdTimestamp,
+		timestamp: activity.createdTimestamp.toISOString(),
 		explanation: activity.explanation,
 		oldName: activity.oldName,
 		newName: activity.newName,

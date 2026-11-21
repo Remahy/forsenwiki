@@ -1,12 +1,13 @@
 import prisma from '$lib/prisma.server';
 import { ACTIVITY_TYPES } from '$lib/constants/activity';
+import { getSystemExplanation } from '$lib/utils/systemExplanation';
 import { contentUploadActivities, createActivity } from '$lib/db/activity/create';
 import { LEXICAL_Y } from '$lib/y/rows';
 import { syncPostContent } from './content';
 import { createLinkContents } from '$lib/db/content/link';
 
 /**
- * @typedef {{ title: { raw: string, sanitized: string }, data: { content: string }, ids: string[], disclaimerTags?: string[], imageHashes?: string[], contentHashes?: string[], externalLinks?: string[] }} CreatePostData
+ * @typedef {{ title: { raw: string, sanitized: string }, data: { content: string }, ids: string[], disclaimerTags?: string[], imageHashes?: string[], contentHashes?: string[], externalLinks?: string[], missingArticles?: string[] }} CreatePostData
  * @typedef {{ user: { name: string, id: string }, byteLength: number, type: import('$lib/constants/constants').Y_POST_TYPES_VALUES }} CreatePostMetadata
  */
 
@@ -15,7 +16,16 @@ import { createLinkContents } from '$lib/db/content/link';
  * @param {CreatePostMetadata} metadata
  */
 export const createPost = async (
-	{ title, data, ids, disclaimerTags, imageHashes = [], contentHashes = [], externalLinks = [] },
+	{
+		title,
+		data,
+		ids,
+		disclaimerTags,
+		imageHashes = [],
+		contentHashes = [],
+		externalLinks = [],
+		missingArticles = [],
+	},
 	metadata
 ) => {
 	const outRelations = ids.map((id) => ({ isSystem: false, toPostId: id }));
@@ -94,6 +104,7 @@ export const createPost = async (
 
 		await createActivity(tx, {
 			type: ACTIVITY_TYPES.ARTICLE_CREATE,
+			explanation: getSystemExplanation({ missingArticles }),
 			userId: user.id,
 			postId: post.id,
 			postUpdateId: postUpdate.id,

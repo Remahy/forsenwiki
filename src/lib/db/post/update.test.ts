@@ -2,7 +2,10 @@ import { createHash } from 'node:crypto';
 import { beforeEach, expect, test, vi } from 'vitest';
 
 import { SYSTEM } from '$lib/constants/constants';
-import { FORCED_CONVERSION_EXPLANATION } from '$lib/constants/activity';
+import {
+	FORCED_CONVERSION_EXPLANATION,
+	MISSING_ARTICLE_LINKS_EXPLANATION,
+} from '$lib/constants/activity';
 import { LEXICAL_Y } from '$lib/y/rows';
 import { updatePost } from './update';
 
@@ -283,5 +286,18 @@ test('external links are content hashed by their URL, used by the article', asyn
 			postUpdateId: 'row-1',
 			createdTimestamp: new Date(1000),
 		},
+	]);
+});
+
+test('an update submitted again with links to missing articles says so, others say nothing', async () => {
+	await updatePost(
+		{ post, outRelations: [], content: 'update', missingArticles: ['deleted'] },
+		metadata
+	);
+	await updatePost({ post, outRelations: [], content: 'update' }, metadata);
+
+	expect(activities.map(({ type, explanation }) => ({ type, explanation }))).toEqual([
+		{ type: 'ARTICLE_UPDATE', explanation: MISSING_ARTICLE_LINKS_EXPLANATION },
+		{ type: 'ARTICLE_UPDATE', explanation: undefined },
 	]);
 });

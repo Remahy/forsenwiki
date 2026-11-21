@@ -1,19 +1,35 @@
 import { $nodesOfType as nodesOfType } from 'lexical';
 
 import { $isGalleryNode as isGalleryNode, ImageNode } from '$lib/lexical/custom';
+import { InvalidArticleError } from '$lib/errors/InvalidArticle';
+import { $closestBlockId } from '../utils/closestBlockId';
 import {
 	IMAGE_MAX_HEIGHT,
 	IMAGE_MAX_WIDTH,
 	IMAGE_MIN_HEIGHT,
 	IMAGE_MIN_WIDTH,
 } from '$lib/constants/image';
+import { labelBlocks } from '$lib/errors/ErrorBlocks';
+import { sortBlockIds } from '../utils/documentOrder';
+
+/**
+ * @param {number} count
+ * @param {string} singular
+ * @param {string} plural
+ */
+const images = (count, singular, plural) =>
+	count === 1 ? `An image ${singular}.` : `${count} images ${plural}.`;
 
 /**
  * @param {LexicalEditor} editor
- * @throws {string}
+ * @throws {InvalidArticleError} Images inserted as base64 or as a link, all of them.
  */
 export const adjustImages = (editor) => {
 	return new Promise((resolve, reject) => {
+		const invalid = { base64: 0, links: 0 };
+		/** @type {Set<string>} */
+		const blockIds = new Set();
+
 		editor.update(
 			() => {
 				const nodes = nodesOfType(ImageNode);
@@ -26,17 +42,18 @@ export const adjustImages = (editor) => {
 
 					const src = node.getSrc();
 
-					if (src?.startsWith('data:')) {
-						return reject(
-							`Image index [${index + 1}]: One of your images was uploaded as an encoded base64 string. Not allowed.`
-						);
-					}
+					const isBase64 = src?.startsWith('data:');
+					const isLink = src?.startsWith('https://') || src?.startsWith('http://');
 
-					// Unset any image that is a direct link.
-					if (src?.startsWith('https://') || src?.startsWith('http://')) {
-						return reject(
-							`Image index [${index + 1}]: One of your images is inserted as a link. Not allowed.`
-						);
+					if (isBase64 || isLink) {
+						invalid[isBase64 ? 'base64' : 'links']++;
+
+						const id = $closestBlockId(node);
+						if (id) {
+							blockIds.add(id);
+						}
+
+						continue;
 					}
 
 					let { width, height } = node.getWidthAndHeight();
@@ -68,6 +85,23 @@ export const adjustImages = (editor) => {
 			},
 			{ discrete: true }
 		);
+
+		if (invalid.base64 || invalid.links) {
+			const count = invalid.base64 + invalid.links;
+			const message = [
+				invalid.base64 &&
+					images(invalid.base64, 'is an encoded base64 string', 'are encoded base64 strings'),
+				invalid.links && images(invalid.links, 'is inserted as a link', 'are inserted as links'),
+			]
+				.filter(Boolean)
+				.join(' ');
+
+			return reject(
+				new InvalidArticleError(`${message} Upload ${count === 1 ? 'it' : 'them'} instead.`, {
+					blocks: labelBlocks(sortBlockIds(editor, [...blockIds]), 'image'),
+				})
+			);
+		}
 
 		resolve(true);
 	});

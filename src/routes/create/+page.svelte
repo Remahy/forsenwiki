@@ -27,12 +27,13 @@
 	import { resetUploadingContentModalGlobals } from '$lib/components/uploadingContentModalGlobals.svelte';
 	import { runValidations } from '$lib/components/editor/validations';
 	import { editorGlobals } from '$lib/components/editor/editorGlobals.svelte';
+	import EditorError from '$lib/components/editor/EditorError.svelte';
 
 	const id = 'new';
 
 	const { initialUpdate } = $page.data;
 
-	/** @type {Error & { status?: number, statusText?: string } | null} */
+	/** @type {EditorErrorValue | null} */
 	let error = $state(null);
 
 	let title = localStore('lastTitle', '');
@@ -113,6 +114,8 @@
 
 		isUploading = true;
 
+		const allowMissingArticles = error?.missingArticleIds;
+
 		/** @type {Response?} */
 		let res = null;
 
@@ -134,11 +137,12 @@
 					type: Y_POST_TYPES.ARTICLE,
 					yDoc: yjsDocMap,
 					disclaimerTags,
+					allowMissingArticles,
 				})
 			);
 		} catch (err) {
 			console.error(err);
-			error = new Error(err?.toString());
+			error = err instanceof Error ? err : new Error(String(err));
 			$uploadModal.isOpen = false;
 		} finally {
 			isUploading = false;
@@ -222,12 +226,7 @@
 	{/if}
 
 	{#if error}
-		<Box class="flex items-center bg-red-300! p-2 font-bold dark:text-black">
-			<p>
-				{(error.status || error.statusText) && `(${error.status} ${error.statusText})`}
-				{error.message}
-			</p>
-		</Box>
+		<EditorError {error} {editor} />
 	{/if}
 
 	<Box class="flex items-center gap-4 p-2">
@@ -238,7 +237,11 @@
 		</small>
 
 		{#if $page.data.session?.user}
-			<Button disabled={!canEdit || isUploading || error} on:click={submit} title="Submit">
+			<Button
+				disabled={!canEdit || isUploading || (error && !error.missingArticleIds)}
+				on:click={submit}
+				title="Submit"
+			>
 				{#if isUploading}
 					<Spinner />
 				{/if}

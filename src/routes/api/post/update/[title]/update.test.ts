@@ -10,6 +10,10 @@ import { $paragraph, $write, config, edited, legacyEdit, read } from '$lib/yjs/l
 import { convertLegacyUpdate } from '$lib/yjs/migrateLegacy';
 import { _getYPostByTitle } from '../../read/[title]/+server';
 import { POST } from './+server';
+import { InvalidArticleError } from '$lib/errors/InvalidArticle';
+import { serverRunValidations } from '$lib/components/editor/validations/index.server';
+import { checkMissingArticleLinks } from '$lib/components/editor/validations/missingArticleLinks.server';
+import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 
 vi.mock('$lib/db/post/read', () => ({
 	readSystemYPostRelations: vi.fn(async () => []),
@@ -31,6 +35,13 @@ vi.mock('$lib/s3/validateUploads.server', () => ({
 vi.mock('$lib/components/editor/validations/index.server', () => ({
 	serverRunValidations: vi.fn(),
 }));
+vi.mock('$lib/components/editor/validations/missingArticleLinks.server', () => ({
+	checkMissingArticleLinks: vi.fn(async () => []),
+}));
+vi.mock('$lib/components/editor/utils/getInternalIds', async (original) => ({
+	...(await original<typeof import('$lib/components/editor/utils/getInternalIds')>()),
+	getInternalIds: vi.fn(() => []),
+}));
 vi.mock('../../read/[title]/+server', () => ({ _getYPostByTitle: vi.fn() }));
 vi.mock('$lib/db/activity/emit', () => ({ emitActivity: vi.fn() }));
 
@@ -40,12 +51,16 @@ const current = await edited(seed, $write('written by someone else since'));
 
 const submit = (
 	update: Uint8Array,
-	{ forced = undefined as boolean | undefined, isModerator = false } = {}
+	{
+		forced = undefined as boolean | undefined,
+		isModerator = false,
+		allowMissingArticles = undefined as string[] | undefined,
+	} = {}
 ) =>
 	POST({
 		request: new Request('http://localhost/api/post/update/article', {
 			method: 'POST',
-			body: JSON.stringify({ content: uint8ArrayToBase64(update), forced }),
+			body: JSON.stringify({ content: uint8ArrayToBase64(update), forced, allowMissingArticles }),
 		}),
 		params: { title: 'article' },
 		locals: {
@@ -207,4 +222,40 @@ test('an article that is converted stores no seed', async () => {
 	await submit(await edited(current, $write('typed now')), { isModerator: true });
 
 	expect(vi.mocked(updatePost).mock.calls[0][0].seed).toBeUndefined();
+});
+
+test('images that are base64 or links refuse the save with the blocks holding them', async () => {
+	vi.mocked(serverRunValidations).mockRejectedValueOnce(
+		new InvalidArticleError('An image is inserted as a link. Upload it instead.', {
+			blocks: [{ id: 'block', label: 'image' }],
+		})
+	);
+
+	await expect(submit(await edited(current, $write('typed now')))).rejects.toMatchObject({
+		status: 400,
+		body: {
+			message: 'An image is inserted as a link. Upload it instead.',
+			blocks: [{ id: 'block', label: 'image' }],
+		},
+	});
+});
+
+test('the missing articles a writer was shown are passed on to keep their links', async () => {
+	await submit(await edited(current, $write('typed now')), { allowMissingArticles: ['gone'] });
+
+	expect(checkMissingArticleLinks).toHaveBeenCalledWith(expect.anything(), ['gone']);
+});
+
+test('links kept to articles that no longer exist are not related to them, and the update says so', async () => {
+	vi.mocked(getInternalIds).mockReturnValueOnce(['forsen', 'deleted']);
+	vi.mocked(checkMissingArticleLinks).mockResolvedValueOnce(['deleted']);
+
+	const response = await submit(await edited(current, $write('typed now')), {
+		allowMissingArticles: ['deleted'],
+	});
+
+	expect(response.status).toBe(200);
+	const [body] = vi.mocked(updatePost).mock.calls[0];
+	expect(body.outRelations).toEqual([{ isSystem: false, toPostId: 'forsen' }]);
+	expect(body.missingArticles).toEqual(['deleted']);
 });

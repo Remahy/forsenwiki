@@ -50,7 +50,7 @@ const select = /** @satisfies {Prisma.Prisma.ActivitySelect} */ ({
  *   id: string,
  *   type: import('$lib/constants/activity').ActivityType,
  *   explanation: string | null,
- *   createdTimestamp: string,
+ *   createdTimestamp: Date,
  *   user: { id: string, name: string | null } | null,
  *   post: { title: string, rawTitle: string } | null,
  *   postUpdate: { id: string, byteLength: bigint | null, newTitle: string | null, oldTitle: string | null } | null,
@@ -111,7 +111,7 @@ const toChildEntry = (row, { isModerator }) => {
 
 	return {
 		...rest,
-		createdTimestamp: createdTimestamp.toISOString(),
+		createdTimestamp,
 		postUpdate: postUpdate && { id: postUpdate.id, ...postUpdate.metadata },
 		content: visibleContent,
 	};
