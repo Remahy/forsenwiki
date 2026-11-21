@@ -15,7 +15,7 @@
 	import { STATIC_DOMAIN } from '$lib/environment/environment';
 	import DocumentPreview from '$lib/components/content/DocumentPreview.svelte';
 	import LinkPreview from '$lib/components/content/LinkPreview.svelte';
-	import { LINK_CONTENT_TYPE } from '$lib/utils/externalLink';
+	import { LINK_CONTENT_TYPE } from '$lib/constants/content';
 	import Link from '$lib/components/Link.svelte';
 
 	const id = page.params.id;
@@ -208,7 +208,7 @@
 		{/if}
 	{/if}
 
-	{#if fileType === 'link'}
+	{#if isLink}
 		<meta name="description" content="External link on forsen.wiki." />
 
 		<meta property="og:description" content="External link on forsen.wiki." />

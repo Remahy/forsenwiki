@@ -114,7 +114,7 @@ const getRecentUploads = async (types = [], options) => {
 };
 
 /**
- * @typedef {{ type?: 'content', rawTitle: string, title: string, createdTimestamp: Date, id: string, fileType?: MimetypeType | 'link', contentType?: string | null, html?: { image: string | null, text: string | null } | null }} QueryResult
+ * @typedef {{ type?: 'content', rawTitle: string, title: string, createdTimestamp: Date, id: string, fileType?: MimetypeType | typeof import('$lib/constants/content').LINK_CONTENT_TYPE, contentType?: string | null, html?: { image: string | null, text: string | null } | null }} QueryResult
  */
 
 /**

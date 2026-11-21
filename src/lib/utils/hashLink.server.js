@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { LINK_HASH_PREFIX } from './externalLink.js';
+import { LINK_HASH_PREFIX } from '../constants/content.js';
 
 /** @param {string} url */
 export const hashLink = (url) =>

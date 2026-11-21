@@ -2,14 +2,8 @@ import prisma from '$lib/prisma.server';
 import { ACTIVITY_TYPES } from '$lib/constants/activity';
 import { createActivity } from '$lib/db/activity/create';
 import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
-import { DOMAIN } from '$lib/environment/environment';
-import { wikiLinkOf } from '$lib/utils/externalLink';
-import { hashLink } from '$lib/utils/hashLink.server';
-
-export const CONTENT_IN_USE = 'CONTENT_IN_USE';
-export const CONTENT_PROTECTED = 'CONTENT_PROTECTED';
-
-export const WIKI_LINK_HASH = hashLink(wikiLinkOf(DOMAIN));
+import { CONTENT_IN_USE, CONTENT_PROTECTED } from '$lib/constants/content';
+import { WIKI_LINK_HASH } from '$lib/constants/content.server';
 
 /**
  * @typedef {{ id: string, hash: string, name: string, type: string | null, contentType: string | null, contentLength: number | null, metadata: Prisma.Prisma.JsonValue }} ContentSnapshot

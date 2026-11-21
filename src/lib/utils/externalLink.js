@@ -1,8 +1,3 @@
-export const LINK_CONTENT_TYPE = 'link';
-
-/** Upload hashes are bare hex, so a link's hash can never be one. */
-export const LINK_HASH_PREFIX = 'link:';
-
 /**
  * Used to normalize the link to VITE_DOMAIN.
  * @param {string} domain

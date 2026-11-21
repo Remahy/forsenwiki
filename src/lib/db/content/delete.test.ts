@@ -1,6 +1,8 @@
 import { beforeEach, expect, test, vi } from 'vitest';
 
-import { WIKI_LINK_HASH, deleteContent } from './delete';
+import { CONTENT_IN_USE, CONTENT_PROTECTED } from '$lib/constants/content';
+import { WIKI_LINK_HASH } from '$lib/constants/content.server';
+import { deleteContent } from './delete';
 
 const content = {
 	id: 'content',
@@ -88,7 +90,7 @@ test('content an article uses is not deleted', async () => {
 	state.usages = 2;
 
 	await expect(deleteContent('content', 'moderator')).rejects.toMatchObject({
-		code: 'CONTENT_IN_USE',
+		code: CONTENT_IN_USE,
 	});
 	expect(state.activities).toEqual([]);
 	expect(state.deleted).toEqual([]);
@@ -98,7 +100,7 @@ test('the link to the wiki is never deleted', async () => {
 	state.hash = WIKI_LINK_HASH;
 
 	await expect(deleteContent('content', 'moderator')).rejects.toMatchObject({
-		code: 'CONTENT_PROTECTED',
+		code: CONTENT_PROTECTED,
 	});
 	expect(state.activities).toEqual([]);
 	expect(state.deleted).toEqual([]);

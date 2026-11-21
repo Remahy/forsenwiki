@@ -15,7 +15,8 @@ import dotenvExpand from 'dotenv-expand';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../src/generated/prisma/client.ts';
 import { SYSTEM } from '../src/lib/constants/constants.js';
-import { classifyLink, LINK_CONTENT_TYPE, wikiLinkOf } from '../src/lib/utils/externalLink.js';
+import { LINK_CONTENT_TYPE } from '../src/lib/constants/content.js';
+import { classifyLink, wikiLinkOf } from '../src/lib/utils/externalLink.js';
 import { hashLink } from '../src/lib/utils/hashLink.server.js';
 
 dotenvExpand.expand(dotenv.config());

@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import prisma from '$lib/prisma.server.js';
 import { SYSTEM } from '$lib/constants/constants.js';
-import { LINK_CONTENT_TYPE } from '$lib/utils/externalLink';
+import { LINK_CONTENT_TYPE } from '$lib/constants/content';
 
 export async function load({ url, params }) {
 	const { idOrName } = params;

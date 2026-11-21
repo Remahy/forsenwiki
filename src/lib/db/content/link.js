@@ -1,4 +1,4 @@
-import { LINK_CONTENT_TYPE } from '$lib/utils/externalLink';
+import { LINK_CONTENT_TYPE } from '$lib/constants/content';
 import { hashLink } from '$lib/utils/hashLink.server';
 
 /**

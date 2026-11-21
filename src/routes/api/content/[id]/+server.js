@@ -1,9 +1,9 @@
 import { error, json } from '@sveltejs/kit';
 import prisma from '$lib/prisma.server';
 import { ForbiddenError } from '$lib/errors/Forbidden';
-import { CONTENT_IN_USE, CONTENT_PROTECTED, deleteContent } from '$lib/db/content/delete';
+import { deleteContent } from '$lib/db/content/delete';
+import { CONTENT_IN_USE, CONTENT_PROTECTED, LINK_CONTENT_TYPE } from '$lib/constants/content';
 import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
-import { LINK_CONTENT_TYPE } from '$lib/utils/externalLink';
 import { updateContentName } from '$lib/db/content/updateName';
 import { deleteByKey } from '$lib/s3/index.server.js';
 import { emitActivity } from '$lib/db/activity/emit';
