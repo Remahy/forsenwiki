@@ -7,6 +7,7 @@ import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
 import { updateContentName } from '$lib/db/content/updateName';
 import { deleteByKey } from '$lib/s3/index.server.js';
 import { emitActivity } from '$lib/db/activity/emit';
+import { LinkRenameError } from '$lib/errors/LinkRename';
 
 export async function POST({ request, locals, params }) {
 	const { isBlocked, isModerator, auth } = locals;
@@ -37,7 +38,7 @@ export async function POST({ request, locals, params }) {
 	}
 
 	if (res.type === LINK_CONTENT_TYPE) {
-		return error(400, 'Links cannot be renamed.');
+		return LinkRenameError();
 	}
 
 	const { name } = await request.json();
