@@ -92,6 +92,15 @@
 						target="_blank"
 					>
 						<div class="flex grow flex-col gap-2">
+							{#if result.usedIn}
+								{@const more = result.usedIn.total - result.usedIn.titles.length}
+								<small
+									>Used in <strong>{result.usedIn.titles.join(', ')}</strong>{more
+										? ` and ${more} more`
+										: ''}</small
+								>
+							{/if}
+
 							<div>
 								{#if !result.type}
 									<Badge class={SEARCH_TYPE_BADGES.article.color}
