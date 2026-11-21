@@ -18,7 +18,7 @@ CREATE INDEX "YPostContent_postUpdateId_idx" ON "YPostContent"("postUpdateId");
 ALTER TABLE "YPostContent" ADD CONSTRAINT "YPostContent_postId_fkey" FOREIGN KEY ("postId") REFERENCES "YPost"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "YPostContent" ADD CONSTRAINT "YPostContent_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "Content"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "YPostContent" ADD CONSTRAINT "YPostContent_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "Content"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "YPostContent" ADD CONSTRAINT "YPostContent_postUpdateId_fkey" FOREIGN KEY ("postUpdateId") REFERENCES "YPostUpdate"("id") ON DELETE SET NULL ON UPDATE CASCADE;

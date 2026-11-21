@@ -7,6 +7,7 @@ import {
 	setUploading,
 } from '$lib/components/uploadingContentModalGlobals.svelte.js';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
+import { UploadRefusedError } from '$lib/errors/UploadRefused';
 
 /**
  * https://stackoverflow.com/a/41797377
@@ -134,9 +135,7 @@ const uploadContentHandler = async (contentToUpload, { confirm = false } = {}) =
 			})
 				.then((res) => {
 					if (!res.ok) {
-						throw new Error(
-							`Storage refused "${presignEntry.name}": ${res.status} ${res.statusText}`
-						);
+						throw UploadRefusedError(presignEntry.name, res);
 					}
 
 					addNewUploaded({

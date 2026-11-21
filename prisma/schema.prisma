@@ -227,7 +227,7 @@ model YPostContent {
   post   YPost  @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String
 
-  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  content   Content @relation(fields: [contentId], references: [id], onDelete: Restrict) /// Content an article uses can't be deleted.
   contentId String
 
   postUpdate   YPostUpdate? @relation(fields: [postUpdateId], references: [id], onDelete: SetNull)

@@ -1,8 +1,9 @@
 import prisma from '$lib/prisma.server';
 import { ACTIVITY_TYPES } from '$lib/constants/activity';
 import { createActivity } from '$lib/db/activity/create';
-import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
-import { CONTENT_IN_USE, CONTENT_PROTECTED } from '$lib/constants/content';
+import { ContentInUseError } from '$lib/errors/ContentInUse';
+import { ContentProtectedError } from '$lib/errors/ContentProtected';
+import { isForeignKeyViolation } from '$lib/db/isForeignKeyViolation';
 import { WIKI_LINK_HASH } from '$lib/constants/content.server';
 
 /**
@@ -10,20 +11,34 @@ import { WIKI_LINK_HASH } from '$lib/constants/content.server';
  */
 
 /**
- * Content no activity points to, such as a failed upload. Content an article uses, and the VITE_DOMAIN link, are refused.
+ * Content no activity points to, such as a failed upload.
+ * Content an article uses, and the VITE_DOMAIN link, are refused.
  * @param {string} id
  * @param {string} userId
  */
 export const deleteContent = async (id, userId) => {
+	try {
+		return await deleteUnusedContent(id, userId);
+	} catch (err) {
+		// The database refuses it when an article saved in the meantime uses it.
+		if (isForeignKeyViolation(err)) {
+			throw ContentInUseError();
+		}
+
+		throw err;
+	}
+};
+
+/**
+ * @param {string} id
+ * @param {string} userId
+ */
+const deleteUnusedContent = (id, userId) => {
 	return prisma.$transaction(async (tx) => {
 		const usages = await tx.yPostContent.count({ where: { contentId: id } });
 
 		if (usages) {
-			const err = new ErrorWithCode(
-				`This content is used in ${usages} article${usages === 1 ? '' : 's'} and cannot be deleted. Remove it from them first.`
-			);
-			err.code = CONTENT_IN_USE;
-			throw err;
+			throw ContentInUseError(usages);
 		}
 
 		const { contentLength, ...content } = await tx.content.findUniqueOrThrow({
@@ -40,9 +55,7 @@ export const deleteContent = async (id, userId) => {
 		});
 
 		if (content.hash === WIKI_LINK_HASH) {
-			const err = new ErrorWithCode('The link to the wiki itself cannot be deleted.');
-			err.code = CONTENT_PROTECTED;
-			throw err;
+			throw ContentProtectedError();
 		}
 
 		/** @type {ContentSnapshot} */

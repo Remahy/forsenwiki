@@ -32,5 +32,7 @@ export const validateUploads = async (hashes) => {
  * @param {string} authorId
  */
 export const pruneFailedUploads = (hashes, authorId) => {
-	return prisma.content.deleteMany({ where: { hash: { in: hashes }, authorId } });
+	return prisma.content.deleteMany({
+		where: { hash: { in: hashes }, authorId, usedIn: { none: {} } },
+	});
 };
