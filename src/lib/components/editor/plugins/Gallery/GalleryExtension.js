@@ -1,4 +1,12 @@
-import { COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
+import {
+	$createNodeSelection,
+	$getNearestNodeFromDOMNode,
+	$setSelection,
+	CLICK_COMMAND,
+	COMMAND_PRIORITY_EDITOR,
+	COMMAND_PRIORITY_LOW,
+	createCommand,
+} from 'lexical';
 import { defineExtension } from '@lexical/extension';
 import {
 	$insertNodeToNearestRoot,
@@ -8,7 +16,7 @@ import {
 
 import { $isImageNode } from '../Image/Image';
 import { $isVideoEmbedNode } from '../VideoEmbed/VideoEmbed';
-import { $createGalleryNode, GalleryNode } from './Gallery';
+import { $createGalleryNode, $isGalleryNode, GalleryNode } from './Gallery';
 
 /**
  * @typedef {Readonly<import('./Gallery').GalleryNodePayload>} GalleryNodePayload
@@ -29,6 +37,27 @@ const insertGallery = (editor, { float, width, height, hasBorder }) => {
 	});
 };
 
+/** @param {MouseEvent} event */
+const $selectGalleryFromHandle = (event) => {
+	const { target } = event;
+
+	if (!(target instanceof Element) || !target.closest('.editor-gallery__handle')) {
+		return false;
+	}
+
+	const node = $getNearestNodeFromDOMNode(target);
+
+	if (!$isGalleryNode(node)) {
+		return false;
+	}
+
+	const selection = $createNodeSelection();
+	selection.add(node.getKey());
+	$setSelection(selection);
+
+	return true;
+};
+
 export const GalleryExtension = defineExtension({
 	name: 'article/gallery',
 	register: (editor) =>
@@ -43,6 +72,7 @@ export const GalleryExtension = defineExtension({
 					return true;
 				},
 				COMMAND_PRIORITY_EDITOR
-			)
+			),
+			editor.registerCommand(CLICK_COMMAND, $selectGalleryFromHandle, COMMAND_PRIORITY_LOW)
 		),
 });

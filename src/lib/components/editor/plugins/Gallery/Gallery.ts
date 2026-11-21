@@ -1,9 +1,18 @@
 import {
 	$applyNodeReplacement,
 	ElementNode,
+	type DOMExportOutput,
+	type ElementDOMSlot,
 	type NodeKey,
 	type SerializedElementNode,
 } from 'lexical';
+
+const createViewport = () => {
+	const div = document.createElement('div');
+	div.classList.add('embla__viewport');
+
+	return div;
+};
 
 export type GalleryNodePayload = any;
 
@@ -15,10 +24,29 @@ export class GalleryNode extends ElementNode {
 	}
 
 	createDOM() {
-		const div = document.createElement('div');
-		div.classList.add('embla__viewport');
+		const wrapper = document.createElement('div');
+		wrapper.classList.add('editor-gallery');
 
-		return div;
+		const handle = document.createElement('div');
+		handle.classList.add('editor-gallery__handle');
+		handle.contentEditable = 'false';
+		handle.title = 'Select gallery';
+		handle.textContent = 'Gallery';
+
+		wrapper.append(handle, createViewport());
+
+		return wrapper;
+	}
+
+	getDOMSlot(element: HTMLElement): ElementDOMSlot<HTMLElement> {
+		const viewport = element.querySelector<HTMLElement>(':scope > .embla__viewport');
+
+		return viewport ? super.getDOMSlot(element).withElement(viewport) : super.getDOMSlot(element);
+	}
+
+	// The handle is editor-only, so exports keep the bare viewport.
+	exportDOM(): DOMExportOutput {
+		return { element: createViewport() };
 	}
 
 	updateDOM() {

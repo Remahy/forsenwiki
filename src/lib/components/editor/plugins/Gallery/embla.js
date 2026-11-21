@@ -185,8 +185,7 @@ export const initializeEmblaForArticle = (rootElement) => {
 
 		const fullscreenButton = element.querySelector('button.embla-fullscreen-button');
 
-		const toggleFn = () =>
-			setFullscreen(element, !element.classList.contains('embla-fullscreen'));
+		const toggleFn = () => setFullscreen(element, !element.classList.contains('embla-fullscreen'));
 
 		/** @param {KeyboardEvent} event */
 		const onKeyDown = (event) => {

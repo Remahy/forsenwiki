@@ -9,7 +9,7 @@
 }
 
 .embla__viewport {
-	@apply flex overflow-hidden w-full;
+	@apply flex w-full overflow-hidden;
 }
 
 .embla__container {
