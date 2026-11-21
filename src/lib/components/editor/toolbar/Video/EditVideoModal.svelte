@@ -80,7 +80,7 @@
 			const res = await searchRequest(query, ['content'], {
 				signal,
 				contentTypes: ['video', 'audio'],
-				page: 0,
+				// Todo allow loading in of more pages.
 				orderBy: 'desc',
 			});
 

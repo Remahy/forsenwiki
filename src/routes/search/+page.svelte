@@ -21,27 +21,21 @@
 
 	let currentQuery = $derived(parseSearchURL($page.url));
 
-	let currentPage = $derived(currentQuery.options.page);
-
 	// @ts-ignore - These detail props are callbacks.
 	function infiniteHandler({ detail: { complete, error, loaded } }) {
-		const newSearchRequest = structuredClone(currentQuery);
-		currentPage++;
-		$page.url.searchParams.set('page', String(currentPage));
-		newSearchRequest.options.page = currentPage;
+		const { query, types, options } = currentQuery;
 
 		// Classic, good old, then & catch.
-		searchRequest(newSearchRequest.query, newSearchRequest.types, newSearchRequest.options)
+		searchRequest(query, types, { ...options, after: results.at(-1) })
 			.then(async (res) => {
+				if (!res.ok) {
+					throw new Error(`Search failed with ${res.status}`);
+				}
+
 				const newData = await res.json();
 				if (newData.length) {
 					const scrollTop = window.scrollY;
-					// Articles found by title and by editor are paged apart, so one can come again.
-					const shown = new Set(results.map(({ id }) => id));
-					results = [
-						...results,
-						...newData.filter((/** @type {{ id: string }} */ { id }) => !shown.has(id)),
-					];
+					results = [...results, ...newData];
 					setTimeout(() => {
 						window.scrollTo({ top: scrollTop, behavior: 'instant' });
 						loaded();
@@ -151,21 +145,19 @@
 				{/snippet}
 			</Masonry>
 
-			{#if currentQuery.types.length === 1}
-				<InfiniteLoading on:infinite={infiniteHandler}>
-					<div slot="noResults"></div>
-					<div slot="noMore">
-						<span>End of the road.</span>
-						<br />
-						forsen.wiki v0.0.1 launched {formatRelative('2024-05-25T11:42:29.000Z', Date.now(), {
-							locale: enGB,
-						})}
-						<span title={new Date('2024-05-25T11:42:29.000Z').toUTCString()}
-							>({new Date('2024-05-25T11:42:29.000Z').toDateString()})</span
-						>
-					</div>
-				</InfiniteLoading>
-			{/if}
+			<InfiniteLoading on:infinite={infiniteHandler}>
+				<div slot="noResults"></div>
+				<div slot="noMore">
+					<span>End of the road.</span>
+					<br />
+					forsen.wiki v0.0.1 launched {formatRelative('2024-05-25T11:42:29.000Z', Date.now(), {
+						locale: enGB,
+					})}
+					<span title={new Date('2024-05-25T11:42:29.000Z').toUTCString()}
+						>({new Date('2024-05-25T11:42:29.000Z').toDateString()})</span
+					>
+				</div>
+			</InfiniteLoading>
 		{:else if $page.url.searchParams.get('query')}
 			<p><strong>No search results found.</strong></p>
 		{/if}

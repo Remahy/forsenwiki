@@ -1,20 +1,29 @@
 import { expect, test } from 'vitest';
 
 import {
-	PAGE_SIZE,
 	articleMatches,
 	contentMatches,
 	contentTypeMatches,
 	editorMatches,
-	pageOf,
+	pageOrder,
+	rowsAfter,
 } from './conditions';
 
-test('pages follow each other without gaps, and ties are broken by id in the same direction', () => {
-	expect(pageOf('desc', 0)).toMatchObject({ skip: 0, take: PAGE_SIZE });
-	expect(pageOf('desc', 3)).toMatchObject({ skip: 3 * PAGE_SIZE, take: PAGE_SIZE });
+test('ties are broken by id in the same direction', () => {
+	expect(pageOrder('asc')).toEqual([{ createdTimestamp: 'asc' }, { id: 'asc' }]);
+	expect(pageOrder('desc')).toEqual([{ createdTimestamp: 'desc' }, { id: 'desc' }]);
+});
 
-	expect(pageOf('asc', 0).orderBy).toEqual([{ createdTimestamp: 'asc' }, { id: 'asc' }]);
-	expect(pageOf('desc', 0).orderBy).toEqual([{ createdTimestamp: 'desc' }, { id: 'desc' }]);
+test('a page continues with the rows after the last one, ties included', () => {
+	const createdTimestamp = new Date(1000);
+
+	expect(rowsAfter('desc', null)).toEqual({});
+	expect(rowsAfter('desc', { createdTimestamp, id: 'b' })).toEqual({
+		OR: [{ createdTimestamp: { lt: createdTimestamp } }, { createdTimestamp, id: { lt: 'b' } }],
+	});
+	expect(rowsAfter('asc', { createdTimestamp, id: 'b' })).toEqual({
+		OR: [{ createdTimestamp: { gt: createdTimestamp } }, { createdTimestamp, id: { gt: 'b' } }],
+	});
 });
 
 test('articles match their title or display title in any case, or their exact id', () => {

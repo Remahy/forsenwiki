@@ -82,7 +82,7 @@
 			const res = await searchRequest(query, ['content'], {
 				signal,
 				contentTypes: ['document'],
-				page: 0,
+				// Todo allow loading in of more pages.
 				orderBy: 'desc',
 			});
 

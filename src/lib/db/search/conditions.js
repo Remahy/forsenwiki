@@ -1,15 +1,34 @@
 export const PAGE_SIZE = 50;
 
 /**
- * Newest or oldest first, ties broken by id so a row stays on one page.
+ * Newest or oldest first, ties broken by id,
+ * so articles and content merge into one order that a page can continue from.
  * @param {'asc' | 'desc'} orderBy
- * @param {number} page
+ * @returns {[{ createdTimestamp: 'asc' | 'desc' }, { id: 'asc' | 'desc' }]}
  */
-export const pageOf = (orderBy, page) => ({
-	orderBy: [{ createdTimestamp: orderBy }, { id: orderBy }],
-	skip: PAGE_SIZE * page,
-	take: PAGE_SIZE,
-});
+export const pageOrder = (orderBy) => [{ createdTimestamp: orderBy }, { id: orderBy }];
+
+/**
+ * @param {'asc' | 'desc'} orderBy
+ * @param {import('$lib/api/search/cursor').SearchCursor | null} after
+ * @returns {Prisma.Prisma.YPostWhereInput & Prisma.Prisma.ContentWhereInput}
+ */
+export const rowsAfter = (orderBy, after) => {
+	if (!after) {
+		return {};
+	}
+
+	const { createdTimestamp, id } = after;
+	if (orderBy === 'asc') {
+		return {
+			OR: [{ createdTimestamp: { gt: createdTimestamp } }, { createdTimestamp, id: { gt: id } }],
+		};
+	}
+
+	return {
+		OR: [{ createdTimestamp: { lt: createdTimestamp } }, { createdTimestamp, id: { lt: id } }],
+	};
+};
 
 export const ARTICLE_SELECT = /** @satisfies {Prisma.Prisma.YPostSelect} */ ({
 	html: { select: { content: true, text: true, image: true } },
