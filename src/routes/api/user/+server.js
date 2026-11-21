@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import prisma from '$lib/prisma.server';
 import { ForbiddenError } from '$lib/errors/Forbidden';
+import { toSafeJSON } from '$lib/utils/json';
 
 /**
  * @param {string} id
@@ -121,5 +122,5 @@ export async function GET({ locals }) {
 		uploads,
 	};
 
-	return json(data);
+	return json(toSafeJSON(data));
 }
