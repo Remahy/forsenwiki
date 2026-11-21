@@ -5,6 +5,7 @@ import { CLOUDFLARE_API_TOKEN, CLOUDFLARE_ZONE_ID } from '$env/static/private';
 import { STATIC_DOMAIN } from '$lib/environment/environment';
 import { validateToken } from '$lib/cloudflare.server';
 import { startCachePruning } from '$lib/db/cache/prune';
+import { startContentPruning } from '$lib/db/content/prune';
 import { handle as authenticationHandle } from './auth';
 
 import '$lib/goatcounter.server';
@@ -23,9 +24,10 @@ if (CLOUDFLARE_API_TOKEN && CLOUDFLARE_ZONE_ID && !building) {
 	console.log('Cloudflare cache purging enabled.');
 }
 
-// We delete diff caches that are older than a month.
+// We delete diff caches that are older than a month, and uploads that never reached storage.
 if (!building) {
 	startCachePruning();
+	startContentPruning();
 }
 
 /** @type {import('@sveltejs/kit').Handle} */
