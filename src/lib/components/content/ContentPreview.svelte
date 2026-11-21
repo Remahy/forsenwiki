@@ -6,6 +6,7 @@
 	import AudioPreview from './AudioPreview.svelte';
 	import DocumentPreview from './DocumentPreview.svelte';
 	import ImagePreview from './ImagePreview.svelte';
+	import LinkPreview from './LinkPreview.svelte';
 	import VideoPreview from './VideoPreview.svelte';
 
 	/**
@@ -54,11 +55,18 @@
 				name: props.rawTitle,
 			}),
 		},
+		link: {
+			component: LinkPreview,
+			/**
+			 * @param {QueryResult} props
+			 */
+			props: (props) => ({ url: props.rawTitle }),
+		},
 	};
 
-	const SvelteComponent = $derived(self.fileType && PreviewComponents[self.fileType].component);
+	const SvelteComponent = $derived(self.fileType && PreviewComponents[self.fileType]?.component);
 	const SvelteComponentProps = $derived(
-		self.fileType && PreviewComponents[self.fileType].props(self)
+		self.fileType && PreviewComponents[self.fileType]?.props(self)
 	);
 </script>
 

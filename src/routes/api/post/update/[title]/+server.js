@@ -30,6 +30,7 @@ import {
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { isSystem } from '$lib/utils/isSystem';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
+import { getContentReferences } from '$lib/components/editor/utils/getContentReferences';
 import { validateUploads, pruneFailedUploads } from '$lib/s3/validateUploads.server';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server';
 import { _getYPostByTitle } from '../../read/[title]/+server';
@@ -237,6 +238,7 @@ export async function POST({ request, locals, params }) {
 	const { byteLength: totalByteLength } = mergePostUpdatesV2([currentUpdate, combinedFinalDiff]);
 
 	const internalIds = getInternalIds(editor);
+	const contentReferences = getContentReferences(editor);
 	const outRelations = internalIds.map((mentionPostId) => ({
 		isSystem: false,
 		toPostId: mentionPostId,
@@ -262,6 +264,8 @@ export async function POST({ request, locals, params }) {
 		content: contentBase64,
 		seed,
 		newImageHashes,
+		contentHashes: contentReferences.hashes,
+		externalLinks: contentReferences.links,
 	};
 	/** @type {import('$lib/db/post/update').UpdatePostMetadata} */
 	const metadata = {

@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
 import prisma from '$lib/prisma.server.js';
 import { SYSTEM } from '$lib/constants/constants.js';
+import { LINK_CONTENT_TYPE } from '$lib/constants/content';
 
 export async function load({ url, params }) {
 	const { idOrName } = params;
@@ -57,7 +58,7 @@ export async function load({ url, params }) {
 
 		stats.uploadedContent = {
 			total: await prisma.content.count({
-				where: { authorId: id },
+				where: { authorId: id, OR: [{ type: null }, { type: { not: LINK_CONTENT_TYPE } }] },
 			}),
 			images: await prisma.content.count({
 				where: { authorId: id, type: 'image' },

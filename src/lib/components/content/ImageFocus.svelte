@@ -86,7 +86,7 @@
 	<button
 		bind:this={closeButton}
 		type="button"
-		class="embla-fullscreen-button button absolute right-2 bottom-2 m-0! p-1!"
+		class="embla-fullscreen-button button absolute! right-2 bottom-2 m-0! p-1!"
 		aria-label="Close image"
 		onclick={close}
 	>

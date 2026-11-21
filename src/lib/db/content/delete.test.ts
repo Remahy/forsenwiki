@@ -1,5 +1,9 @@
 import { beforeEach, expect, test, vi } from 'vitest';
 
+import { Prisma } from '../../../generated/prisma/client';
+
+import { CONTENT_IN_USE, CONTENT_PROTECTED } from '$lib/constants/content';
+import { WIKI_LINK_HASH } from '$lib/constants/content.server';
 import { deleteContent } from './delete';
 
 const content = {
@@ -13,6 +17,10 @@ const content = {
 };
 
 const state = vi.hoisted(() => ({
+	/** An article started using it during the delete, the database refuses. */
+	usedMeanwhile: false,
+	hash: 'hash',
+	usages: 0,
 	recorded: 0,
 	snapshots: [] as unknown[],
 	activities: [] as Record<string, unknown>[],
@@ -21,9 +29,19 @@ const state = vi.hoisted(() => ({
 
 vi.mock('$lib/prisma.server', () => {
 	const tx = {
+		yPostContent: { count: async () => state.usages },
 		content: {
-			findUniqueOrThrow: async () => content,
-			delete: async ({ where }: { where: { id: string } }) => state.deleted.push(where.id),
+			findUniqueOrThrow: async () => ({ ...content, hash: state.hash }),
+			delete: async ({ where }: { where: { id: string } }) => {
+				if (state.usedMeanwhile) {
+					throw new Prisma.PrismaClientKnownRequestError('Foreign key constraint violated', {
+						code: 'P2003',
+						clientVersion: 'test',
+					});
+				}
+
+				state.deleted.push(where.id);
+			},
 		},
 		activity: {
 			updateMany: async ({ data }: { data: { contentSnapshot: unknown } }) => {
@@ -45,6 +63,9 @@ vi.mock('$lib/prisma.server', () => {
 });
 
 beforeEach(() => {
+	state.usedMeanwhile = false;
+	state.hash = 'hash';
+	state.usages = 0;
 	state.recorded = 0;
 	state.snapshots.length = 0;
 	state.activities.length = 0;
@@ -77,4 +98,34 @@ test('content no activity points to is deleted without one', async () => {
 	expect(activity).toBeNull();
 	expect(state.activities).toEqual([]);
 	expect(state.deleted).toEqual(['content']);
+});
+
+test('content an article uses is not deleted', async () => {
+	state.usages = 2;
+
+	await expect(deleteContent('content', 'moderator')).rejects.toMatchObject({
+		code: CONTENT_IN_USE,
+	});
+	expect(state.activities).toEqual([]);
+	expect(state.deleted).toEqual([]);
+});
+
+test('the link to the wiki is never deleted', async () => {
+	state.hash = WIKI_LINK_HASH;
+
+	await expect(deleteContent('content', 'moderator')).rejects.toMatchObject({
+		code: CONTENT_PROTECTED,
+	});
+	expect(state.activities).toEqual([]);
+	expect(state.deleted).toEqual([]);
+});
+
+test('content an article started using during the delete is refused as in use', async () => {
+	state.usedMeanwhile = true;
+
+	await expect(deleteContent('content', 'moderator')).rejects.toMatchObject({
+		code: CONTENT_IN_USE,
+		message: expect.stringContaining('used in an article'),
+	});
+	expect(state.deleted).toEqual([]);
 });

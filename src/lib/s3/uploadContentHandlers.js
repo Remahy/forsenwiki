@@ -7,6 +7,7 @@ import {
 	setUploading,
 } from '$lib/components/uploadingContentModalGlobals.svelte.js';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages';
+import { UploadRefusedError } from '$lib/errors/UploadRefused';
 
 /**
  * https://stackoverflow.com/a/41797377
@@ -132,7 +133,11 @@ const uploadContentHandler = async (contentToUpload, { confirm = false } = {}) =
 				headers: headers(presignEntry.contentType, hash, presignEntry.metadata),
 				body: file,
 			})
-				.then(() => {
+				.then((res) => {
+					if (!res.ok) {
+						throw UploadRefusedError(presignEntry.name, res);
+					}
+
 					addNewUploaded({
 						id: presignEntry.metadata.id,
 						url: `${STATIC_DOMAIN}/${hash}`,

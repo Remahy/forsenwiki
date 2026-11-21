@@ -1,13 +1,24 @@
 import { json } from '@sveltejs/kit';
 import prisma from '$lib/prisma.server.js';
 import { toSnippet } from '$lib/utils/snippet';
+import {
+	ARTICLE_SELECT,
+	articleMatches,
+	contentMatches,
+	contentTypeMatches,
+	editorMatches,
+	pageOf,
+} from '$lib/db/search/conditions';
 
 /**
  * @typedef {import('$lib/s3/limits.js').MimetypeType} MimetypeType
+ * @typedef {{ title: string, rawTitle: string }} UsedInArticle
  */
 
+const SHOWN_USED_IN = 3;
+
 /**
- * @param {Prisma.Content} content
+ * @param {Prisma.Content & { usedIn?: Array<{ post: UsedInArticle }>, _count?: { usedIn: number } }} content
  * @returns {QueryResult}
  */
 const contentEntry = (content) => ({
@@ -19,7 +30,29 @@ const contentEntry = (content) => ({
 	createdTimestamp: content.createdTimestamp,
 	rawTitle: content.name,
 	title: content.hash,
+	usedIn: content._count?.usedIn
+		? {
+				articles: (content.usedIn ?? []).map(({ post }) => post),
+				total: content._count.usedIn,
+			}
+		: undefined,
 });
+
+/**
+ * Break ties by id.
+ * @param {QueryResult[]} results
+ * @param {'asc' | 'desc'} orderBy
+ */
+const sortResults = (results, orderBy) => {
+	const direction = orderBy === 'asc' ? 1 : -1;
+
+	results.sort(
+		(a, b) =>
+			direction *
+			(a.createdTimestamp.getTime() - b.createdTimestamp.getTime() ||
+				(a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
+	);
+};
 
 /**
  * @param {string[]} types
@@ -34,38 +67,16 @@ const getRecentUploads = async (types = [], options) => {
 	let rawRecentYPosts;
 	if ((types.length && types.includes('article')) || types.length === 0) {
 		rawRecentYPosts = prisma.yPost.findMany({
-			orderBy: { createdTimestamp: orderBy },
-			skip: 51 * page,
-			take: 50,
-			select: {
-				html: {
-					select: {
-						content: true,
-						text: true,
-						image: true,
-					},
-				},
-				id: true,
-				rawTitle: true,
-				createdTimestamp: true,
-				title: true,
-			},
+			select: ARTICLE_SELECT,
+			...pageOf(orderBy, page),
 		});
 	}
 
 	let rawRecentContent;
 	if ((types.length && types.includes('content')) || types.length === 0) {
 		rawRecentContent = prisma.content.findMany({
-			where: {
-				type: contentTypes?.length
-					? {
-							in: contentTypes,
-						}
-					: undefined,
-			},
-			orderBy: { createdTimestamp: orderBy },
-			skip: 51 * page,
-			take: 50,
+			where: contentTypeMatches(contentTypes),
+			...pageOf(orderBy, page),
 		});
 	}
 
@@ -90,17 +101,13 @@ const getRecentUploads = async (types = [], options) => {
 		}
 	}
 
-	results.sort((a, b) =>
-		orderBy === 'asc'
-			? a.createdTimestamp.getTime() - b.createdTimestamp.getTime()
-			: b.createdTimestamp.getTime() - a.createdTimestamp.getTime()
-	);
+	sortResults(results, orderBy);
 
 	return { results };
 };
 
 /**
- * @typedef {{ type?: 'content', rawTitle: string, title: string, createdTimestamp: Date, id: string, fileType?: MimetypeType, contentType?: string | null, html?: { image: string | null, text: string | null } | null }} QueryResult
+ * @typedef {{ type?: 'content', rawTitle: string, title: string, createdTimestamp: Date, id: string, fileType?: MimetypeType | typeof import('$lib/constants/content').LINK_CONTENT_TYPE, contentType?: string | null, usedIn?: { articles: UsedInArticle[], total: number }, html?: { image: string | null, text: string | null } | null }} QueryResult
  */
 
 /**
@@ -121,119 +128,33 @@ export const _getSearch = async (query, types = [], options) => {
 
 	if ((types.length && types.includes('article')) || types.length === 0) {
 		rawRawTitleContains = prisma.yPost.findMany({
-			where: {
-				OR: [
-					{
-						rawTitle: {
-							contains: query,
-							mode: 'insensitive',
-						},
-					},
-					{
-						title: {
-							contains: query,
-							mode: 'insensitive',
-						},
-					},
-					{
-						id: {
-							equals: query,
-						},
-					},
-				],
-			},
-			select: {
-				html: {
-					select: {
-						content: true,
-						text: true,
-						image: true,
-					},
-				},
-				id: true,
-				rawTitle: true,
-				createdTimestamp: true,
-				title: true,
-			},
-			skip: 51 * page,
-			take: 50,
+			where: articleMatches(query),
+			select: ARTICLE_SELECT,
+			...pageOf(orderBy, page),
 		});
 
 		rawMetadata = prisma.yPost.findMany({
-			where: {
-				postUpdates: {
-					some: {
-						metadata: {
-							OR: [
-								{
-									user: {
-										name: query.toLowerCase(),
-									},
-								},
-								{
-									user: {
-										id: query.toLowerCase(),
-									},
-								},
-							],
-						},
-					},
-				},
-			},
-			select: {
-				html: {
-					select: {
-						content: true,
-						text: true,
-						image: true,
-					},
-				},
-				id: true,
-				rawTitle: true,
-				createdTimestamp: true,
-				title: true,
-			},
-			skip: 51 * page,
-			take: 50,
+			where: editorMatches(query),
+			select: ARTICLE_SELECT,
+			...pageOf(orderBy, page),
 		});
 	}
 
 	let rawContent = null;
 	if ((types.length && types.includes('content')) || types.length === 0) {
 		rawContent = prisma.content.findMany({
-			where: {
-				OR: [
-					{
-						author: {
-							name: query.toLowerCase(),
-						},
-					},
-					{
-						author: {
-							id: query.toLowerCase(),
-						},
-					},
-					{
-						name: {
-							contains: query.toLowerCase(),
-							mode: 'insensitive',
-						},
-					},
-					{
-						hash: {
-							equals: query.toLowerCase(),
-						},
-					},
-				],
-
-				type: contentTypes?.length
-					? {
-							in: contentTypes,
-						}
-					: undefined,
+			where: { ...contentMatches(query), ...contentTypeMatches(contentTypes) },
+			include: {
+				// The articles the search found it through.
+				usedIn: {
+					where: { post: articleMatches(query) },
+					select: { post: { select: { title: true, rawTitle: true } } },
+					orderBy: { post: { rawTitle: 'asc' } },
+					take: SHOWN_USED_IN,
+				},
+				_count: { select: { usedIn: { where: { post: articleMatches(query) } } } },
 			},
-			skip: 51 * page,
-			take: 50,
+			...pageOf(orderBy, page),
 		});
 	}
 
@@ -268,13 +189,10 @@ export const _getSearch = async (query, types = [], options) => {
 		}
 	}
 
-	results.sort((a, b) =>
-		orderBy === 'asc'
-			? a.createdTimestamp.getTime() - b.createdTimestamp.getTime()
-			: b.createdTimestamp.getTime() - a.createdTimestamp.getTime()
-	);
+	sortResults(results, orderBy);
 
-	return { results: results.flat() };
+	// An article can match by title and by editor.
+	return { results: [...new Map(results.map((result) => [result.id, result])).values()] };
 };
 
 /**

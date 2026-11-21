@@ -20,6 +20,7 @@ import {
 	Y_POST_TYPES,
 } from '$lib/constants/constants';
 import { getUniqueImageHashes } from '$lib/components/editor/utils/getImages.js';
+import { getContentReferences } from '$lib/components/editor/utils/getContentReferences';
 import { pruneFailedUploads, validateUploads } from '$lib/s3/validateUploads.server.js';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server.js';
 
@@ -134,6 +135,7 @@ export async function POST({ request, locals }) {
 	const backendContent = uint8ArrayToBase64(backendUpdate);
 
 	const internalIds = getInternalIds(editor);
+	const contentReferences = getContentReferences(editor);
 
 	/** @type {import('$lib/db/post/create').CreatePostData} */
 	const body = {
@@ -142,6 +144,8 @@ export async function POST({ request, locals }) {
 		ids: internalIds,
 		disclaimerTags,
 		imageHashes,
+		contentHashes: contentReferences.hashes,
+		externalLinks: contentReferences.links,
 	};
 
 	/** @type {import('$lib/db/post/create').CreatePostMetadata} */

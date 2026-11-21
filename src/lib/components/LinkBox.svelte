@@ -5,6 +5,7 @@
 	/**
 	 * @typedef {Object} Props
 	 * @property {string} href
+	 * @property {string} label
 	 * @property {string} [class]
 	 * @property {string} [style]
 	 * @property {string} [id]
@@ -13,11 +14,10 @@
 	 */
 
 	/** @type {Props} */
-	let { href, class: className = '', style, id, children, target } = $props();
+	let { href, label, class: className = '', style, id, children, target } = $props();
 </script>
 
-<a {href} {id} {style} {target}>
-	<Box class="link-box {className}">
-		{@render children?.()}
-	</Box>
-</a>
+<Box {id} {style} class="link-box {className}">
+	<a {href} {target} aria-label={label} class="link-box-link"></a>
+	{@render children?.()}
+</Box>

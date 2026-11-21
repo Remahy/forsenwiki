@@ -2,9 +2,12 @@ import { error, json } from '@sveltejs/kit';
 import prisma from '$lib/prisma.server';
 import { ForbiddenError } from '$lib/errors/Forbidden';
 import { deleteContent } from '$lib/db/content/delete';
+import { CONTENT_IN_USE, CONTENT_PROTECTED, LINK_CONTENT_TYPE } from '$lib/constants/content';
+import { ErrorWithCode } from '$lib/errors/ErrorWithCode';
 import { updateContentName } from '$lib/db/content/updateName';
 import { deleteByKey } from '$lib/s3/index.server.js';
 import { emitActivity } from '$lib/db/activity/emit';
+import { LinkRenameError } from '$lib/errors/LinkRename';
 
 export async function POST({ request, locals, params }) {
 	const { isBlocked, isModerator, auth } = locals;
@@ -32,6 +35,10 @@ export async function POST({ request, locals, params }) {
 
 	if (!isAllowed) {
 		return ForbiddenError();
+	}
+
+	if (res.type === LINK_CONTENT_TYPE) {
+		return LinkRenameError();
 	}
 
 	const { name } = await request.json();
@@ -72,14 +79,25 @@ export async function DELETE({ locals, params }) {
 	let deleteRes;
 	try {
 		deleteRes = await deleteContent(id, session.user.id);
-
-		await deleteByKey(res.hash);
 	} catch (err) {
+		if (err instanceof ErrorWithCode && err.code === CONTENT_IN_USE) {
+			return error(409, err.message);
+		}
+
+		if (err instanceof ErrorWithCode && err.code === CONTENT_PROTECTED) {
+			return error(403, err.message);
+		}
+
 		console.warn(err);
+		return error(500);
 	}
 
-	if (!deleteRes) {
-		return error(500);
+	try {
+		if (res.type !== LINK_CONTENT_TYPE) {
+			await deleteByKey(res.hash);
+		}
+	} catch (err) {
+		console.warn(err);
 	}
 
 	if (deleteRes.activity) {

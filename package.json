@@ -21,6 +21,7 @@
 		"prisma:migrate-dev": "prisma migrate dev",
 		"prisma:seed": "node --experimental-transform-types ./prisma/seed/types.js",
 		"convert:lexical-y": "node --experimental-transform-types ./scripts/convertPostsToLexicalY.js",
+		"backfill:link-content": "node --experimental-transform-types ./scripts/backfillLinkContent.js",
 		"start": "node -r dotenv-expand/config build"
 	},
 	"overrides": {

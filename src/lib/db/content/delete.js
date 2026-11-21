@@ -1,6 +1,10 @@
 import prisma from '$lib/prisma.server';
 import { ACTIVITY_TYPES } from '$lib/constants/activity';
 import { createActivity } from '$lib/db/activity/create';
+import { ContentInUseError } from '$lib/errors/ContentInUse';
+import { ContentProtectedError } from '$lib/errors/ContentProtected';
+import { isForeignKeyViolation } from '$lib/db/isForeignKeyViolation';
+import { WIKI_LINK_HASH } from '$lib/constants/content.server';
 
 /**
  * @typedef {{ id: string, hash: string, name: string, type: string | null, contentType: string | null, contentLength: number | null, metadata: Prisma.Prisma.JsonValue }} ContentSnapshot
@@ -8,11 +12,35 @@ import { createActivity } from '$lib/db/activity/create';
 
 /**
  * Content no activity points to, such as a failed upload.
+ * Content an article uses, and the VITE_DOMAIN link, are refused.
  * @param {string} id
  * @param {string} userId
  */
 export const deleteContent = async (id, userId) => {
+	try {
+		return await deleteUnusedContent(id, userId);
+	} catch (err) {
+		// The database refuses it when an article saved in the meantime uses it.
+		if (isForeignKeyViolation(err)) {
+			throw ContentInUseError();
+		}
+
+		throw err;
+	}
+};
+
+/**
+ * @param {string} id
+ * @param {string} userId
+ */
+const deleteUnusedContent = (id, userId) => {
 	return prisma.$transaction(async (tx) => {
+		const usages = await tx.yPostContent.count({ where: { contentId: id } });
+
+		if (usages) {
+			throw ContentInUseError(usages);
+		}
+
 		const { contentLength, ...content } = await tx.content.findUniqueOrThrow({
 			where: { id },
 			select: {
@@ -25,6 +53,10 @@ export const deleteContent = async (id, userId) => {
 				metadata: true,
 			},
 		});
+
+		if (content.hash === WIKI_LINK_HASH) {
+			throw ContentProtectedError();
+		}
 
 		/** @type {ContentSnapshot} */
 		const contentSnapshot = {

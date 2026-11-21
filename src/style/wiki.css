@@ -59,7 +59,15 @@ html.forsen-wiki-theme {
 	}
 
 	.link-box {
-		@apply forsen-wiki-theme-border border-2 p-4 hover:bg-violet-300 dark:hover:bg-violet-950/75!;
+		@apply forsen-wiki-theme-border relative border-2 p-4 hover:bg-violet-300 dark:hover:bg-violet-950/75!;
+	}
+
+	.link-box-link {
+		@apply absolute inset-0;
+	}
+
+	.link-box :is(a:not(.link-box-link), button, video, audio, input, select, textarea) {
+		@apply relative z-10;
 	}
 
 	.link-button {

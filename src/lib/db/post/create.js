@@ -2,9 +2,11 @@ import prisma from '$lib/prisma.server';
 import { ACTIVITY_TYPES } from '$lib/constants/activity';
 import { contentUploadActivities, createActivity } from '$lib/db/activity/create';
 import { LEXICAL_Y } from '$lib/y/rows';
+import { syncPostContent } from './content';
+import { createLinkContents } from '$lib/db/content/link';
 
 /**
- * @typedef {{ title: { raw: string, sanitized: string }, data: { content: string }, ids: string[], disclaimerTags?: string[], imageHashes?: string[] }} CreatePostData
+ * @typedef {{ title: { raw: string, sanitized: string }, data: { content: string }, ids: string[], disclaimerTags?: string[], imageHashes?: string[], contentHashes?: string[], externalLinks?: string[] }} CreatePostData
  * @typedef {{ user: { name: string, id: string }, byteLength: number, type: import('$lib/constants/constants').Y_POST_TYPES_VALUES }} CreatePostMetadata
  */
 
@@ -13,7 +15,7 @@ import { LEXICAL_Y } from '$lib/y/rows';
  * @param {CreatePostMetadata} metadata
  */
 export const createPost = async (
-	{ title, data, ids, disclaimerTags, imageHashes = [] },
+	{ title, data, ids, disclaimerTags, imageHashes = [], contentHashes = [], externalLinks = [] },
 	metadata
 ) => {
 	const outRelations = ids.map((id) => ({ isSystem: false, toPostId: id }));
@@ -80,6 +82,14 @@ export const createPost = async (
 					},
 				},
 			},
+		});
+
+		const linkHashes = await createLinkContents(tx, { authorId: user.id, urls: externalLinks });
+
+		await syncPostContent(tx, {
+			postId: post.id,
+			postUpdate,
+			hashes: [...contentHashes, ...linkHashes],
 		});
 
 		await createActivity(tx, {

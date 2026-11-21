@@ -109,6 +109,8 @@ model YPost {
 
   activities Activity[]
 
+  contents YPostContent[]
+
   totalByteLength BigInt?
 
   lastUpdated      DateTime @default(now())
@@ -148,6 +150,8 @@ model YPostUpdate {
   newerDiffCaches YPostDiffPageCache[]   @relation("newerDiffPages")
 
   activities Activity[]
+
+  addedContents YPostContent[]
 
   createdTimestamp DateTime @default(now())
 }
@@ -202,19 +206,38 @@ model WhitelistedAccounts {
 model Content {
   id String @id @default(cuid())
 
-  hash          String  @unique
+  hash          String  @unique /// SHA-256 of the file, or of the URL for an external link (prefixed by "link:").
   type          String?
   contentType   String?
   contentLength BigInt?
   metadata      Json    @default("{}")
-  name          String
+  name          String /// The URL for an external link, which can't be renamed.
 
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
 
   activities Activity[]
 
+  usedIn YPostContent[]
+
   createdTimestamp DateTime @default(now())
+}
+
+model YPostContent {
+  post   YPost  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+
+  content   Content @relation(fields: [contentId], references: [id], onDelete: Restrict) /// Content an article uses can't be deleted.
+  contentId String
+
+  postUpdate   YPostUpdate? @relation(fields: [postUpdateId], references: [id], onDelete: SetNull)
+  postUpdateId String?
+
+  createdTimestamp DateTime @default(now()) /// When the article started using it, as far as is known.
+
+  @@id([postId, contentId])
+  @@index([contentId])
+  @@index([postUpdateId])
 }
 
 enum Permissions {
