@@ -163,6 +163,8 @@
 
 		isUploading = true;
 
+		const allowMissingArticles = error?.missingArticleIds;
+
 		/** @type {Response?} */
 		let res = null;
 
@@ -181,6 +183,7 @@
 					newTitle,
 					disclaimerTags: data.isModerator ? disclaimerTags : undefined,
 					forced: notConverted || undefined,
+					allowMissingArticles,
 				})
 			);
 		} catch (err) {
@@ -379,7 +382,11 @@
 		</small>
 
 		{#if $page.data.session?.user}
-			<Button disabled={!canEdit || isUploading || error} on:click={submit} title="Submit">
+			<Button
+				disabled={!canEdit || isUploading || (error && !error.missingArticleIds)}
+				on:click={submit}
+				title="Submit"
+			>
 				{#if isUploading}
 					<Spinner />
 				{/if}

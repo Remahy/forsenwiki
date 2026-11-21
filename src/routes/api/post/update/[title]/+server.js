@@ -38,6 +38,7 @@ import { _migrateLegacyDraft } from '../../legacy-draft/+server';
 import { FailedUploadsError } from '$lib/errors/FailedUploads';
 import { getImageBlockIds } from '$lib/components/editor/utils/getImageBlockIds';
 import { InvalidArticleError, InvalidArticleResponse } from '$lib/errors/InvalidArticle';
+import { checkMissingArticleLinks } from '$lib/components/editor/validations/missingArticleLinks.server';
 
 /**
  * @typedef {Array<{ code: string, field: string, value?: string }>} PartialErrors
@@ -84,6 +85,7 @@ const validateTitle = async (post, newTitle, partialErrors) => {
  * @property {string | null} [newTitle] Skip if user is not moderator.
  * @property {string[]} [disclaimerTags]
  * @property {boolean} [forced] Skip if user is not moderator.
+ * @property {string[]} [allowMissingArticles]
  */
 
 const $json = () => getEditor().getEditorState().toJSON();
@@ -106,7 +108,13 @@ export async function POST({ request, locals, params }) {
 	}
 
 	/** @type {UpdateBody} */
-	const { content, disclaimerTags: disclaimerRawTags, forced, ...rest } = await request.json();
+	const {
+		content,
+		disclaimerTags: disclaimerRawTags,
+		forced,
+		allowMissingArticles,
+		...rest
+	} = await request.json();
 
 	let { newTitle } = rest;
 
@@ -196,6 +204,7 @@ export async function POST({ request, locals, params }) {
 		const editor = article.editor;
 
 		await serverRunValidations(editor);
+		await checkMissingArticleLinks(editor, allowMissingArticles);
 
 		const oldImageHashes = readState(
 			articleExtension(null, EDITOR_IS_READONLY, null),

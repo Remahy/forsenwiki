@@ -26,6 +26,7 @@ import { serverRunValidations } from '$lib/components/editor/validations/index.s
 import { FailedUploadsError } from '$lib/errors/FailedUploads';
 import { getImageBlockIds } from '$lib/components/editor/utils/getImageBlockIds';
 import { InvalidArticleError, InvalidArticleResponse } from '$lib/errors/InvalidArticle';
+import { checkMissingArticleLinks } from '$lib/components/editor/validations/missingArticleLinks.server';
 
 /**
  * @typedef {Object} CreateBody
@@ -33,6 +34,7 @@ import { InvalidArticleError, InvalidArticleResponse } from '$lib/errors/Invalid
  * @property {string} title
  * @property {import('$lib/constants/constants').Y_POST_TYPES_VALUES} type
  * @property {string[]} [disclaimerTags]
+ * @property {string[]} [allowMissingArticles]
  */
 
 export async function POST({ request, locals }) {
@@ -53,6 +55,7 @@ export async function POST({ request, locals }) {
 		content,
 		// type: rawType,
 		disclaimerTags: disclaimerRawTags,
+		allowMissingArticles,
 	} = await request.json();
 
 	const disclaimerTags = Array.isArray(disclaimerRawTags)
@@ -101,6 +104,7 @@ export async function POST({ request, locals }) {
 		);
 
 		await serverRunValidations(article.editor);
+		await checkMissingArticleLinks(article.editor, allowMissingArticles);
 
 		imageHashes = getUniqueImageHashes(article.editor);
 		const failedUploads = await validateUploads(

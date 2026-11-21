@@ -12,6 +12,7 @@ import { _getYPostByTitle } from '../../read/[title]/+server';
 import { POST } from './+server';
 import { InvalidArticleError } from '$lib/errors/InvalidArticle';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server';
+import { checkMissingArticleLinks } from '$lib/components/editor/validations/missingArticleLinks.server';
 
 vi.mock('$lib/db/post/read', () => ({
 	readSystemYPostRelations: vi.fn(async () => []),
@@ -33,6 +34,9 @@ vi.mock('$lib/s3/validateUploads.server', () => ({
 vi.mock('$lib/components/editor/validations/index.server', () => ({
 	serverRunValidations: vi.fn(),
 }));
+vi.mock('$lib/components/editor/validations/missingArticleLinks.server', () => ({
+	checkMissingArticleLinks: vi.fn(),
+}));
 vi.mock('../../read/[title]/+server', () => ({ _getYPostByTitle: vi.fn() }));
 vi.mock('$lib/db/activity/emit', () => ({ emitActivity: vi.fn() }));
 
@@ -42,12 +46,16 @@ const current = await edited(seed, $write('written by someone else since'));
 
 const submit = (
 	update: Uint8Array,
-	{ forced = undefined as boolean | undefined, isModerator = false } = {}
+	{
+		forced = undefined as boolean | undefined,
+		isModerator = false,
+		allowMissingArticles = undefined as string[] | undefined,
+	} = {}
 ) =>
 	POST({
 		request: new Request('http://localhost/api/post/update/article', {
 			method: 'POST',
-			body: JSON.stringify({ content: uint8ArrayToBase64(update), forced }),
+			body: JSON.stringify({ content: uint8ArrayToBase64(update), forced, allowMissingArticles }),
 		}),
 		params: { title: 'article' },
 		locals: {
@@ -227,4 +235,10 @@ test('images that are base64 or links refuse the save with the blocks holding th
 			blockLabel: 'image',
 		},
 	});
+});
+
+test('the missing articles a writer was shown are passed on to keep their links', async () => {
+	await submit(await edited(current, $write('typed now')), { allowMissingArticles: ['gone'] });
+
+	expect(checkMissingArticleLinks).toHaveBeenCalledWith(expect.anything(), ['gone']);
 });

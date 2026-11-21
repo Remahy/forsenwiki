@@ -12,12 +12,19 @@ const headers = new Headers({ 'content-type': 'application/json' });
  * @param {Y_POST_TYPES_VALUES} Arg.type
  * @param {YDoc} Arg.yDoc
  * @param {string[]} [Arg.disclaimerTags]
+ * @param {string[]} [Arg.allowMissingArticles]
  */
-export const createPost = async ({ title, type, yDoc, disclaimerTags = [] }) => {
+export const createPost = async ({
+	title,
+	type,
+	yDoc,
+	disclaimerTags = [],
+	allowMissingArticles,
+}) => {
 	const encodedContent = encodeYDocToUpdateV2ToBase64(yDoc);
 
 	/** @type {import('../../../routes/api/post/create/+server').CreateBody} */
-	const createBody = { title, content: encodedContent, type, disclaimerTags };
+	const createBody = { title, content: encodedContent, type, disclaimerTags, allowMissingArticles };
 	const body = JSON.stringify(createBody);
 
 	const { length } = new TextEncoder().encode(body);
@@ -39,14 +46,28 @@ export const createPost = async ({ title, type, yDoc, disclaimerTags = [] }) => 
  * @param {string} Arg.postTitle
  * @param {YDoc} Arg.yDoc
  * @param {string} Arg.newTitle
- * @param {string[]} [Arg.disclaimerTags] Only applied for moderators.
- * @param {boolean} [Arg.forced] The document is built on a forced migration.
+ * @param {string[]} [Arg.disclaimerTags]
+ * @param {boolean} [Arg.forced]
+ * @param {string[]} [Arg.allowMissingArticles]
  */
-export const updatePost = async ({ postTitle, yDoc, newTitle, disclaimerTags, forced }) => {
+export const updatePost = async ({
+	postTitle,
+	yDoc,
+	newTitle,
+	disclaimerTags,
+	forced,
+	allowMissingArticles,
+}) => {
 	const encodedContent = encodeYDocToUpdateV2ToBase64(yDoc);
 
 	/** @type {import('../../../routes/api/post/update/[title]/+server').UpdateBody} */
-	const updateBody = { content: encodedContent, newTitle, disclaimerTags, forced };
+	const updateBody = {
+		content: encodedContent,
+		newTitle,
+		disclaimerTags,
+		forced,
+		allowMissingArticles,
+	};
 	const body = JSON.stringify(updateBody);
 
 	return fetch(`/api/post/update/${postTitle}`, { method: 'POST', body, headers });
