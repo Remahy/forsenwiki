@@ -3,7 +3,7 @@ import { error, json } from '@sveltejs/kit';
 import { diffPage, diffVersions } from '$lib/diff/index.server';
 import { readHTMLForYPost, readYPostUpdatesWithIdByTitle } from '$lib/db/post/read';
 import { readAuthorForYPostUpdate, readUserNamesByIds } from '$lib/db/metadata/read';
-import { replacer } from '$lib/utils/json';
+import { toSafeJSON } from '$lib/utils/json';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 import { canDiff, currentRows, NOT_COMPARABLE_MESSAGE } from '$lib/y/rows';
 
@@ -182,9 +182,7 @@ export async function GET({ params, url }) {
 			? await _getDiffPage(title, toPostUpdateId, fromPostUpdateId, page)
 			: await _getToYPostUpdateFromYPostUpdateByTitle(title, toPostUpdateId, fromPostUpdateId);
 
-		const safeJSON = JSON.parse(JSON.stringify(res, replacer));
-
-		return json(safeJSON);
+		return json(toSafeJSON(res));
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);

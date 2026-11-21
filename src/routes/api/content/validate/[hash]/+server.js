@@ -1,5 +1,6 @@
 import prisma from '$lib/prisma.server';
 import { error, json } from '@sveltejs/kit';
+import { toSafeJSON } from '$lib/utils/json';
 
 export async function GET({ params, locals }) {
 	const { hash } = params;
@@ -15,5 +16,5 @@ export async function GET({ params, locals }) {
 		res.metadata = {};
 	}
 
-	return json(res);
+	return json(toSafeJSON(res));
 }

@@ -24,7 +24,11 @@
 			/**
 			 * @param {QueryResult} props
 			 */
-			props: (props) => ({ src: getImageCacheURL(props.title).toString(), name: props.rawTitle }),
+			props: (props) => ({
+				src: getImageCacheURL(props.title).toString(),
+				name: props.rawTitle,
+				contentId: props.id,
+			}),
 		},
 		video: {
 			component: VideoPreview,

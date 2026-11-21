@@ -4,7 +4,7 @@ import { yPostUpdatesV2ToBase64 } from '$lib/y/utils';
 import { LEXICAL_Y, NOT_CONVERTED_MESSAGE, readableRows } from '$lib/y/rows';
 import { upsertHTML } from '$lib/db/post/html';
 import { updateToHTML } from '$lib/lexical/updateToHTML';
-import { replacer } from '$lib/utils/json';
+import { toSafeJSON } from '$lib/utils/json';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 
 /**
@@ -120,9 +120,7 @@ export async function GET({ params }) {
 	try {
 		const res = await _getYPostHTML(title);
 
-		const safeJSON = JSON.parse(JSON.stringify(res, replacer));
-
-		return json(safeJSON);
+		return json(toSafeJSON(res));
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);

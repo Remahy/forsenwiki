@@ -3,7 +3,7 @@ import { readYPostUpdatesWithIdByTitle } from '$lib/db/post/read';
 import { yPostUpdatesV2ToBase64 } from '$lib/y/utils';
 import { canDiff, rowsForHistory } from '$lib/y/rows';
 import { readAuthorForYPostUpdate } from '$lib/db/metadata/read';
-import { replacer } from '$lib/utils/json';
+import { toSafeJSON } from '$lib/utils/json';
 import { updateToHTML } from '$lib/lexical/updateToHTML';
 import { sanitizeTitle } from '$lib/components/editor/utils/sanitizeTitle';
 
@@ -69,9 +69,7 @@ export async function GET({ params }) {
 	try {
 		const res = await _getToYPostUpdateIdByTitle(title, toPostUpdateId);
 
-		const safeJSON = JSON.parse(JSON.stringify(res, replacer));
-
-		return json(safeJSON);
+		return json(toSafeJSON(res));
 	} catch (err) {
 		if (typeof err === 'number') {
 			return error(err);

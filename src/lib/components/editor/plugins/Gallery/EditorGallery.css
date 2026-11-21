@@ -12,3 +12,15 @@
 		@apply aspect-video h-full! w-full! object-contain;
 	}
 }
+
+.editor-shell .editor-gallery.focused {
+	@apply outline-2 -outline-offset-2 outline-blue-500;
+}
+
+.editor-gallery__handle {
+	@apply button-bg flex cursor-pointer items-center gap-1 px-2 py-1 text-sm select-none;
+}
+
+.editor-gallery.focused .editor-gallery__handle {
+	@apply bg-violet-600;
+}

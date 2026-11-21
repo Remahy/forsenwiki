@@ -3,6 +3,7 @@
 	import { SquarePenIcon, HistoryIcon } from '@lucide/svelte';
 	import { formatRelative } from 'date-fns';
 	import { enGB } from 'date-fns/locale';
+	import { browser } from '$app/environment';
 	import { page } from '$app/state';
 
 	import '$lib/components/editor/Article.css';
@@ -16,6 +17,7 @@
 	import CacheBustButton from '$lib/components/CacheBustButton.svelte';
 	import Link from '$lib/components/Link.svelte';
 	import { isSystem } from '$lib/utils/isSystem.js';
+	import { replacer } from '$lib/utils/json';
 	import { DISCLAIMER_TAGS } from '$lib/constants/constants.js';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL.js';
 	import Article from '$lib/components/Article.svelte';
@@ -102,10 +104,12 @@
 		`<script type="application/ld+json">${authorsScriptContent}<\/script>`
 	);
 
-	// @ts-ignore
-	BigInt.prototype.toJSON = function () {
-		return { $bigint: this.toString() };
-	};
+	if (browser) {
+		// @ts-ignore
+		BigInt.prototype.toJSON = function () {
+			return { $bigint: this.toString() };
+		};
+	}
 
 	// Re-runs when the article is revealed, since NSFW articles aren't rendered until accepted.
 	$effect(() => {
@@ -241,7 +245,7 @@
 		{:else}
 			<div class="prose dark:prose-invert max-w-[unset]">
 				<p>This article does not have any HTML available.</p>
-				<pre>{JSON.stringify(data, null, 2)}</pre>
+				<pre>{JSON.stringify(data, replacer, 2)}</pre>
 			</div>
 		{/if}
 

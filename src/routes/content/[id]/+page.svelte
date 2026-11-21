@@ -2,6 +2,7 @@
 	import { Trash2Icon } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { browser } from '$app/environment';
 	import { page } from '$app/state';
 
 	import { changeName, deleteContent } from '$lib/api/content';
@@ -164,10 +165,12 @@
 	// @ts-ignore
 	const SvelteComponentProps = $derived(fileType && PreviewComponents[fileType]?.props());
 
-	// @ts-ignore
-	BigInt.prototype.toJSON = function () {
-		return { $bigint: this.toString() };
-	};
+	if (browser) {
+		// @ts-ignore
+		BigInt.prototype.toJSON = function () {
+			return { $bigint: this.toString() };
+		};
+	}
 </script>
 
 <svelte:head>
