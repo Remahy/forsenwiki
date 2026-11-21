@@ -45,7 +45,9 @@ button.embla-fullscreen-button {
 	@apply pointer-events-none absolute top-1/2 left-1/2 flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 pl-0.5 text-white;
 }
 
-.embla-fullscreen {
+.gallery.embla-fullscreen {
+	@apply fixed inset-0 z-50 m-0 h-dvh w-full bg-white p-2 dark:bg-neutral-950;
+
 	.embla-thumbs__slide {
 		@apply lg:flex-[0_0_15%];
 	}
@@ -53,4 +55,8 @@ button.embla-fullscreen-button {
 
 .embla-thumbs__slide--selected {
 	@apply border-blue-500!;
+}
+
+body:has(.gallery.embla-fullscreen) {
+	@apply overflow-hidden;
 }

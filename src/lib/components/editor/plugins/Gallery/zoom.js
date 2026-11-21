@@ -2,6 +2,7 @@ import { get } from 'svelte/store';
 import { createZoomImageWheel } from '@zoom-image/core';
 import { modal } from '$lib/stores/modal';
 import ImageFocus from '$lib/components/content/ImageFocus.svelte';
+import { GALLERY_FULLSCREEN_CHANGE } from './embla';
 
 /**
  * @param {HTMLElement} container
@@ -40,7 +41,9 @@ export const initializeZoomForImgElements = (rootElement) => {
 
 		const { parentElement } = element;
 
-		if (parentElement?.classList.contains('embla__slide')) {
+		const gallery = element.closest('.gallery');
+
+		if (gallery && parentElement?.classList.contains('embla__slide')) {
 			const { cleanup, setState } = initializeZoomWithDefaults(parentElement, {
 				zoomTarget: element,
 				initialState: { enable: false },
@@ -49,24 +52,20 @@ export const initializeZoomForImgElements = (rootElement) => {
 			const onFullscreenChange = () => {
 				setState({ currentZoom: 1 });
 				setState({
-					enable: !!document.fullscreenElement?.contains(element),
+					enable: gallery.classList.contains('embla-fullscreen'),
 				});
 			};
 
-			document.addEventListener('fullscreenchange', onFullscreenChange);
+			gallery.addEventListener(GALLERY_FULLSCREEN_CHANGE, onFullscreenChange);
 			cleanups.push(() => {
 				cleanup();
-				document.removeEventListener('fullscreenchange', onFullscreenChange);
+				gallery.removeEventListener(GALLERY_FULLSCREEN_CHANGE, onFullscreenChange);
 			});
 
 			continue;
 		}
 
 		const openImage = () => {
-			if (document.fullscreenElement) {
-				return;
-			}
-
 			openedImage = true;
 			modal.set({
 				isOpen: true,

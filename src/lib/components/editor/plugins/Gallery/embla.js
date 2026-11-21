@@ -125,17 +125,19 @@ const addVideoIcons = (thumbnailViewport) => {
 	return () => cleanups.forEach((fn) => fn());
 };
 
+export const GALLERY_FULLSCREEN_CHANGE = 'gallery-fullscreen-change';
+
 /**
  * @param {HTMLElement} element
+ * @param {boolean} isFullscreen
  */
-const toggleFullScreen = (element) => {
-	if (!document.fullscreenElement) {
-		element.requestFullscreen();
-		document.body.classList.add('embla-fullscreen');
-	} else if (document.exitFullscreen) {
-		document.body.classList.remove('embla-fullscreen');
-		document.exitFullscreen();
+const setFullscreen = (element, isFullscreen) => {
+	if (element.classList.contains('embla-fullscreen') === isFullscreen) {
+		return;
 	}
+
+	element.classList.toggle('embla-fullscreen', isFullscreen);
+	element.dispatchEvent(new Event(GALLERY_FULLSCREEN_CHANGE));
 };
 
 /**
@@ -183,21 +185,25 @@ export const initializeEmblaForArticle = (rootElement) => {
 
 		const fullscreenButton = element.querySelector('button.embla-fullscreen-button');
 
-		const toggleFn = () => toggleFullScreen(element);
+		const toggleFn = () =>
+			setFullscreen(element, !element.classList.contains('embla-fullscreen'));
+
+		/** @param {KeyboardEvent} event */
+		const onKeyDown = (event) => {
+			if (event.key === 'Escape' && element.classList.contains('embla-fullscreen')) {
+				event.preventDefault();
+				setFullscreen(element, false);
+			}
+		};
 
 		fullscreenButton?.addEventListener('click', toggleFn);
-		cleanups.push(() => fullscreenButton?.removeEventListener('click', toggleFn));
+		document.addEventListener('keydown', onKeyDown);
+		cleanups.push(() => {
+			fullscreenButton?.removeEventListener('click', toggleFn);
+			document.removeEventListener('keydown', onKeyDown);
+			setFullscreen(element, false);
+		});
 	}
-
-	const toggleOutFullscreen = () => {
-		if (!document.fullscreenElement) {
-			document.body.classList.remove('embla-fullscreen');
-		}
-	};
-
-	document.addEventListener('fullscreenchange', toggleOutFullscreen);
-
-	cleanups.push(() => document.removeEventListener('fullscreenchange', toggleOutFullscreen));
 
 	return () => {
 		cleanups.forEach((fn) => fn());
