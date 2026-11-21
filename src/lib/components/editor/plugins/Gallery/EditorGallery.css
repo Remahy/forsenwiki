@@ -12,3 +12,8 @@
 		@apply aspect-video h-full! w-full! object-contain;
 	}
 }
+
+.editor-shell .embla__viewport.focused {
+	outline: 2px solid rgb(60, 132, 244);
+	outline-offset: -2px;
+}

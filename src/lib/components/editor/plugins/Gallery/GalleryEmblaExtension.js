@@ -5,6 +5,7 @@ import { defineExtension } from '@lexical/extension';
 
 import { GalleryNode } from './Gallery';
 import { initializeEmblaForEditorElement } from './embla';
+import { isNodeSelected } from '../../utils/getSelection';
 
 export const GalleryEmblaExtension = defineExtension({
 	name: 'article/gallery-embla',
@@ -34,7 +35,10 @@ export const GalleryEmblaExtension = defineExtension({
 			}),
 			editor.registerUpdateListener(() => {
 				for (const [nodeKey, embla] of instances) {
-					if (editor.getElementByKey(nodeKey)) {
+					const element = editor.getElementByKey(nodeKey);
+
+					if (element) {
+						element.classList.toggle('focused', isNodeSelected(editor, nodeKey));
 						embla.reInit();
 					}
 				}
