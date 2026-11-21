@@ -6,6 +6,7 @@
 
 	import { page } from '$app/stores';
 	import { searchRequest } from '$lib/api/search';
+	import Link from '$lib/components/Link.svelte';
 	import LinkBox from '$lib/components/LinkBox.svelte';
 	import Search from '$lib/components/Search/index.svelte';
 	import { getImageCacheURL } from '$lib/utils/getImageCacheURL';
@@ -90,14 +91,17 @@
 						style="content-visibility: auto;"
 						id={result.id}
 						target="_blank"
+						label={result.rawTitle}
 					>
 						<div class="flex grow flex-col gap-2">
 							{#if result.usedIn}
-								{@const more = result.usedIn.total - result.usedIn.titles.length}
+								{@const more = result.usedIn.total - result.usedIn.articles.length}
 								<small
-									>Used in <strong>{result.usedIn.titles.join(', ')}</strong>{more
-										? ` and ${more} more`
-										: ''}</small
+									>Used in {#each result.usedIn.articles as article, index (article.title)}{index
+											? ', '
+											: ''}<Link href="/w/{article.title}" target="_blank" class="font-bold"
+											>{article.rawTitle}</Link
+										>{/each}{more ? ` and ${more} more` : ''}</small
 								>
 							{/if}
 

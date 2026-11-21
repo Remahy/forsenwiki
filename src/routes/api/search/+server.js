@@ -12,12 +12,13 @@ import {
 
 /**
  * @typedef {import('$lib/s3/limits.js').MimetypeType} MimetypeType
+ * @typedef {{ title: string, rawTitle: string }} UsedInArticle
  */
 
 const SHOWN_USED_IN = 3;
 
 /**
- * @param {Prisma.Content & { usedIn?: Array<{ post: { rawTitle: string } }>, _count?: { usedIn: number } }} content
+ * @param {Prisma.Content & { usedIn?: Array<{ post: UsedInArticle }>, _count?: { usedIn: number } }} content
  * @returns {QueryResult}
  */
 const contentEntry = (content) => ({
@@ -31,7 +32,7 @@ const contentEntry = (content) => ({
 	title: content.hash,
 	usedIn: content._count?.usedIn
 		? {
-				titles: (content.usedIn ?? []).map(({ post }) => post.rawTitle),
+				articles: (content.usedIn ?? []).map(({ post }) => post),
 				total: content._count.usedIn,
 			}
 		: undefined,
@@ -106,7 +107,7 @@ const getRecentUploads = async (types = [], options) => {
 };
 
 /**
- * @typedef {{ type?: 'content', rawTitle: string, title: string, createdTimestamp: Date, id: string, fileType?: MimetypeType | typeof import('$lib/constants/content').LINK_CONTENT_TYPE, contentType?: string | null, usedIn?: { titles: string[], total: number }, html?: { image: string | null, text: string | null } | null }} QueryResult
+ * @typedef {{ type?: 'content', rawTitle: string, title: string, createdTimestamp: Date, id: string, fileType?: MimetypeType | typeof import('$lib/constants/content').LINK_CONTENT_TYPE, contentType?: string | null, usedIn?: { articles: UsedInArticle[], total: number }, html?: { image: string | null, text: string | null } | null }} QueryResult
  */
 
 /**
@@ -147,7 +148,7 @@ export const _getSearch = async (query, types = [], options) => {
 				// The articles the search found it through.
 				usedIn: {
 					where: { post: articleMatches(query) },
-					select: { post: { select: { rawTitle: true } } },
+					select: { post: { select: { title: true, rawTitle: true } } },
 					orderBy: { post: { rawTitle: 'asc' } },
 					take: SHOWN_USED_IN,
 				},

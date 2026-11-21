@@ -72,7 +72,10 @@ test('content found through articles says which, a few by name and how many', as
 			name: 'forsen.png',
 			hash: 'hash',
 			createdTimestamp: new Date(0),
-			usedIn: [{ post: { rawTitle: 'Forsen' } }, { post: { rawTitle: 'Forsen Games' } }],
+			usedIn: [
+				{ post: { title: 'forsen', rawTitle: 'Forsen' } },
+				{ post: { title: 'forsen_games', rawTitle: 'Forsen Games' } },
+			],
 			_count: { usedIn: 5 },
 		},
 		{
@@ -94,6 +97,15 @@ test('content found through articles says which, a few by name and how many', as
 
 	expect(results.map(({ id, usedIn }) => ({ id, usedIn }))).toEqual([
 		{ id: 'named', usedIn: undefined },
-		{ id: 'image', usedIn: { titles: ['Forsen', 'Forsen Games'], total: 5 } },
+		{
+			id: 'image',
+			usedIn: {
+				articles: [
+					{ title: 'forsen', rawTitle: 'Forsen' },
+					{ title: 'forsen_games', rawTitle: 'Forsen Games' },
+				],
+				total: 5,
+			},
+		},
 	]);
 });
