@@ -16,16 +16,6 @@
 	let container;
 	/** @type {HTMLButtonElement} */
 	let closeButton;
-	/** @type {HTMLElement} */
-	let viewer;
-
-	const exitFullscreen = () => {
-		if (document.fullscreenElement === viewer) {
-			document.exitFullscreen().catch((err) => {
-				console.error('Failed exiting image fullscreen', err);
-			});
-		}
-	};
 
 	const close = () => {
 		if (onclose) {
@@ -36,40 +26,22 @@
 		$modal.isOpen = false;
 	};
 
-	onMount(() => {
-		let isMounted = true;
+	/** @param {KeyboardEvent} event */
+	const onKeyDown = (event) => {
+		if (event.key === 'Escape') {
+			event.preventDefault();
+			close();
+		}
+	};
 
+	onMount(() => {
 		const previousFocus = document.activeElement;
 
 		closeButton.focus();
 
 		const { cleanup } = initializeZoomWithDefaults(container);
 
-		const onFullscreenChange = () => {
-			if (document.fullscreenElement !== viewer) {
-				close();
-			}
-		};
-
-		document.addEventListener('fullscreenchange', onFullscreenChange);
-
-		viewer
-			.requestFullscreen?.()
-			.then(() => {
-				if (!isMounted) {
-					exitFullscreen();
-				}
-			})
-			.catch((err) => {
-				console.error('Failed opening image fullscreen', err);
-			});
-
 		return () => {
-			isMounted = false;
-
-			document.removeEventListener('fullscreenchange', onFullscreenChange);
-
-			exitFullscreen();
 			cleanup();
 
 			if (previousFocus instanceof HTMLElement && previousFocus.isConnected) {
@@ -79,7 +51,14 @@
 	});
 </script>
 
-<div bind:this={viewer} class="modal-color pointer-events-auto fixed inset-0 flex h-dvh flex-col">
+<svelte:window onkeydown={onKeyDown} />
+
+<div
+	role="dialog"
+	aria-modal="true"
+	aria-label={name}
+	class="modal-color pointer-events-auto fixed inset-0 z-50 flex h-dvh flex-col"
+>
 	<div bind:this={container} class="min-h-0 grow overflow-hidden">
 		<img src={rawSrc} alt={name} class="m-0! h-full w-full object-contain" />
 	</div>

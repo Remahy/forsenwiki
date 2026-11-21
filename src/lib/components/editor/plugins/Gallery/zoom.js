@@ -1,4 +1,3 @@
-import { flushSync } from 'svelte';
 import { get } from 'svelte/store';
 import { createZoomImageWheel } from '@zoom-image/core';
 import { modal } from '$lib/stores/modal';
@@ -69,14 +68,11 @@ export const initializeZoomForImgElements = (rootElement) => {
 			}
 
 			openedImage = true;
-			// Mount during the user gesture so the browser allows requesting fullscreen.
-			flushSync(() => {
-				modal.set({
-					isOpen: true,
-					component: ImageFocus,
-					src: element.currentSrc || element.src,
-					name: element.alt,
-				});
+			modal.set({
+				isOpen: true,
+				component: ImageFocus,
+				src: element.currentSrc || element.src,
+				name: element.alt,
 			});
 		};
 
