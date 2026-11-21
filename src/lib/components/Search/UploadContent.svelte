@@ -3,97 +3,16 @@
 
 	import {
 		DOCUMENT_FILE_SIZE,
-		getType,
 		IMAGE_AUDIO_FILE_SIZE,
 		mimetypes,
 		supportedMimeTypes,
 		VIDEO_MAX_FILE_SIZE,
 	} from '$lib/s3/limits';
 
-	import { handleNewImage } from '../editor/utils/handleNewImage';
-	import { handleNewFile } from '../editor/utils/handleNewFile';
 	import Spinner from '../Spinner.svelte';
 	import Box from '../Box.svelte';
 	import Button from '../Button.svelte';
-	import { uploadContentState } from './uploadContentState.svelte.js';
-
-	/** @param {HTMLInputElement} target */
-	const handleNewWrapper = async (target) => {
-		const { files } = target;
-		if (!files?.length) {
-			return;
-		}
-
-		for (let index = 0; index < files.length; index++) {
-			const file = files[index];
-			const type = getType(file.type);
-
-			try {
-				switch (type) {
-					case 'image': {
-						const data = await handleNewImage(file, $page.data.isModerator);
-
-						if (data.linkType === 'internal') {
-							uploadContentState.error += `Image "${file.name}" already exists as "${data.name}".\n`;
-						} else if (
-							data.file &&
-							!uploadContentState.content.some(({ hash }) => hash === data.hash)
-						) {
-							// @ts-ignore
-							uploadContentState.content.push(data);
-						}
-						break;
-					}
-					case 'audio': {
-						const data = await handleNewFile(file);
-
-						if (data.linkType === 'internal') {
-							uploadContentState.error += `Audio "${file.name}" already exists as "${data.name}".\n`;
-						} else if (
-							data.file &&
-							!uploadContentState.content.some(({ hash }) => hash === data.hash)
-						) {
-							// @ts-ignore
-							uploadContentState.content.push(data);
-						}
-						break;
-					}
-					case 'video': {
-						const data = await handleNewFile(file);
-
-						if (data.linkType === 'internal') {
-							uploadContentState.error += `Video "${file.name}" already exists as "${data.name}".\n`;
-						} else if (
-							data.file &&
-							!uploadContentState.content.some(({ hash }) => hash === data.hash)
-						) {
-							// @ts-ignore
-							uploadContentState.content.push(data);
-						}
-						break;
-					}
-					case 'document': {
-						const data = await handleNewFile(file);
-
-						if (data.linkType === 'internal') {
-							uploadContentState.error += `Document "${file.name}" already exists as "${data.name}".\n`;
-						} else if (
-							data.file &&
-							!uploadContentState.content.some(({ hash }) => hash === data.hash)
-						) {
-							// @ts-ignore
-							uploadContentState.content.push(data);
-						}
-						break;
-					}
-				}
-			} catch (err) {
-				console.error(err);
-				// @ts-ignore
-				uploadContentState.error = err?.message || `Error with file "${file.name}".`;
-			}
-		}
-	};
+	import { addFilesToUpload, uploadContentState } from './uploadContentState.svelte.js';
 
 	/**
 	 * @param {number} index
@@ -110,7 +29,7 @@
 		const target = /** @type {any} */ (e.target);
 		if (target) {
 			try {
-				await handleNewWrapper(target);
+				await addFilesToUpload(target.files ?? [], $page.data.isModerator);
 			} catch {
 				// noop
 			} finally {

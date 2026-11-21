@@ -1,4 +1,7 @@
 import { validateContent } from '$lib/api/content';
+import { getType } from '$lib/s3/limits';
+import { handleNewImage } from '../editor/utils/handleNewImage';
+import { handleNewFile } from '../editor/utils/handleNewFile';
 import { uploadFiles } from '$lib/s3/uploadContentHandlers';
 import { createFileUploadObject } from '../editor/utils/fileUploadObject';
 import UploadingContentModal from '../UploadingContentModal.svelte';
@@ -21,6 +24,39 @@ export const resetUploadContentState = () => {
 	uploadContentState.content = [];
 	uploadContentState.isLoading = false;
 	uploadContentState.error = '';
+};
+
+const LABELS = { image: 'Image', audio: 'Audio', video: 'Video', document: 'Document' };
+
+/**
+ * @param {ArrayLike<File>} files
+ * @param {boolean} isModerator
+ */
+export const addFilesToUpload = async (files, isModerator) => {
+	for (let index = 0; index < files.length; index++) {
+		const file = files[index];
+		const type = getType(file.type);
+
+		if (!type) {
+			continue;
+		}
+
+		try {
+			const data =
+				type === 'image' ? await handleNewImage(file, isModerator) : await handleNewFile(file);
+
+			if (data.linkType === 'internal') {
+				uploadContentState.error += `${LABELS[type]} "${file.name}" already exists as "${data.name}".\n`;
+			} else if (data.file && !uploadContentState.content.some(({ hash }) => hash === data.hash)) {
+				// @ts-ignore
+				uploadContentState.content.push(data);
+			}
+		} catch (err) {
+			console.error(err);
+			// @ts-ignore
+			uploadContentState.error = err?.message || `Error with file "${file.name}".`;
+		}
+	}
 };
 
 export const handleUploadContentSubmit = async () => {
