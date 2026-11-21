@@ -26,14 +26,14 @@ afterEach(() => {
 
 const file = (name: string, type: string) => new File(['x'], name, { type });
 
-test('images are read as images for the uploader, other files as files', async () => {
+test('images are read as images, other files as files, both with whether a moderator uploads', async () => {
 	const image = file('forsen.png', 'image/png');
 	const video = file('forsen.mp4', 'video/mp4');
 
 	await addFilesToUpload([image, video], true);
 
 	expect(handleNewImage).toHaveBeenCalledExactlyOnceWith(image, true);
-	expect(handleNewFile).toHaveBeenCalledExactlyOnceWith(video);
+	expect(handleNewFile).toHaveBeenCalledExactlyOnceWith(video, true);
 	expect(uploadContentState.content.map(({ name }) => name)).toEqual(['forsen.png', 'forsen.mp4']);
 });
 

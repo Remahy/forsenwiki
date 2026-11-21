@@ -43,7 +43,9 @@ export const addFilesToUpload = async (files, isModerator) => {
 
 		try {
 			const data =
-				type === 'image' ? await handleNewImage(file, isModerator) : await handleNewFile(file);
+				type === 'image'
+					? await handleNewImage(file, isModerator)
+					: await handleNewFile(file, isModerator);
 
 			if (data.linkType === 'internal') {
 				uploadContentState.error += `${LABELS[type]} "${file.name}" already exists as "${data.name}".\n`;
