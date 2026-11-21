@@ -73,6 +73,8 @@ export async function POST({ request, locals }) {
 	let title;
 	/** @type {string[]} */
 	let imageHashes;
+	/** @type {string[]} */
+	let missingArticles = [];
 	try {
 		title = isBio
 			? {
@@ -104,7 +106,7 @@ export async function POST({ request, locals }) {
 		);
 
 		await serverRunValidations(article.editor);
-		await checkMissingArticleLinks(article.editor, allowMissingArticles);
+		missingArticles = await checkMissingArticleLinks(article.editor, allowMissingArticles);
 
 		imageHashes = getUniqueImageHashes(article.editor);
 		const failedUploads = await validateUploads(
@@ -148,7 +150,7 @@ export async function POST({ request, locals }) {
 
 	const backendContent = uint8ArrayToBase64(backendUpdate);
 
-	const internalIds = getInternalIds(editor);
+	const internalIds = getInternalIds(editor).filter((id) => !missingArticles.includes(id));
 	const contentReferences = getContentReferences(editor);
 
 	/** @type {import('$lib/db/post/create').CreatePostData} */
@@ -160,6 +162,7 @@ export async function POST({ request, locals }) {
 		imageHashes,
 		contentHashes: contentReferences.hashes,
 		externalLinks: contentReferences.links,
+		missingArticles,
 	};
 
 	/** @type {import('$lib/db/post/create').CreatePostMetadata} */

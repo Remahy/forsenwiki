@@ -13,6 +13,7 @@ import { POST } from './+server';
 import { InvalidArticleError } from '$lib/errors/InvalidArticle';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server';
 import { checkMissingArticleLinks } from '$lib/components/editor/validations/missingArticleLinks.server';
+import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 
 vi.mock('$lib/db/post/read', () => ({
 	readSystemYPostRelations: vi.fn(async () => []),
@@ -35,7 +36,11 @@ vi.mock('$lib/components/editor/validations/index.server', () => ({
 	serverRunValidations: vi.fn(),
 }));
 vi.mock('$lib/components/editor/validations/missingArticleLinks.server', () => ({
-	checkMissingArticleLinks: vi.fn(),
+	checkMissingArticleLinks: vi.fn(async () => []),
+}));
+vi.mock('$lib/components/editor/utils/getInternalIds', async (original) => ({
+	...(await original<typeof import('$lib/components/editor/utils/getInternalIds')>()),
+	getInternalIds: vi.fn(() => []),
 }));
 vi.mock('../../read/[title]/+server', () => ({ _getYPostByTitle: vi.fn() }));
 vi.mock('$lib/db/activity/emit', () => ({ emitActivity: vi.fn() }));
@@ -241,4 +246,18 @@ test('the missing articles a writer was shown are passed on to keep their links'
 	await submit(await edited(current, $write('typed now')), { allowMissingArticles: ['gone'] });
 
 	expect(checkMissingArticleLinks).toHaveBeenCalledWith(expect.anything(), ['gone']);
+});
+
+test('links kept to articles that no longer exist are not related to them, and the update says so', async () => {
+	vi.mocked(getInternalIds).mockReturnValueOnce(['forsen', 'deleted']);
+	vi.mocked(checkMissingArticleLinks).mockResolvedValueOnce(['deleted']);
+
+	const response = await submit(await edited(current, $write('typed now')), {
+		allowMissingArticles: ['deleted'],
+	});
+
+	expect(response.status).toBe(200);
+	const [body] = vi.mocked(updatePost).mock.calls[0];
+	expect(body.outRelations).toEqual([{ isSystem: false, toPostId: 'forsen' }]);
+	expect(body.missingArticles).toEqual(['deleted']);
 });

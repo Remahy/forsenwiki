@@ -196,6 +196,8 @@ export async function POST({ request, locals, params }) {
 	let article;
 	/** @type {string[]} */
 	let newImageHashes;
+	/** @type {string[]} */
+	let missingArticles;
 	try {
 		article = getYAndEditor(
 			articleExtension(null, EDITOR_IS_READONLY, null),
@@ -204,7 +206,7 @@ export async function POST({ request, locals, params }) {
 		const editor = article.editor;
 
 		await serverRunValidations(editor);
-		await checkMissingArticleLinks(editor, allowMissingArticles);
+		missingArticles = await checkMissingArticleLinks(editor, allowMissingArticles);
 
 		const oldImageHashes = readState(
 			articleExtension(null, EDITOR_IS_READONLY, null),
@@ -259,7 +261,7 @@ export async function POST({ request, locals, params }) {
 	// Total size of the YDoc with the new update.
 	const { byteLength: totalByteLength } = mergePostUpdatesV2([currentUpdate, combinedFinalDiff]);
 
-	const internalIds = getInternalIds(editor);
+	const internalIds = getInternalIds(editor).filter((id) => !missingArticles.includes(id));
 	const contentReferences = getContentReferences(editor);
 	const outRelations = internalIds.map((mentionPostId) => ({
 		isSystem: false,
@@ -288,6 +290,7 @@ export async function POST({ request, locals, params }) {
 		newImageHashes,
 		contentHashes: contentReferences.hashes,
 		externalLinks: contentReferences.links,
+		missingArticles,
 	};
 	/** @type {import('$lib/db/post/update').UpdatePostMetadata} */
 	const metadata = {

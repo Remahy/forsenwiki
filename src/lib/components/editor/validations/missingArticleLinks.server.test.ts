@@ -55,7 +55,7 @@ beforeEach(() => {
 test('links whose articles all exist pass', async () => {
 	const { editor } = setup();
 
-	await expect(checkMissingArticleLinks(editor, undefined)).resolves.toBeUndefined();
+	await expect(checkMissingArticleLinks(editor, undefined)).resolves.toEqual([]);
 });
 
 test('links to articles that no longer exist refuse the save, with their blocks and articles', async () => {
@@ -76,11 +76,11 @@ test('links to articles that no longer exist refuse the save, with their blocks 
 	expect([...refused.body.blockIds].sort()).toEqual([ids.first, ids.second].sort());
 });
 
-test('missing articles the writer was shown are kept, a newly missing one is warned about again', async () => {
+test('missing articles the writer was shown are kept and returned, a newly missing one is warned about again', async () => {
 	deleted.add('gone');
 	const { editor } = setup();
 
-	await expect(checkMissingArticleLinks(editor, ['gone'])).resolves.toBeUndefined();
+	await expect(checkMissingArticleLinks(editor, ['gone'])).resolves.toEqual(['gone']);
 
 	deleted.add('also-gone');
 
