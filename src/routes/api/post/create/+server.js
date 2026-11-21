@@ -25,7 +25,7 @@ import { pruneFailedUploads, validateUploads } from '$lib/s3/validateUploads.ser
 import { serverRunValidations } from '$lib/components/editor/validations/index.server.js';
 import { FailedUploadsError } from '$lib/errors/FailedUploads';
 import { getImageBlockIds } from '$lib/components/editor/utils/getImageBlockIds';
-import { InvalidImagesError, InvalidImagesResponse } from '$lib/errors/InvalidImages';
+import { InvalidArticleError, InvalidArticleResponse } from '$lib/errors/InvalidArticle';
 
 /**
  * @typedef {Object} CreateBody
@@ -123,8 +123,8 @@ export async function POST({ request, locals }) {
 			return InvalidPost(err);
 		}
 
-		if (err instanceof InvalidImagesError) {
-			return InvalidImagesResponse(err);
+		if (err instanceof InvalidArticleError) {
+			return InvalidArticleResponse(err);
 		}
 
 		if (isHttpError(err)) {

@@ -8,7 +8,7 @@ import { $createGalleryNode } from '../plugins/Gallery/Gallery';
 import { $createImageNode, type ImageNode } from '../plugins/Image/Image';
 import { EDITOR_IS_EDITABLE } from '$lib/constants/constants';
 import { IMAGE_MAX_WIDTH } from '$lib/constants/image';
-import { InvalidImagesError } from '$lib/errors/InvalidImages';
+import { InvalidArticleError } from '$lib/errors/InvalidArticle';
 import { adjustImages } from './images';
 
 const setup = (build: () => Record<string, LexicalNode>) => {
@@ -43,7 +43,8 @@ test('every image inserted as base64 or as a link is refused at once, with the b
 
 	const refused = await adjustImages(editor).catch((err) => err);
 
-	expect(refused).toBeInstanceOf(InvalidImagesError);
+	expect(refused).toBeInstanceOf(InvalidArticleError);
+	expect(refused.blockLabel).toBe('image');
 	expect(refused.message).toBe(
 		'2 images are encoded base64 strings. An image is inserted as a link. Upload them instead.'
 	);

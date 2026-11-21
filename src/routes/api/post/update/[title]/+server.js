@@ -37,7 +37,7 @@ import { _getYPostByTitle } from '../../read/[title]/+server';
 import { _migrateLegacyDraft } from '../../legacy-draft/+server';
 import { FailedUploadsError } from '$lib/errors/FailedUploads';
 import { getImageBlockIds } from '$lib/components/editor/utils/getImageBlockIds';
-import { InvalidImagesError, InvalidImagesResponse } from '$lib/errors/InvalidImages';
+import { InvalidArticleError, InvalidArticleResponse } from '$lib/errors/InvalidArticle';
 
 /**
  * @typedef {Array<{ code: string, field: string, value?: string }>} PartialErrors
@@ -223,8 +223,8 @@ export async function POST({ request, locals, params }) {
 			return InvalidPost(err);
 		}
 
-		if (err instanceof InvalidImagesError) {
-			return InvalidImagesResponse(err);
+		if (err instanceof InvalidArticleError) {
+			return InvalidArticleResponse(err);
 		}
 
 		if (isHttpError(err)) {

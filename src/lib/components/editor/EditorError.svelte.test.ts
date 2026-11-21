@@ -27,6 +27,7 @@ test('a failed save shows its status, message, and a way to the blocks it is abo
 			status: 400,
 			statusText: 'Bad Request',
 			blockIds: ['block'],
+			blockLabel: 'image',
 		}),
 		{} as LexicalEditor
 	);
@@ -42,4 +43,25 @@ test('a thrown error shows only its message, and no blocks without an editor', (
 
 	expect(text).toBe('Network down');
 	expect(button).toBeNull();
+});
+
+test('the button names what the blocks hold, or "block" when the error does not say', () => {
+	const link = render(
+		Object.assign(new Error('An internal link is malformed.'), {
+			blockIds: ['block'],
+			blockLabel: 'link',
+		}),
+		{} as LexicalEditor
+	);
+	expect(link.button?.textContent?.trim()).toBe('Show link');
+
+	unmount(component!);
+	component = undefined;
+	document.body.replaceChildren();
+
+	const unlabelled = render(
+		Object.assign(new Error('Something about a block.'), { blockIds: ['block'] }),
+		{} as LexicalEditor
+	);
+	expect(unlabelled.button?.textContent?.trim()).toBe('Show block');
 });

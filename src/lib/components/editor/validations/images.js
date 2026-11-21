@@ -1,7 +1,7 @@
 import { $nodesOfType as nodesOfType } from 'lexical';
 
 import { $isGalleryNode as isGalleryNode, ImageNode } from '$lib/lexical/custom';
-import { InvalidImagesError } from '$lib/errors/InvalidImages';
+import { InvalidArticleError } from '$lib/errors/InvalidArticle';
 import { $closestBlockId } from '../utils/closestBlockId';
 import {
 	IMAGE_MAX_HEIGHT,
@@ -20,7 +20,7 @@ const images = (count, singular, plural) =>
 
 /**
  * @param {LexicalEditor} editor
- * @throws {InvalidImagesError} Images inserted as base64 or as a link, all of them.
+ * @throws {InvalidArticleError} Images inserted as base64 or as a link, all of them.
  */
 export const adjustImages = (editor) => {
 	return new Promise((resolve, reject) => {
@@ -95,9 +95,10 @@ export const adjustImages = (editor) => {
 				.join(' ');
 
 			return reject(
-				new InvalidImagesError(`${message} Upload ${count === 1 ? 'it' : 'them'} instead.`, [
-					...blockIds,
-				])
+				new InvalidArticleError(`${message} Upload ${count === 1 ? 'it' : 'them'} instead.`, {
+					blockIds: [...blockIds],
+					blockLabel: 'image',
+				})
 			);
 		}
 

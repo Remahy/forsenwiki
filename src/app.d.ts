@@ -10,6 +10,8 @@ declare global {
 			message: string;
 			/** Blocks the error is about, for the editor to show. */
 			blockIds?: string[];
+			/** What the blocks hold, e.g. "image". */
+			blockLabel?: string;
 		}
 		interface Locals {
 			isModerator: boolean;
@@ -47,6 +49,7 @@ declare global {
 		status?: number;
 		statusText?: string;
 		blockIds?: string[];
+		blockLabel?: string;
 	};
 
 	export type FileUpload = {
