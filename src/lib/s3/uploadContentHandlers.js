@@ -132,7 +132,13 @@ const uploadContentHandler = async (contentToUpload, { confirm = false } = {}) =
 				headers: headers(presignEntry.contentType, hash, presignEntry.metadata),
 				body: file,
 			})
-				.then(() => {
+				.then((res) => {
+					if (!res.ok) {
+						throw new Error(
+							`Storage refused "${presignEntry.name}": ${res.status} ${res.statusText}`
+						);
+					}
+
 					addNewUploaded({
 						id: presignEntry.metadata.id,
 						url: `${STATIC_DOMAIN}/${hash}`,
