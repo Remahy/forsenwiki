@@ -46,8 +46,7 @@ test('articles linking to the renamed article get new HTML and their cache purge
 		text: 'second',
 		image: undefined,
 	});
-	expect(invalidatePostCache).toHaveBeenCalledWith('first');
-	expect(invalidatePostCache).toHaveBeenCalledWith('second');
+	expect(invalidatePostCache).toHaveBeenCalledExactlyOnceWith(['first', 'second']);
 });
 
 test('articles the renamed article links to are purged, their backlinks show its title', async () => {
@@ -56,7 +55,7 @@ test('articles the renamed article links to are purged, their backlinks show its
 	await refreshAfterRename('renamed');
 
 	expect(readYPostTitlesLinkedFrom).toHaveBeenCalledWith('renamed');
-	expect(invalidatePostCache).toHaveBeenCalledWith('linked');
+	expect(invalidatePostCache).toHaveBeenCalledExactlyOnceWith(['linked']);
 	expect(_renderYPostHTML).not.toHaveBeenCalled();
 });
 
@@ -68,7 +67,7 @@ test('an article that fails to render does not stop the rest', async () => {
 	await refreshAfterRename('renamed');
 
 	expect(updateHTMLIfUnchanged).toHaveBeenCalledOnce();
-	expect(invalidatePostCache).toHaveBeenCalledWith('fine');
+	expect(invalidatePostCache).toHaveBeenCalledExactlyOnceWith(['broken', 'fine']);
 	warn.mockRestore();
 });
 
@@ -79,5 +78,17 @@ test('an article without content is only purged', async () => {
 	await refreshAfterRename('renamed');
 
 	expect(updateHTMLIfUnchanged).not.toHaveBeenCalled();
-	expect(invalidatePostCache).toHaveBeenCalledWith('system');
+	expect(invalidatePostCache).toHaveBeenCalledExactlyOnceWith(['system']);
+});
+
+test('the articles around the renamed article are purged together, after the renders', async () => {
+	vi.mocked(readYPostTitlesLinkedFrom).mockResolvedValue([{ title: 'linked' }]);
+	vi.mocked(readYPostTitlesLinkingTo).mockResolvedValue([{ title: 'first' }]);
+
+	await refreshAfterRename('renamed');
+
+	expect(invalidatePostCache).toHaveBeenCalledExactlyOnceWith(['linked', 'first']);
+	expect(vi.mocked(invalidatePostCache).mock.invocationCallOrder[0]).toBeGreaterThan(
+		vi.mocked(updateHTMLIfUnchanged).mock.invocationCallOrder[0]
+	);
 });

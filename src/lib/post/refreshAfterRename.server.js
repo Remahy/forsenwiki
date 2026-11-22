@@ -9,11 +9,6 @@ import { _renderYPostHTML } from '../../routes/api/post/read/[title]/+server';
 export const refreshAfterRename = async (postId) => {
 	// Their "Articles linking here" list the old title.
 	const linkedFrom = await readYPostTitlesLinkedFrom(postId);
-
-	for (const { title } of linkedFrom) {
-		await invalidatePostCache(title);
-	}
-
 	const linking = await readYPostTitlesLinkingTo(postId);
 
 	// One at a time, a queue of renders on the shared toHTML worker would time out.
@@ -25,10 +20,10 @@ export const refreshAfterRename = async (postId) => {
 				// An article saved during the render has written newer HTML.
 				await updateHTMLIfUnchanged(post.id, post.lastUpdated, { content: html, text, image });
 			}
-
-			await invalidatePostCache(title);
 		} catch (err) {
 			console.warn(err);
 		}
 	}
+
+	await invalidatePostCache([...linkedFrom, ...linking].map(({ title }) => title));
 };

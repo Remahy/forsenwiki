@@ -15,6 +15,7 @@ import { serverRunValidations } from '$lib/components/editor/validations/index.s
 import { checkMissingArticleLinks } from '$lib/components/editor/validations/missingArticleLinks.server';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { refreshAfterRename } from '$lib/post/refreshAfterRename.server';
+import { invalidatePostCache } from '$lib/cloudflare.server';
 
 vi.mock('$lib/db/post/read', () => ({
 	readSystemYPostRelations: vi.fn(async () => []),
@@ -89,6 +90,8 @@ const stored = () => {
 beforeEach(() => {
 	vi.mocked(updatePost).mockClear();
 	vi.mocked(refreshAfterRename).mockClear();
+	vi.mocked(invalidatePostCache).mockClear();
+	vi.mocked(updatePostTitle).mockClear();
 	vi.mocked(_getYPostByTitle).mockResolvedValue({
 		id: 'post',
 		title: 'article',
@@ -284,6 +287,10 @@ test('a rename refreshes the articles around the renamed article', async () => {
 
 	expect(response.status).toBe(200);
 	expect(refreshAfterRename).toHaveBeenCalledWith('post');
+	expect(invalidatePostCache).toHaveBeenCalledWith(['article', 'renamed']);
+	expect(vi.mocked(invalidatePostCache).mock.invocationCallOrder[0]).toBeGreaterThan(
+		vi.mocked(updatePostTitle).mock.invocationCallOrder[0]
+	);
 });
 
 test('an update that keeps the title refreshes nothing else', async () => {

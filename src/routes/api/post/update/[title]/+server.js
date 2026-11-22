@@ -314,13 +314,15 @@ export async function POST({ request, locals, params }) {
 
 	await upsertHTML(post.id, { content: html, text, image });
 
-	await invalidatePostCache(post.title);
-
 	let _post = { title: post.title, rawTitle: post.rawTitle };
 
 	if (potentialNewTitle) {
 		_post = await updatePostTitle({ post, newTitle: potentialNewTitle });
+	}
 
+	await invalidatePostCache([post.title, _post.title]);
+
+	if (potentialNewTitle) {
 		refreshAfterRename(post.id).catch(console.warn);
 	}
 
