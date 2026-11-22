@@ -7,7 +7,7 @@ import workerPath from './worker?modulePath';
 
 /**
  * @typedef {{ html: string, text: string, image?: string }} ToHTMLResult
- * @typedef {{ config: 'article', update: string, format?: import('$lib/y/rows').YPostUpdateFormat } | { config: 'article', content: string }} ToHTMLData
+ * @typedef {{ config: 'article', update: string, format?: import('$lib/y/rows').YPostUpdateFormat, titles?: Record<string, string> } | { config: 'article', content: string }} ToHTMLData
  * @typedef {Parameters<typeof import('./worker').readVersion>[0]} VersionData
  * @typedef {Awaited<ReturnType<typeof import('./worker').readVersion>>} Version
  * @typedef {Parameters<typeof import('./worker').compareVersions>[0]} CompareData

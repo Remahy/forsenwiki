@@ -5,6 +5,7 @@ export function toHTMLWorker(data: {
 	content?: string;
 	update?: string;
 	format?: 'YJS13' | 'LEXICAL_Y';
+	titles?: Record<string, string>;
 }): Promise<{ html: string; text: string; image?: string }>;
 
 export function readVersion(data: { update: string; html?: boolean }): Promise<{

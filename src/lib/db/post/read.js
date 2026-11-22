@@ -19,6 +19,7 @@ export async function readYPostUpdatesByTitle(title) {
 					isSystem: true,
 					toPost: {
 						select: {
+							title: true,
 							postUpdates: {
 								select: {
 									id: true,
@@ -238,6 +239,22 @@ export async function readMissingYPostIds(ids) {
 	const existing = new Set(found.map(({ id }) => id));
 
 	return ids.filter((id) => !existing.has(id));
+}
+
+/** @param {string} postId */
+export async function readYPostTitlesLinkingTo(postId) {
+	return prisma.yPost.findMany({
+		where: { outRelations: { some: { isSystem: false, toPostId: postId } } },
+		select: { title: true },
+	});
+}
+
+/** @param {string} postId */
+export async function readYPostTitlesLinkedFrom(postId) {
+	return prisma.yPost.findMany({
+		where: { inRelations: { some: { isSystem: false, fromPostId: postId } } },
+		select: { title: true },
+	});
 }
 
 /** @param {string} title */

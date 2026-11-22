@@ -112,7 +112,24 @@ test('a converted article is read from its @lexical/y rows only', async () => {
 
 	await _getYPostHTML('article', true);
 
-	expect(vi.mocked(updateToHTML).mock.calls[0]).toEqual([update, LEXICAL_Y]);
+	expect(vi.mocked(updateToHTML).mock.calls[0]).toEqual([update, LEXICAL_Y, undefined]);
+});
+
+test('internal links are rendered with the current titles of the articles they link to', async () => {
+	vi.mocked(readYPostUpdatesByTitle).mockResolvedValue({
+		id: 'post',
+		title: 'article',
+		rawTitle: 'Article',
+		outRelations: [
+			{ isSystem: true, toPostId: 'article', toPost: { title: 'article' } },
+			{ isSystem: false, toPostId: 'renamed', toPost: { title: 'new_title' } },
+		],
+		postUpdates: [row(LEXICAL_Y, seed)],
+	} as never);
+
+	await _getYPostHTML('article', true);
+
+	expect(vi.mocked(updateToHTML).mock.calls[0][2]).toEqual({ renamed: 'new_title' });
 });
 
 test('a system post without content is neither refused nor rendered', async () => {
