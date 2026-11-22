@@ -92,6 +92,15 @@ const toContent = ({ content, contentSnapshot }) => {
 };
 
 /**
+ * @param {Prisma.Prisma.JsonValue | undefined} value
+ */
+const isEmptyObject = (value) =>
+	typeof value === 'object' &&
+	value !== null &&
+	!Array.isArray(value) &&
+	!Object.keys(value).length;
+
+/**
  * Same rule as /api/content/validate/[hash]: only moderators see content metadata.
  * @param {ActivityRow} row
  * @param {Viewer} viewer
@@ -103,7 +112,7 @@ const toChildEntry = (row, { isModerator }) => {
 
 	let visibleContent = toContent(row);
 
-	if (visibleContent && !isModerator) {
+	if (visibleContent && (!isModerator || isEmptyObject(visibleContent.metadata))) {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { metadata, ...withoutMetadata } = visibleContent;
 		visibleContent = withoutMetadata;

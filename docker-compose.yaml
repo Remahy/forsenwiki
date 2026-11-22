@@ -95,6 +95,20 @@ services:
       postgres:
         condition: service_healthy
 
+  # Stands in for Cloudflare R2 when developing, see README.md.
+  s3mock:
+    image: docker.io/adobe/s3mock:5.2.3
+    profiles: ['s3mock']
+    restart: unless-stopped
+    environment:
+      COM_ADOBE_TESTING_S3MOCK_STORE_INITIAL_BUCKETS: usercontent
+      COM_ADOBE_TESTING_S3MOCK_STORE_ROOT: /s3mockroot
+      COM_ADOBE_TESTING_S3MOCK_STORE_RETAIN_FILES_ON_EXIT: 'true'
+    ports:
+      - '9090:9090'
+    volumes:
+      - s3mock-data:/s3mockroot
+
 networks:
   prisma-network:
     name: prisma-network
@@ -105,3 +119,4 @@ volumes:
   caddy_data:
   caddy_config:
   goatcounter-data:
+  s3mock-data:

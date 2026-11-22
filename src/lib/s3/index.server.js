@@ -15,6 +15,8 @@ import { validateImageDimensions } from './validateImageDimensions.server';
 const S3 = new S3Client({
 	region: 'auto',
 	endpoint: CLOUDFLARE_R2_ENDPOINT,
+	// Local S3 mocks only take the bucket in the path, not as a subdomain.
+	forcePathStyle: !CLOUDFLARE_R2_ENDPOINT?.endsWith('.r2.cloudflarestorage.com'),
 	credentials: {
 		accessKeyId: CLOUDFLARE_R2_ACCESS_KEY_ID,
 		secretAccessKey: CLOUDFLARE_R2_SECRET_ACCESS_KEY,

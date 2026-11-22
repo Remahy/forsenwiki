@@ -1,5 +1,5 @@
 import { IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT } from '$lib/constants/image';
-import { STATIC_DOMAIN } from '$lib/environment/environment';
+import { CLOUDFLARE_IMAGES, STATIC_DOMAIN } from '$lib/environment/environment';
 
 export const cacheServiceBaseURLWithStatic = STATIC_DOMAIN;
 
@@ -8,6 +8,11 @@ export const cacheServiceBaseURLWithStatic = STATIC_DOMAIN;
  * @param {{ width?: 'inherit' | number, height?: 'inherit' | number, quality?: 'low' | 'medium-low' }} [opts]
  */
 export const getImageCacheURL = (hash, opts) => {
+	// Local S3 mocks serve the original only.
+	if (!CLOUDFLARE_IMAGES) {
+		return new URL(`${STATIC_DOMAIN}/${hash}`);
+	}
+
 	// This is the Cloudflare Images endpoint. Hardcoded for now.
 	// https://developers.cloudflare.com/images/transform-images/transform-via-url/
 	const ourUrl = new URL('', STATIC_DOMAIN + '/cdn-cgi/image/');
