@@ -94,15 +94,43 @@ export const _getYPostHTML = async (title, shouldCacheBust) => {
 		throw err;
 	}
 
+	const res = await _renderYPostHTML(title);
+
+	if (res.html !== null) {
+		Promise.resolve(
+			upsertHTML(res.post.id, { content: res.html, text: res.text, image: res.image })
+		);
+	}
+
+	return res;
+};
+
+/**
+ * @param {{ isSystem: boolean, toPostId: string, toPost: { title: string } }[]} outRelations
+ */
+const linkedTitles = (outRelations) => {
+	const links = outRelations.filter(({ isSystem }) => !isSystem);
+
+	if (!links.length) {
+		return;
+	}
+
+	return Object.fromEntries(links.map(({ toPostId, toPost }) => [toPostId, toPost.title]));
+};
+
+/**
+ * @param {string} title
+ * @throws {number}
+ */
+export const _renderYPostHTML = async (title) => {
 	const { post, format, update } = await readArticle(title);
 
 	if (!update) {
 		return { post, html: null, text: null, image: null };
 	}
 
-	const { html, text, image } = await updateToHTML(update, format);
-
-	Promise.resolve(upsertHTML(post.id, { content: html, text, image }));
+	// The rows keep the title a link had when its article was last saved.
+	const { html, text, image } = await updateToHTML(update, format, linkedTitles(post.outRelations));
 
 	return { post, html, text, image };
 };

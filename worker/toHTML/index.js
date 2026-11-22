@@ -20,6 +20,7 @@ import { migrations } from '$lib/components/editor/migrations';
 import { diffCombined } from '$lib/lexical/diff/combined';
 import { blockIdOf } from '$lib/lexical/diff/helpers';
 import { diffSplit } from '$lib/lexical/diff/split';
+import { relinkInternal } from '$lib/lexical/relinkInternal';
 import { twitchThumbnailURL } from './twitchThumbnailURL';
 
 const $$getTextInEditor = () => {
@@ -226,7 +227,7 @@ export const renderRows = async ({ rows }) => {
 };
 
 /**
- * @param {{ job: 'version', update: string, html?: boolean } | ({ job: 'compare' } & Parameters<typeof compareVersions>[0]) | ({ job: 'render' } & Parameters<typeof renderRows>[0]) | { job?: undefined, config: string, update?: string, content?: string, format?: import('$lib/y/rows').YPostUpdateFormat }} data
+ * @param {{ job: 'version', update: string, html?: boolean } | ({ job: 'compare' } & Parameters<typeof compareVersions>[0]) | ({ job: 'render' } & Parameters<typeof renderRows>[0]) | { job?: undefined, config: string, update?: string, content?: string, format?: import('$lib/y/rows').YPostUpdateFormat, titles?: Record<string, string> }} data
  * @returns {Promise<any>}
  */
 export const toHTMLWorker = async (data) => {
@@ -242,7 +243,7 @@ export const toHTMLWorker = async (data) => {
 		return renderRows(data);
 	}
 
-	const { config, content, update, format } = data;
+	const { config, content, update, format, titles } = data;
 
 	if (!config) {
 		throw new Error('No config string provided.');
@@ -258,7 +259,7 @@ export const toHTMLWorker = async (data) => {
 
 	/** @type {ReturnType<typeof $render>} */
 	let rendered;
-	if (update && format !== YJS13) {
+	if (update && format !== YJS13 && !titles) {
 		rendered = readState(cfg(null, EDITOR_IS_READONLY, null), base64ToUint8Array(update), $render);
 	} else {
 		const editor = buildEditorFromExtensions(
@@ -266,9 +267,21 @@ export const toHTMLWorker = async (data) => {
 			cfg(null, EDITOR_IS_READONLY, null)
 		);
 
-		const json = update
-			? legacyUpdateToJSON(base64ToUint8Array(update))
-			: JSON.parse(/** @type {string} */ (content));
+		/** @type {import('lexical').SerializedEditorState} */
+		let json;
+		if (!update) {
+			json = JSON.parse(/** @type {string} */ (content));
+		} else if (format === YJS13) {
+			json = legacyUpdateToJSON(base64ToUint8Array(update));
+		} else {
+			json = readState(cfg(null, EDITOR_IS_READONLY, null), base64ToUint8Array(update), () =>
+				$getEditor().getEditorState().toJSON()
+			);
+		}
+
+		if (titles) {
+			relinkInternal(json, titles);
+		}
 
 		editor.setEditorState(editor.parseEditorState(json));
 

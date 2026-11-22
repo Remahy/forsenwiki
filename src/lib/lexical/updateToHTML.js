@@ -4,10 +4,11 @@ import { LEXICAL_Y } from '$lib/y/rows';
 /**
  * @param {string} update
  * @param {import('$lib/y/rows').YPostUpdateFormat} [format]
+ * @param {Record<string, string>} [titles]
  */
-export const updateToHTML = async (update, format = LEXICAL_Y) => {
+export const updateToHTML = async (update, format = LEXICAL_Y, titles) => {
 	try {
-		const result = await toHTML({ config: 'article', update, format });
+		const result = await toHTML({ config: 'article', update, format, titles });
 
 		return result;
 	} catch (err) {

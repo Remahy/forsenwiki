@@ -18,6 +18,7 @@ import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
 import { readSystemYPostRelations, readYPostByTitle } from '$lib/db/post/read';
 import { updatePostTitle, updatePost } from '$lib/db/post/update';
 import { invalidatePostCache } from '$lib/cloudflare.server';
+import { refreshAfterRename } from '$lib/post/refreshAfterRename.server';
 import { upsertHTML } from '$lib/db/post/html';
 import { emitActivity } from '$lib/db/activity/emit';
 import { articleExtension } from '$lib/components/editor/config/article';
@@ -319,6 +320,8 @@ export async function POST({ request, locals, params }) {
 
 	if (potentialNewTitle) {
 		_post = await updatePostTitle({ post, newTitle: potentialNewTitle });
+
+		refreshAfterRename(post.id).catch(console.warn);
 	}
 
 	await emitActivity({ postUpdateId: updatedPost.id });

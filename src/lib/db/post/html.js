@@ -22,3 +22,15 @@ export const upsertHTML = (postId, { content, text, image }) => {
 		},
 	});
 };
+
+/**
+ * @param {string} postId
+ * @param {Date} lastUpdated
+ * @param {{ content: string, text: string, image?: string }} data
+ */
+export const updateHTMLIfUnchanged = (postId, lastUpdated, data) => {
+	return prisma.html.updateMany({
+		where: { postId, post: { is: { lastUpdated } } },
+		data,
+	});
+};

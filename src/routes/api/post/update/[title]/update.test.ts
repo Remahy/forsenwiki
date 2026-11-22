@@ -3,7 +3,7 @@ import { $getRoot } from 'lexical';
 import { base64ToUint8Array, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { readYPostUpdatesByTitle } from '$lib/db/post/read';
-import { updatePost } from '$lib/db/post/update';
+import { updatePost, updatePostTitle } from '$lib/db/post/update';
 import { isLegacyUpdate, seedState } from '$lib/y/headless';
 import { ALREADY_MIGRATED_MESSAGE, LEXICAL_Y, STALE_MIGRATION_MESSAGE, YJS13 } from '$lib/y/rows';
 import { $paragraph, $write, config, edited, legacyEdit, read } from '$lib/yjs/legacy.fixtures';
@@ -14,6 +14,7 @@ import { InvalidArticleError } from '$lib/errors/InvalidArticle';
 import { serverRunValidations } from '$lib/components/editor/validations/index.server';
 import { checkMissingArticleLinks } from '$lib/components/editor/validations/missingArticleLinks.server';
 import { getInternalIds } from '$lib/components/editor/utils/getInternalIds';
+import { refreshAfterRename } from '$lib/post/refreshAfterRename.server';
 
 vi.mock('$lib/db/post/read', () => ({
 	readSystemYPostRelations: vi.fn(async () => []),
@@ -44,6 +45,9 @@ vi.mock('$lib/components/editor/utils/getInternalIds', async (original) => ({
 }));
 vi.mock('../../read/[title]/+server', () => ({ _getYPostByTitle: vi.fn() }));
 vi.mock('$lib/db/activity/emit', () => ({ emitActivity: vi.fn() }));
+vi.mock('$lib/post/refreshAfterRename.server', () => ({
+	refreshAfterRename: vi.fn(async () => {}),
+}));
 
 const legacy = legacyEdit($write('stored before the migration'));
 const seed = convertLegacyUpdate(legacy);
@@ -55,12 +59,18 @@ const submit = (
 		forced = undefined as boolean | undefined,
 		isModerator = false,
 		allowMissingArticles = undefined as string[] | undefined,
+		newTitle = undefined as string | undefined,
 	} = {}
 ) =>
 	POST({
 		request: new Request('http://localhost/api/post/update/article', {
 			method: 'POST',
-			body: JSON.stringify({ content: uint8ArrayToBase64(update), forced, allowMissingArticles }),
+			body: JSON.stringify({
+				content: uint8ArrayToBase64(update),
+				forced,
+				allowMissingArticles,
+				newTitle,
+			}),
 		}),
 		params: { title: 'article' },
 		locals: {
@@ -78,6 +88,7 @@ const stored = () => {
 
 beforeEach(() => {
 	vi.mocked(updatePost).mockClear();
+	vi.mocked(refreshAfterRename).mockClear();
 	vi.mocked(_getYPostByTitle).mockResolvedValue({
 		id: 'post',
 		title: 'article',
@@ -258,4 +269,25 @@ test('links kept to articles that no longer exist are not related to them, and t
 	const [body] = vi.mocked(updatePost).mock.calls[0];
 	expect(body.outRelations).toEqual([{ isSystem: false, toPostId: 'forsen' }]);
 	expect(body.missingArticles).toEqual(['deleted']);
+});
+
+test('a rename refreshes the articles around the renamed article', async () => {
+	vi.mocked(updatePostTitle).mockResolvedValueOnce({
+		title: 'renamed',
+		rawTitle: 'Renamed',
+	} as never);
+
+	const response = await submit(await edited(current, $write('typed now')), {
+		isModerator: true,
+		newTitle: 'Renamed',
+	});
+
+	expect(response.status).toBe(200);
+	expect(refreshAfterRename).toHaveBeenCalledWith('post');
+});
+
+test('an update that keeps the title refreshes nothing else', async () => {
+	await submit(await edited(current, $write('typed now')), { isModerator: true });
+
+	expect(refreshAfterRename).not.toHaveBeenCalled();
 });
