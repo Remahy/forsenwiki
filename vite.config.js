@@ -27,9 +27,18 @@ export default defineConfig({
 				test: {
 					name: 'server',
 					include: ['src/**/*.test.ts'],
-					exclude: ['src/**/*.svelte.test.ts'],
+					exclude: ['src/**/*.svelte.test.ts', 'src/**/timing.test.ts'],
 					// Same DOM the toHTML worker uses.
 					environment: 'jsdom',
+				},
+			},
+			{
+				extends: true,
+				test: {
+					name: 'timing',
+					include: ['src/**/timing.test.ts'],
+					environment: 'jsdom',
+					fileParallelism: false,
 				},
 			},
 			{
