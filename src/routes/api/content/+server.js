@@ -21,6 +21,11 @@ export async function POST({ request, locals }) {
 		return ForbiddenError();
 	}
 
+	// Rows made without storage would never get a file.
+	if (!CLOUDFLARE_R2_SECRET_ACCESS_KEY) {
+		return error(503, 'File uploads are not set up on this server.');
+	}
+
 	/**
 	 * @type {Array<FileUpload>}
 	 */
@@ -75,11 +80,6 @@ export async function POST({ request, locals }) {
 			for (let index = 0; index < readyFiles.length; index++) {
 				const f = readyFiles[index];
 				const content = await createContent(f, tx);
-
-				if (!CLOUDFLARE_R2_SECRET_ACCESS_KEY) {
-					// TODO: If no S3, then upload locally.
-					return true;
-				}
 
 				const { presignedUrl, metadata: finalMetadata } = await getPresignedURL(
 					f,

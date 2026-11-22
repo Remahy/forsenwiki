@@ -8,14 +8,6 @@ import modulePathPlugin from './modulePathPlugin';
 
 export default defineConfig({
 	plugins: [tailwindcss(), modulePathPlugin(), sveltekit()],
-	server: {
-		proxy: {
-			'/usercontent': {
-				target: 'http://localhost:5175/',
-				rewrite: (path) => path.replace(/^\/usercontent/, ''),
-			},
-		},
-	},
 	optimizeDeps: {
 		exclude: ['yjs'],
 	},
